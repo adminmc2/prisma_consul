@@ -19,7 +19,7 @@
   --visionary-violet: #994E95;
 
   /* Tema oscuro (default) */
-  --bg-primary: var(--prisma-navy);
+  --bg-primary: #1a2535;
   --bg-secondary: #1a2535;
   --bg-card: rgba(255, 255, 255, 0.03);
   --text-primary: var(--clinical-white);
@@ -31,6 +31,7 @@
   --font-heading: 'Quicksand', sans-serif;
   --font-body: 'Source Sans 3', sans-serif;
   --font-accent: 'Varela Round', sans-serif;
+  --font-logo: 'Euphemia UCAS', 'EuphemiaUCAS', sans-serif;
 
   /* Espaciado */
   --space-xs: 0.5rem;
@@ -177,41 +178,111 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 /* ----------------------------------------
-   Header
+   Language Switcher - Mini Prisma Triangular
    ---------------------------------------- */
-.header {
+.lang-switcher {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: var(--space-md);
+  right: var(--space-md);
   z-index: 1000;
-  padding: var(--space-md) 0;
-  background: rgba(16, 27, 44, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-color);
-  transition: all var(--transition-base);
 }
 
-.header--scrolled {
-  padding: var(--space-sm) 0;
-}
-
-.header__container {
+.lang-switcher__track {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--space-md);
+  gap: var(--space-sm);
+  background: rgba(16, 27, 44, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
 }
 
-.header__logo-img {
-  height: 80px;
-  width: auto;
+.lang-switcher__label {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  transition: color var(--transition-base);
 }
 
-/* Navigation */
+.lang-switcher__label--es {
+  color: var(--tech-cyan);
+}
+
+/* Mini prisma triangular - igual que el del hero */
+.lang-switcher__prism {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  transition: transform var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Triángulo del prisma */
+.lang-switcher__prism::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -40%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 18px solid rgba(161, 184, 242, 0.5);
+  filter: drop-shadow(0 0 8px rgba(49, 190, 239, 0.6));
+}
+
+/* Brillo interior del triángulo */
+.lang-switcher__prism::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -10%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 7px solid rgba(255, 255, 255, 0.35);
+}
+
+/* Separador */
+.lang-switcher__separator {
+  width: 1px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Estado EN - el prisma apunta al otro lado */
+.lang-switcher.en .lang-switcher__prism {
+  transform: scaleX(-1);
+}
+
+.lang-switcher.en .lang-switcher__label--es {
+  color: var(--text-muted);
+}
+
+.lang-switcher.en .lang-switcher__label--en {
+  color: var(--tech-cyan);
+}
+
+/* Hover */
+.lang-switcher__track:hover {
+  border-color: rgba(49, 190, 239, 0.4);
+}
+
+.lang-switcher__track:hover .lang-switcher__prism::before {
+  border-bottom-color: rgba(49, 190, 239, 0.6);
+  filter: drop-shadow(0 0 10px rgba(49, 190, 239, 0.8));
+}
+
+/* Navigation - Hidden */
 .nav {
   position: fixed;
   top: 0;
@@ -301,7 +372,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 /* ----------------------------------------
-   Hero Section
+   Hero Section - Split Layout
    ---------------------------------------- */
 .hero {
   min-height: 100vh;
@@ -314,24 +385,37 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 .hero__container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+/* Logo grande a la izquierda */
+.hero__logo-side {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero__logo-large {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
 }
 
 .hero__content {
   max-width: 600px;
 }
 
-.hero__logo {
-  height: 120px;
-  width: auto;
-  margin-bottom: var(--space-lg);
-}
-
 .hero__title {
   margin-bottom: var(--space-md);
   color: var(--text-primary);
+  font-family: var(--font-logo);
+  font-weight: 400;
 }
 
 .hero__title-highlight {
@@ -352,7 +436,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   gap: var(--space-sm);
 }
 
-/* Hero Visual - Prism Effect */
+/* Hero Visual - Prism Effect (decorativo) */
 .hero__visual {
   display: none;
 }
@@ -1013,22 +1097,41 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     display: none;
   }
 
-  /* Hero Desktop */
+  /* Hero Desktop - Split Layout */
   .hero {
     padding-top: 0;
+    padding-bottom: 0;
   }
 
   .hero__container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 55% 45%;
     align-items: center;
     gap: var(--space-xl);
+    min-height: 100vh;
+  }
+
+  .hero__logo-side {
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-xl);
+    height: 100%;
+    display: flex;
+  }
+
+  .hero__logo-large {
+    width: 90%;
+    max-width: none;
+    height: auto;
+  }
+
+  .hero__content {
+    max-width: none;
+    padding-right: var(--space-xl);
   }
 
   .hero__visual {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: none;
   }
 
   /* Servicios Desktop */
@@ -1068,6 +1171,23 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 @media (min-width: 1280px) {
   :root {
     --space-2xl: 8rem;
+  }
+
+  /* Hero aún más grande en pantallas grandes */
+  .hero__container {
+    grid-template-columns: 60% 40%;
+  }
+
+  .hero__logo-large {
+    width: 95%;
+  }
+
+  .hero__title {
+    font-size: 2.75rem;
+  }
+
+  .hero__description {
+    font-size: 1.25rem;
   }
 
   .prism-scene {

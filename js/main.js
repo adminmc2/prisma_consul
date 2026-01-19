@@ -5,13 +5,54 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize all modules
-  initMobileMenu();
-  initHeaderScroll();
+  initLanguageSwitcher();
   initSmoothScroll();
   initRevealAnimations();
   initCounterAnimation();
   initContactForm();
 });
+
+/* ----------------------------------------
+   Language Switcher - Real Translation
+   ---------------------------------------- */
+function initLanguageSwitcher() {
+  const switcher = document.getElementById('langSwitcher');
+  if (!switcher) return;
+
+  // Check saved language preference
+  const savedLang = localStorage.getItem('prisma-lang') || 'es';
+  if (savedLang === 'en') {
+    switcher.classList.add('en');
+    switchLanguage('en');
+  }
+
+  switcher.addEventListener('click', () => {
+    switcher.classList.toggle('en');
+    const lang = switcher.classList.contains('en') ? 'en' : 'es';
+    switchLanguage(lang);
+    localStorage.setItem('prisma-lang', lang);
+  });
+}
+
+function switchLanguage(lang) {
+  // Find all elements with data-es and data-en attributes
+  const elements = document.querySelectorAll('[data-es][data-en]');
+
+  elements.forEach(el => {
+    const text = el.getAttribute(`data-${lang}`);
+    if (text) {
+      // Check if text contains HTML
+      if (text.includes('<')) {
+        el.innerHTML = text;
+      } else {
+        el.textContent = text;
+      }
+    }
+  });
+
+  // Update html lang attribute
+  document.documentElement.lang = lang;
+}
 
 /* ----------------------------------------
    Mobile Menu Toggle
@@ -249,21 +290,3 @@ function initContactForm() {
   });
 }
 
-/* ----------------------------------------
-   Language Switcher (Placeholder)
-   ---------------------------------------- */
-function initLanguageSwitcher() {
-  const langBtns = document.querySelectorAll('.lang-btn');
-
-  langBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      langBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      // Here you would implement actual language switching
-      // Could use i18n library or redirect to /en/ version
-      const lang = btn.textContent.toLowerCase();
-      console.log('Language switched to:', lang);
-    });
-  });
-}
