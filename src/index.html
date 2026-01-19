@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PRISMA Consul - Consultoría estratégica para el sector farmacéutico. Pharma, Research, Innovation, Strategy, Marketing, Analytics.">
+
+  <title>PRISMA Consul | Consultoría Farmacéutica</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&family=Source+Sans+3:wght@300;400;600&family=Varela+Round&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="header__container">
+      <a href="#" class="header__logo">
+        <img src="images/logo.svg" alt="PRISMA Consul" class="header__logo-img">
+      </a>
+
+      <nav class="nav" id="nav">
+        <ul class="nav__list">
+          <li class="nav__item"><a href="#servicios" class="nav__link">Servicios</a></li>
+          <li class="nav__item"><a href="#nosotros" class="nav__link">Nosotros</a></li>
+          <li class="nav__item"><a href="#contacto" class="nav__link">Contacto</a></li>
+        </ul>
+        <div class="nav__lang">
+          <button class="lang-btn active">ES</button>
+          <span class="lang-separator">/</span>
+          <button class="lang-btn">EN</button>
+        </div>
+      </nav>
+
+      <button class="header__menu-btn" id="menuBtn" aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero__container">
+      <div class="hero__content">
+        <p class="hero__tagline">Consultoría Farmacéutica</p>
+        <h1 class="hero__title">
+          Transformamos satisfactoria y eficazmente
+          <span class="hero__title-highlight">complejidad</span>
+          en
+          <span class="hero__title-highlight">claridad</span>
+        </h1>
+        <p class="hero__description">
+          Como un prisma que refracta la luz, descomponemos los desafíos del sector farmacéutico en soluciones estratégicas claras y accionables.
+        </p>
+        <div class="hero__cta">
+          <a href="#contacto" class="btn btn--primary">Hablemos</a>
+          <a href="#servicios" class="btn btn--ghost">Descubre más</a>
+        </div>
+      </div>
+
+      <div class="hero__visual">
+        <div class="prism-scene">
+          <!-- Rayo de luz entrante -->
+          <div class="light-beam light-beam--incoming"></div>
+
+          <!-- Prisma triangular de cristal -->
+          <svg class="triangle-prism" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <!-- Gradiente para el cristal -->
+              <linearGradient id="prismGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:rgba(200,220,255,0.15)"/>
+                <stop offset="50%" style="stop-color:rgba(161,184,242,0.08)"/>
+                <stop offset="100%" style="stop-color:rgba(180,200,240,0.12)"/>
+              </linearGradient>
+              <!-- Gradiente para el brillo -->
+              <linearGradient id="prismShine" x1="0%" y1="0%" x2="50%" y2="100%">
+                <stop offset="0%" style="stop-color:rgba(255,255,255,0.25)"/>
+                <stop offset="100%" style="stop-color:rgba(255,255,255,0)"/>
+              </linearGradient>
+            </defs>
+            <!-- Triángulo principal -->
+            <polygon class="prism-body" points="100,15 185,170 15,170" fill="url(#prismGradient)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <!-- Brillo interno -->
+            <polygon class="prism-shine" points="100,25 60,130 40,130" fill="url(#prismShine)"/>
+          </svg>
+
+          <!-- Rayos refractados (espectro) -->
+          <div class="spectrum-rays">
+            <div class="ray ray--1"></div>
+            <div class="ray ray--2"></div>
+            <div class="ray ray--3"></div>
+            <div class="ray ray--4"></div>
+            <div class="ray ray--5"></div>
+            <div class="ray ray--6"></div>
+            <div class="ray ray--7"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__scroll">
+      <span>Scroll</span>
+      <div class="hero__scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- Servicios Section -->
+  <section class="servicios" id="servicios">
+    <div class="servicios__container">
+      <header class="section-header">
+        <p class="section-header__tagline">Nuestros Servicios</p>
+        <h2 class="section-header__title">
+          El espectro completo de
+          <span class="text-gradient">soluciones PRISMA</span>
+        </h2>
+      </header>
+
+      <div class="servicios__grid">
+        <!-- P - Pharma -->
+        <article class="servicio-card" data-color="cyan">
+          <div class="servicio-card__letter">P</div>
+          <h3 class="servicio-card__title">Pharma</h3>
+          <p class="servicio-card__description">
+            Consultoría especializada en el ecosistema farmacéutico. Navegamos la complejidad regulatoria y operativa del sector.
+          </p>
+          <div class="servicio-card__line"></div>
+        </article>
+
+        <!-- R - Research -->
+        <article class="servicio-card" data-color="blue">
+          <div class="servicio-card__letter">R</div>
+          <h3 class="servicio-card__title">Research</h3>
+          <p class="servicio-card__description">
+            Investigación de mercado y análisis competitivo. Datos que impulsan decisiones informadas.
+          </p>
+          <div class="servicio-card__line"></div>
+        </article>
+
+        <!-- I - Innovation -->
+        <article class="servicio-card" data-color="violet">
+          <div class="servicio-card__letter">I</div>
+          <h3 class="servicio-card__title">Innovation</h3>
+          <p class="servicio-card__description">
+            Estrategias de innovación y desarrollo. Transformamos ideas en ventajas competitivas.
+          </p>
+          <div class="servicio-card__line"></div>
+        </article>
+
+        <!-- S - Strategy -->
+        <article class="servicio-card" data-color="cyan">
+          <div class="servicio-card__letter">S</div>
+          <h3 class="servicio-card__title">Strategy</h3>
+          <p class="servicio-card__description">
+            Planificación estratégica y business development. Visión clara para el crecimiento sostenible.
+          </p>
+          <div class="servicio-card__line"></div>
+        </article>
+
+        <!-- M - Marketing -->
+        <article class="servicio-card" data-color="violet">
+          <div class="servicio-card__letter">M</div>
+          <h3 class="servicio-card__title">Marketing</h3>
+          <p class="servicio-card__description">
+            Marketing farmacéutico y comunicación. Conectamos tu propuesta de valor con tu audiencia.
+          </p>
+          <div class="servicio-card__line"></div>
+        </article>
+
+        <!-- A - Analytics -->
+        <article class="servicio-card" data-color="blue">
+          <div class="servicio-card__letter">A</div>
+          <h3 class="servicio-card__title">Analytics</h3>
+          <p class="servicio-card__description">
+            Análisis de datos y business intelligence. Convertimos información en inteligencia accionable.
+          </p>
+          <div class="servicio-card__line"></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nosotros Section -->
+  <section class="nosotros" id="nosotros">
+    <div class="nosotros__container">
+      <div class="nosotros__content">
+        <header class="section-header section-header--left">
+          <p class="section-header__tagline">Sobre Nosotros</p>
+          <h2 class="section-header__title">
+            Experiencia que
+            <span class="text-gradient">genera resultados</span>
+          </h2>
+        </header>
+
+        <p class="nosotros__text">
+          PRISMA Consul nace de la necesidad de ofrecer consultoría especializada y cercana al sector farmacéutico. Trabajamos con distribuidores y empresas que desarrollan fármacos, especialmente PyMEs que buscan un socio estratégico que entienda sus desafíos únicos.
+        </p>
+
+        <p class="nosotros__text">
+          Nuestro enfoque combina el rigor analítico con la visión innovadora, ayudándote a navegar un mercado en constante evolución.
+        </p>
+
+        <ul class="nosotros__features">
+          <li class="feature">
+            <span class="feature__icon"></span>
+            <span class="feature__text">Enfoque especializado en pharma</span>
+          </li>
+          <li class="feature">
+            <span class="feature__icon"></span>
+            <span class="feature__text">Soluciones adaptadas a PyMEs</span>
+          </li>
+          <li class="feature">
+            <span class="feature__icon"></span>
+            <span class="feature__text">Visión estratégica + ejecución táctica</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="nosotros__visual">
+        <div class="stats-card">
+          <div class="stats-card__item">
+            <span class="stats-card__number" data-count="15">0</span>
+            <span class="stats-card__label">Años de experiencia</span>
+          </div>
+          <div class="stats-card__item">
+            <span class="stats-card__number" data-count="50">0</span>
+            <span class="stats-card__label">Proyectos completados</span>
+          </div>
+          <div class="stats-card__item">
+            <span class="stats-card__number" data-count="30">0</span>
+            <span class="stats-card__label">Clientes satisfechos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contacto Section -->
+  <section class="contacto" id="contacto">
+    <div class="contacto__container">
+      <header class="section-header">
+        <p class="section-header__tagline">Contacto</p>
+        <h2 class="section-header__title">
+          ¿Listo para
+          <span class="text-gradient">transformar tu negocio</span>?
+        </h2>
+        <p class="section-header__description">
+          Cuéntanos sobre tu proyecto y descubre cómo PRISMA puede ayudarte.
+        </p>
+      </header>
+
+      <form class="contact-form" id="contactForm">
+        <div class="form-group">
+          <label for="nombre" class="form-label">Nombre</label>
+          <input type="text" id="nombre" name="nombre" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label for="empresa" class="form-label">Empresa</label>
+          <input type="text" id="empresa" name="empresa" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" id="email" name="email" class="form-input" required>
+        </div>
+
+        <div class="form-group form-group--full">
+          <label for="mensaje" class="form-label">¿Cómo podemos ayudarte?</label>
+          <textarea id="mensaje" name="mensaje" class="form-textarea" rows="4" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full">Enviar mensaje</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__container">
+      <div class="footer__brand">
+        <img src="images/logo.svg" alt="PRISMA Consul" class="footer__logo">
+        <p class="footer__tagline">Consultoría estratégica para el sector farmacéutico</p>
+      </div>
+
+      <div class="footer__links">
+        <h4 class="footer__title">Enlaces</h4>
+        <ul class="footer__list">
+          <li><a href="#servicios">Servicios</a></li>
+          <li><a href="#nosotros">Nosotros</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__legal">
+        <h4 class="footer__title">Legal</h4>
+        <ul class="footer__list">
+          <li><a href="#">Política de Privacidad</a></li>
+          <li><a href="#">Aviso Legal</a></li>
+          <li><a href="#">Cookies</a></li>
+        </ul>
+      </div>
+
+      <div class="footer__contact">
+        <h4 class="footer__title">Contacto</h4>
+        <ul class="footer__list">
+          <li>info@prismaconsul.com</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>&copy; 2026 PRISMA Consul. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
+</body>
+</html>
