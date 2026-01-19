@@ -207,7 +207,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 .header__logo-img {
-  height: 60px;
+  height: 80px;
   width: auto;
 }
 
@@ -323,13 +323,10 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   max-width: 600px;
 }
 
-.hero__tagline {
-  font-family: var(--font-accent);
-  font-size: 0.875rem;
-  color: var(--tech-cyan);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: var(--space-md);
+.hero__logo {
+  height: 120px;
+  width: auto;
+  margin-bottom: var(--space-lg);
 }
 
 .hero__title {
