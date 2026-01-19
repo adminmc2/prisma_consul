@@ -428,10 +428,11 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
    ---------------------------------------- */
 .hero {
   min-height: 100vh;
+  min-height: 100svh; /* Small viewport height para móvil */
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: calc(80px + var(--space-xl)) var(--space-md) var(--space-xl);
+  padding: 60px var(--space-md) var(--space-md);
   position: relative;
   overflow: hidden;
 }
@@ -442,7 +443,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   width: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-xl);
+  gap: var(--space-xs);
   align-items: center;
 }
 
@@ -455,19 +456,21 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
 .hero__logo-large {
   width: 100%;
-  max-width: 400px;
+  max-width: 280px;
   height: auto;
 }
 
 .hero__content {
   max-width: 600px;
+  text-align: center;
 }
 
 .hero__title {
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
   color: var(--text-primary);
   font-family: var(--font-logo);
   font-weight: 400;
+  font-size: clamp(1.4rem, 5vw, 2rem);
 }
 
 .hero__title-highlight {
@@ -476,16 +479,24 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 .hero__description {
-  font-size: 1.125rem;
+  font-size: 0.95rem;
   color: var(--text-secondary);
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-sm);
   max-width: 500px;
 }
 
 .hero__cta {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  justify-content: center;
+}
+
+.hero__cta .btn {
+  width: auto;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.8rem;
 }
 
 /* Hero Visual - Prism Effect (decorativo) */
@@ -1087,8 +1098,41 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
    Media Queries - Tablet
    ---------------------------------------- */
 @media (min-width: 768px) {
+  .hero {
+    padding: calc(80px + var(--space-xl)) var(--space-md) var(--space-xl);
+  }
+
+  .hero__container {
+    gap: var(--space-lg);
+  }
+
+  .hero__logo-large {
+    max-width: 400px;
+  }
+
+  .hero__content {
+    text-align: left;
+  }
+
+  .hero__title {
+    margin-bottom: var(--space-md);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+  }
+
+  .hero__description {
+    font-size: 1.125rem;
+    margin-bottom: var(--space-lg);
+  }
+
   .hero__cta {
     flex-direction: row;
+    gap: var(--space-sm);
+    justify-content: flex-start;
+  }
+
+  .hero__cta .btn {
+    padding: 0.875rem 2.5rem;
+    font-size: 0.95rem;
   }
 
   .servicios__grid {
