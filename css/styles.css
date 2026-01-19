@@ -137,19 +137,31 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 /* ----------------------------------------
-   Buttons
+   Buttons - Hexagon/Diamond Shape (Prisma)
    ---------------------------------------- */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.875rem 1.75rem;
+  padding: 0.875rem 2.5rem;
   font-family: var(--font-heading);
   font-weight: 500;
   font-size: 0.95rem;
-  border-radius: var(--radius-full);
+  border-radius: 0;
   transition: all var(--transition-base);
   cursor: pointer;
+  position: relative;
+  background: transparent;
+  border: none;
+  /* Forma hexagonal/diamante con puntas a ambos lados */
+  clip-path: polygon(
+    12px 0%,           /* Punta izquierda superior */
+    calc(100% - 12px) 0%,  /* Borde superior derecho */
+    100% 50%,          /* Punta derecha centro */
+    calc(100% - 12px) 100%, /* Borde inferior derecho */
+    12px 100%,         /* Borde inferior izquierdo */
+    0% 50%             /* Punta izquierda centro */
+  );
 }
 
 .btn--primary {
@@ -158,19 +170,59 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 .btn--primary:hover {
-  transform: translateY(-2px);
+  transform: scale(1.05);
   box-shadow: 0 10px 30px rgba(49, 190, 239, 0.3);
+  filter: brightness(1.1);
 }
 
 .btn--ghost {
   background: transparent;
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  position: relative;
+}
+
+/* Borde visible para btn--ghost usando pseudo-elemento */
+.btn--ghost::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, rgba(161, 184, 242, 0.6), rgba(153, 78, 149, 0.4));
+  clip-path: polygon(
+    12px 0%,
+    calc(100% - 12px) 0%,
+    100% 50%,
+    calc(100% - 12px) 100%,
+    12px 100%,
+    0% 50%
+  );
+  z-index: -2;
+  transition: all var(--transition-base);
+}
+
+/* Interior del botón ghost */
+.btn--ghost::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 37, 53, 0.9);
+  clip-path: polygon(
+    12px 0%,
+    calc(100% - 12px) 0%,
+    100% 50%,
+    calc(100% - 12px) 100%,
+    12px 100%,
+    0% 50%
+  );
+  z-index: -1;
 }
 
 .btn--ghost:hover {
-  border-color: var(--tech-cyan);
   color: var(--tech-cyan);
+}
+
+.btn--ghost:hover::before {
+  background: linear-gradient(135deg, var(--tech-cyan), var(--visionary-violet));
+  filter: brightness(1.3);
 }
 
 .btn--full {
