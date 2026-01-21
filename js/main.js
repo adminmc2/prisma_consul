@@ -31,18 +31,21 @@ function initCustomCursor() {
   const cursor = document.getElementById('customCursor');
   if (!cursor) return;
 
-  // Seguir el mouse
+  let isVisible = false;
+
+  // Seguir el mouse y mostrar cursor
   document.addEventListener('mousemove', (e) => {
     cursor.style.transform = `translate3d(${e.clientX - 8}px, ${e.clientY - 2}px, 0)`;
+    if (!isVisible) {
+      cursor.style.opacity = '1';
+      isVisible = true;
+    }
   });
 
-  // Mostrar/ocultar cursor cuando entra/sale de la ventana
-  document.addEventListener('mouseenter', () => {
-    cursor.style.opacity = '1';
-  });
-
+  // Ocultar cursor cuando sale de la ventana
   document.addEventListener('mouseleave', () => {
     cursor.style.opacity = '0';
+    isVisible = false;
   });
 
   // Ocultar triángulo pequeño solo en elementos del menú (mostrar mano)
@@ -52,7 +55,9 @@ function initCustomCursor() {
       cursor.style.opacity = '0';
     });
     el.addEventListener('mouseleave', () => {
-      cursor.style.opacity = '1';
+      if (isVisible) {
+        cursor.style.opacity = '1';
+      }
     });
   });
 }
