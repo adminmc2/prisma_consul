@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCounterAnimation();
   initContactForm();
   initCTAHoverEffect();
+  initHeroEyes();
 });
 
 /* ----------------------------------------
@@ -117,6 +118,19 @@ function switchLanguage(lang) {
 
   // Update html lang attribute
   document.documentElement.lang = lang;
+
+  // Update eye marker rotating text
+  const svgEs = document.querySelector('.hero-eye-marker__text--es');
+  const svgEn = document.querySelector('.hero-eye-marker__text--en');
+  if (svgEs && svgEn) {
+    if (lang === 'en') {
+      svgEs.style.display = 'none';
+      svgEn.style.display = 'block';
+    } else {
+      svgEs.style.display = 'block';
+      svgEn.style.display = 'none';
+    }
+  }
 }
 
 /* ----------------------------------------
@@ -381,3 +395,56 @@ function initCTAHoverEffect() {
   });
 }
 
+/* ----------------------------------------
+   Hero Eyes Animation - Sigue el mouse
+   ---------------------------------------- */
+function initHeroEyes() {
+  const eyesContainer = document.querySelector('.hero-eyes');
+  const eyes = document.querySelectorAll('.hero-eye');
+  if (!eyesContainer || !eyes.length) return;
+
+  // Seguir el mouse
+  document.addEventListener('mousemove', (e) => {
+    eyes.forEach(eye => {
+      const rect = eye.getBoundingClientRect();
+      const eyeCenterX = rect.left + rect.width / 2;
+      const eyeCenterY = rect.top + rect.height / 2;
+
+      const deltaX = e.clientX - eyeCenterX;
+      const deltaY = e.clientY - eyeCenterY;
+
+      // Calcular distancia y limitar movimiento
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      const maxMove = 5; // Máximo movimiento en px
+
+      let moveX = (deltaX / distance) * Math.min(maxMove, distance / 20);
+      let moveY = (deltaY / distance) * Math.min(maxMove, distance / 20);
+
+      // Evitar NaN cuando el mouse está exactamente en el centro
+      if (isNaN(moveX)) moveX = 0;
+      if (isNaN(moveY)) moveY = 0;
+
+      eye.style.setProperty('--pupil-x', `${moveX}px`);
+      eye.style.setProperty('--pupil-y', `${moveY}px`);
+    });
+  });
+
+  // Estados de parpadeo
+  const blink = () => {
+    eyesContainer.setAttribute('data-state', 'close');
+    setTimeout(() => {
+      eyesContainer.removeAttribute('data-state');
+    }, 150);
+  };
+
+  // Parpadear aleatoriamente cada 2-5 segundos
+  const scheduleBlink = () => {
+    const delay = 2000 + Math.random() * 3000;
+    setTimeout(() => {
+      blink();
+      scheduleBlink();
+    }, delay);
+  };
+
+  scheduleBlink();
+}

@@ -76,6 +76,47 @@
 
   <!-- Hero Section -->
   <section class="hero">
+    <!-- Marcador de posición del ojo - Círculo con texto rotando -->
+    <div class="hero-eye-marker" id="heroEyeMarker">
+      <svg class="hero-eye-marker__text hero-eye-marker__text--es" viewBox="0 0 200 200">
+        <defs>
+          <path id="eyeTextPathEs" d="M 100,100 m -55,0 a 55,55 0 1,1 110,0 a 55,55 0 1,1 -110,0" fill="none"/>
+        </defs>
+        <text class="hero-eye-marker__rotating-text">
+          <textPath href="#eyeTextPathEs">• HAZ SCROLL PARA VER MÁS •</textPath>
+        </text>
+      </svg>
+      <svg class="hero-eye-marker__text hero-eye-marker__text--en" viewBox="0 0 200 200" style="display:none;">
+        <defs>
+          <path id="eyeTextPathEn" d="M 100,100 m -55,0 a 55,55 0 1,1 110,0 a 55,55 0 1,1 -110,0" fill="none"/>
+        </defs>
+        <text class="hero-eye-marker__rotating-text">
+          <textPath href="#eyeTextPathEn">• SCROLL DOWN TO SEE MORE •</textPath>
+        </text>
+      </svg>
+      <!-- Dos ojos animados -->
+      <div class="hero-eyes">
+        <div class="hero-eye hero-eye--left">
+          <div class="hero-eye__pupil"></div>
+          <div class="hero-eye__lower">
+            <div class="hero-eye__lid"></div>
+          </div>
+          <div class="hero-eye__upper">
+            <div class="hero-eye__lid"></div>
+          </div>
+        </div>
+        <div class="hero-eye hero-eye--right">
+          <div class="hero-eye__pupil"></div>
+          <div class="hero-eye__lower">
+            <div class="hero-eye__lid"></div>
+          </div>
+          <div class="hero-eye__upper">
+            <div class="hero-eye__lid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="hero__container">
       <!-- Logo animado grande a la izquierda -->
       <div class="hero__logo-side">
@@ -104,16 +145,6 @@
           <span class="service-divider">|</span>
           <span class="service-item"><span class="service-letter">A</span>NALYTICS</span>
         </div>
-
-        <!-- Guardado para usar después
-        <p class="hero__description" data-es="Como un prisma que refracta la luz, descomponemos los desafíos del sector farmacéutico en soluciones estratégicas claras y accionables." data-en="Like a prism refracting light, we break down pharmaceutical industry challenges into clear and actionable strategic solutions.">
-          Como un prisma que refracta la luz, descomponemos los desafíos del sector farmacéutico en soluciones estratégicas claras y accionables.
-        </p>
-        <div class="hero__cta">
-          <a href="#contacto" class="btn btn--primary" data-es="Hablemos" data-en="Let's Talk">Hablemos</a>
-          <a href="#servicios" class="btn btn--ghost" data-es="Descubre más" data-en="Learn More">Descubre más</a>
-        </div>
-        -->
 
       </div>
     </div>
@@ -158,6 +189,21 @@
       </div>
     </div>
 
+  </section>
+
+  <!-- Video Section -->
+  <section class="video-section">
+    <div class="video-section__container">
+      <div class="video-section__wrapper">
+        <iframe
+          src="https://player.vimeo.com/video/499921561?background=1&autoplay=1&loop=1&muted=1&title=0&byline=0&portrait=0"
+          class="video-section__iframe"
+          frameborder="0"
+          allow="autoplay; fullscreen"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
   </section>
 
   <!-- Servicios Section -->

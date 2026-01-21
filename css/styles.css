@@ -685,6 +685,40 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 /* ----------------------------------------
+   Video Section - Después del hero
+   ---------------------------------------- */
+.video-section {
+  width: 100%;
+  background: var(--bg-primary);
+  padding: 0 var(--space-md);
+  margin-top: -80px;
+}
+
+.video-section__container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.video-section__wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.video-section__iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  border: none;
+  pointer-events: none;
+}
+
+/* ----------------------------------------
    Hero Section - Split Layout
    ---------------------------------------- */
 .hero {
@@ -695,6 +729,8 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   justify-content: center;
   align-items: center;
   padding: var(--space-md);
+  padding-top: 0;
+  margin-top: -40px;
   position: relative;
   overflow: hidden;
 }
@@ -1653,3 +1689,173 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     }
   }
 }
+
+/* ----------------------------------------
+   Hero Eye Marker - Posición del ojo
+   ---------------------------------------- */
+.hero-eye-marker {
+  position: absolute;
+  top: 280px;
+  right: 8%;
+  width: 180px;
+  height: 180px;
+  z-index: 10;
+}
+
+.hero-eye-marker__text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  animation: rotateMarkerText 15s linear infinite;
+}
+
+.hero-eye-marker__rotating-text {
+  font-family: var(--font-primary);
+  font-size: 24px;
+  font-weight: 700;
+  fill: #ffffff;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+@keyframes rotateMarkerText {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Contenedor de los dos ojos */
+.hero-eyes {
+  --eye-size: 28px;
+  --eye-gap: 12px;
+  --eye-color: #DFFF00; /* Amarillo neón */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: var(--eye-gap);
+}
+
+.hero-eye {
+  --lower-rotation: 0deg;
+  --lower-position: 0%;
+  --upper-rotation: 0deg;
+  --upper-position: 0%;
+  --pupil-x: 0px;
+  --pupil-y: 0px;
+  position: relative;
+  width: var(--eye-size);
+  height: var(--eye-size);
+  background: #ffffff;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 2px #ffffff;
+  transition: 0.5s cubic-bezier(0.75, 0.25, 0.25, 0.75);
+}
+
+.hero-eye__pupil {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  height: 70%;
+  background: #000000;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) translate(var(--pupil-x), var(--pupil-y));
+  transition: transform 0.1s ease-out;
+}
+
+.hero-eye__lower,
+.hero-eye__upper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hero-eye__lower {
+  transform: rotate(var(--lower-rotation));
+}
+
+.hero-eye__upper {
+  transform: rotate(var(--upper-rotation));
+}
+
+.hero-eye__lid {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #0d0d0d;
+  transition: 0.15s ease-out;
+}
+
+.hero-eye__lower .hero-eye__lid {
+  top: 100%;
+  transform: translateY(calc(-1 * var(--lower-position)));
+}
+
+.hero-eye__upper .hero-eye__lid {
+  bottom: 100%;
+  transform: translateY(var(--upper-position));
+}
+
+/* Estados de los ojos */
+.hero-eyes[data-state="happy"] .hero-eye--left {
+  --lower-rotation: 20deg;
+  --lower-position: 40%;
+}
+
+.hero-eyes[data-state="happy"] .hero-eye--right {
+  --lower-rotation: -20deg;
+  --lower-position: 40%;
+}
+
+.hero-eyes[data-state="suspicious"] .hero-eye--left {
+  --lower-rotation: -4deg;
+  --lower-position: 20%;
+  --upper-rotation: 4deg;
+  --upper-position: 20%;
+}
+
+.hero-eyes[data-state="suspicious"] .hero-eye--right {
+  --lower-rotation: 4deg;
+  --lower-position: 20%;
+  --upper-rotation: -4deg;
+  --upper-position: 20%;
+}
+
+.hero-eyes[data-state="close"] .hero-eye--left,
+.hero-eyes[data-state="close"] .hero-eye--right {
+  --lower-position: 55%;
+  --upper-position: 55%;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .hero-eye-marker {
+    width: 130px;
+    height: 130px;
+    top: 110px;
+    right: 5%;
+  }
+
+  .hero-eyes {
+    --eye-size: 20px;
+    --eye-gap: 8px;
+  }
+
+  .hero-eye-marker__rotating-text {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-eye-marker {
+    display: none;
+  }
+}
+
