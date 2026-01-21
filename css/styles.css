@@ -436,34 +436,6 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   50% { opacity: 0.7; transform: scale(1.2); }
 }
 
-/* Menu Button - estilo hamburguesa simple */
-.header__menu-btn {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: var(--space-xs);
-  z-index: 1001;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.header__menu-btn span {
-  display: block;
-  width: 28px;
-  height: 2px;
-  background: var(--text-primary);
-  transition: all var(--transition-fast);
-}
-
-.header__menu-btn.active span:nth-child(1) {
-  transform: rotate(45deg) translate(4px, 4px);
-}
-
-.header__menu-btn.active span:nth-child(2) {
-  transform: rotate(-45deg) translate(0px, 0px);
-}
-
 /* Mobile Navigation Menu */
 .header__nav.active {
   display: flex;
@@ -652,7 +624,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   color: var(--text-muted);
 }
 
-/* Menu Button */
+/* Menu Button - Oreo Style (3 barras gruesas redondeadas) */
 .header__menu-btn {
   display: flex;
   flex-direction: column;
@@ -666,22 +638,32 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
 .header__menu-btn span {
   display: block;
-  width: 24px;
-  height: 2px;
+  width: 26px;
+  height: 6px;
   background: var(--text-primary);
-  transition: all var(--transition-fast);
+  border-radius: 999px;
+  transition: all 0.3s ease;
 }
 
+/* Barra del medio más clara */
+.header__menu-btn span:nth-child(2) {
+  background: rgba(250, 249, 246, 0.5);
+}
+
+/* Estado activo - X */
 .header__menu-btn.active span:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
+  transform: rotate(45deg) translate(8px, 8px);
+  background: var(--text-primary);
 }
 
 .header__menu-btn.active span:nth-child(2) {
   opacity: 0;
+  transform: scaleX(0);
 }
 
 .header__menu-btn.active span:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -5px);
+  transform: rotate(-45deg) translate(8px, -8px);
+  background: var(--text-primary);
 }
 
 /* ----------------------------------------
@@ -1870,6 +1852,676 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 @media (max-width: 768px) {
   .hero-eye-marker {
     display: none;
+  }
+}
+
+/* ========================================
+   MOBILE RESPONSIVE STYLES
+   ======================================== */
+
+/* ----------------------------------------
+   Mobile Base - max 480px
+   ---------------------------------------- */
+@media (max-width: 480px) {
+  /* Disable custom cursor on touch devices */
+  html, body, *, *::before, *::after {
+    cursor: auto !important;
+  }
+
+  .custom-cursor {
+    display: none !important;
+  }
+
+  /* Header Mobile - Logo izq, CTA+Lang centro, Menu der */
+  .header__container {
+    padding: var(--space-xs) var(--space-sm);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+  }
+
+  .header__logo-img {
+    width: 80px;
+  }
+
+  .header__actions {
+    display: contents;
+  }
+
+  /* CTA y Language Switcher centrados */
+  .header__cta,
+  .lang-switcher {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+  }
+
+  .header__cta {
+    margin-right: 75px;
+  }
+
+  .lang-switcher {
+    margin-left: 75px;
+  }
+
+  /* Menu button a la derecha */
+  .header__menu-btn {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  /* Language Switcher & CTA - same width on mobile */
+  .lang-switcher__track {
+    padding: 4px 10px 4px 8px;
+    height: 28px;
+    gap: 4px;
+    min-width: 70px;
+    justify-content: center;
+  }
+
+  .lang-switcher__label {
+    font-size: 0.65rem;
+  }
+
+  .lang-switcher__prism {
+    width: 10px;
+    height: 10px;
+  }
+
+  .lang-switcher__prism::before {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 9px solid rgba(161, 184, 242, 0.5);
+  }
+
+  .lang-switcher__separator {
+    height: 10px;
+    margin: 0 2px;
+  }
+
+  /* CTA Button - same width as lang switcher */
+  .header__cta {
+    display: flex;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.65rem;
+    min-width: 70px;
+    justify-content: center;
+    height: 28px;
+    align-items: center;
+  }
+
+  .header__cta-dot {
+    width: 5px;
+    height: 5px;
+    margin-right: 4px;
+  }
+
+  /* Mobile Menu Button */
+  .header__menu-btn {
+    display: flex;
+    padding: 8px;
+  }
+
+  .header__menu-btn span {
+    width: 24px;
+    height: 4px;
+    transform-origin: center center;
+  }
+
+  /* Animación X para móvil */
+  .header__menu-btn.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .header__menu-btn.active span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  .header__menu-btn.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  /* Hide desktop nav */
+  .header__nav {
+    display: none;
+  }
+
+  /* Mobile Nav Active State */
+  .header__nav.active {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(26, 37, 53, 0.98);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    padding: var(--space-lg);
+  }
+
+  .header__nav.active .header__nav-list {
+    flex-direction: column;
+    gap: var(--space-lg);
+    text-align: center;
+  }
+
+  .header__nav.active .header__nav-link {
+    font-size: 1.5rem;
+  }
+
+  /* Ocultar CTA y Lang Switcher cuando el menú está activo */
+  .header.menu-open .header__cta,
+  .header.menu-open .lang-switcher {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Hero Mobile */
+  .hero {
+    min-height: auto;
+    padding: 100px var(--space-md) 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .hero__container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    align-items: center;
+  }
+
+  .hero__logo-side {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero__logo-large {
+    max-width: 320px;
+    width: 85%;
+  }
+
+  .hero__content {
+    text-align: center;
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .hero__title {
+    font-size: 1.25rem;
+    line-height: 1.4;
+    margin-bottom: var(--space-sm);
+  }
+
+  .hero__description {
+    font-size: 0.9rem;
+    margin-bottom: var(--space-xs);
+  }
+
+  /* Hero Services PRISMA - Mobile */
+  .hero__services {
+    margin-top: 0;
+    margin-bottom: 0;
+    justify-content: center;
+  }
+
+  .hero__services--v2 {
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    line-height: 1.8;
+  }
+
+  .hero__services--v2 .service-divider {
+    margin: 0 0.15rem;
+  }
+
+  /* Hero CTA buttons mobile - OCULTOS */
+  .hero__cta {
+    display: none;
+  }
+
+  /* Hero content - sin margen inferior */
+  .hero__content {
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  /* Video Section Mobile - Sin efecto, solo mostrar video */
+  .video-section {
+    height: auto !important;
+    min-height: 0 !important;
+    margin-top: var(--space-xl) !important;
+    padding: 0 var(--space-sm) !important;
+  }
+
+  .video-section__sticky {
+    position: static !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .video-section__wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 8px;
+    position: static !important;
+    top: auto !important;
+    transform: none !important;
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Servicios Mobile */
+  .servicios {
+    padding: var(--space-xl) var(--space-sm);
+  }
+
+  .servicios__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .servicio-card {
+    padding: var(--space-md);
+  }
+
+  .servicio-card__letter {
+    font-size: 2.5rem;
+  }
+
+  .servicio-card__title {
+    font-size: 1.1rem;
+  }
+
+  .servicio-card__description {
+    font-size: 0.9rem;
+  }
+
+  /* Nosotros Mobile */
+  .nosotros {
+    padding: var(--space-xl) var(--space-sm);
+  }
+
+  .nosotros__container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .nosotros__text {
+    font-size: 0.95rem;
+  }
+
+  .nosotros__features {
+    gap: var(--space-sm);
+  }
+
+  .feature__text {
+    font-size: 0.9rem;
+  }
+
+  .stats-card {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xs);
+    padding: var(--space-md);
+  }
+
+  .stats-card__number {
+    font-size: 1.5rem;
+  }
+
+  .stats-card__label {
+    font-size: 0.65rem;
+  }
+
+  /* Contacto Mobile */
+  .contacto {
+    padding: var(--space-xl) var(--space-sm);
+  }
+
+  .contact-form {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .form-group--full {
+    grid-column: span 1;
+  }
+
+  .form-input,
+  .form-textarea {
+    padding: var(--space-sm);
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  .btn--full {
+    width: 100%;
+    grid-column: span 1;
+  }
+
+  /* Footer Mobile */
+  .footer {
+    padding: var(--space-lg) var(--space-sm) var(--space-md);
+  }
+
+  .footer__container {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    text-align: center;
+  }
+
+  .footer__logo {
+    height: 40px;
+    margin: 0 auto var(--space-xs);
+  }
+
+  .footer__list {
+    align-items: center;
+  }
+
+  .footer__bottom {
+    margin-top: var(--space-md);
+    padding-top: var(--space-sm);
+  }
+
+  .footer__bottom p {
+    font-size: 0.7rem;
+  }
+
+  /* Section headers mobile */
+  .section-header {
+    margin-bottom: var(--space-lg);
+  }
+
+  .section-header__tagline {
+    font-size: 0.75rem;
+  }
+
+  .section-header__title {
+    font-size: 1.5rem;
+  }
+
+  .section-header__description {
+    font-size: 0.9rem;
+  }
+
+  /* Buttons mobile adjustments */
+  .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.85rem;
+    clip-path: polygon(
+      8px 0%,
+      calc(100% - 8px) 0%,
+      100% 50%,
+      calc(100% - 8px) 100%,
+      8px 100%,
+      0% 50%
+    );
+  }
+
+  .btn--ghost::before,
+  .btn--ghost::after {
+    clip-path: polygon(
+      8px 0%,
+      calc(100% - 8px) 0%,
+      100% 50%,
+      calc(100% - 8px) 100%,
+      8px 100%,
+      0% 50%
+    );
+  }
+
+  /* Hide prism animation on mobile */
+  .hero__visual {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .prism-scene {
+    display: none !important;
+  }
+
+  /* Hero section - sin espacios extra */
+  .hero {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Eliminar cualquier espacio extra del hero visual */
+  .hero__visual,
+  .prism-scene,
+  .light-beam,
+  .triangle-prism,
+  .spectrum-rays {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    visibility: hidden !important;
+  }
+}
+
+/* ----------------------------------------
+   Small Mobile - max 360px
+   ---------------------------------------- */
+@media (max-width: 360px) {
+  .header__logo-img {
+    width: 70px;
+  }
+
+  .lang-switcher__track {
+    padding: 6px 10px 6px 6px;
+    height: 36px;
+  }
+
+  .lang-switcher__label {
+    font-size: 0.7rem;
+  }
+
+  .hero__title {
+    font-size: 1.1rem;
+  }
+
+  .hero__services--v2 {
+    font-size: 0.55rem;
+  }
+
+  .stats-card__number {
+    font-size: 1.25rem;
+  }
+
+  .stats-card__label {
+    font-size: 0.6rem;
+  }
+}
+
+/* ----------------------------------------
+   Tablet Portrait - 481px to 768px
+   ---------------------------------------- */
+@media (min-width: 481px) and (max-width: 768px) {
+  /* Disable custom cursor on touch devices */
+  .custom-cursor {
+    display: none !important;
+  }
+
+  html, body, *, *::before, *::after {
+    cursor: auto !important;
+  }
+
+  /* Header Tablet - Logo izq, CTA+Lang centro, Menu der */
+  .header__container {
+    padding: var(--space-xs) var(--space-md);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+  }
+
+  .header__logo-img {
+    width: 100px;
+  }
+
+  .header__nav {
+    display: none;
+  }
+
+  .header__actions {
+    display: contents;
+  }
+
+  /* CTA y Language Switcher centrados */
+  .header__cta,
+  .lang-switcher {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+  }
+
+  .header__cta {
+    margin-right: 90px;
+  }
+
+  .lang-switcher {
+    margin-left: 90px;
+  }
+
+  /* Language Switcher & CTA - same width on tablet */
+  .lang-switcher__track {
+    padding: 5px 12px 5px 8px;
+    height: 32px;
+    gap: 5px;
+    min-width: 80px;
+    justify-content: center;
+  }
+
+  .lang-switcher__label {
+    font-size: 0.7rem;
+  }
+
+  .lang-switcher__prism {
+    width: 12px;
+    height: 12px;
+  }
+
+  .lang-switcher__prism::before {
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 10px solid rgba(161, 184, 242, 0.5);
+  }
+
+  .lang-switcher__separator {
+    height: 12px;
+    margin: 0 3px;
+  }
+
+  /* CTA Button - same width as lang switcher */
+  .header__cta {
+    display: flex;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.7rem;
+    min-width: 80px;
+    justify-content: center;
+    height: 32px;
+    align-items: center;
+  }
+
+  .header__cta-dot {
+    width: 5px;
+    height: 5px;
+    margin-right: 4px;
+  }
+
+  /* Menu button a la derecha */
+  .header__menu-btn {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    display: flex;
+  }
+
+  /* Hero Tablet */
+  .hero {
+    min-height: auto;
+    padding: 100px var(--space-md) var(--space-xl);
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .hero__container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+
+  .hero__logo-large {
+    max-width: 280px;
+  }
+
+  .hero__content {
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .hero__title {
+    font-size: 1.5rem;
+  }
+
+  .hero__services--v2 {
+    font-size: 0.8rem;
+    justify-content: center;
+  }
+
+  .hero__cta {
+    justify-content: center;
+  }
+
+  /* Video Section Tablet */
+  .video-section {
+    height: 120vh;
+  }
+
+  .video-section__wrapper {
+    width: 90%;
+  }
+
+  /* Services Tablet */
+  .servicios__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Stats Tablet */
+  .stats-card {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .stats-card__number {
+    font-size: 2rem;
+  }
+
+  /* Contact form Tablet */
+  .contact-form {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group--full {
+    grid-column: span 1;
+  }
+
+  /* Footer Tablet */
+  .footer__container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
   }
 }
 

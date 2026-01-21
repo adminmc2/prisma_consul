@@ -4,8 +4,16 @@
    ======================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Check if touch device
+  const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
   // Initialize all modules
-  initCustomCursor();
+  if (!isTouchDevice) {
+    initCustomCursor();
+    initCTAHoverEffect();
+    initHeroEyes();
+  }
+
   initLanguageSwitcher();
   initMobileMenu();
   initHeaderScroll();
@@ -13,8 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initRevealAnimations();
   initCounterAnimation();
   initContactForm();
-  initCTAHoverEffect();
-  initHeroEyes();
   initVideoScroll();
 });
 
@@ -140,31 +146,44 @@ function switchLanguage(lang) {
 function initMobileMenu() {
   const menuBtn = document.getElementById('menuBtn');
   const nav = document.getElementById('nav');
+  const header = document.getElementById('header');
   const navLinks = document.querySelectorAll('.header__nav-link');
 
   if (!menuBtn || !nav) return;
 
+  const openMenu = () => {
+    menuBtn.classList.add('active');
+    nav.classList.add('active');
+    header.classList.add('menu-open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeMenu = () => {
+    menuBtn.classList.remove('active');
+    nav.classList.remove('active');
+    header.classList.remove('menu-open');
+    document.body.style.overflow = '';
+  };
+
   menuBtn.addEventListener('click', () => {
-    menuBtn.classList.toggle('active');
-    nav.classList.toggle('active');
-    document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+    if (nav.classList.contains('active')) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
   });
 
   // Close menu when clicking a link
   navLinks.forEach(link => {
     link.addEventListener('click', () => {
-      menuBtn.classList.remove('active');
-      nav.classList.remove('active');
-      document.body.style.overflow = '';
+      closeMenu();
     });
   });
 
   // Close menu when clicking outside
   document.addEventListener('click', (e) => {
     if (!nav.contains(e.target) && !menuBtn.contains(e.target) && nav.classList.contains('active')) {
-      menuBtn.classList.remove('active');
-      nav.classList.remove('active');
-      document.body.style.overflow = '';
+      closeMenu();
     }
   });
 }
