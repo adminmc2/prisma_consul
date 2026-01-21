@@ -6,6 +6,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize all modules
   initLanguageSwitcher();
+  initMobileMenu();
+  initHeaderScroll();
   initSmoothScroll();
   initRevealAnimations();
   initCounterAnimation();
@@ -60,7 +62,7 @@ function switchLanguage(lang) {
 function initMobileMenu() {
   const menuBtn = document.getElementById('menuBtn');
   const nav = document.getElementById('nav');
-  const navLinks = document.querySelectorAll('.nav__link');
+  const navLinks = document.querySelectorAll('.header__nav-link');
 
   if (!menuBtn || !nav) return;
 

@@ -62,6 +62,20 @@
   padding: 0;
 }
 
+/* ----------------------------------------
+   Custom Cursor - Prisma Triangle (Global)
+   ---------------------------------------- */
+html, body, *, *::before, *::after {
+  cursor: url('../images/cursor-triangle-white.png') 8 1, auto !important;
+}
+
+/* Para elementos interactivos */
+a, button, [role="button"], input[type="submit"], input, textarea, select,
+.btn, .header__nav-link, .lang-switcher, .header__menu-btn,
+object, embed, iframe {
+  cursor: url('../images/cursor-triangle-white.png') 8 1, pointer !important;
+}
+
 html {
   scroll-behavior: smooth;
   font-size: 16px;
@@ -230,12 +244,172 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 /* ----------------------------------------
+   Header / Navigation Bar
+   ---------------------------------------- */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: transparent;
+  transition: all var(--transition-base);
+}
+
+/* Header con fondo al hacer scroll - sin borde */
+.header--scrolled {
+  background: rgba(26, 37, 53, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.header__container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: var(--space-xs) var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo en el header */
+.header__logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.header__logo-img {
+  width: 140px;
+  height: auto;
+}
+
+/* Navegación - centrada con flex */
+.header__nav {
+  display: none;
+  flex: 1;
+  justify-content: center;
+}
+
+.header__nav-list {
+  display: flex;
+  align-items: center;
+  gap: clamp(2.5rem, 5vw, 6rem);
+}
+
+.header__nav-link {
+  font-family: var(--font-heading);
+  font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: color var(--transition-fast);
+  position: relative;
+  white-space: nowrap;
+}
+
+.header__nav-link:hover {
+  color: var(--tech-cyan);
+}
+
+/* Actions (CTA + Lang + Menu) */
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+/* CTA Button */
+.header__cta {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 2px solid var(--text-primary);
+  border-radius: var(--radius-full);
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.header__cta:hover {
+  border-color: var(--tech-cyan);
+  color: var(--tech-cyan);
+}
+
+.header__cta-dot {
+  width: 8px;
+  height: 8px;
+  background: #7CFC00;
+  border-radius: 50%;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.2); }
+}
+
+/* Menu Button - estilo hamburguesa simple */
+.header__menu-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--space-xs);
+  z-index: 1001;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.header__menu-btn span {
+  display: block;
+  width: 28px;
+  height: 2px;
+  background: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.header__menu-btn.active span:nth-child(1) {
+  transform: rotate(45deg) translate(4px, 4px);
+}
+
+.header__menu-btn.active span:nth-child(2) {
+  transform: rotate(-45deg) translate(0px, 0px);
+}
+
+/* Mobile Navigation Menu */
+.header__nav.active {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(26, 37, 53, 0.98);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  transform: none;
+}
+
+.header__nav.active .header__nav-list {
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.header__nav.active .header__nav-link {
+  font-size: 1.5rem;
+}
+
+/* ----------------------------------------
    Language Switcher - Mini Prisma Triangular
    ---------------------------------------- */
 .lang-switcher {
-  position: fixed;
-  top: var(--space-md);
-  right: var(--space-md);
+  position: relative;
+  top: auto;
+  right: auto;
   z-index: 1000;
 }
 
@@ -401,6 +575,9 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   gap: 5px;
   padding: var(--space-xs);
   z-index: 1001;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .header__menu-btn span {
@@ -423,27 +600,52 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
+/* Mobile Navigation Menu */
+.header__nav.active {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(26, 37, 53, 0.98);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.header__nav.active .header__nav-list {
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.header__nav.active .header__nav-link {
+  font-size: 1.5rem;
+}
+
 /* ----------------------------------------
    Hero Section - Split Layout
    ---------------------------------------- */
 .hero {
   min-height: 100vh;
-  min-height: 100svh; /* Small viewport height para móvil */
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 60px var(--space-md) var(--space-md);
+  align-items: center;
+  padding: var(--space-md);
   position: relative;
   overflow: hidden;
 }
 
 .hero__container {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   width: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-xs);
+  gap: var(--space-md);
   align-items: center;
 }
 
@@ -456,8 +658,11 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
 .hero__logo-large {
   width: 100%;
-  max-width: 280px;
+  max-width: 350px;
   height: auto;
+  display: block;
+  cursor: url('../images/cursor-triangle-white.png') 8 1, auto !important;
+  pointer-events: none;
 }
 
 .hero__content {
@@ -1099,8 +1304,27 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
    Media Queries - Tablet
    ---------------------------------------- */
 @media (min-width: 768px) {
+  /* Header Tablet - mostrar nav */
+  .header__nav {
+    display: flex;
+  }
+
+  .header__menu-btn {
+    display: none;
+  }
+
+  .header__cta {
+    display: flex;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+
+  .header__logo-img {
+    width: 130px;
+  }
+
   .hero {
-    padding: calc(80px + var(--space-xl)) var(--space-md) var(--space-xl);
+    padding: var(--space-xl) var(--space-md);
   }
 
   .hero__container {
@@ -1108,7 +1332,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   }
 
   .hero__logo-large {
-    max-width: 400px;
+    max-width: 500px;
   }
 
   .hero__content {
@@ -1168,57 +1392,44 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
    ---------------------------------------- */
 @media (min-width: 1024px) {
   /* Header Desktop */
-  .nav {
-    position: static;
-    width: auto;
-    height: auto;
-    background: transparent;
-    padding: 0;
-    border: none;
+  .header__nav {
     display: flex;
-    align-items: center;
-    gap: var(--space-lg);
   }
 
-  .nav__list {
-    flex-direction: row;
-    gap: var(--space-lg);
-    margin-bottom: 0;
-  }
-
-  .nav__link {
-    font-size: 0.95rem;
+  .header__cta {
+    display: flex;
   }
 
   .header__menu-btn {
     display: none;
   }
 
+  .header__logo-img {
+    width: 160px;
+  }
+
   /* Hero Desktop - Split Layout */
   .hero {
-    padding-top: 0;
-    padding-bottom: 0;
+    padding: 0 var(--space-xl);
   }
 
   .hero__container {
     display: grid;
     grid-template-columns: 55% 45%;
     align-items: center;
-    gap: var(--space-xl);
+    gap: var(--space-2xl);
     min-height: 100vh;
   }
 
   .hero__logo-side {
     justify-content: center;
     align-items: center;
-    padding: var(--space-xl);
-    height: 100%;
     display: flex;
   }
 
   .hero__logo-large {
-    width: 90%;
-    max-width: none;
+    width: 100%;
+    max-width: 700px;
     height: auto;
   }
 

@@ -16,14 +16,48 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <!-- Language Switcher -->
-  <div class="lang-switcher" id="langSwitcher">
-    <div class="lang-switcher__track">
-      <span class="lang-switcher__label lang-switcher__label--es">ES</span>
-      <div class="lang-switcher__prism"></div>
-      <span class="lang-switcher__label lang-switcher__label--en">EN</span>
+  <!-- Header / Navigation -->
+  <header class="header" id="header">
+    <div class="header__container">
+      <!-- Logo (izquierda) -->
+      <a href="#" class="header__logo">
+        <img src="images/logo prisma v2.svg" alt="PRISMA Consul" class="header__logo-img">
+      </a>
+
+      <!-- Navigation (centro) -->
+      <nav class="header__nav" id="nav">
+        <ul class="header__nav-list">
+          <li><a href="#" class="header__nav-link" data-es="Inicio" data-en="Home">Inicio</a></li>
+          <li><a href="#servicios" class="header__nav-link" data-es="Servicios" data-en="Services">Servicios</a></li>
+          <li><a href="#nosotros" class="header__nav-link" data-es="Nosotros" data-en="About Us">Nosotros</a></li>
+          <li><a href="#contacto" class="header__nav-link" data-es="Contacto" data-en="Contact">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <!-- CTA Button + Language (derecha) -->
+      <div class="header__actions">
+        <a href="#contacto" class="header__cta" data-es="Hablemos" data-en="Let's Talk!">
+          <span class="header__cta-dot"></span>
+          Hablemos
+        </a>
+
+        <!-- Language Switcher -->
+        <div class="lang-switcher" id="langSwitcher">
+          <div class="lang-switcher__track">
+            <span class="lang-switcher__label lang-switcher__label--es">ES</span>
+            <div class="lang-switcher__prism"></div>
+            <span class="lang-switcher__label lang-switcher__label--en">EN</span>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button class="header__menu-btn" id="menuBtn" aria-label="Menu">
+          <span></span>
+          <span></span>
+        </button>
+      </div>
     </div>
-  </div>
+  </header>
 
   <!-- Hero Section -->
   <section class="hero">
