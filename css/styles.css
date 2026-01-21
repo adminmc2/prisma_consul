@@ -749,6 +749,42 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   max-width: 500px;
 }
 
+/* ----------------------------------------
+   Hero Services - PRISMA
+   ---------------------------------------- */
+.hero__services {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-top: var(--space-lg);
+  font-family: var(--font-heading);
+  justify-content: center;
+}
+
+/* Propuesta 2: Primera letra cyan bold, resto transparente */
+.hero__services--v2 {
+  color: rgba(250, 249, 246, 0.6);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.85rem;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+}
+
+.hero__services--v2 .service-letter {
+  color: var(--tech-cyan);
+  font-weight: 700;
+  font-size: 1em;
+}
+
+.hero__services--v2 .service-divider {
+  color: rgba(250, 249, 246, 0.35);
+  margin: 0 0.25rem;
+  font-weight: 300;
+}
+
 .hero__cta {
   display: flex;
   flex-direction: row;
@@ -1398,7 +1434,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
   .hero__title {
     margin-bottom: var(--space-md);
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
   }
 
   .hero__description {
@@ -1415,6 +1451,16 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   .hero__cta .btn {
     padding: 0.875rem 2.5rem;
     font-size: 0.95rem;
+  }
+
+  /* Hero Services - Desktop */
+  .hero__services {
+    justify-content: flex-start;
+  }
+
+  .hero__services--v2 {
+    font-size: 0.95rem;
+    letter-spacing: 3px;
   }
 
   .servicios__grid {
@@ -1468,31 +1514,36 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   /* Hero Desktop - Split Layout */
   .hero {
     padding: 0 var(--space-xl);
+    margin-top: -20px;
   }
 
   .hero__container {
     display: grid;
-    grid-template-columns: 55% 45%;
+    grid-template-columns: 35% 65%;
     align-items: center;
-    gap: var(--space-2xl);
+    gap: var(--space-xl);
     min-height: 100vh;
+    padding-right: var(--space-md);
+    padding-top: 70px;
   }
 
   .hero__logo-side {
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     display: flex;
   }
 
   .hero__logo-large {
     width: 100%;
-    max-width: 700px;
+    max-width: 500px;
     height: auto;
   }
 
   .hero__content {
-    max-width: none;
-    padding-right: var(--space-xl);
+    max-width: 900px;
+    padding-right: var(--space-md);
+    padding-left: 0;
+    padding-top: 1rem;
   }
 
   .hero__visual {
@@ -1540,15 +1591,20 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
   /* Hero aún más grande en pantallas grandes */
   .hero__container {
-    grid-template-columns: 60% 40%;
+    grid-template-columns: 38% 62%;
+  }
+
+  .hero__logo-side {
+    justify-content: flex-start;
   }
 
   .hero__logo-large {
-    width: 95%;
+    width: 100%;
+    max-width: 600px;
   }
 
   .hero__title {
-    font-size: 2.75rem;
+    font-size: 3rem;
   }
 
   .hero__description {
