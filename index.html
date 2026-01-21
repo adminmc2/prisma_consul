@@ -16,6 +16,9 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+  <!-- Custom Cursor -->
+  <div class="custom-cursor" id="customCursor"></div>
+
   <!-- Header / Navigation -->
   <header class="header" id="header">
     <div class="header__container">
@@ -27,10 +30,22 @@
       <!-- Navigation (centro) -->
       <nav class="header__nav" id="nav">
         <ul class="header__nav-list">
-          <li><a href="#" class="header__nav-link" data-es="Inicio" data-en="Home">Inicio</a></li>
-          <li><a href="#servicios" class="header__nav-link" data-es="Servicios" data-en="Services">Servicios</a></li>
-          <li><a href="#nosotros" class="header__nav-link" data-es="Nosotros" data-en="About Us">Nosotros</a></li>
-          <li><a href="#contacto" class="header__nav-link" data-es="Contacto" data-en="Contact">Contacto</a></li>
+          <li><a href="#" class="header__nav-link" data-es="Inicio" data-en="Home">
+            <span class="link-hidden">Inicio</span>
+            <span class="link-slide"><span>Inicio</span><span>Inicio</span></span>
+          </a></li>
+          <li><a href="#servicios" class="header__nav-link" data-es="Servicios" data-en="Services">
+            <span class="link-hidden">Servicios</span>
+            <span class="link-slide"><span>Servicios</span><span>Servicios</span></span>
+          </a></li>
+          <li><a href="#nosotros" class="header__nav-link" data-es="Nosotros" data-en="About Us">
+            <span class="link-hidden">Nosotros</span>
+            <span class="link-slide"><span>Nosotros</span><span>Nosotros</span></span>
+          </a></li>
+          <li><a href="#contacto" class="header__nav-link" data-es="Contacto" data-en="Contact">
+            <span class="link-hidden">Contacto</span>
+            <span class="link-slide"><span>Contacto</span><span>Contacto</span></span>
+          </a></li>
         </ul>
       </nav>
 

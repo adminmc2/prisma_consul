@@ -5,6 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize all modules
+  initCustomCursor();
   initLanguageSwitcher();
   initMobileMenu();
   initHeaderScroll();
@@ -13,6 +14,28 @@ document.addEventListener('DOMContentLoaded', () => {
   initCounterAnimation();
   initContactForm();
 });
+
+/* ----------------------------------------
+   Custom Cursor - Triangle that follows mouse
+   ---------------------------------------- */
+function initCustomCursor() {
+  const cursor = document.getElementById('customCursor');
+  if (!cursor) return;
+
+  // Seguir el mouse
+  document.addEventListener('mousemove', (e) => {
+    cursor.style.transform = `translate3d(${e.clientX - 8}px, ${e.clientY - 2}px, 0)`;
+  });
+
+  // Mostrar/ocultar cursor cuando entra/sale de la ventana
+  document.addEventListener('mouseenter', () => {
+    cursor.style.opacity = '1';
+  });
+
+  document.addEventListener('mouseleave', () => {
+    cursor.style.opacity = '0';
+  });
+}
 
 /* ----------------------------------------
    Language Switcher - Real Translation
