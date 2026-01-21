@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initContactForm();
   initCTAHoverEffect();
   initHeroEyes();
+  initVideoScroll();
 });
 
 /* ----------------------------------------
@@ -447,4 +448,65 @@ function initHeroEyes() {
   };
 
   scheduleBlink();
+}
+
+/* ----------------------------------------
+   Video Scroll Effect - Estilo QClay
+   El video escala de pequeño a pantalla completa
+   ---------------------------------------- */
+function initVideoScroll() {
+  const videoSection = document.getElementById('videoSection');
+  if (!videoSection) return;
+
+  const videoWrapper = videoSection.querySelector('.video-section__wrapper');
+  if (!videoWrapper) return;
+
+  const updateVideoScale = () => {
+    const rect = videoSection.getBoundingClientRect();
+    const sectionHeight = videoSection.offsetHeight;
+    const viewportHeight = window.innerHeight;
+
+    // Calcular progreso del scroll dentro de la sección
+    // 0 = inicio de la sección, 1 = fin de la sección
+    const scrollProgress = Math.max(0, Math.min(1, -rect.top / (sectionHeight - viewportHeight)));
+
+    // Escalar de 80% a 100% del viewport
+    const startWidth = 80; // porcentaje inicial
+    const endWidth = 100; // porcentaje final
+    const currentWidth = startWidth + (endWidth - startWidth) * scrollProgress;
+
+    // Border radius de 16px a 0
+    const startRadius = 16;
+    const endRadius = 0;
+    const currentRadius = startRadius - (startRadius - endRadius) * scrollProgress;
+
+    // Aplicar estilos
+    videoWrapper.style.width = `${currentWidth}vw`;
+    videoWrapper.style.maxWidth = 'none';
+    videoWrapper.style.borderRadius = `${currentRadius}px`;
+
+    // Cuando está a pantalla completa, hacer el video 100vh
+    if (scrollProgress > 0.95) {
+      videoWrapper.style.height = '100vh';
+      videoWrapper.style.aspectRatio = 'unset';
+    } else {
+      videoWrapper.style.height = '';
+      videoWrapper.style.aspectRatio = '16 / 9';
+    }
+  };
+
+  // Ejecutar en scroll con requestAnimationFrame para mejor rendimiento
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        updateVideoScale();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // Ejecutar una vez al cargar
+  updateVideoScale();
 }
