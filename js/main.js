@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRevealAnimations();
   initCounterAnimation();
   initContactForm();
+  initCTAHoverEffect();
 });
 
 /* ----------------------------------------
@@ -34,6 +35,17 @@ function initCustomCursor() {
 
   document.addEventListener('mouseleave', () => {
     cursor.style.opacity = '0';
+  });
+
+  // Ocultar triángulo pequeño solo en elementos del menú (mostrar mano)
+  const menuElements = document.querySelectorAll('.header__nav-link');
+  menuElements.forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.opacity = '0';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.opacity = '1';
+    });
   });
 }
 
@@ -66,6 +78,34 @@ function switchLanguage(lang) {
   elements.forEach(el => {
     const text = el.getAttribute(`data-${lang}`);
     if (text) {
+      // Special handling for CTA button with dot inside
+      if (el.classList.contains('header__cta')) {
+        const dot = el.querySelector('.header__cta-dot');
+        if (dot) {
+          // Clear and rebuild: dot + text
+          el.innerHTML = '';
+          el.appendChild(dot);
+          el.appendChild(document.createTextNode(text));
+          return;
+        }
+      }
+
+      // Special handling for nav links with link-slide structure
+      if (el.classList.contains('header__nav-link')) {
+        const linkSlide = el.querySelector('.link-slide');
+        const linkHidden = el.querySelector('.link-hidden');
+        if (linkSlide && linkHidden) {
+          // Update hidden text
+          linkHidden.textContent = text;
+          // Update both spans in link-slide
+          const spans = linkSlide.querySelectorAll('span');
+          spans.forEach(span => {
+            span.textContent = text;
+          });
+          return;
+        }
+      }
+
       // Check if text contains HTML
       if (text.includes('<')) {
         el.innerHTML = text;
@@ -312,6 +352,32 @@ function initContactForm() {
     input.addEventListener('blur', () => {
       input.parentElement.classList.remove('focused');
     });
+  });
+}
+
+/* ----------------------------------------
+   CTA Button Hover Effect - Movimiento parallax
+   ---------------------------------------- */
+function initCTAHoverEffect() {
+  const ctaButton = document.querySelector('.header__cta');
+  if (!ctaButton) return;
+
+  ctaButton.addEventListener('mousemove', (e) => {
+    const rect = ctaButton.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Movimiento sutil del botón (efecto parallax)
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const moveX = (x - centerX) / 8;
+    const moveY = (y - centerY) / 8;
+
+    ctaButton.style.transform = `translate(${moveX}px, ${moveY}px)`;
+  });
+
+  ctaButton.addEventListener('mouseleave', () => {
+    ctaButton.style.transform = 'translate(0, 0)';
   });
 }
 
