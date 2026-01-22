@@ -669,17 +669,21 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 /* ----------------------------------------
-   Video Section - Efecto sticky scale (estilo QClay)
+   Video Section - Dentro del contenedor combinado
    ---------------------------------------- */
 .video-section {
-  position: relative;
-  height: 200vh; /* Espacio para el efecto de scroll */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
   background: var(--bg-primary);
+  z-index: 10; /* Por encima de servicios inicialmente */
+  will-change: transform;
 }
 
 .video-section__sticky {
-  position: sticky;
-  top: 0;
+  position: relative;
   height: 100vh;
   width: 100%;
   display: flex;
@@ -1123,88 +1127,172 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 /* ----------------------------------------
-   Servicios Section
+   Video + Servicios Container - Transición slide
+   ---------------------------------------- */
+.video-servicios-container {
+  position: relative;
+  height: 400vh; /* Espacio para: video scale + slide + horizontal scroll */
+  background: var(--bg-primary);
+}
+
+.video-servicios-container__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ----------------------------------------
+   Servicios Section - Estructura QClay
    ---------------------------------------- */
 .servicios {
-  padding: var(--space-2xl) var(--space-md);
-  background: var(--bg-secondary);
-}
-
-.servicios__container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.servicios__grid {
-  display: grid;
-  gap: var(--space-md);
-}
-
-/* Servicio Card */
-.servicio-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: var(--bg-primary);
+  display: flex;
+  z-index: 5;
   overflow: hidden;
-  transition: all var(--transition-base);
+}
+
+/* Título como primer elemento del carrusel */
+.servicios__header {
+  flex-shrink: 0;
+  width: 400px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
+}
+
+.servicios__title {
+  display: flex;
+  flex-direction: column;
+  line-height: 0.95;
+}
+
+.servicios__title-line {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -2px;
+}
+
+/* Contenedor de cards - scroll horizontal */
+.servicios__cards-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+}
+
+.servicios__cards {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem 2rem 2rem 4rem;
+  height: calc(100vh - 80px);
+  align-items: center;
+  will-change: transform;
+}
+
+/* Card individual - Altura completa estilo QClay */
+.servicio-card {
+  flex-shrink: 0;
+  width: 380px;
+  height: calc(100vh - 120px);
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
 }
 
 .servicio-card:hover {
-  transform: translateY(-4px);
+  transform: scale(1.02);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* Colores de fondo por tipo - Gradientes PRISMA */
+.servicio-card[data-color="cyan"] {
+  background: linear-gradient(165deg, rgba(57, 168, 190, 0.2) 0%, rgba(57, 168, 190, 0.05) 100%);
   border-color: var(--tech-cyan);
 }
 
-.servicio-card[data-color="cyan"] .servicio-card__letter,
-.servicio-card[data-color="cyan"] .servicio-card__line {
-  color: var(--tech-cyan);
-  background: var(--tech-cyan);
+.servicio-card[data-color="blue"] {
+  background: linear-gradient(165deg, rgba(135, 159, 207, 0.2) 0%, rgba(135, 159, 207, 0.05) 100%);
+  border-color: var(--soft-blue);
 }
 
-.servicio-card[data-color="blue"] .servicio-card__letter,
-.servicio-card[data-color="blue"] .servicio-card__line {
-  color: var(--soft-blue);
-  background: var(--soft-blue);
+.servicio-card[data-color="violet"] {
+  background: linear-gradient(165deg, rgba(121, 76, 122, 0.2) 0%, rgba(121, 76, 122, 0.05) 100%);
+  border-color: var(--visionary-violet);
 }
 
-.servicio-card[data-color="violet"] .servicio-card__letter,
-.servicio-card[data-color="violet"] .servicio-card__line {
-  color: var(--visionary-violet);
-  background: var(--visionary-violet);
+/* Parte visual con la letra grande */
+.servicio-card__visual {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 50%;
 }
 
 .servicio-card__letter {
   font-family: var(--font-heading);
-  font-size: 3rem;
+  font-size: 12rem;
   font-weight: 700;
-  opacity: 0.3;
+  opacity: 0.15;
+  line-height: 1;
+}
+
+.servicio-card[data-color="cyan"] .servicio-card__letter {
+  color: var(--tech-cyan);
+}
+
+.servicio-card[data-color="blue"] .servicio-card__letter {
+  color: var(--soft-blue);
+}
+
+.servicio-card[data-color="violet"] .servicio-card__letter {
+  color: var(--visionary-violet);
+}
+
+/* Contenido de la card */
+.servicio-card__content {
+  padding: var(--space-xl);
+}
+
+.servicio-card__index {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
   margin-bottom: var(--space-sm);
-  background: transparent;
+  display: block;
 }
 
 .servicio-card__title {
-  margin-bottom: var(--space-xs);
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
 }
 
 .servicio-card__description {
+  font-size: 1rem;
   color: var(--text-secondary);
-  font-size: 0.95rem;
-}
-
-.servicio-card__line {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--transition-base);
-}
-
-.servicio-card:hover .servicio-card__line {
-  transform: scaleX(1);
+  line-height: 1.7;
 }
 
 /* ----------------------------------------

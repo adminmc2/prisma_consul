@@ -475,56 +475,126 @@ function initHeroEyes() {
 }
 
 /* ----------------------------------------
-   Video Scroll Effect - Estilo QClay
-   El video escala de pequeño a pantalla completa
+   Video + Servicios Scroll Effect - Estilo QClay
+   3 Fases:
+   1. Video escala de 80% a 100%
+   2. Video sube y desaparece, servicios aparece
+   3. Scroll horizontal de servicios cards
    ---------------------------------------- */
 function initVideoScroll() {
+  const container = document.getElementById('videoServiciosContainer');
   const videoSection = document.getElementById('videoSection');
-  if (!videoSection) return;
+  const serviciosSection = document.getElementById('servicios');
+  const serviciosCards = document.getElementById('serviciosCards');
+
+  if (!container || !videoSection || !serviciosSection) return;
 
   const videoWrapper = videoSection.querySelector('.video-section__wrapper');
   if (!videoWrapper) return;
 
-  const updateVideoScale = () => {
-    const rect = videoSection.getBoundingClientRect();
-    const sectionHeight = videoSection.offsetHeight;
-    const viewportHeight = window.innerHeight;
+  // Calcular el ancho total para scroll horizontal
+  let totalCardsWidth = 0;
+  let wrapperWidth = 0;
 
-    // Calcular progreso del scroll dentro de la sección
-    // 0 = inicio de la sección, 1 = fin de la sección
-    const scrollProgress = Math.max(0, Math.min(1, -rect.top / (sectionHeight - viewportHeight)));
-
-    // Escalar de 80% a 100% del viewport
-    const startWidth = 80; // porcentaje inicial
-    const endWidth = 100; // porcentaje final
-    const currentWidth = startWidth + (endWidth - startWidth) * scrollProgress;
-
-    // Border radius de 16px a 0
-    const startRadius = 16;
-    const endRadius = 0;
-    const currentRadius = startRadius - (startRadius - endRadius) * scrollProgress;
-
-    // Aplicar estilos
-    videoWrapper.style.width = `${currentWidth}vw`;
-    videoWrapper.style.maxWidth = 'none';
-    videoWrapper.style.borderRadius = `${currentRadius}px`;
-
-    // Cuando está a pantalla completa, hacer el video 100vh
-    if (scrollProgress > 0.95) {
-      videoWrapper.style.height = '100vh';
-      videoWrapper.style.aspectRatio = 'unset';
-    } else {
-      videoWrapper.style.height = '';
-      videoWrapper.style.aspectRatio = '16 / 9';
+  const calculateDimensions = () => {
+    if (serviciosCards) {
+      totalCardsWidth = serviciosCards.scrollWidth;
+      wrapperWidth = serviciosCards.parentElement.offsetWidth;
     }
   };
 
-  // Ejecutar en scroll con requestAnimationFrame para mejor rendimiento
+  calculateDimensions();
+  window.addEventListener('resize', calculateDimensions);
+
+  const updateAnimation = () => {
+    const rect = container.getBoundingClientRect();
+    const containerHeight = container.offsetHeight;
+    const viewportHeight = window.innerHeight;
+
+    // Progreso total del scroll (0 a 1)
+    const totalProgress = Math.max(0, Math.min(1, -rect.top / (containerHeight - viewportHeight)));
+
+    // Fase 1: 0% - 25% → Video escala de 80% a 100%
+    // Fase 2: 25% - 40% → Video sube y desaparece
+    // Fase 3: 40% - 100% → Scroll horizontal de servicios
+
+    const phase1End = 0.25;
+    const phase2End = 0.40;
+
+    if (totalProgress <= phase1End) {
+      // FASE 1: Video escala
+      const phase1Progress = totalProgress / phase1End;
+
+      // Escalar de 80% a 100%
+      const currentWidth = 80 + (20 * phase1Progress);
+      const currentRadius = 16 - (16 * phase1Progress);
+
+      videoWrapper.style.width = `${currentWidth}vw`;
+      videoWrapper.style.maxWidth = 'none';
+      videoWrapper.style.borderRadius = `${currentRadius}px`;
+
+      if (phase1Progress > 0.9) {
+        videoWrapper.style.height = '100vh';
+        videoWrapper.style.aspectRatio = 'unset';
+      } else {
+        videoWrapper.style.height = '';
+        videoWrapper.style.aspectRatio = '16 / 9';
+      }
+
+      // Video visible, servicios oculto
+      videoSection.style.transform = 'translateY(0)';
+      videoSection.style.opacity = '1';
+      serviciosSection.style.opacity = '0';
+
+    } else if (totalProgress <= phase2End) {
+      // FASE 2: Video sube y desaparece
+      const phase2Progress = (totalProgress - phase1End) / (phase2End - phase1End);
+
+      // Video sube (de 0 a -100vh)
+      const videoY = -100 * phase2Progress;
+      videoSection.style.transform = `translateY(${videoY}vh)`;
+      videoSection.style.opacity = `${1 - phase2Progress}`;
+
+      // Servicios aparece
+      serviciosSection.style.opacity = `${phase2Progress}`;
+
+      // Mantener video a pantalla completa
+      videoWrapper.style.width = '100vw';
+      videoWrapper.style.height = '100vh';
+      videoWrapper.style.borderRadius = '0';
+      videoWrapper.style.aspectRatio = 'unset';
+
+      // Cards sin movimiento horizontal aún
+      if (serviciosCards) {
+        serviciosCards.style.transform = 'translateX(0)';
+      }
+
+    } else {
+      // FASE 3: Scroll horizontal de servicios
+      const phase3Progress = (totalProgress - phase2End) / (1 - phase2End);
+
+      // Video completamente arriba
+      videoSection.style.transform = 'translateY(-100vh)';
+      videoSection.style.opacity = '0';
+
+      // Servicios visible
+      serviciosSection.style.opacity = '1';
+
+      // Scroll horizontal de cards
+      if (serviciosCards && totalCardsWidth > wrapperWidth) {
+        const maxScroll = totalCardsWidth - wrapperWidth;
+        const scrollX = -maxScroll * phase3Progress;
+        serviciosCards.style.transform = `translateX(${scrollX}px)`;
+      }
+    }
+  };
+
+  // Ejecutar en scroll con requestAnimationFrame
   let ticking = false;
   window.addEventListener('scroll', () => {
     if (!ticking) {
       requestAnimationFrame(() => {
-        updateVideoScale();
+        updateAnimation();
         ticking = false;
       });
       ticking = true;
@@ -532,5 +602,5 @@ function initVideoScroll() {
   }, { passive: true });
 
   // Ejecutar una vez al cargar
-  updateVideoScale();
+  updateAnimation();
 }
