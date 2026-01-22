@@ -1248,29 +1248,27 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   border-color: rgba(153, 78, 149, 0.3);
 }
 
-/* Letra grande cortada en la parte superior izquierda */
-.servicio-card__letter {
+/* Letra SVG grande en la parte inferior izquierda */
+.servicio-card__letter-svg {
   position: absolute;
-  top: -70px;
-  left: -15px;
-  font-family: var(--font-heading);
-  font-size: 18rem;
-  font-weight: 700;
-  line-height: 0.8;
-  opacity: 0.12;
+  bottom: -50px;
+  left: -100px;
+  width: 500px;
+  height: 500px;
+  opacity: 0.08;
   pointer-events: none;
   z-index: 1;
 }
 
-.servicio-card[data-color="cyan"] .servicio-card__letter {
+.servicio-card[data-color="cyan"] .servicio-card__letter-svg {
   color: var(--tech-cyan);
 }
 
-.servicio-card[data-color="blue"] .servicio-card__letter {
+.servicio-card[data-color="blue"] .servicio-card__letter-svg {
   color: var(--soft-blue);
 }
 
-.servicio-card[data-color="violet"] .servicio-card__letter {
+.servicio-card[data-color="violet"] .servicio-card__letter-svg {
   color: var(--visionary-violet);
 }
 
