@@ -295,10 +295,16 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   transition: all var(--transition-base);
 }
 
-/* Header con fondo al hacer scroll - sin borde */
+/* Header con fondo al hacer scroll */
 .header--scrolled {
   background: rgba(26, 37, 53, 0.95);
   backdrop-filter: blur(10px);
+}
+
+/* Header transparente sobre el video */
+.header--transparent {
+  background: transparent !important;
+  backdrop-filter: none !important;
 }
 
 .header__container {
@@ -1154,19 +1160,24 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   height: 100vh;
   background: var(--bg-primary);
   display: flex;
+  align-items: flex-start; /* Alinear desde arriba */
+  justify-content: flex-start;
   z-index: 5;
   overflow: hidden;
+  padding-top: 180px; /* Espacio para el menú */
+  box-sizing: border-box;
 }
 
 /* Título como primer elemento del carrusel */
 .servicios__header {
   flex-shrink: 0;
-  width: 400px;
-  height: 100%;
+  width: 450px;
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Alinear arriba */
   justify-content: center;
   padding: var(--space-xl);
+  padding-top: 0;
+  margin-right: 6rem;
 }
 
 .servicios__title {
@@ -1185,27 +1196,26 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
 /* Contenedor de cards - scroll horizontal */
 .servicios__cards-wrapper {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
+  flex: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Alinear desde arriba */
+  overflow: visible;
+  margin-top: 0;
 }
 
 .servicios__cards {
   display: flex;
   gap: 2rem;
-  padding: 2rem 2rem 2rem 4rem;
-  height: calc(100vh - 80px);
-  align-items: center;
+  padding: 0 2rem 0 4rem;
+  align-items: flex-start; /* Alinear desde arriba */
   will-change: transform;
 }
 
-/* Card individual - Altura completa estilo QClay */
+/* Card individual - Estilo QClay horizontal */
 .servicio-card {
   flex-shrink: 0;
-  width: 380px;
-  height: calc(100vh - 120px);
+  width: 800px;
+  height: calc(100vh - 210px); /* Altura del viewport menos espacio para menu y margen inferior */
   border-radius: 24px;
   overflow: hidden;
   display: flex;
@@ -1214,45 +1224,42 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   border: 1px solid var(--border-color);
   background: var(--bg-card);
+  padding: 0;
 }
 
 .servicio-card:hover {
-  transform: scale(1.02);
+  transform: scale(1.01);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 /* Colores de fondo por tipo - Gradientes PRISMA */
 .servicio-card[data-color="cyan"] {
-  background: linear-gradient(165deg, rgba(57, 168, 190, 0.2) 0%, rgba(57, 168, 190, 0.05) 100%);
-  border-color: var(--tech-cyan);
+  background: linear-gradient(165deg, rgba(57, 168, 190, 0.15) 0%, rgba(57, 168, 190, 0.03) 100%);
+  border-color: rgba(49, 190, 239, 0.3);
 }
 
 .servicio-card[data-color="blue"] {
-  background: linear-gradient(165deg, rgba(135, 159, 207, 0.2) 0%, rgba(135, 159, 207, 0.05) 100%);
-  border-color: var(--soft-blue);
+  background: linear-gradient(165deg, rgba(135, 159, 207, 0.15) 0%, rgba(135, 159, 207, 0.03) 100%);
+  border-color: rgba(161, 184, 242, 0.3);
 }
 
 .servicio-card[data-color="violet"] {
-  background: linear-gradient(165deg, rgba(121, 76, 122, 0.2) 0%, rgba(121, 76, 122, 0.05) 100%);
-  border-color: var(--visionary-violet);
+  background: linear-gradient(165deg, rgba(121, 76, 122, 0.15) 0%, rgba(121, 76, 122, 0.03) 100%);
+  border-color: rgba(153, 78, 149, 0.3);
 }
 
-/* Parte visual con la letra grande */
-.servicio-card__visual {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  min-height: 50%;
-}
-
+/* Letra grande cortada en la parte superior izquierda */
 .servicio-card__letter {
+  position: absolute;
+  top: -70px;
+  left: -15px;
   font-family: var(--font-heading);
-  font-size: 12rem;
+  font-size: 18rem;
   font-weight: 700;
-  opacity: 0.15;
-  line-height: 1;
+  line-height: 0.8;
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .servicio-card[data-color="cyan"] .servicio-card__letter {
@@ -1267,32 +1274,78 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   color: var(--visionary-violet);
 }
 
-/* Contenido de la card */
-.servicio-card__content {
-  padding: var(--space-xl);
+/* Area de GIF/imagen en ovalo - parte superior derecha */
+.servicio-card__media {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  width: 130px;
+  height: 130px;
+  z-index: 2;
 }
 
-.servicio-card__index {
-  font-family: var(--font-heading);
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: var(--space-sm);
-  display: block;
+.servicio-card__gif-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.servicio-card[data-color="cyan"] .servicio-card__gif-placeholder {
+  background: radial-gradient(circle, rgba(49, 190, 239, 0.15) 0%, rgba(49, 190, 239, 0.03) 70%);
+  border-color: rgba(49, 190, 239, 0.2);
+}
+
+.servicio-card[data-color="blue"] .servicio-card__gif-placeholder {
+  background: radial-gradient(circle, rgba(161, 184, 242, 0.15) 0%, rgba(161, 184, 242, 0.03) 70%);
+  border-color: rgba(161, 184, 242, 0.2);
+}
+
+.servicio-card[data-color="violet"] .servicio-card__gif-placeholder {
+  background: radial-gradient(circle, rgba(153, 78, 149, 0.15) 0%, rgba(153, 78, 149, 0.03) 70%);
+  border-color: rgba(153, 78, 149, 0.2);
+}
+
+/* Contenido de la card - parte inferior */
+.servicio-card__content {
+  position: absolute;
+  bottom: 100px;
+  left: 0;
+  right: 0;
+  padding: 0 var(--space-2xl);
+  z-index: 2;
 }
 
 .servicio-card__title {
   font-family: var(--font-heading);
-  font-size: 1.75rem;
+  font-size: 4.5rem;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: var(--space-md);
+  letter-spacing: -2px;
 }
 
 .servicio-card__description {
-  font-size: 1rem;
+  font-size: 1.25rem;
   color: var(--text-secondary);
   line-height: 1.7;
+  max-width: 450px;
+}
+
+/* Numero de indice en la esquina inferior derecha */
+.servicio-card__index {
+  position: absolute;
+  bottom: 35px;
+  right: 40px;
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  z-index: 2;
 }
 
 /* ----------------------------------------

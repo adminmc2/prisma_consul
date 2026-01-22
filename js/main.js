@@ -486,6 +486,7 @@ function initVideoScroll() {
   const videoSection = document.getElementById('videoSection');
   const serviciosSection = document.getElementById('servicios');
   const serviciosCards = document.getElementById('serviciosCards');
+  const header = document.getElementById('header');
 
   if (!container || !videoSection || !serviciosSection) return;
 
@@ -499,7 +500,8 @@ function initVideoScroll() {
   const calculateDimensions = () => {
     if (serviciosCards) {
       totalCardsWidth = serviciosCards.scrollWidth;
-      wrapperWidth = serviciosCards.parentElement.offsetWidth;
+      wrapperWidth = window.innerWidth;
+      console.log('totalCardsWidth:', totalCardsWidth, 'wrapperWidth:', wrapperWidth);
     }
   };
 
@@ -514,12 +516,22 @@ function initVideoScroll() {
     // Progreso total del scroll (0 a 1)
     const totalProgress = Math.max(0, Math.min(1, -rect.top / (containerHeight - viewportHeight)));
 
-    // Fase 1: 0% - 25% → Video escala de 80% a 100%
-    // Fase 2: 25% - 40% → Video sube y desaparece
-    // Fase 3: 40% - 100% → Scroll horizontal de servicios
+    // Fase 1: 0% - 20% → Video escala de 80% a 100%
+    // Fase 2: 20% - 35% → Video sube y desaparece
+    // Fase 3: 35% - 50% → PAUSA - servicios visible sin moverse
+    // Fase 4: 50% - 100% → Scroll horizontal de servicios
 
-    const phase1End = 0.25;
-    const phase2End = 0.40;
+    const phase1End = 0.20;
+    const phase2End = 0.35;
+    const phase3End = 0.50; // Pausa
+
+    // Header transparente solo durante fase 1 y 2 (video visible)
+    // En fase 3+ (servicios) el header vuelve a ser visible con fondo
+    if (header && totalProgress > 0 && totalProgress < phase2End) {
+      header.classList.add('header--transparent');
+    } else if (header) {
+      header.classList.remove('header--transparent');
+    }
 
     if (totalProgress <= phase1End) {
       // FASE 1: Video escala
@@ -564,14 +576,27 @@ function initVideoScroll() {
       videoWrapper.style.borderRadius = '0';
       videoWrapper.style.aspectRatio = 'unset';
 
-      // Cards sin movimiento horizontal aún
+      // Cards sin movimiento horizontal
+      if (serviciosCards) {
+        serviciosCards.style.transform = 'translateX(0)';
+      }
+
+    } else if (totalProgress <= phase3End) {
+      // FASE 3: PAUSA - Servicios visible, sin movimiento
+      // El usuario puede ver el contenido inicial
+
+      videoSection.style.transform = 'translateY(-100vh)';
+      videoSection.style.opacity = '0';
+      serviciosSection.style.opacity = '1';
+
+      // Cards quietas
       if (serviciosCards) {
         serviciosCards.style.transform = 'translateX(0)';
       }
 
     } else {
-      // FASE 3: Scroll horizontal de servicios
-      const phase3Progress = (totalProgress - phase2End) / (1 - phase2End);
+      // FASE 4: Scroll horizontal de servicios
+      const phase4Progress = (totalProgress - phase3End) / (1 - phase3End);
 
       // Video completamente arriba
       videoSection.style.transform = 'translateY(-100vh)';
@@ -581,10 +606,11 @@ function initVideoScroll() {
       serviciosSection.style.opacity = '1';
 
       // Scroll horizontal de cards
-      if (serviciosCards && totalCardsWidth > wrapperWidth) {
+      if (serviciosCards) {
         const maxScroll = totalCardsWidth - wrapperWidth;
-        const scrollX = -maxScroll * phase3Progress;
+        const scrollX = -maxScroll * phase4Progress;
         serviciosCards.style.transform = `translateX(${scrollX}px)`;
+        console.log('FASE 4: progress:', phase4Progress, 'scrollX:', scrollX);
       }
     }
   };
