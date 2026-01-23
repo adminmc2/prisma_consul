@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCounterAnimation();
   initContactForm();
   initVideoScroll();
+  initTransitionStatic();
 });
 
 /* ----------------------------------------
@@ -519,11 +520,13 @@ function initVideoScroll() {
     // Fase 1: 0% - 20% → Video escala de 80% a 100%
     // Fase 2: 20% - 35% → Video sube y desaparece
     // Fase 3: 35% - 50% → PAUSA - servicios visible sin moverse
-    // Fase 4: 50% - 100% → Scroll horizontal de servicios
+    // Fase 4: 50% - 85% → Scroll horizontal de servicios
+    // Fase 5: 85% - 100% → PAUSA de lectura en Analytics (última card)
 
     const phase1End = 0.20;
     const phase2End = 0.35;
-    const phase3End = 0.50; // Pausa
+    const phase3End = 0.50; // Pausa inicial
+    const phase4End = 0.85; // Fin del scroll horizontal
 
     // Header transparente solo durante fase 1 y 2 (video visible)
     // En fase 3+ (servicios) el header vuelve a ser visible con fondo
@@ -594,9 +597,9 @@ function initVideoScroll() {
         serviciosCards.style.transform = 'translateX(0)';
       }
 
-    } else {
+    } else if (totalProgress <= phase4End) {
       // FASE 4: Scroll horizontal de servicios
-      const phase4Progress = (totalProgress - phase3End) / (1 - phase3End);
+      const phase4Progress = (totalProgress - phase3End) / (phase4End - phase3End);
 
       // Video completamente arriba
       videoSection.style.transform = 'translateY(-100vh)';
@@ -610,7 +613,20 @@ function initVideoScroll() {
         const maxScroll = totalCardsWidth - wrapperWidth;
         const scrollX = -maxScroll * phase4Progress;
         serviciosCards.style.transform = `translateX(${scrollX}px)`;
-        console.log('FASE 4: progress:', phase4Progress, 'scrollX:', scrollX);
+      }
+
+    } else {
+      // FASE 5: PAUSA de lectura en Analytics (última card visible)
+      // El scroll horizontal se mantiene al final mientras el usuario sigue scrolleando
+
+      videoSection.style.transform = 'translateY(-100vh)';
+      videoSection.style.opacity = '0';
+      serviciosSection.style.opacity = '1';
+
+      // Cards en posición final (Analytics visible)
+      if (serviciosCards) {
+        const maxScroll = totalCardsWidth - wrapperWidth;
+        serviciosCards.style.transform = `translateX(${-maxScroll}px)`;
       }
     }
   };
@@ -627,8 +643,169 @@ function initVideoScroll() {
     }
   }, { passive: true });
 
+  // Transition Marquee - aparece al final de servicios, desaparece en transition-static
+  const transitionMarquee = document.getElementById('transitionMarquee');
+  const transitionStatic = document.getElementById('transitionStatic');
+
+  if (transitionMarquee && transitionStatic) {
+    const checkTransition = () => {
+      const containerRect = container.getBoundingClientRect();
+      const staticRect = transitionStatic.getBoundingClientRect();
+
+      // Mostrar cuando el container está casi terminando y antes de que la sección estática entre en pantalla
+      const showMarquee = containerRect.bottom < window.innerHeight * 1.2 &&
+                          staticRect.top > window.innerHeight * 0.5;
+
+      if (showMarquee) {
+        transitionMarquee.classList.add('active');
+      } else {
+        transitionMarquee.classList.remove('active');
+      }
+    };
+
+    window.addEventListener('scroll', () => {
+      requestAnimationFrame(checkTransition);
+    }, { passive: true });
+  }
+
   // Ejecutar una vez al cargar
   updateAnimation();
+}
+
+/* ----------------------------------------
+   Transition Static - Título se mueve + Tarjeta aparece
+   Fases:
+   1. Título centrado (estado inicial) - SOLO visible cuando la sección está en pantalla
+   2. Al hacer scroll, título se mueve a top-left y se hace pequeño
+   3. CUANDO título está en posición final, tarjeta aparece DE GOLPE desde la derecha
+   ---------------------------------------- */
+function initTransitionStatic() {
+  const section = document.getElementById('transitionStatic');
+  const title = document.getElementById('transitionTitle');
+  const card = document.getElementById('transitionCard');
+
+  if (!section || !title || !card) return;
+
+  // Posición final del título (ajustada - más abajo)
+  const finalTop = 200; // px desde arriba (más abajo, dentro de la tarjeta)
+  const finalLeft = 60; // px desde la izquierda
+  const finalScale = 0.35;
+
+  const updateTransition = () => {
+    const rect = section.getBoundingClientRect();
+    const sectionHeight = section.offsetHeight;
+    const viewportHeight = window.innerHeight;
+
+    // IMPORTANTE: Ocultar todo si la sección NO está visible
+    // La sección empieza cuando rect.top < viewportHeight
+    if (rect.top >= viewportHeight) {
+      // Sección todavía no visible - OCULTAR TODO
+      title.style.opacity = '0';
+      title.style.pointerEvents = 'none';
+      card.style.opacity = '0';
+      return;
+    }
+
+    // Sección ya pasó completamente
+    if (rect.bottom <= 0) {
+      title.style.opacity = '0';
+      title.style.pointerEvents = 'none';
+      card.style.opacity = '0';
+      return;
+    }
+
+    // Sección está visible - mostrar título
+    title.style.opacity = '1';
+    title.style.pointerEvents = 'auto';
+
+    // Calcular progreso del scroll dentro de la sección
+    // 0 = sección acaba de entrar, 1 = fin de la sección
+    const scrollProgress = Math.max(0, Math.min(1, -rect.top / (sectionHeight - viewportHeight)));
+
+    // Fase 1: 0% - 40% → Título se mueve de centro a top-left (sin tarjeta)
+    // Fase 2: 40% - 45% → Tarjeta aparece DE GOLPE desde la derecha (muy rápido)
+    // Fase 3: 45% - 100% → Todo en posición
+
+    const phase1End = 0.40;
+    const phase2End = 0.45;
+
+    if (scrollProgress <= phase1End) {
+      // FASE 1: Solo el título se mueve de centro a top-left
+      const phase1Progress = scrollProgress / phase1End;
+      const easeProgress = easeOutCubic(phase1Progress);
+
+      // Calcular valores actuales
+      const currentScale = 1 + (finalScale - 1) * easeProgress;
+
+      // Posición: de centro a top-left
+      const topPx = (viewportHeight * 0.5) * (1 - easeProgress) + finalTop * easeProgress;
+      const leftPx = (window.innerWidth * 0.5) * (1 - easeProgress) + finalLeft * easeProgress;
+
+      // Transform: de translate(-50%, -50%) a translate(0, 0)
+      const translateX = -50 * (1 - easeProgress);
+      const translateY = -50 * (1 - easeProgress);
+
+      title.style.position = 'fixed';
+      title.style.top = `${topPx}px`;
+      title.style.left = `${leftPx}px`;
+      title.style.transform = `translate(${translateX}%, ${translateY}%) scale(${currentScale})`;
+      title.style.transformOrigin = 'top left';
+
+      // Tarjeta COMPLETAMENTE oculta durante fase 1
+      card.style.transform = 'translateX(100%)';
+      card.style.opacity = '0';
+
+    } else if (scrollProgress <= phase2End) {
+      // FASE 2: Título en posición final, tarjeta entra MUY RÁPIDO desde la derecha
+      const phase2Progress = (scrollProgress - phase1End) / (phase2End - phase1End);
+      const easeProgress = easeOutQuart(phase2Progress);
+
+      // Título en posición final
+      title.style.position = 'fixed';
+      title.style.top = `${finalTop}px`;
+      title.style.left = `${finalLeft}px`;
+      title.style.transform = `translate(0, 0) scale(${finalScale})`;
+      title.style.transformOrigin = 'top left';
+
+      // Tarjeta entra desde la derecha MUY RÁPIDO
+      const cardX = 100 * (1 - easeProgress);
+      card.style.transform = `translateX(${cardX}%)`;
+      card.style.opacity = '1';
+
+    } else {
+      // FASE 3: Todo en posición final
+      title.style.position = 'fixed';
+      title.style.top = `${finalTop}px`;
+      title.style.left = `${finalLeft}px`;
+      title.style.transform = `translate(0, 0) scale(${finalScale})`;
+      title.style.transformOrigin = 'top left';
+
+      card.style.transform = 'translateX(0)';
+      card.style.opacity = '1';
+    }
+  };
+
+  function easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function easeOutQuart(t) {
+    return 1 - Math.pow(1 - t, 4);
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        updateTransition();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // Ejecutar una vez al cargar
+  updateTransition();
 }
 
 
