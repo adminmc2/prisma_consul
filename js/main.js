@@ -630,3 +630,5 @@ function initVideoScroll() {
   // Ejecutar una vez al cargar
   updateAnimation();
 }
+
+
