@@ -1529,7 +1529,136 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   opacity: 1;
 }
 
+/* Grid de 3 columnas dentro de la tarjeta */
+.transition-static__columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  height: 100%;
+  gap: 0;
+}
 
+/* Columna izquierda - roles */
+.transition-static__col--left {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px;
+  padding-top: 120px;
+}
+
+.transition-static__roles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.transition-static__roles span {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  font-weight: 200;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: var(--text-secondary);
+  line-height: 1.2;
+}
+
+/* Columna central - fondo + persona */
+.transition-static__col--center {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Fondo rectangular cyan - toda la altura */
+.transition-static__bg-pattern {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 80%;
+  height: 100%;
+  background: rgba(49, 190, 239, 0.12);
+  border-radius: 0;
+  z-index: 1;
+}
+
+/* Persona encima del fondo - medio cuerpo (cabeza visible) */
+.transition-static__person {
+  position: absolute;
+  z-index: 2;
+  height: 140%;
+  width: auto;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: top center;
+  filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.5));
+  top: 0;
+}
+
+/* Columna derecha - info persona */
+.transition-static__col--right {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 40px;
+}
+
+.transition-static__person-info {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 100%;
+}
+
+.transition-static__person-name {
+  font-family: var(--font-heading);
+  font-size: clamp(2.2rem, 3.5vw, 3.5rem);
+  font-weight: 200;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.transition-static__person-desc {
+  font-family: var(--font-heading);
+  font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+  font-weight: 200;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.transition-static__contact-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 28px 14px 18px;
+  background: var(--tech-cyan);
+  border: 1px solid var(--tech-cyan);
+  border-radius: 4px 25px 25px 4px;
+  color: var(--prisma-navy);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  margin-top: 16px;
+}
+
+.transition-static__contact-btn:hover {
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--prisma-navy);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(49, 190, 239, 0.3);
+}
 
 /* ----------------------------------------
    Nosotros Section

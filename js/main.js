@@ -686,8 +686,8 @@ function initTransitionStatic() {
 
   if (!section || !title || !card) return;
 
-  // Posición final del título (ajustada - más abajo)
-  const finalTop = 200; // px desde arriba (más abajo, dentro de la tarjeta)
+  // Posición final del título (arriba izquierda)
+  const finalTop = 200; // px desde arriba
   const finalLeft = 60; // px desde la izquierda
   const finalScale = 0.35;
 
@@ -748,8 +748,11 @@ function initTransitionStatic() {
       title.style.position = 'fixed';
       title.style.top = `${topPx}px`;
       title.style.left = `${leftPx}px`;
+      title.style.bottom = 'auto';
       title.style.transform = `translate(${translateX}%, ${translateY}%) scale(${currentScale})`;
       title.style.transformOrigin = 'top left';
+      title.style.textAlign = easeProgress > 0.5 ? 'left' : 'center';
+      title.style.alignItems = easeProgress > 0.5 ? 'flex-start' : 'center';
 
       // Tarjeta COMPLETAMENTE oculta durante fase 1
       card.style.transform = 'translateX(100%)';
@@ -760,12 +763,8 @@ function initTransitionStatic() {
       const phase2Progress = (scrollProgress - phase1End) / (phase2End - phase1End);
       const easeProgress = easeOutQuart(phase2Progress);
 
-      // Título en posición final
-      title.style.position = 'fixed';
-      title.style.top = `${finalTop}px`;
-      title.style.left = `${finalLeft}px`;
-      title.style.transform = `translate(0, 0) scale(${finalScale})`;
-      title.style.transformOrigin = 'top left';
+      // Título en posición final (top-left)
+      setTitleFinal();
 
       // Tarjeta entra desde la derecha MUY RÁPIDO
       const cardX = 100 * (1 - easeProgress);
@@ -774,14 +773,21 @@ function initTransitionStatic() {
 
     } else {
       // FASE 3: Todo en posición final
-      title.style.position = 'fixed';
-      title.style.top = `${finalTop}px`;
-      title.style.left = `${finalLeft}px`;
-      title.style.transform = `translate(0, 0) scale(${finalScale})`;
-      title.style.transformOrigin = 'top left';
+      setTitleFinal();
 
       card.style.transform = 'translateX(0)';
       card.style.opacity = '1';
+    }
+
+    function setTitleFinal() {
+      title.style.position = 'fixed';
+      title.style.top = `${finalTop}px`;
+      title.style.left = `${finalLeft}px`;
+      title.style.bottom = 'auto';
+      title.style.transform = `translate(0, 0) scale(${finalScale})`;
+      title.style.transformOrigin = 'top left';
+      title.style.textAlign = 'left';
+      title.style.alignItems = 'flex-start';
     }
   };
 
