@@ -1479,7 +1479,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   flex-direction: column;
   align-items: center;
   gap: 0;
-  z-index: 10;
+  z-index: 100; /* Alto para estar por encima de todo */
   transition: none; /* JavaScript controla la transición */
   will-change: transform, top, left, opacity;
   opacity: 0; /* Empieza oculto, JS lo muestra cuando la sección es visible */
@@ -1516,7 +1516,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   height: calc(100vh - 210px); /* Misma altura que las cards de servicios */
   background: var(--prisma-navy); /* Azul oscuro existente */
   border-radius: 24px;
-  z-index: 5; /* Detrás del título (z-index: 10) pero encima del fondo */
+  z-index: 99; /* Alto para estar por encima de servicios, pero debajo del título */
   opacity: 0;
   pointer-events: none;
   transition: none; /* JavaScript controla la transición */

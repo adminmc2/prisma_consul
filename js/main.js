@@ -629,6 +629,41 @@ function initVideoScroll() {
         serviciosCards.style.transform = `translateX(${-maxScroll}px)`;
       }
     }
+
+    // Ocultar servicios cuando transition-static entra en viewport
+    const transitionStaticSection = document.getElementById('transitionStatic');
+    if (transitionStaticSection) {
+      const staticRect = transitionStaticSection.getBoundingClientRect();
+      const viewportH = window.innerHeight;
+      const stickyContainer = document.querySelector('.video-servicios-container__sticky');
+
+      // Fade out servicios cuando transition-static entra
+      if (staticRect.top < viewportH) {
+        const fadeProgress = Math.max(0, Math.min(1, (viewportH - staticRect.top) / (viewportH * 0.3)));
+
+        if (stickyContainer) {
+          stickyContainer.style.opacity = `${1 - fadeProgress}`;
+          if (fadeProgress >= 0.9) {
+            stickyContainer.style.visibility = 'hidden';
+            stickyContainer.style.zIndex = '-1';
+          }
+        }
+        serviciosSection.style.opacity = `${1 - fadeProgress}`;
+        if (fadeProgress >= 0.9) {
+          serviciosSection.style.visibility = 'hidden';
+          serviciosSection.style.zIndex = '-1';
+        }
+      } else {
+        if (stickyContainer) {
+          stickyContainer.style.visibility = 'visible';
+          stickyContainer.style.opacity = '1';
+          stickyContainer.style.zIndex = '';
+        }
+        serviciosSection.style.opacity = '1';
+        serviciosSection.style.visibility = 'visible';
+        serviciosSection.style.zIndex = '';
+      }
+    }
   };
 
   // Ejecutar en scroll con requestAnimationFrame
@@ -687,8 +722,8 @@ function initTransitionStatic() {
   if (!section || !title || !card) return;
 
   // Posición final del título (arriba izquierda)
-  const finalTop = 200; // px desde arriba
-  const finalLeft = 60; // px desde la izquierda
+  const finalTop = 200;
+  const finalLeft = 60;
   const finalScale = 0.35;
 
   const updateTransition = () => {
@@ -696,54 +731,72 @@ function initTransitionStatic() {
     const sectionHeight = section.offsetHeight;
     const viewportHeight = window.innerHeight;
 
-    // IMPORTANTE: Ocultar todo si la sección NO está visible
-    // La sección empieza cuando rect.top < viewportHeight
-    if (rect.top >= viewportHeight) {
-      // Sección todavía no visible - OCULTAR TODO
+    // Verificar si el marquee diagonal todavía está activo
+    const transitionMarquee = document.getElementById('transitionMarquee');
+    const marqueeIsActive = transitionMarquee && transitionMarquee.classList.contains('active');
+
+    // El título solo debe aparecer cuando:
+    // 1. La sección transition-static ha entrado en el viewport
+    // 2. El marquee diagonal ya NO está activo
+    // 3. La parte superior de la sección está cerca de la parte superior del viewport
+    const sectionInViewport = rect.top < viewportHeight && rect.bottom > 0;
+    const showTitle = sectionInViewport && !marqueeIsActive && rect.top < viewportHeight * 0.5;
+
+    if (!showTitle) {
       title.style.opacity = '0';
       title.style.pointerEvents = 'none';
       card.style.opacity = '0';
+      card.style.transform = 'translateX(100%)';
       return;
     }
 
-    // Sección ya pasó completamente
-    if (rect.bottom <= 0) {
-      title.style.opacity = '0';
-      title.style.pointerEvents = 'none';
+    // Calcular progreso: 0 = título empieza a mostrarse, 1 = sección saliendo
+    // El título empieza cuando rect.top < viewportHeight * 0.5
+    const startPoint = viewportHeight * 0.5;
+    const scrolled = startPoint - rect.top;
+    const scrollProgress = Math.max(0, Math.min(1, scrolled / sectionHeight));
+
+    // Fases:
+    // Fase 0: 0% - 15% → Título aparece centrado (fade in)
+    // Fase 1: 15% - 45% → Título se mueve de centro a top-left
+    // Fase 2: 45% - 50% → Tarjeta aparece DE GOLPE
+    // Fase 3: 50% - 100% → Todo en posición
+
+    const phase0End = 0.15;
+    const phase1End = 0.45;
+    const phase2End = 0.50;
+
+    if (scrollProgress <= phase0End) {
+      // FASE 0: Título aparece con fade in, centrado
+      const progress = scrollProgress / phase0End;
+
+      title.style.opacity = `${progress}`;
+      title.style.pointerEvents = 'auto';
+      title.style.position = 'fixed';
+      title.style.top = '50%';
+      title.style.left = '50%';
+      title.style.bottom = 'auto';
+      title.style.transform = 'translate(-50%, -50%) scale(1)';
+      title.style.transformOrigin = 'center center';
+      title.style.textAlign = 'center';
+      title.style.alignItems = 'center';
+
+      card.style.transform = 'translateX(100%)';
       card.style.opacity = '0';
-      return;
-    }
 
-    // Sección está visible - mostrar título
-    title.style.opacity = '1';
-    title.style.pointerEvents = 'auto';
+    } else if (scrollProgress <= phase1End) {
+      // FASE 1: Título se mueve de centro a top-left
+      const progress = (scrollProgress - phase0End) / (phase1End - phase0End);
+      const ease = easeOutCubic(progress);
 
-    // Calcular progreso del scroll dentro de la sección
-    // 0 = sección acaba de entrar, 1 = fin de la sección
-    const scrollProgress = Math.max(0, Math.min(1, -rect.top / (sectionHeight - viewportHeight)));
+      title.style.opacity = '1';
+      title.style.pointerEvents = 'auto';
 
-    // Fase 1: 0% - 40% → Título se mueve de centro a top-left (sin tarjeta)
-    // Fase 2: 40% - 45% → Tarjeta aparece DE GOLPE desde la derecha (muy rápido)
-    // Fase 3: 45% - 100% → Todo en posición
-
-    const phase1End = 0.40;
-    const phase2End = 0.45;
-
-    if (scrollProgress <= phase1End) {
-      // FASE 1: Solo el título se mueve de centro a top-left
-      const phase1Progress = scrollProgress / phase1End;
-      const easeProgress = easeOutCubic(phase1Progress);
-
-      // Calcular valores actuales
-      const currentScale = 1 + (finalScale - 1) * easeProgress;
-
-      // Posición: de centro a top-left
-      const topPx = (viewportHeight * 0.5) * (1 - easeProgress) + finalTop * easeProgress;
-      const leftPx = (window.innerWidth * 0.5) * (1 - easeProgress) + finalLeft * easeProgress;
-
-      // Transform: de translate(-50%, -50%) a translate(0, 0)
-      const translateX = -50 * (1 - easeProgress);
-      const translateY = -50 * (1 - easeProgress);
+      const currentScale = 1 + (finalScale - 1) * ease;
+      const topPx = (viewportHeight * 0.5) * (1 - ease) + finalTop * ease;
+      const leftPx = (window.innerWidth * 0.5) * (1 - ease) + finalLeft * ease;
+      const translateX = -50 * (1 - ease);
+      const translateY = -50 * (1 - ease);
 
       title.style.position = 'fixed';
       title.style.top = `${topPx}px`;
@@ -751,35 +804,33 @@ function initTransitionStatic() {
       title.style.bottom = 'auto';
       title.style.transform = `translate(${translateX}%, ${translateY}%) scale(${currentScale})`;
       title.style.transformOrigin = 'top left';
-      title.style.textAlign = easeProgress > 0.5 ? 'left' : 'center';
-      title.style.alignItems = easeProgress > 0.5 ? 'flex-start' : 'center';
+      title.style.textAlign = ease > 0.5 ? 'left' : 'center';
+      title.style.alignItems = ease > 0.5 ? 'flex-start' : 'center';
 
-      // Tarjeta COMPLETAMENTE oculta durante fase 1
       card.style.transform = 'translateX(100%)';
       card.style.opacity = '0';
 
     } else if (scrollProgress <= phase2End) {
-      // FASE 2: Título en posición final, tarjeta entra MUY RÁPIDO desde la derecha
-      const phase2Progress = (scrollProgress - phase1End) / (phase2End - phase1End);
-      const easeProgress = easeOutQuart(phase2Progress);
+      // FASE 2: Tarjeta entra rápido
+      const progress = (scrollProgress - phase1End) / (phase2End - phase1End);
+      const ease = easeOutQuart(progress);
 
-      // Título en posición final (top-left)
       setTitleFinal();
 
-      // Tarjeta entra desde la derecha MUY RÁPIDO
-      const cardX = 100 * (1 - easeProgress);
+      const cardX = 100 * (1 - ease);
       card.style.transform = `translateX(${cardX}%)`;
       card.style.opacity = '1';
 
     } else {
       // FASE 3: Todo en posición final
       setTitleFinal();
-
       card.style.transform = 'translateX(0)';
       card.style.opacity = '1';
     }
 
     function setTitleFinal() {
+      title.style.opacity = '1';
+      title.style.pointerEvents = 'auto';
       title.style.position = 'fixed';
       title.style.top = `${finalTop}px`;
       title.style.left = `${finalLeft}px`;
@@ -810,7 +861,6 @@ function initTransitionStatic() {
     }
   }, { passive: true });
 
-  // Ejecutar una vez al cargar
   updateTransition();
 }
 
