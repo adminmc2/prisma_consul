@@ -494,7 +494,7 @@ function initVideoScroll() {
   // No ejecutar animaciones de scroll en móvil - CSS maneja el layout estático
   const isMobile = window.innerWidth <= 480;
   if (isMobile) {
-    // En móvil, mostrar todo sin animaciones
+    // En móvil, mostrar servicios sin animaciones (video ya está controlado por CSS)
     if (serviciosSection) {
       serviciosSection.style.opacity = '1';
       serviciosSection.style.transform = 'none';

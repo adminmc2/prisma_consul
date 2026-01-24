@@ -2541,28 +2541,28 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     padding-bottom: 0;
   }
 
-  /* Video Section Mobile - Sin efecto, solo mostrar video */
+  /* Video Section Mobile - Sin efecto de scroll */
   .video-section {
+    position: relative !important;
     height: auto !important;
     min-height: 0 !important;
-    margin-top: var(--space-xl) !important;
-    padding: 0 var(--space-sm) !important;
+    margin-top: var(--space-lg) !important;
+    padding: 0 var(--space-md) !important;
   }
 
   .video-section__sticky {
-    position: static !important;
+    position: relative !important;
     height: auto !important;
     min-height: 0 !important;
   }
 
   .video-section__wrapper {
+    position: relative !important;
     width: 100% !important;
     max-width: 100% !important;
-    border-radius: 8px;
-    position: static !important;
-    top: auto !important;
-    transform: none !important;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 16 / 9 !important;
+    height: auto !important;
+    border-radius: var(--radius-lg) !important;
   }
 
   /* ========================================
@@ -2584,7 +2584,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   .servicios {
     position: relative !important;
     height: auto !important;
-    padding: var(--space-xl) var(--space-sm);
+    padding: var(--space-xl) var(--space-md);
     padding-top: var(--space-lg);
     display: flex;
     flex-direction: column;
@@ -2597,18 +2597,21 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     width: 100%;
     padding: 0;
     margin-right: 0;
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-sm);
     justify-content: flex-start;
+  }
+
+  .servicios__cards-wrapper {
+    width: 100%;
+    padding: 0;
+    overflow: visible;
   }
 
   .servicios__title {
     text-align: left;
   }
 
-  .servicios__title-line {
-    font-size: 2rem;
-    letter-spacing: -1px;
-  }
+  /* Título NUESTROS SERVICIOS ya definido en tipografía coherente */
 
   .servicios__cards-wrapper {
     width: 100%;
@@ -2621,35 +2624,34 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     gap: var(--space-md);
     padding: 0;
     transform: none !important;
+    width: 100%;
   }
 
   .servicio-card {
     width: 100% !important;
     height: auto !important;
-    min-height: 350px;
+    min-height: 320px;
     padding: var(--space-md);
     border-radius: 16px;
+    margin: 0 !important;
   }
 
   .servicio-card__letter-svg {
-    width: 100px !important;
-    height: 100px !important;
-    bottom: 10px !important;
-    left: 10px !important;
-    opacity: 0.15 !important;
+    width: 200px !important;
+    height: 200px !important;
+    bottom: -20px !important;
+    left: -20px !important;
+    opacity: 0.12 !important;
   }
 
   .servicio-card__content {
-    padding: var(--space-sm);
+    position: relative !important;
+    top: auto !important;
+    padding: var(--space-md);
+    padding-top: 100px; /* Espacio para triángulo */
   }
 
-  .servicio-card__title {
-    font-size: 1.2rem;
-  }
-
-  .servicio-card__description {
-    font-size: 0.9rem;
-  }
+  /* Títulos y descripciones ya definidos en tipografía coherente */
 
   .servicio-card__footer {
     padding: var(--space-sm);
@@ -2670,27 +2672,84 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     height: 36px;
   }
 
+  /* Número de índice - en el medio vertical de la tarjeta */
+  .servicio-card__index {
+    bottom: auto !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    right: 20px !important;
+    font-size: 2.5rem !important;
+  }
+
+  /* Triángulo - reducir tamaño */
+  .servicio-card__media {
+    width: 70px !important;
+    height: 70px !important;
+    top: 20px !important;
+    right: auto !important;
+    left: 20px !important;
+  }
+
+  /* ========================================
+     TIPOGRAFÍA COHERENTE MÓVIL
+     ======================================== */
+
+  /* Títulos de sección - todos iguales */
+  .servicios__title-line,
+  .section-header__title,
+  .nosotros h2,
+  .contacto h2 {
+    font-family: var(--font-heading) !important;
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -1px !important;
+    line-height: 1.1 !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* Descripciones y textos de párrafo - todos iguales */
+  .servicio-card__description,
+  .nosotros__text,
+  .transition-static__person-desc,
+  .section-header__description,
+  .feature__text {
+    font-family: var(--font-body) !important;
+    font-size: 0.95rem !important;
+    font-weight: 400 !important;
+    line-height: 1.6 !important;
+    color: var(--text-secondary) !important;
+  }
+
+  /* Títulos de tarjetas/elementos - subtítulos */
+  .servicio-card__title,
+  .transition-static__person-name {
+    font-family: var(--font-heading) !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.5px !important;
+    line-height: 1.2 !important;
+    color: var(--text-primary) !important;
+  }
+
+  /* Roles/etiquetas pequeñas */
+  .transition-static__roles span {
+    font-family: var(--font-heading) !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+    color: var(--text-secondary) !important;
+  }
+
   /* Nosotros Mobile */
   .nosotros {
-    padding: var(--space-xl) var(--space-sm);
+    padding: var(--space-xl) var(--space-md);
   }
 
   .nosotros__container {
     display: flex;
     flex-direction: column;
     gap: var(--space-lg);
-  }
-
-  .nosotros__text {
-    font-size: 0.95rem;
-  }
-
-  .nosotros__features {
-    gap: var(--space-sm);
-  }
-
-  .feature__text {
-    font-size: 0.9rem;
   }
 
   .stats-card {
@@ -2767,16 +2826,14 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   }
 
   .section-header__tagline {
-    font-size: 0.75rem;
+    font-family: var(--font-accent) !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+    color: var(--tech-cyan) !important;
   }
 
-  .section-header__title {
-    font-size: 1.5rem;
-  }
-
-  .section-header__description {
-    font-size: 0.9rem;
-  }
+  /* Título y descripción ya definidos en tipografía coherente */
 
   /* Buttons mobile adjustments */
   .btn {
@@ -2884,10 +2941,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     gap: var(--space-xs);
   }
 
-  .transition-static__roles span {
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-  }
+  /* Roles ya definidos en tipografía coherente */
 
   /* Columna central - persona */
   .transition-static__col--center {
@@ -2912,14 +2966,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     order: 3;
   }
 
-  .transition-static__person-name {
-    font-size: 1.8rem;
-    letter-spacing: 2px;
-  }
-
-  .transition-static__person-desc {
-    font-size: 1rem;
-  }
+  /* Nombre y descripción ya definidos en tipografía coherente */
 
   .transition-static__contact-btn {
     width: 100%;
