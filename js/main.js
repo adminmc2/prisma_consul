@@ -491,6 +491,20 @@ function initVideoScroll() {
 
   if (!container || !videoSection || !serviciosSection) return;
 
+  // No ejecutar animaciones de scroll en móvil - CSS maneja el layout estático
+  const isMobile = window.innerWidth <= 480;
+  if (isMobile) {
+    // En móvil, mostrar todo sin animaciones
+    if (serviciosSection) {
+      serviciosSection.style.opacity = '1';
+      serviciosSection.style.transform = 'none';
+    }
+    if (serviciosCards) {
+      serviciosCards.style.transform = 'none';
+    }
+    return;
+  }
+
   const videoWrapper = videoSection.querySelector('.video-section__wrapper');
   if (!videoWrapper) return;
 
@@ -720,6 +734,16 @@ function initTransitionStatic() {
   const card = document.getElementById('transitionCard');
 
   if (!section || !title || !card) return;
+
+  // No ejecutar animaciones en móvil - CSS maneja el layout estático
+  const isMobile = window.innerWidth <= 480;
+  if (isMobile) {
+    // En móvil, asegurar que la tarjeta sea visible
+    card.style.opacity = '1';
+    card.style.width = '100%';
+    title.style.display = 'none';
+    return;
+  }
 
   const updateTransition = () => {
     const rect = section.getBoundingClientRect();

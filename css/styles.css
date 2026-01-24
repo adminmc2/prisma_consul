@@ -2138,8 +2138,8 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
    ---------------------------------------- */
 .hero-eye-marker {
   position: absolute;
-  top: 280px;
-  right: 8%;
+  top: 350px;
+  right: 15%;
   width: 180px;
   height: 180px;
   z-index: 10;
@@ -2565,30 +2565,109 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     aspect-ratio: 16 / 9;
   }
 
-  /* Servicios Mobile */
-  .servicios {
-    padding: var(--space-xl) var(--space-sm);
+  /* ========================================
+     VIDEO + SERVICIOS CONTAINER - MOBILE
+     Sin efectos de scroll, layout vertical simple
+     ======================================== */
+  .video-servicios-container {
+    height: auto !important;
+    position: relative;
   }
 
-  .servicios__grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-sm);
+  .video-servicios-container__sticky {
+    position: relative !important;
+    height: auto !important;
+    overflow: visible;
+  }
+
+  /* Servicios Mobile - Layout vertical */
+  .servicios {
+    position: relative !important;
+    height: auto !important;
+    padding: var(--space-xl) var(--space-sm);
+    padding-top: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .servicios__header {
+    width: 100%;
+    padding: 0;
+    margin-right: 0;
+    margin-bottom: var(--space-lg);
+    justify-content: flex-start;
+  }
+
+  .servicios__title {
+    text-align: left;
+  }
+
+  .servicios__title-line {
+    font-size: 2rem;
+    letter-spacing: -1px;
+  }
+
+  .servicios__cards-wrapper {
+    width: 100%;
+    overflow: visible;
+  }
+
+  .servicios__cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: 0;
+    transform: none !important;
   }
 
   .servicio-card {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 350px;
     padding: var(--space-md);
+    border-radius: 16px;
   }
 
-  .servicio-card__letter {
-    font-size: 2.5rem;
+  .servicio-card__letter-svg {
+    width: 100px !important;
+    height: 100px !important;
+    bottom: 10px !important;
+    left: 10px !important;
+    opacity: 0.15 !important;
+  }
+
+  .servicio-card__content {
+    padding: var(--space-sm);
   }
 
   .servicio-card__title {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 
   .servicio-card__description {
     font-size: 0.9rem;
+  }
+
+  .servicio-card__footer {
+    padding: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .servicio-card__tags {
+    gap: 6px;
+  }
+
+  .servicio-card__tag {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+
+  .servicio-card__arrow {
+    width: 36px;
+    height: 36px;
   }
 
   /* Nosotros Mobile */
@@ -2756,6 +2835,102 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     padding: 0 !important;
     position: absolute !important;
     visibility: hidden !important;
+  }
+
+  /* ========================================
+     TRANSITION STATIC - MOBILE
+     Sin animación, mostrar contenido directamente
+     ======================================== */
+  .transition-static {
+    min-height: auto !important;
+    height: auto !important;
+    padding: var(--space-lg) var(--space-sm);
+  }
+
+  /* Ocultar el título animado en móvil */
+  .transition-static__content {
+    display: none !important;
+  }
+
+  /* Tarjeta visible directamente sin animación */
+  .transition-static__card {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    opacity: 1 !important;
+    border-radius: 16px;
+    padding: var(--space-md);
+  }
+
+  /* Layout de columnas en móvil - una sola columna */
+  .transition-static__columns {
+    display: flex !important;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  /* Columna izquierda - roles */
+  .transition-static__col--left {
+    padding: 0;
+    padding-top: 0;
+    order: 2;
+  }
+
+  .transition-static__roles {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .transition-static__roles span {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+  }
+
+  /* Columna central - persona */
+  .transition-static__col--center {
+    order: 1;
+    min-height: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .transition-static__bg-pattern {
+    left: 5%;
+    width: 90%;
+  }
+
+  .transition-static__person {
+    height: 120%;
+  }
+
+  /* Columna derecha - info persona */
+  .transition-static__col--right {
+    padding: 0;
+    order: 3;
+  }
+
+  .transition-static__person-name {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+  }
+
+  .transition-static__person-desc {
+    font-size: 1rem;
+  }
+
+  .transition-static__contact-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+
+  /* Ocultar marquee diagonal en móvil */
+  .transition-marquee {
+    display: none !important;
   }
 }
 
