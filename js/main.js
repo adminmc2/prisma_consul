@@ -721,11 +721,6 @@ function initTransitionStatic() {
 
   if (!section || !title || !card) return;
 
-  // Posición final del título (arriba izquierda)
-  const finalTop = 200;
-  const finalLeft = 60;
-  const finalScale = 0.35;
-
   const updateTransition = () => {
     const rect = section.getBoundingClientRect();
     const sectionHeight = section.offsetHeight;
@@ -735,39 +730,33 @@ function initTransitionStatic() {
     const transitionMarquee = document.getElementById('transitionMarquee');
     const marqueeIsActive = transitionMarquee && transitionMarquee.classList.contains('active');
 
-    // El título solo debe aparecer cuando:
-    // 1. La sección transition-static ha entrado en el viewport
-    // 2. El marquee diagonal ya NO está activo
-    // 3. La parte superior de la sección está cerca de la parte superior del viewport
+    // El título solo debe aparecer cuando la sección está visible y el marquee no está activo
     const sectionInViewport = rect.top < viewportHeight && rect.bottom > 0;
     const showTitle = sectionInViewport && !marqueeIsActive && rect.top < viewportHeight * 0.5;
 
     if (!showTitle) {
       title.style.opacity = '0';
       title.style.pointerEvents = 'none';
+      card.style.width = '0px';
       card.style.opacity = '0';
-      card.style.transform = 'translateX(100%)';
       return;
     }
 
-    // Calcular progreso: 0 = título empieza a mostrarse, 1 = sección saliendo
-    // El título empieza cuando rect.top < viewportHeight * 0.5
+    // Calcular progreso
     const startPoint = viewportHeight * 0.5;
     const scrolled = startPoint - rect.top;
     const scrollProgress = Math.max(0, Math.min(1, scrolled / sectionHeight));
 
     // Fases:
-    // Fase 0: 0% - 15% → Título aparece centrado (fade in)
-    // Fase 1: 15% - 45% → Título se mueve de centro a top-left
-    // Fase 2: 45% - 50% → Tarjeta aparece DE GOLPE
-    // Fase 3: 50% - 100% → Todo en posición
+    // Fase 0: 0% - 8% → Título aparece centrado (fade in)
+    // Fase 1: 8% - 50% → SIMULTÁNEO: Título se encoge y va a izquierda + Tarjeta crece desde derecha
+    // Fase 2: 50% - 100% → Tarjeta completa, título desaparecido
 
-    const phase0End = 0.15;
-    const phase1End = 0.45;
-    const phase2End = 0.50;
+    const phase0End = 0.08;
+    const phase1End = 0.50;
 
     if (scrollProgress <= phase0End) {
-      // FASE 0: Título aparece con fade in, centrado
+      // FASE 0: Título aparece centrado
       const progress = scrollProgress / phase0End;
 
       title.style.opacity = `${progress}`;
@@ -775,70 +764,42 @@ function initTransitionStatic() {
       title.style.position = 'fixed';
       title.style.top = '50%';
       title.style.left = '50%';
-      title.style.bottom = 'auto';
       title.style.transform = 'translate(-50%, -50%) scale(1)';
-      title.style.transformOrigin = 'center center';
-      title.style.textAlign = 'center';
-      title.style.alignItems = 'center';
 
-      card.style.transform = 'translateX(100%)';
+      // Tarjeta pequeña/oculta a la derecha
       card.style.opacity = '0';
+      card.style.width = '0px';
 
     } else if (scrollProgress <= phase1End) {
-      // FASE 1: Título se mueve de centro a top-left
+      // FASE 1: Título se encoge y mueve a izquierda + Tarjeta crece desde derecha
       const progress = (scrollProgress - phase0End) / (phase1End - phase0End);
       const ease = easeOutCubic(progress);
 
-      title.style.opacity = '1';
-      title.style.pointerEvents = 'auto';
+      // TÍTULO: Se encoge (1 → 0.2) y se mueve a la izquierda hasta salir
+      const titleScale = 1 - (ease * 0.8); // 1 → 0.2
+      const titleLeft = 50 - (ease * 80); // 50% → -30% (sale por izquierda)
+      const titleOpacity = 1 - ease; // desaparece gradualmente
 
-      const currentScale = 1 + (finalScale - 1) * ease;
-      const topPx = (viewportHeight * 0.5) * (1 - ease) + finalTop * ease;
-      const leftPx = (window.innerWidth * 0.5) * (1 - ease) + finalLeft * ease;
-      const translateX = -50 * (1 - ease);
-      const translateY = -50 * (1 - ease);
-
+      title.style.opacity = `${titleOpacity}`;
+      title.style.pointerEvents = 'none';
       title.style.position = 'fixed';
-      title.style.top = `${topPx}px`;
-      title.style.left = `${leftPx}px`;
-      title.style.bottom = 'auto';
-      title.style.transform = `translate(${translateX}%, ${translateY}%) scale(${currentScale})`;
-      title.style.transformOrigin = 'top left';
-      title.style.textAlign = ease > 0.5 ? 'left' : 'center';
-      title.style.alignItems = ease > 0.5 ? 'flex-start' : 'center';
+      title.style.top = '50%';
+      title.style.left = `${titleLeft}%`;
+      title.style.transform = `translate(-50%, -50%) scale(${titleScale})`;
 
-      card.style.transform = 'translateX(100%)';
-      card.style.opacity = '0';
-
-    } else if (scrollProgress <= phase2End) {
-      // FASE 2: Tarjeta entra rápido
-      const progress = (scrollProgress - phase1End) / (phase2End - phase1End);
-      const ease = easeOutQuart(progress);
-
-      setTitleFinal();
-
-      const cardX = 100 * (1 - ease);
-      card.style.transform = `translateX(${cardX}%)`;
+      // TARJETA: Crece desde la derecha (pequeña → toda la pantalla)
+      const maxWidth = window.innerWidth - 40; // ancho máximo con margen
+      const cardWidth = ease * maxWidth;
       card.style.opacity = '1';
+      card.style.width = `${cardWidth}px`;
 
     } else {
-      // FASE 3: Todo en posición final
-      setTitleFinal();
-      card.style.transform = 'translateX(0)';
-      card.style.opacity = '1';
-    }
+      // FASE 2: Tarjeta completa, título desaparecido
+      title.style.opacity = '0';
+      title.style.pointerEvents = 'none';
 
-    function setTitleFinal() {
-      title.style.opacity = '1';
-      title.style.pointerEvents = 'auto';
-      title.style.position = 'fixed';
-      title.style.top = `${finalTop}px`;
-      title.style.left = `${finalLeft}px`;
-      title.style.bottom = 'auto';
-      title.style.transform = `translate(0, 0) scale(${finalScale})`;
-      title.style.transformOrigin = 'top left';
-      title.style.textAlign = 'left';
-      title.style.alignItems = 'flex-start';
+      card.style.opacity = '1';
+      card.style.width = 'calc(100% - 40px)';
     }
   };
 

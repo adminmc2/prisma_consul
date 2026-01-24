@@ -1479,20 +1479,10 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   flex-direction: column;
   align-items: center;
   gap: 0;
-  z-index: 100; /* Alto para estar por encima de todo */
-  transition: none; /* JavaScript controla la transición */
+  z-index: 100;
+  transition: none;
   will-change: transform, top, left, opacity;
-  opacity: 0; /* Empieza oculto, JS lo muestra cuando la sección es visible */
-}
-
-/* Estado final del título (top-left, pequeño) */
-.transition-static__content.title-moved {
-  top: 120px;
-  left: 80px;
-  transform: translate(0, 0) scale(0.35);
-  transform-origin: top left;
-  text-align: left;
-  align-items: flex-start;
+  opacity: 0;
 }
 
 .transition-static__text {
@@ -1506,27 +1496,29 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   color: var(--text-primary);
 }
 
-/* Tarjeta oscura - aparece desde la derecha */
-.transition-static__card {
-  position: fixed;
-  top: 180px; /* Mismo padding-top que servicios */
-  transform: translateX(100%); /* Empieza fuera de pantalla a la derecha */
-  right: 20px;
-  width: calc(100% - 40px);
-  height: calc(100vh - 210px); /* Misma altura que las cards de servicios */
-  background: var(--prisma-navy); /* Azul oscuro existente */
-  border-radius: 24px;
-  z-index: 99; /* Alto para estar por encima de servicios, pero debajo del título */
-  opacity: 0;
-  pointer-events: none;
-  transition: none; /* JavaScript controla la transición */
-  will-change: transform, opacity;
+/* Estado final del título (izquierda, centro vertical - estilo QClay) */
+.transition-static__content.title-moved {
+  top: 50%;
+  left: 60px;
+  transform: translate(0, -50%) scale(0.4);
+  transform-origin: left center;
+  text-align: left;
+  align-items: flex-start;
 }
 
-/* Estado visible de la tarjeta */
-.transition-static__card.card-visible {
-  transform: translateX(0);
-  opacity: 1;
+/* Tarjeta oscura - CRECE desde la derecha cubriendo el título */
+.transition-static__card {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 0%; /* Empieza con ancho 0, crece con scroll */
+  height: calc(100vh - 40px);
+  background: var(--prisma-navy);
+  border-radius: 24px;
+  z-index: 101; /* Por ENCIMA del título para cubrirlo */
+  opacity: 0;
+  overflow: hidden;
+  will-change: width, opacity;
 }
 
 /* Grid de 3 columnas dentro de la tarjeta */
