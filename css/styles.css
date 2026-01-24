@@ -2138,8 +2138,8 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
    ---------------------------------------- */
 .hero-eye-marker {
   position: absolute;
-  top: 350px;
-  right: 15%;
+  top: 200px;
+  right: 5%;
   width: 180px;
   height: 180px;
   z-index: 10;
