@@ -2586,6 +2586,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     height: auto !important;
     padding: var(--space-xl) var(--space-md);
     padding-top: var(--space-lg);
+    padding-bottom: 60vh !important; /* Espacio GRANDE para invitar a scroll - como QClay */
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -2896,77 +2897,181 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
   /* ========================================
      TRANSITION STATIC - MOBILE
-     Sin animación, mostrar contenido directamente
+     Título a pantalla completa + tarjeta equipo
      ======================================== */
   .transition-static {
     min-height: auto !important;
     height: auto !important;
-    padding: var(--space-lg) var(--space-sm);
+    padding: var(--space-md) !important;
+    background: var(--bg-primary) !important;
+    display: block !important;
+    position: relative !important;
   }
 
-  /* Ocultar el título animado en móvil */
+  /* Título - pantalla completa cuando tiene clase mobile-fullscreen */
   .transition-static__content {
-    display: none !important;
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    z-index: 1 !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    padding: var(--space-sm) 0 var(--space-md) 0 !important;
   }
 
-  /* Tarjeta visible directamente sin animación */
+  /* Estado fullscreen - pantalla completa */
+  .transition-static__content.mobile-fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: var(--bg-primary) !important;
+    z-index: 9999 !important;
+    padding: 0 !important;
+  }
+
+  .transition-static__text {
+    font-family: var(--font-heading) !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
+    color: var(--text-primary) !important;
+    text-align: center !important;
+  }
+
+  /* Texto grande cuando está en fullscreen - abarcar toda la pantalla */
+  .transition-static__content.mobile-fullscreen .transition-static__text {
+    font-size: 12vw !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    letter-spacing: 2px !important;
+  }
+
+  /* Tarjeta del equipo - oculta por defecto, se muestra con JS */
   .transition-static__card {
     position: relative !important;
     top: auto !important;
     right: auto !important;
+    left: auto !important;
     width: 100% !important;
     height: auto !important;
-    opacity: 1 !important;
-    border-radius: 16px;
-    padding: var(--space-md);
+    border-radius: 16px !important;
+    padding: var(--space-md) !important;
+    background: var(--prisma-navy) !important;
+    display: block !important;
+    opacity: 0 !important;
+    transition: opacity 0.5s ease !important;
   }
 
-  /* Layout de columnas en móvil - una sola columna */
+  .transition-static__card.mobile-visible {
+    opacity: 1 !important;
+  }
+
+  /* Layout de columnas en móvil - UNA SOLA COLUMNA */
   .transition-static__columns {
     display: flex !important;
-    flex-direction: column;
-    gap: var(--space-lg);
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+    gap: var(--space-md) !important;
+    width: 100% !important;
+  }
+
+  /* Todas las columnas - reset */
+  .transition-static__col {
+    width: 100% !important;
+    padding: 0 !important;
   }
 
   /* Columna izquierda - roles */
   .transition-static__col--left {
-    padding: 0;
-    padding-top: 0;
-    order: 2;
+    order: 2 !important;
+    display: flex !important;
+    justify-content: center !important;
   }
 
   .transition-static__roles {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    justify-content: center !important;
   }
 
-  /* Roles ya definidos en tipografía coherente */
+  .transition-static__roles span {
+    font-size: 0.7rem !important;
+    padding: 6px 12px !important;
+    background: rgba(255,255,255,0.1) !important;
+    border-radius: 20px !important;
+    letter-spacing: 1px !important;
+  }
 
   /* Columna central - persona */
   .transition-static__col--center {
-    order: 1;
-    min-height: 300px;
-    border-radius: 12px;
-    overflow: hidden;
+    order: 1 !important;
+    width: 100% !important;
+    min-height: 250px !important;
+    max-height: 300px !important;
+    height: 250px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .transition-static__bg-pattern {
-    left: 5%;
-    width: 90%;
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 70% !important;
+    height: 80% !important;
   }
 
   .transition-static__person {
-    height: 120%;
+    position: relative !important;
+    width: auto !important;
+    height: 85% !important;
+    max-height: 260px !important;
+    object-fit: contain !important;
+    z-index: 2 !important;
   }
 
   /* Columna derecha - info persona */
   .transition-static__col--right {
-    padding: 0;
-    order: 3;
+    padding: 0 !important;
+    order: 3 !important;
+    width: 100% !important;
   }
 
-  /* Nombre y descripción ya definidos en tipografía coherente */
+  .transition-static__person-info {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: var(--space-sm) !important;
+    text-align: center !important;
+  }
+
+  .transition-static__person-name {
+    text-align: center !important;
+    font-size: 1.25rem !important;
+    width: 100% !important;
+  }
+
+  .transition-static__person-desc {
+    text-align: center !important;
+  }
 
   .transition-static__contact-btn {
     width: 100%;
@@ -2975,9 +3080,48 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     font-size: 0.9rem;
   }
 
-  /* Ocultar marquee diagonal en móvil */
+  /* Marquee diagonal en móvil - visible cuando tiene clase active */
   .transition-marquee {
-    display: none !important;
+    display: flex !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 9998 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.5s ease !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .transition-marquee.mobile-active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .transition-marquee__content {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) rotate(-15deg) !important;
+    width: 200% !important;
+  }
+
+  .marquee-line {
+    height: 50px !important;
+  }
+
+  .marquee-text {
+    font-size: 2.2rem !important;
+  }
+
+  /* Reducir grosor del outline en CREAMOS para móvil */
+  .marquee-text--outline {
+    -webkit-text-stroke-width: 1px !important;
   }
 }
 
