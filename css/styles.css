@@ -1575,18 +1575,18 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   z-index: 1;
 }
 
-/* Persona encima del fondo - medio cuerpo (cabeza visible) */
+/* Persona encima del fondo - medio cuerpo (cabeza visible, corta en cintura) */
 .transition-static__person {
   position: absolute;
   z-index: 2;
-  height: 95%;
+  height: 140%;
   width: auto;
   max-width: none;
   max-height: none;
-  object-fit: contain;
+  object-fit: cover;
   object-position: top center;
   filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.5));
-  top: 5%;
+  top: 0;
 }
 
 /* Columna derecha - info persona */
