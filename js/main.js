@@ -735,63 +735,25 @@ function initTransitionStatic() {
 
   if (!section || !title || !card) return;
 
-  // Animación especial para móvil
+  // Animación simple para móvil
   const isMobile = window.innerWidth <= 480;
   if (isMobile) {
-    const marquee = document.getElementById('transitionMarquee');
-    let step = 0; // 0: inicial, 1: marquee, 2: título fullscreen, 3: tarjeta visible
-
-    // Ocultar título y tarjeta inicialmente
-    title.style.opacity = '0';
-    card.style.opacity = '0';
+    let done = false;
 
     const updateMobileTransition = () => {
+      if (done) return;
+
       const rect = section.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
+      const sectionVisible = rect.top < viewportHeight * 0.8;
 
-      // Cuando la sección entra en viewport (cuando el top está en el 50% de la pantalla)
-      const sectionVisible = rect.top < viewportHeight * 0.5;
-
-      if (sectionVisible && step === 0) {
-        step = 1;
-
-        // PASO 1: Mostrar marquee diagonal a pantalla completa
-        if (marquee) {
-          marquee.classList.add('mobile-active');
-        }
-
-        // PASO 2: Después de 2 segundos, ocultar marquee y mostrar título centrado
-        setTimeout(() => {
-          if (marquee) {
-            marquee.classList.remove('mobile-active');
-          }
-          // Mostrar título a pantalla completa
-          title.style.opacity = '1';
-          title.classList.add('mobile-fullscreen');
-          step = 2;
-
-          // PASO 3: Después de 1.5 segundos, quitar fullscreen y mostrar tarjeta
-          setTimeout(() => {
-            title.classList.remove('mobile-fullscreen');
-            card.style.opacity = '1';
-            card.classList.add('mobile-visible');
-            step = 3;
-          }, 1500);
-        }, 2000);
-      }
-
-      // Si la animación ya terminó, mantener estado final
-      if (step === 3) {
-        if (marquee) marquee.classList.remove('mobile-active');
-        title.classList.remove('mobile-fullscreen');
-        title.style.opacity = '1';
-        card.style.opacity = '1';
+      if (sectionVisible) {
+        done = true;
         card.classList.add('mobile-visible');
       }
     };
 
     window.addEventListener('scroll', updateMobileTransition, { passive: true });
-    setTimeout(updateMobileTransition, 100);
     return;
   }
 
@@ -800,13 +762,9 @@ function initTransitionStatic() {
     const sectionHeight = section.offsetHeight;
     const viewportHeight = window.innerHeight;
 
-    // Verificar si el marquee diagonal todavía está activo
-    const transitionMarquee = document.getElementById('transitionMarquee');
-    const marqueeIsActive = transitionMarquee && transitionMarquee.classList.contains('active');
-
-    // El título solo debe aparecer cuando la sección está visible y el marquee no está activo
+    // El título solo debe aparecer cuando la sección está visible
     const sectionInViewport = rect.top < viewportHeight && rect.bottom > 0;
-    const showTitle = sectionInViewport && !marqueeIsActive && rect.top < viewportHeight * 0.5;
+    const showTitle = sectionInViewport && rect.top < viewportHeight * 0.5;
 
     if (!showTitle) {
       title.style.opacity = '0';
