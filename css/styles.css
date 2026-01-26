@@ -1779,29 +1779,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   transition: opacity 0.6s ease, visibility 0.6s ease;
 }
 
-/* Header/Título de la sección quote */
-.quote-header {
-  padding: 100px 60px 20px 60px;
-  flex-shrink: 0;
-}
-
-.quote-header__title {
-  font-family: var(--font-quicksand);
-  font-size: clamp(1.5rem, 3vw, 2.5rem);
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.1em;
-  margin: 0;
-}
-
-.quote-header__title .text-gradient {
-  background: linear-gradient(135deg, var(--cyan) 0%, var(--blue-light) 50%, var(--violet) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Contenedor del contenido quote (comillas + triángulos) */
+/* Contenedor del contenido quote */
 .quote-content {
   display: flex;
   align-items: stretch;
@@ -1821,30 +1799,41 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 60px 40px 60px 60px;
+  padding: 100px 40px 60px 80px;
   max-width: 60%;
 }
 
-/* Comillas grandes estilo Q.Clay */
-.quote-marks {
-  font-family: Georgia, serif;
-  font-size: 100px;
-  font-weight: 400;
-  line-height: 0.8;
-  color: rgba(80, 100, 120, 0.5);
-  margin-bottom: 30px;
-  margin-left: -10px;
+/* Label pequeño arriba del texto - "Experiencia que genera resultados" */
+.quote-label {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(49, 190, 239, 0.85);
+  margin: 0 0 32px 0;
+  transition: color 0.15s ease;
 }
 
-/* Texto principal - empieza gris, se ilumina con scroll */
+/* Texto principal - empieza gris, palabras se iluminan con scroll */
 .quote-text {
   font-family: var(--font-heading);
   font-size: clamp(1.4rem, 2.5vw, 2.4rem);
   font-weight: 300;
-  line-height: 1.4;
-  color: rgba(120, 140, 160, 0.5);
+  line-height: 1.5;
+  color: rgba(100, 110, 130, 0.5);
   margin: 0;
-  transition: color 0.15s ease;
+}
+
+/* Cada palabra tiene su propia transición */
+.quote-word {
+  display: inline;
+  transition: color 0.15s ease, font-weight 0.15s ease;
+}
+
+/* Texto destacado en azul */
+.quote-highlight {
+  color: rgba(49, 190, 239, 0.85) !important;
 }
 
 /* Lado derecho - Triángulos, barra, subtítulo */
@@ -1858,14 +1847,52 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   overflow: visible; /* Permitir que triángulos se extiendan hacia el header */
 }
 
+/* Estadísticas superpuestas en el triángulo del medio */
+.quote-stats {
+  position: absolute;
+  top: 48%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 30;
+}
+
+.quote-stats__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.quote-stats__number {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: rgba(49, 190, 239, 0.85);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.quote-stats__label {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: rgba(49, 190, 239, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
 /* Triángulos decorativos superpuestos (estilo Q.Clay)
    3 triángulos iguales: conectados punta con base */
 .quote-triangles {
   position: absolute;
   top: 50%;
-  right: 80px;
-  transform: translateY(-50%);
-  margin-top: -80px; /* Subir para equilibrar corte superior e inferior */
+  left: 45%;
+  transform: translate(-50%, -50%);
+  margin-top: -40px; /* Ajuste vertical */
   width: 350px;
   height: 915px; /* 305px * 3 triángulos */
   pointer-events: none;
@@ -1895,38 +1922,66 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   height: 305px;
 }
 
-/* Barra de progreso VERTICAL */
+/* Barra de progreso VERTICAL - Estilo Q.Clay */
 .quote-progress-vertical {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: 50%;
+  right: 40px; /* Pegada a la derecha */
+  left: auto;
   width: 2px;
-  height: 180px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
-  overflow: hidden;
+  height: 280px; /* Más alta */
+  background: rgba(255, 255, 255, 0.15); /* Semi-transparente como Q.Clay */
+  border-radius: 1px;
+  overflow: visible;
+  z-index: 20;
 }
 
 .quote-progress-vertical__bar {
   width: 100%;
   height: 0%;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 2px;
-  transition: height 0.1s linear;
+  background: rgba(255, 255, 255, 0.9); /* Más brillante */
+  border-radius: 1px;
+  transition: height 0.15s ease-out;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3); /* Brillo sutil */
 }
 
-/* Subtítulo/firma abajo a la derecha */
+/* Subtítulo/firma - Forma de triángulo invertido */
 .quote-subtitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  bottom: 60px;
+  left: 45%;
+  transform: translateX(-50%);
+  z-index: 25;
+}
+
+.quote-subtitle__line {
   font-family: var(--font-body);
+  font-weight: 400;
+  color: rgba(180, 190, 200, 0.4);
+  text-align: center;
+  display: block;
+  transition: color 0.3s ease;
+}
+
+/* Línea 1: más pequeña arriba (punta del triángulo) */
+.quote-subtitle__line--1 {
   font-size: 0.9rem;
-  font-weight: 300;
-  line-height: 1.5;
-  color: rgba(180, 190, 200, 0.6);
-  text-align: right;
-  margin: 0;
-  position: relative;
-  z-index: 10;
+  margin-bottom: 5px;
+}
+
+/* Línea 2: mediana */
+.quote-subtitle__line--2 {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+/* Línea 3: más grande abajo (base del triángulo) */
+.quote-subtitle__line--3 {
+  font-size: 1.35rem;
 }
 
 /* ----------------------------------------
@@ -3365,13 +3420,10 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     flex-direction: column !important;
   }
 
-  .quote-header {
-    padding: 0 0 var(--space-md) 0 !important;
-    text-align: center;
-  }
-
-  .quote-header__title {
-    font-size: 1.3rem !important;
+  .quote-label {
+    font-size: 0.75rem !important;
+    text-align: center !important;
+    margin-bottom: var(--space-md) !important;
   }
 
   .quote-content {
@@ -3383,11 +3435,6 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     padding: 0 !important;
   }
 
-  .quote-marks {
-    font-size: 60px !important;
-    margin-bottom: 20px !important;
-    text-align: center !important;
-  }
 
   .quote-text {
     font-size: 1.1rem !important;
