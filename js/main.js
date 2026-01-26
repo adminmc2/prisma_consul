@@ -757,6 +757,40 @@ function initTransitionStatic() {
     return;
   }
 
+  // Función para resetear estados de personas/roles/info
+  const resetPersonStates = () => {
+    const bg1 = document.querySelector('.transition-static__bg--1');
+    const bg2 = document.querySelector('.transition-static__bg--2');
+    const bg3 = document.querySelector('.transition-static__bg--3');
+    const person1 = document.querySelector('.transition-static__person--1');
+    const person2 = document.querySelector('.transition-static__person--2');
+    const person3 = document.querySelector('.transition-static__person--3');
+    const roles1 = document.querySelector('.transition-static__roles--1');
+    const roles2 = document.querySelector('.transition-static__roles--2');
+    const roles3 = document.querySelector('.transition-static__roles--3');
+    const info1 = document.querySelector('.transition-static__info--1');
+    const info2 = document.querySelector('.transition-static__info--2');
+    const info3 = document.querySelector('.transition-static__info--3');
+    const closingSection = document.getElementById('transitionClosing');
+    const header = document.getElementById('header');
+
+    // Resetear a estado inicial (persona 1 activa)
+    if (bg1) bg1.classList.add('active');
+    if (bg2) bg2.classList.remove('active');
+    if (bg3) bg3.classList.remove('active');
+    if (person1) { person1.classList.add('active'); person1.classList.remove('exiting'); }
+    if (person2) { person2.classList.remove('active'); person2.classList.remove('exiting'); }
+    if (person3) { person3.classList.remove('active'); person3.classList.remove('exiting'); }
+    if (roles1) roles1.classList.add('active');
+    if (roles2) roles2.classList.remove('active');
+    if (roles3) roles3.classList.remove('active');
+    if (info1) info1.classList.add('active');
+    if (info2) info2.classList.remove('active');
+    if (info3) info3.classList.remove('active');
+    if (closingSection) closingSection.classList.remove('active');
+    if (header) header.classList.remove('header--quote-active');
+  };
+
   const updateTransition = () => {
     const rect = section.getBoundingClientRect();
     const sectionHeight = section.offsetHeight;
@@ -771,6 +805,9 @@ function initTransitionStatic() {
       title.style.pointerEvents = 'none';
       card.style.width = '0px';
       card.style.opacity = '0';
+
+      // Resetear estado de personas cuando la sección no es visible
+      resetPersonStates();
       return;
     }
 
@@ -802,6 +839,9 @@ function initTransitionStatic() {
       card.style.opacity = '0';
       card.style.width = '0px';
 
+      // Resetear estados de personas
+      resetPersonStates();
+
     } else if (scrollProgress <= phase1End) {
       // FASE 1: Título se encoge y mueve a izquierda + Tarjeta crece desde derecha
       const progress = (scrollProgress - phase0End) / (phase1End - phase0End);
@@ -825,6 +865,9 @@ function initTransitionStatic() {
       card.style.opacity = '1';
       card.style.width = `${cardWidth}px`;
 
+      // Resetear estados de personas (todavía no se muestran)
+      resetPersonStates();
+
     } else {
       // FASE 2+: Tarjeta completa, título desaparecido
       title.style.opacity = '0';
@@ -833,12 +876,14 @@ function initTransitionStatic() {
       card.style.opacity = '1';
       card.style.width = 'calc(100% - 40px)';
 
-      // FASES de transición entre personas:
+      // FASES de transición entre personas (como en el commit original):
       // 50% - 65% → Persona 1
       // 65% - 80% → Persona 2
-      // 80% - 100% → Persona 3
+      // 80% - 95% → Persona 3
+      // 95% - 100% → Closing Quote section
       const person1End = 0.65;
       const person2End = 0.80;
+      const person3End = 0.95;
 
       // Obtener elementos de las capas
       const bg1 = document.querySelector('.transition-static__bg--1');
@@ -854,6 +899,10 @@ function initTransitionStatic() {
       const info2 = document.querySelector('.transition-static__info--2');
       const info3 = document.querySelector('.transition-static__info--3');
 
+      // Obtener sección de cierre
+      const closingSection = document.getElementById('transitionClosing');
+      const quoteProgressBar = document.getElementById('quoteProgressBar');
+
       if (scrollProgress > phase1End && scrollProgress <= person1End) {
         // Mostrar persona 1
         if (bg1) bg1.classList.add('active');
@@ -868,6 +917,9 @@ function initTransitionStatic() {
         if (info1) info1.classList.add('active');
         if (info2) info2.classList.remove('active');
         if (info3) info3.classList.remove('active');
+        if (closingSection) closingSection.classList.remove('active');
+        const header = document.getElementById('header');
+        if (header) header.classList.remove('header--quote-active');
       } else if (scrollProgress > person1End && scrollProgress <= person2End) {
         // Transición a persona 2
         if (bg1) bg1.classList.remove('active');
@@ -882,7 +934,10 @@ function initTransitionStatic() {
         if (info1) info1.classList.remove('active');
         if (info2) info2.classList.add('active');
         if (info3) info3.classList.remove('active');
-      } else if (scrollProgress > person2End) {
+        if (closingSection) closingSection.classList.remove('active');
+        const header = document.getElementById('header');
+        if (header) header.classList.remove('header--quote-active');
+      } else if (scrollProgress > person2End && scrollProgress <= person3End) {
         // Transición a persona 3
         if (bg1) bg1.classList.remove('active');
         if (bg2) bg2.classList.remove('active');
@@ -896,6 +951,54 @@ function initTransitionStatic() {
         if (info1) info1.classList.remove('active');
         if (info2) info2.classList.remove('active');
         if (info3) info3.classList.add('active');
+        if (closingSection) closingSection.classList.remove('active');
+        const header = document.getElementById('header');
+        if (header) header.classList.remove('header--quote-active');
+      } else if (scrollProgress > person3End) {
+        // FASE FINAL: Closing Quote Section
+        // Ocultar persona 3 y mostrar sección de cierre
+        if (bg1) bg1.classList.remove('active');
+        if (bg2) bg2.classList.remove('active');
+        if (bg3) bg3.classList.remove('active');
+        if (person1) { person1.classList.remove('active'); person1.classList.add('exiting'); }
+        if (person2) { person2.classList.remove('active'); person2.classList.add('exiting'); }
+        if (person3) { person3.classList.remove('active'); person3.classList.add('exiting'); }
+        if (roles1) roles1.classList.remove('active');
+        if (roles2) roles2.classList.remove('active');
+        if (roles3) roles3.classList.remove('active');
+        if (info1) info1.classList.remove('active');
+        if (info2) info2.classList.remove('active');
+        if (info3) info3.classList.remove('active');
+
+        // Mostrar sección de cierre
+        if (closingSection) {
+          closingSection.classList.add('active');
+
+          // Header transparente cuando quote está activa
+          const header = document.getElementById('header');
+          if (header) header.classList.add('header--quote-active');
+
+          // Calcular progreso (80% - 100% mapea a 0% - 100%)
+          const quoteProgress = (scrollProgress - person3End) / (1 - person3End);
+
+          // Barra de progreso VERTICAL
+          if (quoteProgressBar) {
+            quoteProgressBar.style.height = `${Math.min(100, quoteProgress * 100)}%`;
+          }
+
+          // Texto que se ilumina de gris a blanco
+          const quoteText = document.getElementById('quoteText');
+          if (quoteText) {
+            // Interpolar de gris oscuro (0.5 opacity) a blanco (1.0)
+            const grayValue = Math.floor(120 + (quoteProgress * 135)); // 120 -> 255
+            const opacity = 0.5 + (quoteProgress * 0.5); // 0.5 -> 1.0
+            quoteText.style.color = `rgba(${grayValue}, ${grayValue + 10}, ${grayValue + 20}, ${opacity})`;
+          }
+        }
+      } else {
+        // Quitar clase del header cuando no está en quote
+        const header = document.getElementById('header');
+        if (header) header.classList.remove('header--quote-active');
       }
     }
   };
