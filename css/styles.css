@@ -1742,6 +1742,12 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   box-shadow: 0 8px 25px rgba(49, 190, 239, 0.3);
 }
 
+/* Foto y roles móvil - ocultos en desktop */
+.transition-static__mobile-photo,
+.transition-static__mobile-roles {
+  display: none;
+}
+
 /* ----------------------------------------
    Nosotros Section
    ---------------------------------------- */
@@ -3029,7 +3035,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     text-align: left !important;
   }
 
-  /* Tarjeta del equipo - oculta por defecto, se muestra con JS */
+  /* Tarjeta del equipo - visible en móvil */
   .transition-static__card {
     position: relative !important;
     top: auto !important;
@@ -3037,46 +3043,58 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     left: auto !important;
     width: 100% !important;
     height: auto !important;
-    border-radius: 16px !important;
-    padding: var(--space-md) !important;
-    background: var(--prisma-navy) !important;
-    display: block !important;
-    opacity: 0 !important;
-    transition: opacity 0.5s ease !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--space-lg) !important;
+    opacity: 1 !important;
   }
 
   .transition-static__card.mobile-visible {
     opacity: 1 !important;
   }
 
-  /* Layout de columnas en móvil - UNA SOLA COLUMNA */
-  .transition-static__columns {
-    display: flex !important;
-    flex-direction: column !important;
-    grid-template-columns: none !important;
-    gap: var(--space-md) !important;
-    width: 100% !important;
+  /* Ocultar capas de desktop */
+  .transition-static__bg-layer,
+  .transition-static__person-layer {
+    display: none !important;
   }
 
-  /* Todas las columnas - reset */
-  .transition-static__col {
+  /* Mostrar todas las tarjetas de roles e info */
+  .transition-static__roles-layer,
+  .transition-static__info-layer {
+    position: relative !important;
     width: 100% !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--space-lg) !important;
     padding: 0 !important;
   }
 
-  /* Columna izquierda - roles */
-  .transition-static__col--left {
-    order: 2 !important;
+  /* Cada tarjeta de persona en móvil */
+  .transition-static__roles,
+  .transition-static__person-info {
+    position: relative !important;
+    opacity: 1 !important;
+    background: var(--prisma-navy) !important;
+    border-radius: 16px !important;
+    padding: var(--space-md) !important;
     display: flex !important;
-    justify-content: center !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: var(--space-sm) !important;
+    text-align: center !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
   }
 
-  .transition-static__roles {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-    justify-content: center !important;
+  /* Ocultar roles en móvil - solo mostrar info */
+  .transition-static__roles-layer {
+    display: none !important;
   }
 
   .transition-static__roles span {
@@ -3085,54 +3103,6 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     background: rgba(255,255,255,0.1) !important;
     border-radius: 20px !important;
     letter-spacing: 1px !important;
-  }
-
-  /* Columna central - persona */
-  .transition-static__col--center {
-    order: 1 !important;
-    width: 100% !important;
-    min-height: 250px !important;
-    max-height: 300px !important;
-    height: 250px !important;
-    border-radius: 12px !important;
-    overflow: hidden !important;
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .transition-static__bg-pattern {
-    position: absolute !important;
-    left: 50% !important;
-    top: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 70% !important;
-    height: 80% !important;
-  }
-
-  .transition-static__person {
-    position: relative !important;
-    width: auto !important;
-    height: 85% !important;
-    max-height: 260px !important;
-    object-fit: contain !important;
-    z-index: 2 !important;
-  }
-
-  /* Columna derecha - info persona */
-  .transition-static__col--right {
-    padding: 0 !important;
-    order: 3 !important;
-    width: 100% !important;
-  }
-
-  .transition-static__person-info {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: var(--space-sm) !important;
-    text-align: center !important;
   }
 
   .transition-static__person-name {
@@ -3150,6 +3120,51 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     justify-content: center;
     padding: 12px 20px;
     font-size: 0.9rem;
+  }
+
+  /* Foto de persona en móvil */
+  .transition-static__mobile-photo {
+    display: block !important;
+    width: 100%;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgba(49, 190, 239, 0.1);
+    margin-bottom: var(--space-sm);
+  }
+
+  .transition-static__mobile-photo img {
+    width: auto;
+    height: 250%;
+    object-fit: cover;
+    object-position: top center;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+  }
+
+  /* Roles/puestos en móvil */
+  .transition-static__mobile-roles {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: var(--space-sm);
+  }
+
+  .transition-static__mobile-roles span {
+    font-family: var(--font-heading);
+    font-size: 0.7rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
   }
 
 }
