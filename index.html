@@ -510,31 +510,59 @@
     </div>
     <!-- Tarjeta oscura que aparece desde la derecha -->
     <div class="transition-static__card" id="transitionCard">
-      <div class="transition-static__columns">
-        <!-- Columna izquierda - roles -->
-        <div class="transition-static__col transition-static__col--left">
-          <div class="transition-static__roles">
-            <span>FOUNDER</span>
-            <span>MARKETING</span>
-            <span>ESTRATEGIA</span>
-          </div>
-        </div>
 
-        <!-- Columna central - fondo + persona -->
-        <div class="transition-static__col transition-static__col--center">
-          <div class="transition-static__bg-pattern"></div>
-          <img src="images/hombre suilueta_.png" alt="" class="transition-static__person">
-        </div>
+      <!-- CAPA 1: Fondos (crossfade) -->
+      <div class="transition-static__bg-layer">
+        <div class="transition-static__bg-pattern transition-static__bg--1 active"></div>
+        <div class="transition-static__bg-pattern transition-static__bg--2"></div>
+        <div class="transition-static__bg-pattern transition-static__bg--3"></div>
+      </div>
 
-        <!-- Columna derecha - info persona -->
-        <div class="transition-static__col transition-static__col--right">
-          <div class="transition-static__person-info">
-            <h3 class="transition-static__person-name">José Pablo Villaseñor García</h3>
-            <p class="transition-static__person-desc">Estratega empresarial con más de 15 años de experiencia transformando organizaciones. Especialista en desarrollo de marca, marketing digital y consultoría de negocios.</p>
-            <a href="#contacto" class="transition-static__contact-btn" data-es="Contactar" data-en="Contact">Contactar</a>
-          </div>
+      <!-- CAPA 2: Personas (desliza izquierda/derecha) -->
+      <div class="transition-static__person-layer">
+        <img src="images/hombre suilueta_.png" alt="" class="transition-static__person transition-static__person--1 active">
+        <img src="images/hombre suilueta_.png" alt="" class="transition-static__person transition-static__person--2">
+        <img src="images/hombre suilueta_.png" alt="" class="transition-static__person transition-static__person--3">
+      </div>
+
+      <!-- CAPA 3: Roles izquierda (fade) -->
+      <div class="transition-static__roles-layer">
+        <div class="transition-static__roles transition-static__roles--1 active">
+          <span>FOUNDER</span>
+          <span>MARKETING</span>
+          <span>ESTRATEGIA</span>
+        </div>
+        <div class="transition-static__roles transition-static__roles--2">
+          <span>DIRECTOR</span>
+          <span>INNOVACIÓN</span>
+          <span>RESEARCH</span>
+        </div>
+        <div class="transition-static__roles transition-static__roles--3">
+          <span>CONSULTOR</span>
+          <span>ANALYTICS</span>
+          <span>PHARMA</span>
         </div>
       </div>
+
+      <!-- CAPA 4: Info derecha (fade) -->
+      <div class="transition-static__info-layer">
+        <div class="transition-static__person-info transition-static__info--1 active">
+          <h3 class="transition-static__person-name">José Pablo Villaseñor García</h3>
+          <p class="transition-static__person-desc">Estratega empresarial con más de 15 años de experiencia transformando organizaciones. Especialista en desarrollo de marca, marketing digital y consultoría de negocios.</p>
+          <a href="#contacto" class="transition-static__contact-btn" data-es="Contactar" data-en="Contact">Contactar</a>
+        </div>
+        <div class="transition-static__person-info transition-static__info--2">
+          <h3 class="transition-static__person-name">María González López</h3>
+          <p class="transition-static__person-desc">Directora de Innovación con amplia experiencia en investigación farmacéutica. Lidera proyectos de transformación digital y desarrollo de nuevos productos.</p>
+          <a href="#contacto" class="transition-static__contact-btn" data-es="Contactar" data-en="Contact">Contactar</a>
+        </div>
+        <div class="transition-static__person-info transition-static__info--3">
+          <h3 class="transition-static__person-name">Carlos Ramírez Hernández</h3>
+          <p class="transition-static__person-desc">Consultor Senior especializado en analytics y business intelligence. Experto en transformar datos en decisiones estratégicas para el sector farmacéutico.</p>
+          <a href="#contacto" class="transition-static__contact-btn" data-es="Contactar" data-en="Contact">Contactar</a>
+        </div>
+      </div>
+
     </div>
   </section>
 

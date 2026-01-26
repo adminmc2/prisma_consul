@@ -826,12 +826,77 @@ function initTransitionStatic() {
       card.style.width = `${cardWidth}px`;
 
     } else {
-      // FASE 2: Tarjeta completa, título desaparecido
+      // FASE 2+: Tarjeta completa, título desaparecido
       title.style.opacity = '0';
       title.style.pointerEvents = 'none';
 
       card.style.opacity = '1';
       card.style.width = 'calc(100% - 40px)';
+
+      // FASES de transición entre personas:
+      // 50% - 65% → Persona 1
+      // 65% - 80% → Persona 2
+      // 80% - 100% → Persona 3
+      const person1End = 0.65;
+      const person2End = 0.80;
+
+      // Obtener elementos de las capas
+      const bg1 = document.querySelector('.transition-static__bg--1');
+      const bg2 = document.querySelector('.transition-static__bg--2');
+      const bg3 = document.querySelector('.transition-static__bg--3');
+      const person1 = document.querySelector('.transition-static__person--1');
+      const person2 = document.querySelector('.transition-static__person--2');
+      const person3 = document.querySelector('.transition-static__person--3');
+      const roles1 = document.querySelector('.transition-static__roles--1');
+      const roles2 = document.querySelector('.transition-static__roles--2');
+      const roles3 = document.querySelector('.transition-static__roles--3');
+      const info1 = document.querySelector('.transition-static__info--1');
+      const info2 = document.querySelector('.transition-static__info--2');
+      const info3 = document.querySelector('.transition-static__info--3');
+
+      if (scrollProgress > phase1End && scrollProgress <= person1End) {
+        // Mostrar persona 1
+        if (bg1) bg1.classList.add('active');
+        if (bg2) bg2.classList.remove('active');
+        if (bg3) bg3.classList.remove('active');
+        if (person1) { person1.classList.add('active'); person1.classList.remove('exiting'); }
+        if (person2) { person2.classList.remove('active'); person2.classList.remove('exiting'); }
+        if (person3) person3.classList.remove('active');
+        if (roles1) roles1.classList.add('active');
+        if (roles2) roles2.classList.remove('active');
+        if (roles3) roles3.classList.remove('active');
+        if (info1) info1.classList.add('active');
+        if (info2) info2.classList.remove('active');
+        if (info3) info3.classList.remove('active');
+      } else if (scrollProgress > person1End && scrollProgress <= person2End) {
+        // Transición a persona 2
+        if (bg1) bg1.classList.remove('active');
+        if (bg2) bg2.classList.add('active');
+        if (bg3) bg3.classList.remove('active');
+        if (person1) { person1.classList.remove('active'); person1.classList.add('exiting'); }
+        if (person2) { person2.classList.add('active'); person2.classList.remove('exiting'); }
+        if (person3) person3.classList.remove('active');
+        if (roles1) roles1.classList.remove('active');
+        if (roles2) roles2.classList.add('active');
+        if (roles3) roles3.classList.remove('active');
+        if (info1) info1.classList.remove('active');
+        if (info2) info2.classList.add('active');
+        if (info3) info3.classList.remove('active');
+      } else if (scrollProgress > person2End) {
+        // Transición a persona 3
+        if (bg1) bg1.classList.remove('active');
+        if (bg2) bg2.classList.remove('active');
+        if (bg3) bg3.classList.add('active');
+        if (person1) { person1.classList.remove('active'); person1.classList.add('exiting'); }
+        if (person2) { person2.classList.remove('active'); person2.classList.add('exiting'); }
+        if (person3) person3.classList.add('active');
+        if (roles1) roles1.classList.remove('active');
+        if (roles2) roles2.classList.remove('active');
+        if (roles3) roles3.classList.add('active');
+        if (info1) info1.classList.remove('active');
+        if (info2) info2.classList.remove('active');
+        if (info3) info3.classList.add('active');
+      }
     }
   };
 

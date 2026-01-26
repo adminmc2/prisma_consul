@@ -1459,7 +1459,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
    Transition Static Section - Centered Text with Card Animation
    ---------------------------------------- */
 .transition-static {
-  min-height: 200vh; /* Espacio para la animación de scroll */
+  min-height: 450vh; /* Espacio para la animación de scroll + transición de 3 personas */
   background: var(--bg-secondary);
   display: flex;
   align-items: flex-start;
@@ -1521,16 +1521,117 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   will-change: width, opacity;
 }
 
-/* Grid de 3 columnas dentro de la tarjeta */
-.transition-static__columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+/* ===== SISTEMA DE CAPAS PARA TRANSICIÓN ===== */
+
+/* CAPA 1: Fondos (crossfade) */
+.transition-static__bg-layer {
+  position: absolute;
+  top: 0;
+  left: 33.33%;
+  width: 33.33%;
   height: 100%;
-  gap: 0;
+  z-index: 1;
 }
 
-/* Columna izquierda - roles */
-.transition-static__col--left {
+.transition-static__bg-pattern {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 80%;
+  height: 100%;
+  border-radius: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.transition-static__bg--1 {
+  background: rgba(49, 190, 239, 0.12);
+}
+
+.transition-static__bg--2 {
+  background: rgba(161, 139, 217, 0.15);
+}
+
+.transition-static__bg--3 {
+  background: rgba(153, 78, 149, 0.15);
+}
+
+.transition-static__bg-pattern.active {
+  opacity: 1;
+}
+
+/* CAPA 2: Personas (desliza izquierda/derecha) */
+.transition-static__person-layer {
+  position: absolute;
+  top: 0;
+  left: 33.33%;
+  width: 33.33%;
+  height: 100%;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.transition-static__person {
+  position: absolute;
+  height: 140%;
+  width: auto;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: top center;
+  filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.5));
+  top: 0;
+  left: 50%;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+}
+
+.transition-static__person--1 {
+  transform: translateX(-50%);
+}
+
+.transition-static__person--1.active {
+  transform: translateX(-50%);
+  opacity: 1;
+}
+
+.transition-static__person--1.exiting {
+  transform: translateX(-150%);
+  opacity: 0;
+}
+
+.transition-static__person--2 {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.transition-static__person--2.active {
+  transform: translateX(-50%);
+  opacity: 1;
+}
+
+.transition-static__person--2.exiting {
+  transform: translateX(-150%);
+  opacity: 0;
+}
+
+.transition-static__person--3 {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.transition-static__person--3.active {
+  transform: translateX(-50%);
+  opacity: 1;
+}
+
+/* CAPA 3: Roles izquierda (fade) */
+.transition-static__roles-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 33.33%;
+  height: 100%;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -1542,6 +1643,15 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.transition-static__roles.active {
+  opacity: 1;
 }
 
 .transition-static__roles span {
@@ -1554,47 +1664,17 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   line-height: 1.2;
 }
 
-/* Columna central - fondo + persona */
-.transition-static__col--center {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  overflow: hidden;
-}
-
-/* Fondo rectangular cyan - toda la altura */
-.transition-static__bg-pattern {
+/* CAPA 4: Info derecha (fade) */
+.transition-static__info-layer {
   position: absolute;
   top: 0;
-  left: 10%;
-  width: 80%;
+  right: 0;
+  width: 33.33%;
   height: 100%;
-  background: rgba(49, 190, 239, 0.12);
-  border-radius: 0;
-  z-index: 1;
-}
-
-/* Persona encima del fondo - medio cuerpo (cabeza visible, corta en cintura) */
-.transition-static__person {
-  position: absolute;
-  z-index: 2;
-  height: 140%;
-  width: auto;
-  max-width: none;
-  max-height: none;
-  object-fit: cover;
-  object-position: top center;
-  filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.5));
-  top: 0;
-}
-
-/* Columna derecha - info persona */
-.transition-static__col--right {
+  z-index: 3;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  align-items: flex-start;
   padding: 40px;
 }
 
@@ -1603,6 +1683,16 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   flex-direction: column;
   gap: 24px;
   max-width: 100%;
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  left: 40px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.transition-static__person-info.active {
+  opacity: 1;
 }
 
 .transition-static__person-name {
