@@ -1509,10 +1509,10 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 /* Tarjeta oscura - CRECE desde la derecha cubriendo el título */
 .transition-static__card {
   position: fixed;
-  top: 20px;
+  top: 100px;
   right: 20px;
   width: 0%; /* Empieza con ancho 0, crece con scroll */
-  height: calc(100vh - 40px);
+  height: calc(100vh - 120px);
   background: var(--prisma-navy);
   border-radius: 24px;
   z-index: 101; /* Por ENCIMA del título para cubrirlo */
@@ -1579,14 +1579,14 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 .transition-static__person {
   position: absolute;
   z-index: 2;
-  height: 140%;
+  height: 95%;
   width: auto;
   max-width: none;
   max-height: none;
-  object-fit: cover;
+  object-fit: contain;
   object-position: top center;
   filter: drop-shadow(0 10px 40px rgba(0, 0, 0, 0.5));
-  top: 0;
+  top: 5%;
 }
 
 /* Columna derecha - info persona */
