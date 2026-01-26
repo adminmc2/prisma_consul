@@ -668,40 +668,56 @@
   <!-- Contacto Section -->
   <section class="contacto" id="contacto">
     <div class="contacto__container">
-      <header class="section-header">
-        <p class="section-header__tagline" data-es="Contacto" data-en="Contact">Contacto</p>
-        <h2 class="section-header__title" data-es="¿Listo para <span class='text-gradient'>transformar tu negocio</span>?" data-en="Ready to <span class='text-gradient'>transform your business</span>?">
-          ¿Listo para
-          <span class="text-gradient">transformar tu negocio</span>?
+      <!-- Columna izquierda: Invitación -->
+      <div class="contacto__invitation">
+        <h2 class="contacto__title" data-es="Conversemos sobre el <span class='text-gradient'>futuro de tu empresa</span>" data-en="Let's talk about <span class='text-gradient'>your company's future</span>">
+          Conversemos sobre el <span class="text-gradient">futuro de tu empresa</span>
         </h2>
-        <p class="section-header__description" data-es="Cuéntanos sobre tu proyecto y descubre cómo PRISMA puede ayudarte." data-en="Tell us about your project and discover how PRISMA can help you.">
-          Cuéntanos sobre tu proyecto y descubre cómo PRISMA puede ayudarte.
+        <p class="contacto__description" data-es="En PRISMA creemos que cada organización tiene un potencial único. Queremos conocer tus desafíos y explorar juntos cómo la estrategia correcta puede transformar tu visión en resultados." data-en="At PRISMA, we believe every organization has unique potential. We want to understand your challenges and explore together how the right strategy can transform your vision into results.">
+          En PRISMA creemos que cada organización tiene un potencial único. Queremos conocer tus desafíos y explorar juntos cómo la estrategia correcta puede transformar tu visión en resultados.
         </p>
-      </header>
-
-      <form class="contact-form" id="contactForm">
-        <div class="form-group">
-          <label for="nombre" class="form-label" data-es="Nombre" data-en="Name">Nombre</label>
-          <input type="text" id="nombre" name="nombre" class="form-input" required>
+        <div class="contacto__benefits">
+          <div class="contacto__benefit">
+            <span class="contacto__benefit-icon">✦</span>
+            <span data-es="Diagnóstico inicial sin compromiso" data-en="Initial assessment with no commitment">Diagnóstico inicial sin compromiso</span>
+          </div>
+          <div class="contacto__benefit">
+            <span class="contacto__benefit-icon">✦</span>
+            <span data-es="Respuesta en menos de 24 horas" data-en="Response within 24 hours">Respuesta en menos de 24 horas</span>
+          </div>
+          <div class="contacto__benefit">
+            <span class="contacto__benefit-icon">✦</span>
+            <span data-es="Enfoque personalizado a tu industria" data-en="Personalized approach to your industry">Enfoque personalizado a tu industria</span>
+          </div>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label for="empresa" class="form-label" data-es="Empresa" data-en="Company">Empresa</label>
-          <input type="text" id="empresa" name="empresa" class="form-input">
-        </div>
+      <!-- Columna derecha: Formulario -->
+      <div class="contacto__form-wrapper">
+        <form class="contact-form" id="contactForm">
+          <div class="form-group">
+            <label for="nombre" class="form-label" data-es="Nombre" data-en="Name">Nombre</label>
+            <input type="text" id="nombre" name="nombre" class="form-input" required>
+          </div>
 
-        <div class="form-group">
-          <label for="email" class="form-label">Email</label>
-          <input type="email" id="email" name="email" class="form-input" required>
-        </div>
+          <div class="form-group">
+            <label for="empresa" class="form-label" data-es="Empresa" data-en="Company">Empresa</label>
+            <input type="text" id="empresa" name="empresa" class="form-input">
+          </div>
 
-        <div class="form-group form-group--full">
-          <label for="mensaje" class="form-label" data-es="¿Cómo podemos ayudarte?" data-en="How can we help you?">¿Cómo podemos ayudarte?</label>
-          <textarea id="mensaje" name="mensaje" class="form-textarea" rows="4" required></textarea>
-        </div>
+          <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" name="email" class="form-input" required>
+          </div>
 
-        <button type="submit" class="btn btn--primary btn--full" data-es="Enviar mensaje" data-en="Send message">Enviar mensaje</button>
-      </form>
+          <div class="form-group form-group--full">
+            <label for="mensaje" class="form-label" data-es="¿Cómo podemos ayudarte?" data-en="How can we help you?">¿Cómo podemos ayudarte?</label>
+            <textarea id="mensaje" name="mensaje" class="form-textarea" rows="4" required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--full" data-es="Enviar mensaje" data-en="Send message">Enviar mensaje</button>
+        </form>
+      </div>
     </div>
   </section>
 

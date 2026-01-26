@@ -1043,4 +1043,44 @@ function initTransitionStatic() {
   updateTransition();
 }
 
+// =============================================
+// Contacto Section - Reveal Animation (scroll-based)
+// =============================================
+function initContactoReveal() {
+  const contactoSection = document.querySelector('.contacto');
+  if (!contactoSection) return;
+
+  const invitation = contactoSection.querySelector('.contacto__invitation');
+  const formWrapper = contactoSection.querySelector('.contacto__form-wrapper');
+
+  if (!invitation || !formWrapper) return;
+
+  let hasRevealed = false;
+
+  const updateContactoReveal = () => {
+    if (hasRevealed) return;
+
+    const rect = contactoSection.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const headerHeight = 80; // Altura del header fijo
+
+    // Solo revelar cuando el TOP de la sección esté por debajo del header
+    // Es decir, cuando rect.top sea menor que headerHeight + un margen
+    // Esto significa que la sección ya pasó el header y está visible
+    const triggerPoint = headerHeight + 150; // 150px después del header
+
+    if (rect.top < triggerPoint && rect.top > -rect.height) {
+      invitation.classList.add('revealed');
+      formWrapper.classList.add('revealed');
+      hasRevealed = true;
+    }
+  };
+
+  window.addEventListener('scroll', updateContactoReveal, { passive: true });
+  // NO hacer check inicial - solo activar con scroll
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', initContactoReveal);
+
 

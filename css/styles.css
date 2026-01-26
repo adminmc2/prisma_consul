@@ -2079,20 +2079,94 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
    Contacto Section
    ---------------------------------------- */
 .contacto {
-  padding: var(--space-2xl) var(--space-md);
+  padding-top: 250px; /* Espacio grande arriba para transición desde quote */
+  padding-left: var(--space-md);
+  padding-right: var(--space-md);
+  padding-bottom: var(--space-2xl);
   background: var(--bg-secondary);
+  position: relative;
+  overflow: hidden;
+  margin-top: -1px; /* Evitar gap visual */
 }
 
 .contacto__container {
-  max-width: 600px;
+  max-width: 1100px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+}
+
+/* Columna de invitación - Animación de entrada */
+.contacto__invitation {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.contacto__invitation.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Columna del formulario - Animación de entrada con delay */
+.contacto__form-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+}
+
+.contacto__form-wrapper.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.contacto__title {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+  margin: var(--space-sm) 0 var(--space-lg);
+}
+
+.contacto__description {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xl);
+}
+
+.contacto__benefits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.contacto__benefit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.contacto__benefit-icon {
+  color: var(--tech-cyan);
+  font-size: 0.8rem;
 }
 
 /* Contact Form */
 .contact-form {
   display: grid;
   gap: var(--space-md);
-  margin-top: var(--space-lg);
 }
 
 .form-group {
@@ -2290,6 +2364,12 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     width: auto;
     grid-column: span 2;
     justify-self: center;
+  }
+
+  /* Contacto - Two columns on tablet */
+  .contacto__container {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
   }
 
   .footer__container {
