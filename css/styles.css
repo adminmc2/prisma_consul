@@ -1175,24 +1175,24 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   height: 100vh;
   background: var(--bg-primary);
   display: flex;
-  align-items: flex-start; /* Alinear desde arriba */
+  align-items: center;
   justify-content: flex-start;
   z-index: 5;
   overflow: hidden;
-  padding-top: 180px; /* Espacio para el menú */
+  padding-top: 80px; /* Espacio para el menú */
   box-sizing: border-box;
 }
 
 /* Título como primer elemento del carrusel */
 .servicios__header {
   flex-shrink: 0;
-  width: 450px;
+  width: clamp(280px, 25vw, 450px);
   display: flex;
   align-items: flex-start; /* Alinear arriba */
   justify-content: center;
   padding: var(--space-xl);
   padding-top: 0;
-  margin-right: 6rem;
+  margin-right: clamp(2rem, 4vw, 6rem);
 }
 
 .servicios__title {
@@ -1203,7 +1203,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
 .servicios__title-line {
   font-family: var(--font-heading);
-  font-size: clamp(3rem, 8vw, 6rem);
+  font-size: clamp(2.5rem, 4.5vw, 6rem);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -2px;
@@ -1230,8 +1230,8 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 /* Card individual - Estilo QClay horizontal */
 .servicio-card {
   flex-shrink: 0;
-  width: 800px;
-  height: calc(100vh - 210px); /* Altura del viewport menos espacio para menu y margen inferior */
+  width: clamp(480px, 38vw, 800px);
+  height: clamp(420px, 55vh, calc(100vh - 280px));
   border-radius: 24px;
   overflow: hidden;
   display: flex;
@@ -1267,10 +1267,10 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 /* Letra SVG grande en la parte inferior izquierda */
 .servicio-card__letter-svg {
   position: absolute;
-  bottom: -50px;
-  left: -100px;
-  width: 500px;
-  height: 500px;
+  bottom: -30px;
+  left: -60px;
+  width: clamp(250px, 65%, 500px);
+  height: clamp(250px, 65%, 500px);
   opacity: 0.08;
   pointer-events: none;
   z-index: 1;
@@ -1291,10 +1291,10 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 /* Area de GIF/imagen en ovalo - parte superior derecha */
 .servicio-card__media {
   position: absolute;
-  top: 40px;
-  right: 40px;
-  width: 130px;
-  height: 130px;
+  top: clamp(25px, 5%, 40px);
+  right: clamp(2.5rem, 7%, 40px);
+  width: clamp(60px, 18%, 130px);
+  height: clamp(60px, 18%, 130px);
   z-index: 2;
 }
 
@@ -1331,59 +1331,71 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 /* Título de la card - posicionado arriba */
 .servicio-card__title-wrap {
   position: absolute;
-  top: 50px;
+  top: clamp(25px, 6%, 50px);
   left: 0;
   right: 0;
-  padding: 0 var(--space-2xl);
+  padding: 0 clamp(3rem, 9%, 5rem);
   z-index: 2;
 }
 
-/* Cuerpo de la card - descripción y bullets desde arriba (debajo del título) */
+/* Cuerpo de la card - descripción y bullets debajo del título */
 .servicio-card__body {
   position: absolute;
-  top: 200px;
+  top: clamp(100px, 26%, 200px);
   left: 0;
   right: 0;
-  padding: 0 var(--space-2xl);
+  padding: 0 clamp(3rem, 9%, 5rem);
   z-index: 2;
 }
 
 .servicio-card__title {
   font-family: var(--font-heading);
-  font-size: 4.5rem;
+  font-size: clamp(2.2rem, 3.2vw, 4.5rem);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -2px;
 }
 
 .servicio-card__description {
-  font-size: 1.5rem;
+  font-size: clamp(1.05rem, 1.5vw, 1.5rem);
   color: var(--text-secondary);
-  line-height: 1.7;
-  max-width: 550px;
+  line-height: 1.6;
+  max-width: 90%;
 }
 
 .servicio-card__list {
-  list-style: disc;
-  padding-left: 1.2rem;
-  margin-top: var(--space-sm);
-  max-width: 550px;
+  list-style: none;
+  padding-left: 1.2em;
+  margin-top: var(--space-xs);
+  max-width: 90%;
 }
 
 .servicio-card__list li {
-  font-size: 1.1rem;
+  font-size: clamp(0.9rem, 1.1vw, 1.1rem);
   color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 0.3rem;
+  line-height: 1.5;
+  margin-bottom: 0.15rem;
+  position: relative;
+  padding-left: 0;
+}
+
+.servicio-card__list li::before {
+  content: "•";
+  position: absolute;
+  left: -0.8em;
+}
+
+.servicio-card__list li.no-bullet::before {
+  content: none;
 }
 
 /* Numero de indice en la esquina inferior derecha */
 .servicio-card__index {
   position: absolute;
-  bottom: 35px;
-  right: 40px;
+  bottom: clamp(20px, 5%, 35px);
+  right: clamp(2.5rem, 7%, 40px);
   font-family: var(--font-heading);
-  font-size: 4.5rem;
+  font-size: clamp(2rem, 3.2vw, 4.5rem);
   font-weight: 700;
   color: var(--text-muted);
   z-index: 2;
@@ -3024,6 +3036,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   .hero__services--v2 .service-divider {
     margin: 0 0.1rem !important;
   }
+
 }
 
 /* Desktop pequeño - layout tipo móvil horizontal (1025px-1124px) */
@@ -3099,6 +3112,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   .hero-eye-marker {
     display: none !important;
   }
+
 }
 
 /* ========================================
@@ -3435,34 +3449,46 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   .servicio-card {
     width: 100% !important;
     height: auto !important;
-    min-height: 320px;
-    padding: var(--space-md);
+    min-height: auto;
+    padding: var(--space-sm) var(--space-md);
     border-radius: 16px;
     margin: 0 !important;
   }
 
   .servicio-card__letter-svg {
-    width: 200px !important;
-    height: 200px !important;
-    bottom: -20px !important;
-    left: -20px !important;
-    opacity: 0.12 !important;
+    width: 160px !important;
+    height: 160px !important;
+    bottom: -15px !important;
+    left: -15px !important;
+    opacity: 0.10 !important;
   }
 
   .servicio-card__title-wrap {
     position: relative !important;
     top: auto !important;
-    padding: var(--space-md);
-    padding-top: 100px; /* Espacio para triángulo */
+    padding: var(--space-sm) var(--space-md);
+    padding-top: 70px;
   }
 
   .servicio-card__body {
     position: relative !important;
-    bottom: auto !important;
-    padding: var(--space-md);
+    top: auto !important;
+    padding: var(--space-xs) var(--space-md) var(--space-md);
   }
 
-  /* Títulos y descripciones ya definidos en tipografía coherente */
+  .servicio-card__description {
+    margin-bottom: var(--space-xs);
+  }
+
+  .servicio-card__list {
+    padding-left: 1em !important;
+  }
+
+  .servicio-card__list li {
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.1rem !important;
+  }
 
   .servicio-card__footer {
     padding: var(--space-sm);
@@ -3483,22 +3509,23 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     height: 36px;
   }
 
-  /* Número de índice - en el medio vertical de la tarjeta */
+  /* Número de índice - abajo a la derecha */
   .servicio-card__index {
-    bottom: auto !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
+    position: absolute !important;
+    bottom: 15px !important;
+    top: auto !important;
+    transform: none !important;
     right: 20px !important;
-    font-size: 2.5rem !important;
+    font-size: 2rem !important;
   }
 
   /* Triángulo - reducir tamaño */
   .servicio-card__media {
-    width: 70px !important;
-    height: 70px !important;
-    top: 20px !important;
+    width: 55px !important;
+    height: 55px !important;
+    top: 15px !important;
     right: auto !important;
-    left: 20px !important;
+    left: 15px !important;
   }
 
   /* ========================================
@@ -3936,6 +3963,54 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     display: none !important;
   }
 
+  /* Service Cards Mobile - más compactas */
+  .servicio-card {
+    padding: var(--space-xs) var(--space-sm) !important;
+  }
+
+  .servicio-card__title-wrap {
+    padding: var(--space-xs) var(--space-sm) !important;
+    padding-top: 55px !important;
+  }
+
+  .servicio-card__body {
+    padding: 0 var(--space-sm) var(--space-sm) !important;
+  }
+
+  .servicio-card__title {
+    font-size: 1.25rem !important;
+  }
+
+  .servicio-card__description {
+    font-size: 0.85rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .servicio-card__list li {
+    font-size: 0.78rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .servicio-card__index {
+    font-size: 1.6rem !important;
+    bottom: 10px !important;
+    right: 15px !important;
+  }
+
+  .servicio-card__media {
+    width: 45px !important;
+    height: 45px !important;
+    top: 12px !important;
+    left: 12px !important;
+  }
+
+  .servicio-card__letter-svg {
+    width: 120px !important;
+    height: 120px !important;
+    bottom: -10px !important;
+    left: -10px !important;
+  }
+
 }
 
 /* ----------------------------------------
@@ -3969,6 +4044,42 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
   .stats-card__label {
     font-size: 0.6rem;
+  }
+
+  /* Service Cards - muy pequeño */
+  .servicio-card__title-wrap {
+    padding-top: 48px !important;
+  }
+
+  .servicio-card__title {
+    font-size: 1.1rem !important;
+  }
+
+  .servicio-card__description {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .servicio-card__list li {
+    font-size: 0.73rem !important;
+  }
+
+  .servicio-card__index {
+    font-size: 1.4rem !important;
+    bottom: 8px !important;
+    right: 12px !important;
+  }
+
+  .servicio-card__media {
+    width: 38px !important;
+    height: 38px !important;
+    top: 10px !important;
+    left: 10px !important;
+  }
+
+  .servicio-card__letter-svg {
+    width: 100px !important;
+    height: 100px !important;
   }
 }
 
@@ -4124,6 +4235,52 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   /* Services Tablet */
   .servicios__grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Service Cards Tablet - tamaño intermedio */
+  .servicio-card {
+    padding: var(--space-sm) var(--space-lg) !important;
+  }
+
+  .servicio-card__title-wrap {
+    padding: var(--space-sm) var(--space-lg) !important;
+    padding-top: 65px !important;
+  }
+
+  .servicio-card__body {
+    padding: var(--space-xs) var(--space-lg) var(--space-md) !important;
+  }
+
+  .servicio-card__title {
+    font-size: 1.35rem !important;
+  }
+
+  .servicio-card__description {
+    font-size: 0.9rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .servicio-card__list li {
+    font-size: 0.82rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .servicio-card__index {
+    font-size: 1.8rem !important;
+    bottom: 12px !important;
+    right: 18px !important;
+  }
+
+  .servicio-card__media {
+    width: 50px !important;
+    height: 50px !important;
+    top: 12px !important;
+    left: 15px !important;
+  }
+
+  .servicio-card__letter-svg {
+    width: 140px !important;
+    height: 140px !important;
   }
 
   /* Stats Tablet */
