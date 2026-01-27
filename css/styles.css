@@ -2622,6 +2622,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   .hero {
     padding: 0 var(--space-xl);
     margin-top: -20px;
+    margin-bottom: -250px;
   }
 
   .hero__container {
@@ -2629,9 +2630,10 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     grid-template-columns: 35% 65%;
     align-items: center;
     gap: var(--space-xl);
-    min-height: 65vh;
+    min-height: auto;
     padding-right: var(--space-md);
     padding-top: 10px;
+    padding-bottom: 40px;
   }
 
   .hero__logo-side {
@@ -2968,11 +2970,9 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   }
 }
 
-/* Desktop - posición y tamaño eye marker */
+/* Desktop - posición eye marker */
 @media (min-width: 1025px) {
   .hero-eye-marker {
-    width: 90px;
-    height: 90px;
     top: 310px;
     right: 10%;
   }
