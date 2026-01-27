@@ -2994,6 +2994,81 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   }
 }
 
+/* Desktop pequeño - layout tipo móvil horizontal (1025px-1124px) */
+@media (min-width: 1025px) and (max-width: 1124px) {
+  .hero {
+    min-height: 100vh !important;
+    padding: var(--space-xl) var(--space-lg) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .hero__container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: var(--space-md) !important;
+    max-width: 75% !important;
+  }
+
+  .hero__logo-side {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    background: none !important;
+  }
+
+  .hero__logo-large {
+    max-width: 480px !important;
+    width: 55% !important;
+    min-width: 300px;
+    height: auto !important;
+  }
+
+  .hero__content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: var(--space-md) !important;
+  }
+
+  .hero__title {
+    font-size: 2.2rem !important;
+    text-align: center !important;
+    line-height: 1.2 !important;
+    margin-bottom: var(--space-md) !important;
+  }
+
+  .hero__description {
+    font-size: 1.15rem !important;
+    text-align: center !important;
+    max-width: 550px;
+    line-height: 1.6;
+  }
+
+  .hero__services--v2 {
+    font-size: 0.8rem !important;
+    letter-spacing: 2px !important;
+    gap: 0.5rem !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    margin-top: var(--space-md) !important;
+  }
+
+  .hero__services--v2 .service-divider {
+    margin: 0 0.3rem !important;
+  }
+
+  .hero-eye-marker {
+    display: none !important;
+  }
+}
+
 /* ========================================
    MOBILE RESPONSIVE STYLES
    ======================================== */
