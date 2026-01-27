@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&family=Source+Sans+3:wght@300;400;600&family=Varela+Round&display=swap" rel="stylesheet">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="css/styles.css?v=32">
+  <link rel="stylesheet" href="css/styles.css?v=34">
 </head>
 <body>
   <!-- Custom Cursor -->
@@ -201,13 +201,15 @@
       <section class="video-section" id="videoSection">
         <div class="video-section__sticky">
           <div class="video-section__wrapper">
-            <iframe
-              src="https://player.vimeo.com/video/499921561?background=1&autoplay=1&loop=1&muted=1&title=0&byline=0&portrait=0"
-              class="video-section__iframe"
-              frameborder="0"
-              allow="autoplay; fullscreen"
-              allowfullscreen>
-            </iframe>
+            <video
+              class="video-section__video"
+              autoplay
+              muted
+              loop
+              playsinline
+              controls>
+              <source src="https://prismaconsul-vjurf9lr9p.live-website.com/wp-content/uploads/2026/01/prisma_video.mp4" type="video/mp4">
+            </video>
           </div>
         </div>
       </section>
