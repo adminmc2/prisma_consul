@@ -1328,10 +1328,20 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   filter: blur(4px);
 }
 
-/* Contenido de la card - parte superior izquierda */
-.servicio-card__content {
+/* Título de la card - posicionado arriba */
+.servicio-card__title-wrap {
   position: absolute;
-  top: 40px;
+  top: 50px;
+  left: 0;
+  right: 0;
+  padding: 0 var(--space-2xl);
+  z-index: 2;
+}
+
+/* Cuerpo de la card - descripción y bullets desde arriba (debajo del título) */
+.servicio-card__body {
+  position: absolute;
+  top: 200px;
   left: 0;
   right: 0;
   padding: 0 var(--space-2xl);
@@ -1343,7 +1353,6 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   font-size: 4.5rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 9rem;
   letter-spacing: -2px;
 }
 
@@ -3440,11 +3449,17 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     opacity: 0.12 !important;
   }
 
-  .servicio-card__content {
+  .servicio-card__title-wrap {
     position: relative !important;
     top: auto !important;
     padding: var(--space-md);
     padding-top: 100px; /* Espacio para triángulo */
+  }
+
+  .servicio-card__body {
+    position: relative !important;
+    bottom: auto !important;
+    padding: var(--space-md);
   }
 
   /* Títulos y descripciones ya definidos en tipografía coherente */
