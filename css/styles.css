@@ -1319,10 +1319,10 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   filter: blur(4px);
 }
 
-/* Contenido de la card - parte inferior */
+/* Contenido de la card - parte superior izquierda */
 .servicio-card__content {
   position: absolute;
-  top: 55%;
+  top: 40px;
   left: 0;
   right: 0;
   padding: 0 var(--space-2xl);
@@ -1334,7 +1334,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   font-size: 4.5rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: var(--space-md);
+  margin-bottom: 9rem;
   letter-spacing: -2px;
 }
 
@@ -1342,7 +1342,21 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   font-size: 1.5rem;
   color: var(--text-secondary);
   line-height: 1.7;
-  max-width: 500px;
+  max-width: 550px;
+}
+
+.servicio-card__list {
+  list-style: disc;
+  padding-left: 1.2rem;
+  margin-top: var(--space-sm);
+  max-width: 550px;
+}
+
+.servicio-card__list li {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 0.3rem;
 }
 
 /* Numero de indice en la esquina inferior derecha */

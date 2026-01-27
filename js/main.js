@@ -538,8 +538,8 @@ function initVideoScroll() {
     // Fase 5: 85% - 100% → PAUSA de lectura en Analytics (última card)
 
     const phase1End = 0.20;
-    const phase2End = 0.35;
-    const phase3End = 0.50; // Pausa inicial
+    const phase2End = 0.38;
+    const phase3End = 0.55; // Pausa inicial (más tiempo para ver servicios)
     const phase4End = 0.85; // Fin del scroll horizontal
 
     // Header transparente solo durante fase 1 y 2 (video visible)
