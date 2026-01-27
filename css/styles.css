@@ -3286,15 +3286,19 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   }
 
   .hero__services--v2 {
-    font-size: 0.65rem;
-    letter-spacing: 1px;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-    line-height: 1.8;
+    font-size: 0.5rem !important;
+    letter-spacing: 0.5px !important;
+    flex-wrap: wrap !important;
+    gap: 0.2rem !important;
+    line-height: 1.8 !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
   }
 
   .hero__services--v2 .service-divider {
-    margin: 0 0.15rem;
+    margin: 0 0.1rem !important;
   }
 
   /* Hero CTA buttons mobile - OCULTOS */
