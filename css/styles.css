@@ -301,10 +301,12 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   backdrop-filter: blur(10px);
 }
 
-/* Header transparente cuando la sección quote está activa */
-.header--quote-active {
-  background: transparent !important;
-  backdrop-filter: none !important;
+/* Header transparente cuando la sección quote está activa (solo desktop) */
+@media (min-width: 1024px) {
+  .header--quote-active {
+    background: transparent !important;
+    backdrop-filter: none !important;
+  }
 }
 
 /* Header transparente sobre el video */
@@ -1937,16 +1939,16 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   left: 45%;
   transform: translate(-50%, -50%);
   margin-top: -40px; /* Ajuste vertical */
-  width: 350px;
-  height: 915px; /* 305px * 3 triángulos */
+  width: clamp(250px, 24vw, 350px);
+  height: calc(clamp(250px, 24vw, 350px) * 2.614); /* ratio 305/350 * 3 */
   pointer-events: none;
 }
 
 .quote-triangle-wrapper {
   position: absolute;
   left: 0;
-  width: 350px;
-  height: 305px;
+  width: 100%;
+  height: calc(100% / 3);
 }
 
 .quote-triangle-wrapper--1 {
@@ -1954,16 +1956,16 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 .quote-triangle-wrapper--2 {
-  top: 305px;
+  top: calc(100% / 3);
 }
 
 .quote-triangle-wrapper--3 {
-  top: 610px;
+  top: calc(200% / 3);
 }
 
 .quote-triangle {
-  width: 350px;
-  height: 305px;
+  width: 100%;
+  height: 100%;
 }
 
 /* Barra de progreso VERTICAL - Estilo Q.Clay */
@@ -2013,19 +2015,19 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
 /* Línea 1: más pequeña arriba (punta del triángulo) */
 .quote-subtitle__line--1 {
-  font-size: 0.9rem;
+  font-size: clamp(0.6rem, 1vw, 0.9rem);
   margin-bottom: 5px;
 }
 
 /* Línea 2: mediana */
 .quote-subtitle__line--2 {
-  font-size: 1.1rem;
+  font-size: clamp(0.7rem, 1.22vw, 1.1rem);
   margin-bottom: 5px;
 }
 
 /* Línea 3: más grande abajo (base del triángulo) */
 .quote-subtitle__line--3 {
-  font-size: 1.35rem;
+  font-size: clamp(0.85rem, 1.5vw, 1.35rem);
 }
 
 /* ----------------------------------------
