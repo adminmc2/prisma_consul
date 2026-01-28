@@ -1639,6 +1639,8 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
 .transition-static__person--1 {
   transform: translateX(-50%);
+  height: 185%;
+  top: -15%;
 }
 
 .transition-static__person--1.active {
@@ -1654,6 +1656,8 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 .transition-static__person--2 {
   transform: translateX(100%);
   opacity: 0;
+  height: 155%;
+  top: -3%;
 }
 
 .transition-static__person--2.active {
@@ -2464,7 +2468,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   /* Contacto - Two columns on tablet */
   .contacto__container {
     grid-template-columns: 1fr 1fr;
-    align-items: center;
+    align-items: start;
   }
 
   .footer__container {
@@ -3061,7 +3065,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 /* Desktop medio - ajustes para 1025px-1470px (cubre MacBook 13") */
-@media (min-width: 1025px) and (max-width: 1470px) {
+@media (min-width: 1025px) and (max-width: 1512px) {
   .hero-eye-marker {
     width: 100px !important;
     height: 100px !important;
@@ -3085,13 +3089,34 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
   /* Sección personas - ajustes responsive */
   .transition-static__person {
-    height: 110% !important;
+    height: 130% !important;
     left: 50% !important;
     transform: translateX(-50%);
   }
 
+  .transition-static__person--1 {
+    height: 160% !important;
+    top: -3% !important;
+    transform: translateX(-50%);
+  }
+
+  .transition-static__person--2 {
+    height: 140% !important;
+    top: -2% !important;
+  }
+
+  .transition-static__person--1.active {
+    transform: translateX(-50%) !important;
+  }
+
   .transition-static__person--2.active {
     transform: translateX(-50%) !important;
+  }
+
+  .transition-static__person--3 {
+    height: 115% !important;
+    top: 0% !important;
+    left: 55% !important;
   }
 
   .transition-static__person--3.active {
@@ -3214,6 +3239,17 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
   .hero-eye-marker {
     display: none !important;
+  }
+
+  /* Personas - ajuste para 13 pulgadas */
+  .transition-static__person--3 {
+    height: 100% !important;
+    top: 2% !important;
+    left: 55% !important;
+  }
+
+  .transition-static__person--3.active {
+    transform: translateX(-50%) !important;
   }
 
 }
