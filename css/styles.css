@@ -1183,6 +1183,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   overflow: hidden;
   padding-top: 80px; /* Espacio para el menú */
   box-sizing: border-box;
+  opacity: 0;
 }
 
 /* Título como primer elemento del carrusel */
@@ -1619,8 +1620,9 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   left: 33.33%;
   width: 33.33%;
   height: 100%;
-  z-index: 2;
-  overflow: hidden;
+  z-index: 4;
+  overflow: visible;
+  pointer-events: none;
 }
 
 .transition-static__person {
@@ -1639,8 +1641,8 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
 .transition-static__person--1 {
   transform: translateX(-50%);
-  height: 185%;
-  top: -15%;
+  height: 155%;
+  top: -5%;
 }
 
 .transition-static__person--1.active {
@@ -1676,7 +1678,8 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 .transition-static__person--3.active {
-  transform: translateX(-50%);
+  transform: translateX(-55%);
+  left: 55%;
   opacity: 1;
 }
 
@@ -2129,7 +2132,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
    Contacto Section
    ---------------------------------------- */
 .contacto {
-  padding-top: 250px; /* Espacio grande arriba para transición desde quote */
+  padding-top: 200px; /* Espacio arriba para transición desde quote */
   padding-left: var(--space-md);
   padding-right: var(--space-md);
   padding-bottom: var(--space-2xl);
@@ -2253,6 +2256,29 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   min-height: 120px;
 }
 
+/* Botón enviar formulario - mismo estilo que Contactar */
+.contact-form .btn--primary {
+  clip-path: none;
+  background: var(--tech-cyan);
+  border: 1px solid var(--tech-cyan);
+  border-radius: 4px 25px 25px 4px;
+  color: var(--prisma-navy);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 500;
+  padding: 14px 28px;
+  justify-content: center;
+}
+
+.contact-form .btn--primary:hover {
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--prisma-navy);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(49, 190, 239, 0.3);
+  filter: none;
+}
+
 /* ----------------------------------------
    Footer
    ---------------------------------------- */
@@ -2264,14 +2290,33 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 .footer__container {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 var(--space-md);
   display: grid;
   gap: var(--space-lg);
 }
 
-.footer__logo {
-  height: 50px;
+.footer__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+}
+
+.footer__logo-symbol {
+  height: 160px;
   width: auto;
-  margin-bottom: var(--space-sm);
+  margin-top: -55px;
+  margin-bottom: -45px;
+  margin-left: -50px;
+}
+
+.footer__brand-name {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: 2px;
+  margin-bottom: 2px;
 }
 
 .footer__tagline {
@@ -2306,7 +2351,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 .footer__bottom {
   max-width: 1200px;
   margin: var(--space-lg) auto 0;
-  padding-top: var(--space-md);
+  padding: var(--space-md) var(--space-md) 0;
   border-top: 1px solid var(--border-color);
   text-align: center;
 }
@@ -3065,7 +3110,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 /* Desktop medio - ajustes para 1025px-1470px (cubre MacBook 13") */
-@media (min-width: 1025px) and (max-width: 1512px) {
+@media (min-width: 1025px) and (max-width: 1600px) {
   .hero-eye-marker {
     width: 100px !important;
     height: 100px !important;
@@ -3095,8 +3140,8 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   }
 
   .transition-static__person--1 {
-    height: 160% !important;
-    top: -3% !important;
+    height: 125% !important;
+    top: 0% !important;
     transform: translateX(-50%);
   }
 
@@ -3114,13 +3159,13 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   }
 
   .transition-static__person--3 {
-    height: 115% !important;
-    top: 0% !important;
+    height: 120% !important;
+    top: -5% !important;
     left: 55% !important;
   }
 
   .transition-static__person--3.active {
-    transform: translateX(-50%) !important;
+    transform: translateX(-55%) !important;
   }
 
   .transition-static__roles span {
@@ -3243,13 +3288,13 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
   /* Personas - ajuste para 13 pulgadas */
   .transition-static__person--3 {
-    height: 100% !important;
-    top: 2% !important;
+    height: 105% !important;
+    top: -2% !important;
     left: 55% !important;
   }
 
   .transition-static__person--3.active {
-    transform: translateX(-50%) !important;
+    transform: translateX(-55%) !important;
   }
 
 }
@@ -3779,9 +3824,15 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     text-align: center;
   }
 
-  .footer__logo {
-    height: 40px;
-    margin: 0 auto var(--space-xs);
+  .footer__brand {
+    align-items: center;
+  }
+
+  .footer__logo-symbol {
+    height: 130px;
+    margin-top: -40px;
+    margin-bottom: -35px;
+    margin-left: 0;
   }
 
   .footer__list {

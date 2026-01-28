@@ -233,6 +233,97 @@ function initSmoothScroll() {
 
       e.preventDefault();
 
+      // Si es #servicios, ir a la posición donde los servicios son visibles (fase 3)
+      if (href === '#servicios') {
+        const container = document.getElementById('videoServiciosContainer');
+        if (container) {
+          const containerTop = container.getBoundingClientRect().top + window.pageYOffset;
+          const containerHeight = container.offsetHeight;
+          const viewportHeight = window.innerHeight;
+          const scrollableDistance = containerHeight - viewportHeight;
+          // Fase 3 empieza en 0.38, ir un poco más allá para asegurar visibilidad
+          const targetScroll = containerTop + (scrollableDistance * 0.42);
+          window.scrollTo({
+            top: targetScroll,
+            behavior: 'smooth'
+          });
+          return;
+        }
+      }
+
+      // Si es #nosotros, ir a la posición donde la tarjeta está abierta con persona 1
+      if (href === '#nosotros') {
+        const nosotrosSection = document.getElementById('nosotros');
+        if (nosotrosSection) {
+          const sectionTop = nosotrosSection.getBoundingClientRect().top + window.pageYOffset;
+          const sectionHeight = nosotrosSection.offsetHeight;
+          const viewportHeight = window.innerHeight;
+          // Tarjeta abierta (scrollProgress >= 0.50) pero persona 1 visible
+          // (distanceToBottom > 2.3 * viewportHeight)
+          // scrollY = sectionTop + sectionHeight - 3.5 * viewportHeight
+          // Esto asegura distanceToBottom = 2.5vh (> 2.3vh) → persona 1
+          const targetScroll = sectionTop + sectionHeight - (viewportHeight * 3.5);
+          window.scrollTo({
+            top: targetScroll,
+            behavior: 'smooth'
+          });
+          return;
+        }
+      }
+
+      // Si es #contacto, ir al título "Conversemos sobre el futuro de tu empresa"
+      if (href === '#contacto') {
+        const contactoSection = document.getElementById('contacto');
+        if (contactoSection) {
+          // Activar flag para bloquear reactivación del closing overlay
+          window._scrollingToContacto = true;
+          // Forzar reveal del contenido
+          const invitation = contactoSection.querySelector('.contacto__invitation');
+          const formWrapper = contactoSection.querySelector('.contacto__form-wrapper');
+          if (invitation) invitation.classList.add('revealed');
+          if (formWrapper) formWrapper.classList.add('revealed');
+          // Ocultar la capa fixed del closing de nosotros
+          const closingSection = document.getElementById('transitionClosing');
+          if (closingSection) {
+            closingSection.classList.remove('active');
+            closingSection.style.display = 'none';
+          }
+          const header = document.getElementById('header');
+          if (header) header.classList.remove('header--quote-active');
+          // Primero: saltar instantáneamente al final del documento
+          // Esto nos posiciona DESPUÉS de la zona de nosotros, evitando
+          // que el scroll handler reactive el closing overlay
+          const docHeight = document.documentElement.scrollHeight;
+          const viewportHeight = window.innerHeight;
+          window.scrollTo({ top: docHeight - viewportHeight, behavior: 'instant' });
+          // Esperar un frame para que el scroll handler procese la nueva posición
+          requestAnimationFrame(() => {
+            // Re-ocultar closing por si el handler lo reactivó
+            if (closingSection) {
+              closingSection.classList.remove('active');
+              closingSection.style.display = 'none';
+            }
+            if (header) header.classList.remove('header--quote-active');
+            // Scroll al inicio de la sección contacto + pequeño margen
+            // Esto garantiza que targetScroll siempre está DENTRO de contacto
+            // (nunca en nosotros), evitando la pantalla negra
+            const sectionTop = contactoSection.getBoundingClientRect().top + window.pageYOffset;
+            const targetScroll = sectionTop + 20;
+            window.scrollTo({
+              top: targetScroll,
+              behavior: 'smooth'
+            });
+            // Restaurar display del closing después de llegar
+            setTimeout(() => {
+              window._scrollingToContacto = false;
+              // Solo restaurar display si hemos scrolleado de vuelta a nosotros
+              // Si seguimos en contacto, dejar oculto - se restaurará vía scroll handler
+            }, 1500);
+          });
+          return;
+        }
+      }
+
       const headerOffset = 80;
       const elementPosition = target.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
@@ -345,21 +436,26 @@ function initContactForm() {
     submitBtn.textContent = 'Enviando...';
     submitBtn.disabled = true;
 
-    // Simulate form submission (replace with actual endpoint)
     try {
       // Collect form data
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
 
-      // Log data for now (replace with actual API call)
-      console.log('Form data:', data);
+      // Build mailto link with form data
+      const to = 'jpvg_0604@hotmail.com';
+      const subject = encodeURIComponent('Contacto desde PRISMA Consul - ' + (data.nombre || ''));
+      const body = encodeURIComponent(
+        'Nombre: ' + (data.nombre || '') + '\n' +
+        'Empresa: ' + (data.empresa || '') + '\n' +
+        'Email: ' + (data.email || '') + '\n\n' +
+        'Mensaje:\n' + (data.mensaje || '')
+      );
 
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      window.location.href = 'mailto:' + to + '?subject=' + subject + '&body=' + body;
 
       // Success state
       submitBtn.textContent = '¡Enviado!';
-      submitBtn.style.background = 'linear-gradient(135deg, #32CD32, #228B22)';
+      submitBtn.style.background = '#32CD32';
       form.reset();
 
       // Reset button after 3 seconds
@@ -372,7 +468,7 @@ function initContactForm() {
     } catch (error) {
       console.error('Form submission error:', error);
       submitBtn.textContent = 'Error. Reintentar';
-      submitBtn.style.background = 'linear-gradient(135deg, #FF6B6B, #EE5A5A)';
+      submitBtn.style.background = '#FF6B6B';
 
       setTimeout(() => {
         submitBtn.textContent = originalText;
@@ -645,7 +741,7 @@ function initVideoScroll() {
     }
 
     // Ocultar servicios cuando transition-static entra en viewport
-    const transitionStaticSection = document.getElementById('transitionStatic');
+    const transitionStaticSection = document.getElementById('nosotros');
     if (transitionStaticSection) {
       const staticRect = transitionStaticSection.getBoundingClientRect();
       const viewportH = window.innerHeight;
@@ -694,7 +790,7 @@ function initVideoScroll() {
 
   // Transition Marquee - aparece al final de servicios, desaparece en transition-static
   const transitionMarquee = document.getElementById('transitionMarquee');
-  const transitionStatic = document.getElementById('transitionStatic');
+  const transitionStatic = document.getElementById('nosotros');
 
   if (transitionMarquee && transitionStatic) {
     const checkTransition = () => {
@@ -729,7 +825,7 @@ function initVideoScroll() {
    3. CUANDO título está en posición final, tarjeta aparece DE GOLPE desde la derecha
    ---------------------------------------- */
 function initTransitionStatic() {
-  const section = document.getElementById('transitionStatic');
+  const section = document.getElementById('nosotros');
   const title = document.getElementById('transitionTitle');
   const card = document.getElementById('transitionCard');
 
@@ -918,7 +1014,8 @@ function initTransitionStatic() {
         if (info2) info2.classList.remove('active');
         if (info3) info3.classList.remove('active');
 
-        if (closingSection) {
+        if (closingSection && !window._scrollingToContacto) {
+          closingSection.style.display = '';
           closingSection.classList.add('active');
           if (header) header.classList.add('header--quote-active');
 
