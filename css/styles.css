@@ -2639,6 +2639,50 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     grid-template-columns: 1fr 1fr;
     gap: var(--space-md);
   }
+
+  /* Sección personas - tablet responsive */
+  .transition-static__roles span {
+    font-size: clamp(1rem, 2vw, 1.6rem) !important;
+    letter-spacing: 2px !important;
+  }
+
+  .transition-static__person-name {
+    font-size: clamp(1.1rem, 1.8vw, 1.5rem) !important;
+    letter-spacing: 2px !important;
+  }
+
+  .transition-static__person-desc {
+    font-size: clamp(0.7rem, 0.9vw, 0.85rem) !important;
+    line-height: 1.5 !important;
+  }
+
+  .transition-static__person-info {
+    gap: 12px !important;
+  }
+
+  .transition-static__contact-btn {
+    font-size: 0.8rem !important;
+    padding: 8px 18px 8px 12px !important;
+  }
+
+  .transition-static__roles-layer {
+    padding: 20px !important;
+  }
+
+  .transition-static__roles {
+    bottom: 20px !important;
+    left: 20px !important;
+  }
+
+  .transition-static__info-layer {
+    padding: 20px !important;
+  }
+
+  .transition-static__person-info {
+    bottom: 20px !important;
+    right: 20px !important;
+    left: 20px !important;
+  }
 }
 
 /* ----------------------------------------
@@ -3035,6 +3079,64 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
   .hero__services--v2 .service-divider {
     margin: 0 0.1rem !important;
+  }
+
+  /* Sección personas - ajustes responsive */
+  .transition-static__person {
+    height: 110% !important;
+    left: 50% !important;
+    transform: translateX(-50%);
+  }
+
+  .transition-static__person--2.active {
+    transform: translateX(-50%) !important;
+  }
+
+  .transition-static__person--3.active {
+    transform: translateX(-50%) !important;
+  }
+
+  .transition-static__roles span {
+    font-size: clamp(1.4rem, 2.5vw, 2.2rem) !important;
+    letter-spacing: 2px !important;
+  }
+
+  .transition-static__person-name {
+    font-size: clamp(1.3rem, 2.2vw, 1.8rem) !important;
+    letter-spacing: 2px !important;
+  }
+
+  .transition-static__person-desc {
+    font-size: clamp(0.75rem, 0.95vw, 0.9rem) !important;
+    line-height: 1.5 !important;
+  }
+
+  .transition-static__person-info {
+    gap: 14px !important;
+  }
+
+  .transition-static__contact-btn {
+    font-size: 0.85rem !important;
+    padding: 10px 22px 10px 14px !important;
+  }
+
+  .transition-static__roles-layer {
+    padding: 25px !important;
+  }
+
+  .transition-static__roles {
+    bottom: 25px !important;
+    left: 25px !important;
+  }
+
+  .transition-static__info-layer {
+    padding: 25px !important;
+  }
+
+  .transition-static__person-info {
+    bottom: 25px !important;
+    right: 25px !important;
+    left: 25px !important;
   }
 }
 
@@ -3823,9 +3925,9 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     padding: var(--space-md) !important;
     display: flex !important;
     flex-direction: column !important;
-    align-items: center !important;
+    align-items: flex-start !important;
     gap: var(--space-sm) !important;
-    text-align: center !important;
+    text-align: left !important;
     bottom: auto !important;
     left: auto !important;
     right: auto !important;
@@ -3845,18 +3947,18 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   }
 
   .transition-static__person-name {
-    text-align: center !important;
+    text-align: left !important;
     font-size: 1.25rem !important;
     width: 100% !important;
   }
 
   .transition-static__person-desc {
-    text-align: center !important;
+    text-align: left !important;
   }
 
   .transition-static__contact-btn {
-    width: 100%;
-    justify-content: center;
+    width: auto;
+    justify-content: flex-start;
     padding: 12px 20px;
     font-size: 0.9rem;
   }
@@ -3865,7 +3967,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   .transition-static__mobile-photo {
     display: block !important;
     width: 100%;
-    height: 200px;
+    height: 300px;
     position: relative;
     overflow: hidden;
     border-radius: 12px;
@@ -3874,14 +3976,27 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   }
 
   .transition-static__mobile-photo img {
-    width: auto;
-    height: 250%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     object-position: top center;
-    position: absolute;
-    left: 50%;
-    top: 0;
-    transform: translateX(-50%);
+  }
+
+  /* Colores distintos por persona */
+  .transition-static__info--1 .transition-static__mobile-photo {
+    background: rgba(49, 190, 239, 0.12);
+  }
+  .transition-static__info--2 .transition-static__mobile-photo {
+    background: rgba(161, 139, 217, 0.15);
+  }
+  .transition-static__info--3 .transition-static__mobile-photo {
+    background: rgba(153, 78, 149, 0.15);
+  }
+
+  /* Jorge - más cara, menos cuerpo */
+  .transition-static__info--2 .transition-static__mobile-photo img {
+    transform: scale(1.4);
+    transform-origin: top center;
   }
 
   /* Roles/puestos en móvil */
@@ -3890,7 +4005,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     flex-direction: row;
     flex-wrap: wrap;
     gap: 8px;
-    justify-content: center;
+    justify-content: flex-start;
     margin-bottom: var(--space-sm);
   }
 
@@ -4304,6 +4419,180 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   .footer__container {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-lg);
+  }
+
+  /* Sección personas - tablet portrait: layout tipo móvil */
+  .transition-static {
+    min-height: auto !important;
+    height: auto !important;
+    padding: var(--space-xl) var(--space-md) !important;
+    background: var(--bg-primary) !important;
+    display: block !important;
+  }
+
+  .transition-static__content {
+    position: relative !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    padding: 0 0 var(--space-md) 0 !important;
+    opacity: 1 !important;
+    transform: none !important;
+    top: auto !important;
+    left: auto !important;
+  }
+
+  .transition-static__text {
+    font-family: var(--font-heading) !important;
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
+    color: var(--text-primary) !important;
+    text-align: left !important;
+  }
+
+  .transition-static__card {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--space-lg) !important;
+    opacity: 1 !important;
+  }
+
+  .transition-static__bg-layer,
+  .transition-static__person-layer {
+    display: none !important;
+  }
+
+  .transition-static__roles-layer {
+    display: none !important;
+  }
+
+  .transition-static__info-layer {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--space-lg) !important;
+    padding: 0 !important;
+  }
+
+  .transition-static__person-info {
+    position: relative !important;
+    opacity: 1 !important;
+    background: var(--prisma-navy) !important;
+    border-radius: 16px !important;
+    padding: var(--space-md) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: var(--space-sm) !important;
+    text-align: left !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+  }
+
+  .transition-static__mobile-photo {
+    display: block !important;
+    width: 100%;
+    height: 350px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgba(49, 190, 239, 0.1);
+    margin-bottom: var(--space-sm);
+  }
+
+  .transition-static__mobile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+
+  /* Colores distintos por persona */
+  .transition-static__info--1 .transition-static__mobile-photo {
+    background: rgba(49, 190, 239, 0.12);
+  }
+  .transition-static__info--2 .transition-static__mobile-photo {
+    background: rgba(161, 139, 217, 0.15);
+  }
+  .transition-static__info--3 .transition-static__mobile-photo {
+    background: rgba(153, 78, 149, 0.15);
+  }
+
+  /* Jorge - más cara, menos cuerpo */
+  .transition-static__info--2 .transition-static__mobile-photo img {
+    transform: scale(1.4);
+    transform-origin: top center;
+  }
+
+  .transition-static__mobile-roles {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-start;
+    margin-bottom: var(--space-sm);
+  }
+
+  .transition-static__mobile-roles span {
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+  }
+
+  .transition-static__person-name {
+    text-align: left !important;
+    font-size: 1.4rem !important;
+    letter-spacing: 1.5px !important;
+  }
+
+  .transition-static__person-desc {
+    text-align: left !important;
+    font-size: 0.9rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .transition-static__contact-btn {
+    width: auto;
+    font-size: 0.85rem !important;
+    padding: 10px 20px !important;
+  }
+
+  .transition-static__closing {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: var(--prisma-navy) !important;
+    border-radius: 16px !important;
+    margin-top: var(--space-lg) !important;
+    padding: var(--space-lg) var(--space-md) !important;
+    flex-direction: column !important;
   }
 }
 
