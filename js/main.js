@@ -442,7 +442,7 @@ function initContactForm() {
       const data = Object.fromEntries(formData.entries());
 
       // Build mailto link with form data
-      const to = 'jpvg_0604@hotmail.com';
+      const to = 'info@prismaconsul.com';
       const subject = encodeURIComponent('Contacto desde PRISMA Consul - ' + (data.nombre || ''));
       const body = encodeURIComponent(
         'Nombre: ' + (data.nombre || '') + '\n' +
