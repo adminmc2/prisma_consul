@@ -1642,7 +1642,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 .transition-static__person--1 {
   transform: translateX(-50%);
   height: 200%;
-  top: -20%;
+  top: -13%;
 }
 
 .transition-static__person--1.active {
@@ -3141,7 +3141,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
   .transition-static__person--1 {
     height: 200% !important;
-    top: -20% !important;
+    top: -13% !important;
     transform: translateX(-50%);
   }
 
