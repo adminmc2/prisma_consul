@@ -1641,8 +1641,8 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 
 .transition-static__person--1 {
   transform: translateX(-50%);
-  height: 155%;
-  top: -5%;
+  height: 200%;
+  top: -20%;
 }
 
 .transition-static__person--1.active {
@@ -3140,8 +3140,8 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   }
 
   .transition-static__person--1 {
-    height: 125% !important;
-    top: 0% !important;
+    height: 200% !important;
+    top: -20% !important;
     transform: translateX(-50%);
   }
 
@@ -4082,6 +4082,12 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     background: rgba(153, 78, 149, 0.15);
   }
 
+  /* Pablo - más cara, menos cuerpo */
+  .transition-static__info--1 .transition-static__mobile-photo img {
+    transform: scale(1.8);
+    transform-origin: 42% 20%;
+  }
+
   /* Jorge - más cara, menos cuerpo */
   .transition-static__info--2 .transition-static__mobile-photo img {
     transform: scale(1.4);
@@ -4621,6 +4627,12 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   }
   .transition-static__info--3 .transition-static__mobile-photo {
     background: rgba(153, 78, 149, 0.15);
+  }
+
+  /* Pablo - más cara, menos cuerpo */
+  .transition-static__info--1 .transition-static__mobile-photo img {
+    transform: scale(1.8);
+    transform-origin: 42% 20%;
   }
 
   /* Jorge - más cara, menos cuerpo */
