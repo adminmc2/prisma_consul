@@ -7,7 +7,7 @@
 
 > Especificación completa: Experiencias, Campos, Flujos, IA y Componentes
 
-Versión 2.1 — Febrero 2026
+Versión 2.2 — Febrero 2026
 
 ---
 
@@ -65,6 +65,28 @@ El sistema está diseñado en tres capas que trabajan juntas para ofrecer experi
 | **Flujo Continuo** | Una acción real (visita) = un registro. No múltiples pantallas |
 | **IA Integrada** | No es un módulo aparte. Está en cada campo, cada acción, cada pantalla |
 | **Offline-Ready** | El rep puede trabajar sin señal. Sincroniza cuando hay conexión |
+
+### Ejemplos de GenUI en Acción
+
+La interfaz generativa adapta cada pantalla al contexto específico del usuario:
+
+| Situación | Interfaz Generada |
+|-----------|-------------------|
+| Rep dice "registrar visita con Dr. García" | Sistema muestra formulario precargado con datos del Dr. García, historial reciente, productos que suele prescribir |
+| Rep en zona de hospitales | Mapa muestra solo HCPs de esa zona, ordenados por última visita |
+| Supervisor consulta equipo lunes 8am | Dashboard enfatiza métricas de semana anterior y pendientes |
+| Director pregunta por forecast | Vista ejecutiva con proyección, no detalles operativos |
+
+### Ejemplos de Modo Offline
+
+El sistema permite trabajo completo sin conexión:
+
+| Escenario | Comportamiento |
+|-----------|----------------|
+| 5 visitas en hospital rural sin señal | Todas las visitas se registran localmente, se sincronizan al salir a zona con cobertura |
+| Rep en avión registra notas | Notas guardadas offline, cola de sincronización visible |
+| Zona remota durante 3 días | Base de datos local funciona completa, sincronización automática al reconectar |
+| Pérdida de señal durante visita | Registro continúa sin interrupción, timestamp y ubicación se preservan |
 
 ---
 
@@ -326,7 +348,29 @@ El médico accede a través de una app de la empresa (conectada al sistema) o un
 
 **Pregunta central:** *"¿Cómo configuro el sistema sin depender del proveedor?"*
 
-## 8.1 Áreas de Configuración
+## 8.1 Dos Opciones de Gestión
+
+El cliente elige cómo prefiere gestionar la administración del sistema:
+
+| Opción | Descripción | Ideal Para |
+|--------|-------------|------------|
+| **"La gestionas tú"** | Acceso completo al panel de administración. El cliente tiene control total sobre usuarios, catálogos, reglas y configuraciones. Incluye capacitación inicial. | Empresas con equipo IT interno o que prefieren autonomía total |
+| **"La gestionamos nosotros"** | Prisma gestiona la administración como servicio. El cliente solicita cambios y Prisma los implementa en máximo 24-48 horas. | Empresas que prefieren enfocarse en ventas y delegar lo técnico |
+
+### Regalo: 6 Meses de Administración Supervisada
+
+Durante los primeros 6 meses de operación, **Prisma gestiona la administración sin costo adicional**:
+
+- ✓ Configuración inicial completa
+- ✓ Carga de catálogos (productos, territorios, HCPs)
+- ✓ Alta de usuarios y asignación de roles
+- ✓ Configuración de reglas de compliance
+- ✓ Ajustes y optimizaciones según feedback
+- ✓ Capacitación progresiva al equipo del cliente
+
+Al finalizar los 6 meses, el cliente decide: continuar con gestión autónoma o contratar administración como servicio mensual.
+
+## 8.2 Áreas de Configuración
 
 | ÁREA | CONFIGURACIONES DISPONIBLES |
 |------|---------------------------|
@@ -653,6 +697,6 @@ El sistema se conecta con otras herramientas para crear un ecosistema completo.
 
 ---
 
-*Versión 2.1 — Febrero 2026*
+*Versión 2.2 — Febrero 2026*
 
 *© 2026 APEX - Prisma. Todos los derechos reservados.*
