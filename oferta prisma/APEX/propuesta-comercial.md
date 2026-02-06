@@ -10,7 +10,7 @@
 **PROPUESTA COMERCIAL**
 Documento Ejecutivo para Tomadores de Decisión
 
-Versión 3.2 — Febrero 2026
+Versión 3.3 — Febrero 2026
 
 ---
 
@@ -75,6 +75,57 @@ Cuando añades más capacidades en fases posteriores:
 - No hay "actualizaciones traumáticas"
 - Lo nuevo se integra con lo existente
 - Tu equipo no tiene que reaprender todo
+
+---
+
+## Dos Capas que Trabajan Juntas
+
+APEX combina lo mejor de dos mundos: la estructura clara de los sistemas tradicionales con la potencia de la IA proactiva.
+
+### La Interfaz Estructurada (Siempre Disponible)
+
+Todo lo que esperas de un sistema profesional, accesible sin depender de la IA:
+
+- **Fichas** de clientes, médicos, productos
+- **Listados** de visitas, pedidos, muestras
+- **Formularios** para registro y edición
+- **Dashboards** con métricas clave
+
+Esta capa funciona igual que cualquier CRM — solo que configurada exactamente para ti. **No consume tokens de IA.** Es tu base sólida.
+
+### El Lienzo IA (Proactivo)
+
+Un espacio dinámico donde la IA **anticipa** lo que necesitas. No espera a que preguntes — te prepara:
+
+| Cuándo | Qué hace la IA |
+|--------|----------------|
+| **Al abrir la app por la mañana** | Te muestra el briefing de hoy: visitas pendientes, alertas, oportunidades |
+| **Antes de cada visita** | Prepara el historial del médico, pedidos recientes, qué comentarle |
+| **Al terminar el día** | Resume tu actividad, sugiere seguimientos para mañana |
+| **Cuando detecta algo importante** | Alerta proactiva: pedido inusual, cliente inactivo, oportunidad |
+
+El Lienzo IA funciona como un **canvas visual** — similar a herramientas creativas como Firefly o Canva — donde la IA genera componentes visuales (tarjetas, gráficos, alertas) según tu contexto.
+
+### Por Qué Dos Capas
+
+| Necesidad | Capa | Ejemplo |
+|-----------|------|---------|
+| "Quiero ver la lista de pedidos" | Estructurada | Acceso directo, sin IA |
+| "¿Qué debería hacer hoy?" | Lienzo IA | Briefing proactivo |
+| "Necesito el historial del Dr. García" | Estructurada | Ficha del médico |
+| "¿A qué médicos debería visitar esta semana?" | Lienzo IA | Sugerencias inteligentes |
+
+**Beneficio clave:** No dependes de la IA para todo. Pero cuando la usas, hace mucho más que responder — anticipa.
+
+### Tokens y Consumo
+
+La Interfaz Estructurada es **ilimitada** — no consume tokens. El Lienzo IA consume según tu plan:
+
+| Plan | Uso del Lienzo IA |
+|------|-------------------|
+| **Básico (20€)** | Briefings diarios + consultas básicas |
+| **Profesional (30€)** | Proactividad completa + análisis |
+| **Avanzado (45€)** | Sin límites + agentes autónomos |
 
 ---
 

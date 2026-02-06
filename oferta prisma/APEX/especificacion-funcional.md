@@ -7,7 +7,7 @@
 
 > Especificación completa: Experiencias, Campos, Flujos, IA y Componentes
 
-Versión 2.2 — Febrero 2026
+Versión 2.3 — Febrero 2026
 
 ---
 
@@ -31,20 +31,89 @@ Versión 2.2 — Febrero 2026
 
 # 1. ARQUITECTURA DEL SISTEMA
 
-El sistema está diseñado en tres capas que trabajan juntas para ofrecer experiencias personalizadas a cada tipo de usuario.
+El sistema está diseñado con una **arquitectura de interfaz dual** que combina acceso estructurado tradicional con un lienzo de IA proactiva.
+
+## 1.1 Arquitectura de Interfaz Dual
+
+Todos los usuarios tienen acceso a **dos formas de interactuar** con el sistema:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│           INTERFAZ ESTRUCTURADA (Siempre disponible)            │
+│  ─────────────────────────────────────────────────────────────  │
+│  • Fichas de cliente/médico                                     │
+│  • Listados de pedidos y visitas                                │
+│  • Registros y formularios                                      │
+│  • Menús y navegación tradicional                               │
+│                                                                 │
+│  → Acceso directo a datos SIN necesidad de IA                   │
+│  → El usuario PUEDE hacer todo sin tocar el lienzo IA           │
+└─────────────────────────────────────────────────────────────────┘
+                              +
+┌─────────────────────────────────────────────────────────────────┐
+│                    LIENZO IA (Proactivo)                        │
+│  ─────────────────────────────────────────────────────────────  │
+│  • Canvas interactivo tipo Adobe Firefly                        │
+│  • IA PROACTIVA: prepara información antes de que la pidas      │
+│  • Genera componentes visuales en tiempo real                   │
+│  • Componentes fijables al escritorio personal                  │
+│                                                                 │
+│  → Consume tokens según plan de suscripción                     │
+│  → Lo que diferencia a APEX de un CRM tradicional               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Lo Diferenciador: IA Proactiva
+
+A diferencia de los asistentes tradicionales que esperan instrucciones, el Lienzo IA de APEX **anticipa necesidades**:
+
+| CRM Tradicional | APEX con Lienzo IA |
+|-----------------|-------------------|
+| "Busca el cliente Juan" | Al abrir: "Buenos días. Tienes llamada con Juan en 10 min. Aquí está su ficha, historial y propuesta de valor sugerida." |
+| El usuario navega menús | La IA presenta tarjetas con acciones pendientes |
+| Reportes predefinidos | La IA genera el reporte que necesitas cuando lo necesitas |
+| Alertas genéricas | Alertas contextuales con sugerencia de acción |
+
+### Ejemplo: Mañana de un Representante
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  LIENZO IA - 8:00 AM                                            │
+│  ─────────────────────────────────────────────────────────────  │
+│                                                                 │
+│  "Buenos días, María. Hoy tienes 6 visitas programadas."        │
+│                                                                 │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
+│  │ 9:00 AM         │  │ 10:30 AM        │  │ 12:00 PM        │  │
+│  │ Dr. García      │  │ Dra. López      │  │ Dr. Martínez    │  │
+│  │ Cardiólogo      │  │ Internista      │  │ Pediatra        │  │
+│  │                 │  │                 │  │                 │  │
+│  │ ⚠️ 25 días sin  │  │ ✓ Le interesa   │  │ 🆕 Primera      │  │
+│  │ visitar         │  │ estudio nuevo   │  │ visita          │  │
+│  │                 │  │                 │  │                 │  │
+│  │ [Ver briefing]  │  │ [Ver briefing]  │  │ [Ver briefing]  │  │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘  │
+│                                                                 │
+│  💡 Sugerencia: El Dr. García preguntó por el estudio COMBINE.  │
+│     ¿Lo llevo preparado? [Sí, adjuntar] [No]                    │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## 1.2 Capas del Sistema
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    CAPA 1: EXPERIENCIAS                     │
-│  Interfaces adaptativas según el rol del usuario            │
+│  Escritorios personalizables por rol                        │
 │  Rep • Supervisor • Director • Comercial • Médico • Admin   │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │               CAPA 2: INTELIGENCIA ARTIFICIAL               │
-│  Siempre disponible, límites según consumo                  │
-│  Texto • Voz • Predicciones • Agentes Autónomos             │
+│  Proactiva + Reactiva, límites según consumo                │
+│  Lienzo IA • GenUI • Voz • Predicciones • Agentes           │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -55,16 +124,54 @@ El sistema está diseñado en tres capas que trabajan juntas para ofrecer experi
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 1.1 Principios de Diseño
+## 1.3 Principios de Diseño
 
 | Principio | Descripción |
 |-----------|-------------|
-| **GenUI (Generative UI)** | La interfaz se adapta en tiempo real según el contexto y rol del usuario |
+| **Interfaz Dual** | Acceso estructurado (sin IA) + Lienzo IA proactivo. El usuario elige cómo interactuar |
+| **IA Proactiva** | La IA no espera instrucciones. Prepara briefings, sugiere acciones, anticipa necesidades |
+| **GenUI (Generative UI)** | La interfaz se genera en tiempo real según el contexto y la intención del usuario |
 | **Mobile-First** | El rep de campo usa móvil 95% del tiempo. El sistema está optimizado para eso |
 | **WhatsApp-First** | El 90% del trabajo del rep puede hacerse desde WhatsApp sin abrir otra app |
 | **Flujo Continuo** | Una acción real (visita) = un registro. No múltiples pantallas |
-| **IA Integrada** | No es un módulo aparte. Está en cada campo, cada acción, cada pantalla |
 | **Offline-Ready** | El rep puede trabajar sin señal. Sincroniza cuando hay conexión |
+
+## 1.4 Componentes del Lienzo IA
+
+Los componentes generados por la IA pueden ser:
+
+| Tipo | Descripción | Ejemplo |
+|------|-------------|---------|
+| **Efímeros** | Se consultan y desaparecen | "¿Cuántas visitas hice esta semana?" → número → desaparece |
+| **Persistentes** | Se fijan en el escritorio personal | Gráfico de meta mensual fijado en la esquina superior |
+| **Descargables** | Se exportan para compartir | Reporte PDF generado para enviar al director |
+
+### Cómo se Fijan Componentes
+
+```
+Usuario: "Muéstrame las visitas de mi equipo esta semana"
+    ↓
+IA genera tabla con visitas por rep
+    ↓
+Usuario: [📌 Fijar] [📥 Descargar] [✓ OK]
+    ↓
+Si fija → Aparece en su escritorio personal
+Si descarga → PDF/Excel
+Si OK → Desaparece después de consultarlo
+```
+
+## 1.5 Consumo de Tokens
+
+| Interacción | Consume Tokens |
+|-------------|----------------|
+| Acceder a interfaz estructurada (fichas, listas) | ❌ No |
+| Lienzo IA: briefing matutino proactivo | ✅ Sí |
+| Lienzo IA: preguntar algo | ✅ Sí |
+| Lienzo IA: generar componente visual | ✅ Sí |
+| Dictar nota de voz (transcripción) | ✅ Sí |
+| Fijar componente en escritorio | ❌ No (ya se generó) |
+
+**Nota:** En el futuro, cuando el sistema madure, algunas interacciones rutinarias del lienzo podrán ser gratuitas.
 
 ### Ejemplos de GenUI en Acción
 
@@ -697,6 +804,6 @@ El sistema se conecta con otras herramientas para crear un ecosistema completo.
 
 ---
 
-*Versión 2.2 — Febrero 2026*
+*Versión 2.3 — Febrero 2026*
 
 *© 2026 APEX - Prisma. Todos los derechos reservados.*

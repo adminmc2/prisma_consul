@@ -8,7 +8,7 @@
 
 ---
 
-**Versión:** 2.1
+**Versión:** 2.2
 **Fecha:** Febrero 2026
 **Clasificación:** Documento Técnico de Implementación
 
@@ -128,6 +128,139 @@ Arquitectura de microservicios con API Gateway, diseñada para escalar horizonta
 | **worker-service** | Jobs en background: reportes, sincronización, notificaciones | Bull + Redis |
 | **realtime-service** | WebSockets para actualizaciones en tiempo real | Socket.io |
 | **agents-orchestrator** | Coordinación de los 4 agentes IA | LangChain + Custom |
+| **canvas-service** | Motor del Lienzo IA: generación de componentes, proactividad | NestJS + LangChain |
+
+### 2.3 Arquitectura del Lienzo IA
+
+El Lienzo IA es el componente diferenciador de APEX. A diferencia de una interfaz tradicional, el Lienzo es un canvas dinámico donde la IA genera componentes visuales de forma proactiva y reactiva.
+
+#### Diagrama del Lienzo IA
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         LIENZO IA (Canvas)                          │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │                     ZONA PROACTIVA                            │  │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐      │  │
+│  │  │ Tarjeta  │  │ Tarjeta  │  │ Alerta   │  │Sugerencia│      │  │
+│  │  │ Próxima  │  │ Briefing │  │ Urgente  │  │ del Día  │      │  │
+│  │  │ Visita   │  │  HCP     │  │          │  │          │      │  │
+│  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘      │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+│                                                                     │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │                      ZONA REACTIVA                            │  │
+│  │  ┌─────────────────────────────────────────────────────────┐  │  │
+│  │  │ "¿Qué necesitas?"                                       │  │  │
+│  │  │ [Campo de entrada natural / voz]                        │  │  │
+│  │  └─────────────────────────────────────────────────────────┘  │  │
+│  │                                                               │  │
+│  │  ┌─────────────────────────────────────────────────────────┐  │  │
+│  │  │              [Componente Generado]                      │  │  │
+│  │  │                                                         │  │  │
+│  │  │   [📌 Fijar]   [📥 Descargar]   [✓ OK]                 │  │  │
+│  │  └─────────────────────────────────────────────────────────┘  │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+│                                                                     │
+│  ┌───────────────────────────────────────────────────────────────┐  │
+│  │                   COMPONENTES FIJADOS                         │  │
+│  │  (Escritorio personalizado del usuario)                       │  │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐                    │  │
+│  │  │ KPI Meta │  │ Gráfico  │  │ Lista    │                    │  │
+│  │  │  Mes     │  │ Visitas  │  │ Pendient │                    │  │
+│  │  └──────────┘  └──────────┘  └──────────┘                    │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+#### Componentes del Servicio Canvas
+
+| Componente | Función | Tecnología |
+|------------|---------|------------|
+| **Proactivity Engine** | Genera contenido antes de que el usuario lo pida | Cron Jobs + LangChain |
+| **Component Generator** | Crea componentes visuales (tablas, gráficos, tarjetas) | React + D3.js + IA |
+| **Context Analyzer** | Analiza hora, ubicación, historial para personalizar | ML Pipeline |
+| **Persistence Layer** | Guarda componentes fijados por usuario | PostgreSQL JSONB |
+| **Token Counter** | Contabiliza consumo de IA por usuario | Redis |
+
+#### Flujo de Proactividad
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                    FLUJO PROACTIVO (Matutino)                     │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  6:00 AM  Cron Job dispara "PrepareUserDay"                     │
+│     │                                                            │
+│     ▼                                                            │
+│  Para cada usuario activo:                                       │
+│     │                                                            │
+│     ├── Consultar agenda del día (visitas, llamadas)            │
+│     ├── Generar briefings para cada HCP a visitar               │
+│     ├── Detectar alertas (metas en riesgo, vencimientos)        │
+│     ├── Preparar sugerencias personalizadas                     │
+│     │                                                            │
+│     ▼                                                            │
+│  Almacenar en cache (Redis) con TTL de 24h                      │
+│     │                                                            │
+│     ▼                                                            │
+│  Cuando usuario abre app → Mostrar contenido pre-generado       │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+#### Tipos de Componentes Generables
+
+| Tipo | Descripción | Persistencia | Tokens |
+|------|-------------|--------------|--------|
+| **Tarjeta Briefing** | Resumen de HCP antes de visita | Efímero | ~200 |
+| **Tabla Dinámica** | Listado con filtros generados por IA | Fijable | ~300 |
+| **Gráfico KPI** | Visualización de métrica específica | Fijable | ~250 |
+| **Alerta Contextual** | Notificación con contexto y sugerencia | Efímero | ~100 |
+| **Resumen de Período** | Análisis de semana/mes con insights | Descargable | ~500 |
+| **Guión de Llamada** | Script sugerido para próxima interacción | Efímero | ~400 |
+
+#### API del Canvas Service
+
+```typescript
+// Endpoints principales del Canvas Service
+
+POST /canvas/generate
+// Genera un componente bajo demanda
+{
+  "user_id": "uuid",
+  "intent": "muéstrame las visitas de mi equipo esta semana",
+  "context": { "role": "supervisor", "territory": "Norte" }
+}
+// Response: { component_type, data, html_preview, tokens_used }
+
+GET /canvas/proactive/{user_id}
+// Obtiene componentes proactivos pre-generados
+// Response: { briefings[], alerts[], suggestions[] }
+
+POST /canvas/pin
+// Fija un componente en el escritorio del usuario
+{
+  "user_id": "uuid",
+  "component_id": "uuid",
+  "position": { "x": 0, "y": 1 }
+}
+
+DELETE /canvas/pin/{component_id}
+// Elimina componente fijado
+
+GET /canvas/workspace/{user_id}
+// Obtiene el escritorio completo del usuario
+// Response: { pinned_components[], layout }
+```
+
+#### Consumo de Tokens por Plan
+
+| Plan | Tokens/mes | Proactividad | Componentes Fijables |
+|------|------------|--------------|---------------------|
+| **Básico** | 50,000 | Briefing matutino básico | 3 |
+| **Profesional** | 200,000 | Briefings + alertas + sugerencias | 10 |
+| **Avanzado** | 500,000+ | Todo + análisis predictivos | Ilimitados |
 
 ---
 
