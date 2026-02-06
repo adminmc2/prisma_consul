@@ -93,59 +93,91 @@
     <!-- Pantalla: Investigando empresa -->
     <section class="form-screen" data-screen="researching-company">
       <div class="screen-content">
-        <div class="research-header">
-          <div class="research-icon">
-            <div class="loading-search">
-              <svg viewBox="0 0 60 60" fill="none">
-                <circle cx="26" cy="26" r="18" stroke="currentColor" stroke-width="3" opacity="0.3"/>
-                <circle class="search-circle" cx="26" cy="26" r="18" stroke="currentColor" stroke-width="3"/>
-                <line x1="40" y1="40" x2="52" y2="52" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-              </svg>
+        <!-- Estado: Buscando -->
+        <div id="researchSearching">
+          <div class="research-header">
+            <div class="research-icon">
+              <div class="loading-search">
+                <svg viewBox="0 0 60 60" fill="none">
+                  <circle cx="26" cy="26" r="18" stroke="currentColor" stroke-width="3" opacity="0.3"/>
+                  <circle class="search-circle" cx="26" cy="26" r="18" stroke="currentColor" stroke-width="3"/>
+                  <line x1="40" y1="40" x2="52" y2="52" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+            <h2 class="research-title">Investigando tu empresa...</h2>
+          </div>
+
+          <div class="research-info">
+            <p class="research-description">
+              Estamos buscando información pública sobre tu empresa para hacerte preguntas más relevantes.
+            </p>
+
+            <div class="research-benefits">
+              <div class="research-benefit">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <span>Personalizamos las preguntas a tu industria</span>
+              </div>
+              <div class="research-benefit">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <span>Identificamos dolores comunes en empresas similares</span>
+              </div>
             </div>
           </div>
-          <h2 class="research-title" id="companyResearchStatus">Investigando tu empresa...</h2>
         </div>
 
-        <div class="research-info">
-          <p class="research-description">
-            Estamos analizando información pública de tu empresa para entender mejor tu contexto y hacerte preguntas más relevantes.
-          </p>
+        <!-- Estado: Resultados encontrados -->
+        <div id="researchResults" style="display: none;">
+          <div class="research-header">
+            <div class="research-icon research-icon-done">
+              <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <h2 class="research-title">Esto es lo que encontramos</h2>
+          </div>
 
-          <div class="research-benefits">
-            <div class="research-benefit">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
-              </svg>
-              <span>Personalizamos las preguntas a tu industria</span>
+          <div class="research-findings">
+            <div class="finding-card">
+              <div class="finding-label">Empresa</div>
+              <div class="finding-value" id="findingName">-</div>
             </div>
-            <div class="research-benefit">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
-              </svg>
-              <span>Identificamos dolores comunes en empresas similares</span>
+            <div class="finding-card">
+              <div class="finding-label">Sector</div>
+              <div class="finding-value" id="findingSector">-</div>
             </div>
-            <div class="research-benefit">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
-              </svg>
-              <span>Preparamos una propuesta más acertada</span>
+            <div class="finding-card">
+              <div class="finding-label">Descripción</div>
+              <div class="finding-value finding-description" id="findingDescription">-</div>
+            </div>
+            <div class="finding-card" id="findingFieldTeamCard" style="display: none;">
+              <div class="finding-label">Equipo de campo</div>
+              <div class="finding-value" id="findingFieldTeam">-</div>
+            </div>
+            <div class="finding-card" id="findingSamplesCard" style="display: none;">
+              <div class="finding-label">Muestras médicas</div>
+              <div class="finding-value" id="findingSamples">-</div>
             </div>
           </div>
 
-          <p class="research-privacy">
+          <p class="research-note">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4M12 8h.01"/>
             </svg>
-            Solo usamos información pública. Tu privacidad es importante.
+            <span id="researchConfidence">Información obtenida de fuentes públicas</span>
           </p>
         </div>
 
-        <button class="btn-primary btn-continue-research" id="btnContinueResearch">
-          <span>Continuar</span>
+        <button class="btn-primary btn-continue-research" id="btnContinueResearch" disabled>
+          <span>Buscando...</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
@@ -641,12 +673,6 @@
       </svg>
     </button>
   </nav>
-
-  <!-- Keyboard Shortcut Hints (Desktop) -->
-  <div class="keyboard-hints" id="keyboardHints">
-    <span class="hint"><kbd>Enter</kbd> para continuar</span>
-    <span class="hint"><kbd>A</kbd>-<kbd>F</kbd> para seleccionar</span>
-  </div>
 
   <!-- Scripts -->
   <script src="form.js"></script>

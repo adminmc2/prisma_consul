@@ -450,11 +450,6 @@ function showNav(show = true) {
   DOM.formNav.classList.toggle('hidden', !show);
 }
 
-function showKeyboardHints(show = true) {
-  if (DOM.keyboardHints) {
-    DOM.keyboardHints.classList.toggle('hidden', !show);
-  }
-}
 
 // ============================================================
 // NAVEGACIÓN DE PANTALLAS
@@ -512,10 +507,6 @@ function updateNavigationState() {
 
   // Botón anterior
   DOM.btnPrev.disabled = FormState.screenHistory.length <= 2;
-
-  // Keyboard hints solo en preguntas
-  const questionScreens = screen.startsWith('q1-') || screen === 'phase2-questions';
-  showKeyboardHints(questionScreens && window.innerWidth > 768);
 }
 
 async function goBack() {
@@ -585,24 +576,18 @@ async function handleCompanySubmit() {
 }
 
 async function handleResearchCompany() {
-  const statusEl = DOM.companyResearchStatus;
   const btnContinue = DOM.btnContinueResearch;
 
   // Deshabilitar botón mientras investiga
   if (btnContinue) {
     btnContinue.disabled = true;
-    btnContinue.querySelector('span').textContent = 'Investigando...';
+    btnContinue.querySelector('span').textContent = 'Buscando...';
   }
 
   try {
-    // Actualizar estado visual
-    statusEl.textContent = 'Buscando información de la empresa...';
-
     const response = await fetch(CONFIG.researchApiUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         companyName: FormState.company.name,
         website: FormState.company.website
@@ -610,34 +595,94 @@ async function handleResearchCompany() {
     });
 
     const data = await response.json();
+    console.log('Research results:', data);
 
     if (data.success && data.profile) {
       FormState.company.profile = data.profile;
       FormState.company.researchComplete = true;
 
-      statusEl.textContent = `Encontramos información sobre ${data.profile.empresa.nombre || 'tu empresa'}`;
-
       // Pre-rellenar sector si lo detectamos
-      if (data.profile.empresa.sector) {
+      if (data.profile.empresa?.sector) {
         FormState.responses.phase1.sector = data.profile.empresa.sector;
       }
-      if (data.profile.empresa.tiene_equipo_campo !== undefined) {
+      if (data.profile.empresa?.tiene_equipo_campo !== undefined) {
         FormState.responses.phase1.has_field_team = data.profile.empresa.tiene_equipo_campo ? 'yes' : 'no';
       }
+
+      // Mostrar resultados
+      showResearchResults(data.profile, data.hadWebSearch);
     } else {
-      statusEl.textContent = 'Listo para continuar';
-      FormState.company.profile = data.profile;  // Perfil por defecto
+      FormState.company.profile = data.profile;
+      showResearchResults(null, false);
     }
 
   } catch (error) {
     console.error('Error researching company:', error);
-    statusEl.textContent = 'Listo para continuar';
+    showResearchResults(null, false);
   }
 
-  // Habilitar botón para que el usuario continúe cuando quiera
+  // Habilitar botón
   if (btnContinue) {
     btnContinue.disabled = false;
     btnContinue.querySelector('span').textContent = 'Continuar';
+  }
+}
+
+// Mostrar los resultados de la investigación en la UI
+function showResearchResults(profile, hadWebSearch) {
+  const searchingSection = document.getElementById('researchSearching');
+  const resultsSection = document.getElementById('researchResults');
+
+  const sectorNames = {
+    'pharma': 'Farmacéutico / Dispositivos médicos',
+    'distribution': 'Distribución / Mayorista',
+    'manufacturing': 'Manufactura / Producción',
+    'services': 'Servicios profesionales',
+    'retail': 'Retail / Comercio',
+    'other': 'Otro sector'
+  };
+
+  // Ocultar búsqueda, mostrar resultados
+  if (searchingSection) searchingSection.style.display = 'none';
+  if (resultsSection) resultsSection.style.display = 'block';
+
+  const nameEl = document.getElementById('findingName');
+  const sectorEl = document.getElementById('findingSector');
+  const descEl = document.getElementById('findingDescription');
+  const fieldTeamCard = document.getElementById('findingFieldTeamCard');
+  const fieldTeamEl = document.getElementById('findingFieldTeam');
+  const samplesCard = document.getElementById('findingSamplesCard');
+  const samplesEl = document.getElementById('findingSamples');
+  const confidenceEl = document.getElementById('researchConfidence');
+
+  if (profile && profile.empresa) {
+    if (nameEl) nameEl.textContent = profile.empresa.nombre || FormState.company.name || 'Tu empresa';
+    if (sectorEl) sectorEl.textContent = sectorNames[profile.empresa.sector] || profile.empresa.sector || 'No identificado';
+    if (descEl) descEl.textContent = profile.empresa.descripcion || 'Sin descripción disponible';
+
+    // Mostrar equipo de campo si aplica
+    if (profile.empresa.tiene_equipo_campo !== undefined && fieldTeamCard) {
+      fieldTeamCard.style.display = 'block';
+      if (fieldTeamEl) fieldTeamEl.textContent = profile.empresa.tiene_equipo_campo ? 'Sí, cuenta con equipo en campo' : 'No detectado';
+    }
+
+    // Mostrar muestras si es pharma
+    if (profile.empresa.sector === 'pharma' && samplesCard) {
+      samplesCard.style.display = 'block';
+      if (samplesEl) samplesEl.textContent = profile.empresa.tiene_muestras_medicas ? 'Sí, maneja muestras médicas' : 'No detectado';
+    }
+
+    if (confidenceEl) {
+      confidenceEl.textContent = hadWebSearch
+        ? 'Información obtenida de búsqueda web en tiempo real'
+        : 'Información inferida del nombre de la empresa';
+    }
+  } else {
+    // Sin resultados
+    if (nameEl) nameEl.textContent = FormState.company.name || 'Tu empresa';
+    if (sectorEl) sectorEl.textContent = 'Te preguntaremos en el siguiente paso';
+    if (descEl) descEl.textContent = 'No encontramos información pública, pero las siguientes preguntas nos ayudarán a entender tu contexto.';
+    if (confidenceEl) confidenceEl.textContent = 'Continuaremos con preguntas personalizadas';
   }
 }
 
@@ -727,12 +772,26 @@ async function handleTransitionToPhase2() {
   await sleep(CONFIG.loadingMinDuration);
 
   try {
+    console.log('Generating adaptive questions with context:', {
+      company: FormState.company.name,
+      profile: FormState.company.profile?.empresa?.nombre,
+      sector: FormState.company.profile?.empresa?.sector,
+      hadWebSearch: FormState.company.profile?.fuente_informacion
+    });
+
     const questions = await generateAdaptiveQuestions();
+
+    if (!questions || questions.length === 0) {
+      throw new Error('No questions generated');
+    }
+
+    console.log('Generated', questions.length, 'adaptive questions:', questions.map(q => q.texto));
     FormState.responses.adaptiveQuestions = questions;
     FormState.responses.currentAdaptiveIndex = 0;
     FormState.totalQuestions = 5 + questions.length;
   } catch (error) {
-    console.error('Error generating adaptive questions:', error);
+    console.error('Error generating adaptive questions, using fallback:', error);
+    console.log('Fallback reason:', error.message);
     FormState.responses.adaptiveQuestions = getFallbackQuestions();
     FormState.responses.currentAdaptiveIndex = 0;
     FormState.totalQuestions = 5 + FormState.responses.adaptiveQuestions.length;
@@ -744,6 +803,16 @@ async function handleTransitionToPhase2() {
 async function generateAdaptiveQuestions() {
   const { phase1 } = FormState.responses;
   const companyProfile = FormState.company.profile;
+
+  console.log('=== GENERATING ADAPTIVE QUESTIONS ===');
+  console.log('Company profile:', companyProfile ? {
+    nombre: companyProfile.empresa?.nombre,
+    sector: companyProfile.empresa?.sector,
+    tiene_equipo_campo: companyProfile.empresa?.tiene_equipo_campo,
+    fuente: companyProfile.fuente_informacion,
+    preguntas_sugeridas: companyProfile.preguntas_sugeridas?.length || 0
+  } : 'NO PROFILE');
+  console.log('Phase1 responses:', phase1);
 
   // Construir contexto completo con la base de conocimiento
   const relevantClusters = getRelevantClusters(phase1, companyProfile);
@@ -861,20 +930,45 @@ INSTRUCCIONES FINALES:
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Groq API error:', response.status, errorText);
     throw new Error(`Groq API error: ${response.status}`);
   }
 
   const data = await response.json();
-  const content = data.choices[0].message.content;
+
+  if (!data.choices?.[0]?.message?.content) {
+    console.error('Invalid Groq response structure:', data);
+    throw new Error('Invalid response from Groq');
+  }
+
+  let content = data.choices[0].message.content;
+  console.log('Raw Groq response (first 300 chars):', content.substring(0, 300));
+
+  // Limpiar markdown code blocks si existen
+  content = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '');
 
   // Parsear JSON de la respuesta
   const jsonMatch = content.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
+    console.error('No JSON found in cleaned response:', content.substring(0, 500));
     throw new Error('No valid JSON in response');
   }
 
-  const parsed = JSON.parse(jsonMatch[0]);
-  return parsed.preguntas;
+  try {
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    if (!parsed.preguntas || !Array.isArray(parsed.preguntas) || parsed.preguntas.length === 0) {
+      console.error('No preguntas array in response:', parsed);
+      throw new Error('Response missing preguntas array');
+    }
+
+    console.log('Successfully generated', parsed.preguntas.length, 'adaptive questions');
+    return parsed.preguntas;
+  } catch (parseError) {
+    console.error('JSON parse error:', parseError.message, 'Content:', jsonMatch[0].substring(0, 300));
+    throw new Error('Failed to parse questions JSON');
+  }
 }
 
 function getRelevantClusters(phase1, companyProfile) {
@@ -1706,64 +1800,37 @@ function getPlanRecomendado() {
   return 'Base';
 }
 
-// ============================================================
-// KEYBOARD SHORTCUTS
-// ============================================================
-
-function handleKeyboardShortcuts(e) {
-  if (e.key === 'Enter') {
-    // En pantalla de empresa
-    if (FormState.currentScreen === 'q0-company') {
-      handleCompanySubmit();
-      return;
-    }
-
-    const activeOption = document.querySelector('.option-btn.selected');
-    if (activeOption) {
-      advanceFromCurrentQuestion();
-    }
-    return;
-  }
-
-  const key = e.key.toUpperCase();
-  if (key >= 'A' && key <= 'F') {
-    const index = key.charCodeAt(0) - 65;
-    const currentOptions = document.querySelectorAll('.form-screen.active .option-btn');
-    if (currentOptions[index]) {
-      currentOptions[index].click();
-    }
-  }
-
-  if (e.key === 'Escape') {
-    goBack();
-  }
-}
 
 // ============================================================
 // INICIALIZACIÓN
 // ============================================================
 
 function init() {
-  initDOM();
+  try {
+    initDOM();
 
-  // Event Listeners - Botón Start (ahora va a pregunta de empresa)
-  DOM.btnStart.addEventListener('click', () => goToScreen('q0-company'));
+    // Event Listeners - Botón Start (ahora va a pregunta de empresa)
+    if (DOM.btnStart) {
+      DOM.btnStart.addEventListener('click', () => goToScreen('q0-company'));
+    }
 
-  // Event Listeners - Empresa
-  if (DOM.btnResearchCompany) {
-    DOM.btnResearchCompany.addEventListener('click', handleCompanySubmit);
-  }
-  if (DOM.companyInput) {
-    DOM.companyInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') handleCompanySubmit();
-    });
-  }
+    // Event Listeners - Empresa
+    if (DOM.btnResearchCompany) {
+      DOM.btnResearchCompany.addEventListener('click', handleCompanySubmit);
+    }
+    if (DOM.companyInput) {
+      DOM.companyInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleCompanySubmit();
+      });
+    }
 
-  // Event Listeners - Opciones
-  document.addEventListener('click', handleOptionClick);
+    // Event Listeners - Opciones (delegación de eventos - siempre funciona)
+    document.addEventListener('click', handleOptionClick);
 
-  // Event Listeners - Navegación
-  DOM.btnPrev.addEventListener('click', goBack);
+    // Event Listeners - Navegación
+    if (DOM.btnPrev) {
+      DOM.btnPrev.addEventListener('click', goBack);
+    }
 
   // Event Listeners - Multi-select continue
   if (DOM.btnContinueQ4) {
@@ -1779,28 +1846,35 @@ function init() {
   }
 
   // Event Listeners - Pains
-  DOM.btnConfirmPains.addEventListener('click', handleConfirmPains);
-  DOM.btnAdjustPains.addEventListener('click', handleAdjustPains);
+  if (DOM.btnConfirmPains) {
+    DOM.btnConfirmPains.addEventListener('click', handleConfirmPains);
+  }
+  if (DOM.btnAdjustPains) {
+    DOM.btnAdjustPains.addEventListener('click', handleAdjustPains);
+  }
 
   // Event Listeners - Audio
-  DOM.recorderBtn.addEventListener('click', toggleRecording);
-  DOM.btnRerecord.addEventListener('click', handleRerecord);
-  DOM.btnUseAudio.addEventListener('click', handleUseAudio);
+  if (DOM.recorderBtn) {
+    DOM.recorderBtn.addEventListener('click', toggleRecording);
+  }
+  if (DOM.btnRerecord) {
+    DOM.btnRerecord.addEventListener('click', handleRerecord);
+  }
+  if (DOM.btnUseAudio) {
+    DOM.btnUseAudio.addEventListener('click', handleUseAudio);
+  }
 
   // Event Listeners - Contact Form
-  DOM.contactForm.addEventListener('submit', handleContactSubmit);
+  if (DOM.contactForm) {
+    DOM.contactForm.addEventListener('submit', handleContactSubmit);
+  }
 
-  // Keyboard shortcuts
-  document.addEventListener('keydown', handleKeyboardShortcuts);
-
-  // Responsive
-  window.addEventListener('resize', () => {
-    const questionScreens = FormState.currentScreen.startsWith('q1-') ||
-                           FormState.currentScreen === 'phase2-questions';
-    showKeyboardHints(questionScreens && window.innerWidth > 768);
-  });
 
   console.log('APEX Discovery Form initialized with full pain catalog (169 pains)');
+
+  } catch (error) {
+    console.error('Error initializing form:', error);
+  }
 }
 
 if (document.readyState === 'loading') {

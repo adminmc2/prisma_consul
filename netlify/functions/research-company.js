@@ -1,11 +1,28 @@
 /**
  * Netlify Function: Research Company
- * Busca información real sobre la empresa usando búsqueda web
+ * Busca información real sobre la empresa usando Groq Compound (búsqueda web nativa)
  * y genera un perfil detallado para personalizar las preguntas
  */
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
-const PERPLEXITY_API_KEY = process.env.PERPLEXITY_API_KEY;
+
+// Helper para fetch con timeout
+async function fetchWithTimeout(url, options, timeoutMs = 15000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
+}
 
 exports.handler = async (event) => {
   // CORS headers
@@ -41,160 +58,116 @@ exports.handler = async (event) => {
 
     const searchQuery = website || companyName;
     let webSearchResults = null;
+    let searchExecuted = false;
 
-    // PASO 1: Búsqueda web real con Perplexity (si está configurado)
-    if (PERPLEXITY_API_KEY) {
-      try {
-        console.log('Searching with Perplexity for:', searchQuery);
+    // PASO 1: Búsqueda web con Groq Compound (con timeout de 12 segundos)
+    try {
+      console.log('Searching with Groq Compound for:', searchQuery);
 
-        const perplexityResponse = await fetch('https://api.perplexity.ai/chat/completions', {
+      const compoundResponse = await fetchWithTimeout(
+        'https://api.groq.com/openai/v1/chat/completions',
+        {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+            'Authorization': `Bearer ${GROQ_API_KEY}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            model: 'llama-3.1-sonar-small-128k-online',
+            model: 'groq/compound',
             messages: [
               {
                 role: 'system',
-                content: 'Eres un investigador de empresas. Busca información actual y real sobre la empresa. Responde en español con información concreta y verificable.'
+                content: 'Busca información sobre esta empresa. Responde en español, conciso.'
               },
               {
                 role: 'user',
-                content: `Investiga la empresa "${searchQuery}". Necesito saber:
-1. ¿Qué hace esta empresa? (productos/servicios)
-2. ¿En qué sector opera? (farmacéutico, distribución, manufactura, servicios, retail)
-3. ¿Quiénes son sus clientes típicos? (B2B, B2C, médicos, hospitales, etc.)
-4. ¿Tiene equipo de ventas en campo o visitadores?
-5. ¿Maneja productos regulados o muestras médicas?
-6. ¿Cuáles son los principales retos de su industria?
-7. ¿Qué tecnología o sistemas usan típicamente empresas similares?
-
-Si es una empresa farmacéutica, laboratorio o de dispositivos médicos, indica específicamente si tiene visitadores médicos y si maneja muestras.`
+                content: `Busca información sobre "${searchQuery}": qué hace, sector, si tiene equipo de campo, si maneja productos regulados.`
               }
             ],
             temperature: 0.2,
-            max_tokens: 1500
+            max_tokens: 1000
           })
-        });
+        },
+        12000 // 12 segundos timeout
+      );
 
-        if (perplexityResponse.ok) {
-          const perplexityData = await perplexityResponse.json();
-          webSearchResults = perplexityData.choices[0].message.content;
-          console.log('Perplexity search successful');
-        } else {
-          console.error('Perplexity error:', await perplexityResponse.text());
+      if (compoundResponse.ok) {
+        const compoundData = await compoundResponse.json();
+        webSearchResults = compoundData.choices[0]?.message?.content;
+        if (webSearchResults) {
+          searchExecuted = true;
+          console.log('Groq Compound search successful');
         }
-      } catch (perplexityError) {
-        console.error('Perplexity search failed:', perplexityError.message);
+      } else {
+        console.error('Groq Compound error:', compoundResponse.status);
       }
+    } catch (compoundError) {
+      console.error('Groq Compound search failed (timeout or error):', compoundError.message);
+      // Continuar sin búsqueda web
     }
 
     // PASO 2: Usar Groq para estructurar la información
-    const systemPrompt = `Eres un analista de negocios experto. Tu tarea es crear un perfil estructurado de una empresa para entender sus dolores operativos potenciales.
+    const systemPrompt = `Eres un analista de negocios. Crea un perfil estructurado de empresa.
+${webSearchResults ? `INFORMACIÓN WEB:\n${webSearchResults}\n\nUsa esta información REAL.` : 'No hay información web. Infiere del nombre.'}
+Responde SOLO con JSON válido.`;
 
-${webSearchResults ? `
-INFORMACIÓN ENCONTRADA EN BÚSQUEDA WEB:
-${webSearchResults}
+    const userPrompt = `Perfil para: "${searchQuery}"
 
-Usa esta información REAL para crear el perfil. NO inventes datos que no estén en la búsqueda.
-` : `
-No hay información de búsqueda web disponible. Infiere basándote en el nombre/dominio de la empresa, pero indica baja confianza.
-`}
-
-Responde SOLO con JSON válido, sin texto adicional ni markdown.`;
-
-    const userPrompt = `Crea un perfil estructurado para: "${searchQuery}"
-
-Formato JSON requerido:
+JSON requerido:
 {
   "empresa": {
-    "nombre": "Nombre de la empresa",
+    "nombre": "string",
     "sector": "pharma|distribution|manufacturing|services|retail|other",
-    "descripcion": "Descripción del negocio basada en información real (2-3 oraciones)",
-    "modelo_negocio": "B2B|B2C|B2B2C|mixto",
+    "descripcion": "2-3 oraciones",
+    "modelo_negocio": "B2B|B2C|mixto",
     "tamaño_estimado": "startup|pyme|mediana|grande",
-    "tiene_equipo_campo": true/false,
-    "tiene_muestras_medicas": true/false,
-    "regulado": true/false,
-    "productos_servicios": ["producto1", "producto2"],
-    "clientes_objetivo": "Descripción de clientes"
+    "tiene_equipo_campo": boolean,
+    "tiene_muestras_medicas": boolean,
+    "regulado": boolean,
+    "productos_servicios": ["array"],
+    "clientes_objetivo": "string"
   },
   "contexto": {
-    "actividades_principales": ["actividad1", "actividad2", "actividad3"],
-    "clientes_tipicos": "Descripción detallada de sus clientes típicos",
-    "retos_sector": ["reto específico 1", "reto específico 2", "reto específico 3"],
-    "tecnologia_probable": ["tecnología que probablemente usan"]
+    "actividades_principales": ["array"],
+    "clientes_tipicos": "string",
+    "retos_sector": ["array"],
+    "tecnologia_probable": ["array"]
   },
   "dolores_probables": {
-    "prioridad_alta": ["CODIGO-DOLOR1", "CODIGO-DOLOR2"],
-    "prioridad_media": ["CODIGO-DOLOR3", "CODIGO-DOLOR4"],
-    "señales_detectadas": ["señal específica del sector", "otra señal"]
+    "prioridad_alta": ["CODIGO-DOLOR"],
+    "prioridad_media": ["CODIGO-DOLOR"],
+    "señales_detectadas": ["array"]
   },
   "preguntas_sugeridas": [
-    {
-      "pregunta": "Pregunta muy específica para esta empresa basada en lo que sabemos",
-      "objetivo": "Qué queremos detectar",
-      "categoria_dolor": "CODIGO-DOLOR"
-    },
-    {
-      "pregunta": "Segunda pregunta específica",
-      "objetivo": "Objetivo",
-      "categoria_dolor": "CODIGO-DOLOR"
-    },
-    {
-      "pregunta": "Tercera pregunta específica",
-      "objetivo": "Objetivo",
-      "categoria_dolor": "CODIGO-DOLOR"
-    }
+    {"pregunta": "Pregunta específica", "objetivo": "Qué detectar", "categoria_dolor": "CODIGO"}
   ],
-  "confianza": 0.0-1.0,
-  "fuente_informacion": "web_search|inferencia"
+  "confianza": 0.0-1.0
 }
 
-CÓDIGOS DE DOLOR DISPONIBLES:
-- A-VISIBILIDAD: No saber qué hace el equipo en campo
-- A-REGISTRO: El equipo no registra información
-- A-CONOCIMIENTO: Información solo en cabeza de personas
-- B-DATOS: Datos dispersos o duplicados
-- B-CENTRALIZACION: Sin base de datos central
-- C-INVENTARIO: Descontrol de muestras/inventario
-- C-COMPLIANCE: Problemas de cumplimiento normativo
-- D-PIPELINE: Sin visibilidad del embudo de ventas
-- D-SEGUIMIENTO: Oportunidades que se pierden
-- D-FORECAST: No poder predecir ventas
-- E-CONVERSION: Baja conversión de leads
-- F-REPORTES: Reportes manuales que toman mucho tiempo
-- F-DASHBOARDS: Sin métricas en tiempo real
-- G-ADOPCION: El equipo no usa las herramientas
-- G-EXCEL: Dependencia excesiva de Excel
-- H-CANALES: Comunicación fragmentada (WhatsApp, email)
-- K-PLANIFICACION: Sin planificación de rutas/territorios
-- L-TRAZABILIDAD: Sin historial de interacciones
-- P-TIEMPO: Mucho tiempo en tareas administrativas
+CÓDIGOS: A-VISIBILIDAD, A-REGISTRO, B-DATOS, B-CENTRALIZACION, C-INVENTARIO, C-COMPLIANCE, D-PIPELINE, D-SEGUIMIENTO, F-REPORTES, G-EXCEL, H-CANALES, K-PLANIFICACION, L-TRAZABILIDAD, P-TIEMPO
 
-IMPORTANTE:
-- Si es sector pharma/dispositivos médicos: SIEMPRE incluir C-INVENTARIO, C-COMPLIANCE, L-TRAZABILIDAD
-- Si tiene equipo de campo: SIEMPRE incluir A-VISIBILIDAD, A-REGISTRO, K-PLANIFICACION
-- Las preguntas deben ser MUY ESPECÍFICAS para esta empresa, NO genéricas`;
+Si pharma: incluir C-INVENTARIO, C-COMPLIANCE. Si equipo campo: incluir A-VISIBILIDAD, A-REGISTRO.`;
 
-    const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${GROQ_API_KEY}`,
-        'Content-Type': 'application/json'
+    const groqResponse = await fetchWithTimeout(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.5,
+          max_tokens: 2000
+        })
       },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.5,
-        max_tokens: 2500
-      })
-    });
+      15000 // 15 segundos timeout
+    );
 
     if (!groqResponse.ok) {
       const errorText = await groqResponse.text();
@@ -203,7 +176,10 @@ IMPORTANTE:
     }
 
     const data = await groqResponse.json();
-    const content = data.choices[0].message.content;
+    let content = data.choices[0]?.message?.content || '';
+
+    // Limpiar markdown si existe
+    content = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '');
 
     // Parsear JSON de la respuesta
     const jsonMatch = content.match(/\{[\s\S]*\}/);
@@ -213,14 +189,20 @@ IMPORTANTE:
 
     const companyProfile = JSON.parse(jsonMatch[0]);
 
-    // Ajustar confianza basada en si tuvimos búsqueda web
-    if (webSearchResults) {
-      companyProfile.confianza = Math.max(companyProfile.confianza || 0.7, 0.7);
-      companyProfile.fuente_informacion = 'web_search';
+    // Ajustar confianza basada en si tuvimos búsqueda web exitosa
+    if (searchExecuted && webSearchResults) {
+      companyProfile.confianza = Math.max(companyProfile.confianza || 0.7, 0.75);
+      companyProfile.fuente_informacion = 'groq_compound_web_search';
     } else {
       companyProfile.confianza = Math.min(companyProfile.confianza || 0.4, 0.5);
       companyProfile.fuente_informacion = 'inferencia';
     }
+
+    console.log('Research complete:', {
+      company: searchQuery,
+      hadWebSearch: searchExecuted,
+      confidence: companyProfile.confianza
+    });
 
     return {
       statusCode: 200,
@@ -229,7 +211,8 @@ IMPORTANTE:
         success: true,
         profile: companyProfile,
         searchedFor: searchQuery,
-        hadWebSearch: !!webSearchResults
+        hadWebSearch: searchExecuted,
+        searchMethod: searchExecuted ? 'groq_compound' : 'none'
       })
     };
 
