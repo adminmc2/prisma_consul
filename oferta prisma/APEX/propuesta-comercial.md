@@ -10,20 +10,19 @@
 **PROPUESTA COMERCIAL**
 Documento Ejecutivo para Tomadores de Decisión
 
-Versión 3.0 — Febrero 2026
+Versión 3.1 — Febrero 2026
 
 ---
 
 ## Contenido
 
 1. Nuestra Filosofía
-2. El Problema que Resolvemos
+2. El Sistema Líquido
 3. Cómo Funciona APEX
 4. Inversión: Core + Tus 5 Focos
 5. Ejemplos Reales
-6. Lo Que Siempre Puede Crecer
-7. Formulario de Descubrimiento
-8. Próximos Pasos
+6. Cómo Empezar
+7. Próximos Pasos
 
 ---
 
@@ -40,7 +39,7 @@ Por eso creamos algo diferente: **un sistema que se adapta a ti, no al revés**.
 ## Tres Principios que nos Definen
 
 ### Flexibilidad Real
-No hay "paquetes" predefinidos. Tú nos cuentas qué te duele, nosotros te decimos qué podemos resolver ahora y qué queda para después. Cada propuesta es única porque cada empresa es única.
+No hay "paquetes" predefinidos. No hay funciones que "no están incluidas". Todo es posible. Tú nos cuentas qué te duele, nosotros te decimos qué podemos resolver en esta fase y qué queda para las siguientes.
 
 ### Co-creación Continua
 No te entregamos un sistema cerrado. Trabajamos contigo, entendemos tu operación, ajustamos sobre la marcha. Ves avances cada dos semanas. Si algo no funciona para tu equipo, lo cambiamos juntos.
@@ -50,30 +49,30 @@ Empieza con lo que puedes hoy. Añade capacidades cuando las necesites y puedas 
 
 ---
 
-# 2. EL PROBLEMA QUE RESOLVEMOS
+# 2. EL SISTEMA LÍQUIDO
 
-## Los CRM Tradicionales Fallaron
+## Arquitectura que se Adapta
 
-La industria del CRM vendió durante años una promesa que no cumplió: "Compra este sistema y tu equipo será más productivo." La realidad fue otra.
+APEX no es un producto con módulos que activas o desactivas. Es un **sistema líquido**: como el agua que toma la forma del recipiente donde la pones.
 
-| LO QUE PROMETIERON | LO QUE PASÓ |
-|--------------------|-------------|
-| "Sistema integral todo-en-uno" | Pagas por 50 funciones, usas 5 |
-| "Fácil de usar" | 5 pantallas para registrar una visita |
-| "Tu equipo lo adoptará rápido" | El 60% lo evita porque "quita tiempo" |
-| "Visibilidad en tiempo real" | Datos incompletos porque nadie captura |
-| "Elige el paquete que necesitas" | Paquetes rígidos que no encajan con nadie |
+Tu empresa es única. Tus procesos son únicos. Tus dolores son únicos. El sistema se moldea a tu realidad, no al revés.
 
-## El Error de Fondo
+### Qué Significa "Líquido"
 
-Los CRM tradicionales te venden **paquetes cerrados**:
-- "Básico" = muy limitado
-- "Profesional" = pagas cosas que no usas
-- "Enterprise" = carísimo y complejo
+| Sistemas Tradicionales | APEX |
+|------------------------|------|
+| Módulos rígidos que compras | Capacidades que se adaptan |
+| "Esto no está incluido" | Todo es posible, definimos el alcance |
+| Cambiar algo rompe lo demás | Añadir más cosas es natural |
+| Te adaptas al software | El software se adapta a ti |
 
-Pero tu realidad no encaja en paquetes. Tus dolores son específicos. Lo que para una empresa es crítico, para otra es irrelevante.
+### Crecimiento Coherente
 
-**El problema no es la tecnología. Es que te obligan a adaptarte a sus cajas, en lugar de construir algo para ti.**
+Cuando añades más capacidades en fases posteriores:
+- El sistema **absorbe** los cambios naturalmente
+- No hay "actualizaciones traumáticas"
+- Lo nuevo se integra con lo existente
+- Tu equipo no tiene que reaprender todo
 
 ---
 
@@ -86,7 +85,7 @@ Tu inversión se divide en dos partes claras:
 ```
 ┌─────────────────────────────────────────────────────┐
 │  PARTE 1: FUNDACIÓN UNIVERSAL          1,000€      │
-│  Lo que SIEMPRE incluye tu sistema                 │
+│  La base sobre la que TODO se construye            │
 ├─────────────────────────────────────────────────────┤
 │  PARTE 2: TUS 5 FOCOS                  1,500€      │
 │  Los 5 dolores que TÚ eliges resolver              │
@@ -101,16 +100,16 @@ Tu inversión se divide en dos partes claras:
 
 ## PARTE 1: Fundación Universal (1,000€)
 
-Lo que SIEMPRE incluye tu sistema, sin negociación:
+Lo que SIEMPRE incluye tu sistema:
 
 | Elemento | Qué es | Por qué no es negociable |
 |----------|--------|--------------------------|
 | **Identidad** | Tu logo, colores, nombre en todo el sistema | Es TU herramienta, no "un CRM genérico" |
-| **Estructura de roles** | Cada perfil ve lo que necesita | Sin esto, no hay experiencia diferenciada |
-| **Interfaz móvil para campo** | Los agentes de ventas trabajan desde el móvil | El rep vive en la calle, no en escritorio |
-| **Interfaz web para oficina** | Supervisores y directores en pantalla completa | Análisis y gestión requieren más espacio |
-| **Núcleo de datos** | Contactos/clientes + Usuarios + Registro de actividad | Sin datos, no hay CRM |
-| **Dashboard por rol** | El agente ve "mi día", el supervisor ve "mi equipo", el director ve "el negocio" | Cada quien ve su realidad, no un panel genérico |
+| **Hasta 4 roles** | Los roles que TÚ tengas (campo, supervisión, dirección, admin) | Cada quien ve su realidad |
+| **Interfaz móvil** | Para quienes trabajan en la calle | El rep vive en el móvil, no en escritorio |
+| **Interfaz web** | Para quienes trabajan en oficina | Análisis y gestión requieren más espacio |
+| **Núcleo de datos** | Contactos + Usuarios + Actividades | Sin datos, no hay CRM |
+| **Dashboard por rol** | "Mi día" / "Mi equipo" / "Mi negocio" | Cada quien ve lo que necesita |
 
 ### Lo que NO es el Core:
 
@@ -120,9 +119,13 @@ Lo que SIEMPRE incluye tu sistema, sin negociación:
 
 ### Lo que SÍ es:
 
-- La base sobre la que TODO lo demás se construye
-- Adaptada a los roles que TÚ tienes (no roles genéricos)
+- La base **líquida** sobre la que TODO lo demás se construye
+- Adaptada a los roles que TÚ tienes (hasta 4 en esta fase)
 - Lista para crecer con tus 5 focos
+
+### Roles adicionales
+
+Si tienes más de 4 roles diferentes (por ejemplo: Portal para médicos externos, rol de cobranza separado, etc.), los definimos en fases siguientes.
 
 ---
 
@@ -130,24 +133,82 @@ Lo que SIEMPRE incluye tu sistema, sin negociación:
 
 Aquí es donde entra la **flexibilidad total**.
 
-En lugar de "elige de este menú", el modelo es:
+### ¿Qué es un "Foco"?
 
-> **"Cuéntanos tus 5 mayores dolores. Nosotros te decimos qué podemos resolver en esta fase y qué queda para después."**
+Un foco es **un dolor que quieres resolver**. No es un módulo ni una función. Es tu respuesta a: *"¿Qué es lo que más te duele hoy en tu operación?"*
 
 ### Cómo funciona:
 
-1. **Tú describes** (en texto o audio) tus 5 prioridades
+1. **Tú nos cuentas** (en audio o texto) tus 5 prioridades
 2. **Nosotros traducimos** cada prioridad en funcionalidad concreta
 3. **Acordamos juntos** el alcance inicial de cada una
 4. **Queda claro** qué entra ahora y qué es "Fase 2"
 
-### El límite real
+### El alcance de cada foco
 
-No es "complejidad" ni "precio por función".
+Cada foco tiene un **alcance inicial** en esta fase. No se trata de "complejidad" ni de "precio por función". Se trata de:
 
-El límite es: **profundidad inicial por foco**.
+- Tiempo disponible
+- Coherencia con lo ya construido
+- Prioridad para tu operación
+- Profundidad razonable para empezar
 
-Todos pueden tener control de cobranza. Pero unos tendrán recordatorios manuales y otros tendrán recordatorios automáticos por WhatsApp. Ambos son válidos. Empiezas por donde puedes, creces cuando quieras.
+**Lo importante:** Cada foco puede profundizarse en fases siguientes. El sistema está diseñado para absorber más capacidades sin romperse.
+
+---
+
+## Capacidades Disponibles
+
+APEX tiene un catálogo extenso de capacidades organizadas en áreas de trabajo. Este catálogo te servirá como **referencia** para pensar qué te duele:
+
+### Áreas de Trabajo
+
+| Área | Qué resuelve |
+|------|--------------|
+| **Actividad Comercial** | Registro de visitas, seguimiento, agenda, compromisos |
+| **Gestión de Clientes/HCPs** | Fichas, historial, segmentación, categorización |
+| **Control de Inventario** | Muestras, stock, trazabilidad, límites |
+| **Cobranza y Cartera** | Saldos, gestiones, recordatorios, antigüedad |
+| **Reportes y Visibilidad** | Dashboards, KPIs, alertas, comparativos |
+| **Comunicación** | WhatsApp, notificaciones, briefings, seguimientos |
+| **Compliance** | Límites regulatorios, firmas, auditoría, trazabilidad |
+| **Inteligencia Artificial** | Transcripción, sugerencias, predicciones, agentes |
+| **Integraciones** | ERP, facturación, calendario, sistemas externos |
+| **Portal Externo** | Autoservicio para médicos, clientes, farmacias |
+
+### Capacidades de IA (siempre disponibles)
+
+La inteligencia artificial no es un "extra". Es parte del sistema. Lo que varía es la profundidad según tus focos:
+
+| Capacidad | Qué hace |
+|-----------|----------|
+| **Registro por voz** | Dictas la visita, el sistema completa los campos |
+| **Sugerencias** | Próximos pasos, seguimientos, oportunidades |
+| **Briefings** | Resumen del médico antes de cada visita |
+| **Alertas inteligentes** | Detecta anomalías, riesgos, oportunidades |
+| **Transcripción** | Convierte audio en texto estructurado |
+| **Agentes autónomos** | Ejecutan tareas sin intervención humana |
+
+### Canal WhatsApp (siempre disponible)
+
+WhatsApp no es un "módulo adicional". Es un canal natural de trabajo:
+
+- Registrar visitas desde WhatsApp
+- Consultar información de médicos
+- Recibir alertas y recordatorios
+- Dictar notas de voz que se transcriben
+
+La profundidad (agentes conversacionales, flujos automatizados, etc.) depende de tus focos.
+
+### Compliance Farmacéutico (integrado)
+
+El cumplimiento regulatorio está integrado, no es un add-on:
+
+- Límites de muestras por médico
+- Firma electrónica de entregas
+- Trazabilidad completa
+- Audit trail automático
+- Reportes para COFEPRIS, FDA, GDPR
 
 ---
 
@@ -165,13 +226,13 @@ Todos pueden tener control de cobranza. Pero unos tendrán recordatorios manuale
 
 ### Lo que proponemos para Fase 1:
 
-| Foco | Alcance Inicial | Queda para Fase 2 |
+| Foco | Alcance Inicial | Puede crecer a... |
 |------|-----------------|-------------------|
-| **Actividad de reps** | Registro diario + historial por médico | Geolocalización validada, alertas de inactividad |
-| **Control de muestras** | Inventario por rep + registro de entrega + límites | Predicción de consumo, alertas automáticas |
-| **Seguimiento a médicos** | Compromisos registrados + recordatorios | Portal para que el médico consulte |
-| **Visibilidad de ventas** | Dashboard con KPIs básicos | Forecast con IA, comparativos avanzados |
-| **Migración de Excel** | Importación de datos + estructura ordenada | Integración con ERP |
+| **Actividad de reps** | Registro diario + historial por médico + WhatsApp | Geolocalización validada, alertas de inactividad |
+| **Control de muestras** | Inventario por rep + entrega + límites + firma | Predicción de consumo, alertas automáticas |
+| **Seguimiento a médicos** | Compromisos + recordatorios + briefing básico | Portal para que el médico consulte |
+| **Visibilidad de ventas** | Dashboard con KPIs + comparativos | Forecast con IA, predicciones avanzadas |
+| **Migración de Excel** | Importación + estructura ordenada | Integración con ERP |
 
 ---
 
@@ -187,15 +248,13 @@ Todos pueden tener control de cobranza. Pero unos tendrán recordatorios manuale
 
 ### Lo que proponemos para Fase 1:
 
-| Foco | Alcance Inicial | Queda para Fase 2 |
+| Foco | Alcance Inicial | Puede crecer a... |
 |------|-----------------|-------------------|
-| **Cobranza** | Antigüedad de saldos + registro de gestiones + recordatorios manuales | Recordatorios automáticos por WhatsApp |
-| **Control de descuentos** | Matriz de límites + aprobación del supervisor | Análisis de impacto en margen |
-| **Reportes ejecutivos** | 3 reportes clave configurados + envío semanal | Generación con IA, personalizables |
-| **Alertas** | 5 alertas configuradas (las que más le duelan) | Sistema completo de notificaciones |
-| **Integración facturación** | *Fase 2 (requiere análisis técnico)* | Sincronización bidireccional |
-
-> **Nota:** La integración con facturación queda fuera del presupuesto inicial porque requiere trabajo técnico específico. Se cotiza aparte.
+| **Cobranza** | Antigüedad de saldos + gestiones + recordatorios | Recordatorios automáticos por WhatsApp, predicción de impago |
+| **Control de descuentos** | Matriz de límites + aprobación supervisor | Análisis de impacto en margen |
+| **Reportes ejecutivos** | 3 reportes clave + envío semanal | Generación con IA, dashboards personalizables |
+| **Alertas** | 5 alertas configuradas (las más urgentes) | Sistema completo de notificaciones inteligentes |
+| **Integración facturación** | Análisis técnico + diseño de integración | Sincronización bidireccional (Fase 2) |
 
 ---
 
@@ -211,91 +270,47 @@ Todos pueden tener control de cobranza. Pero unos tendrán recordatorios manuale
 
 ### Lo que proponemos para Fase 1:
 
-| Foco | Alcance Inicial | Queda para Fase 2 |
+| Foco | Alcance Inicial | Puede crecer a... |
 |------|-----------------|-------------------|
-| **Registro de visitas** | Registro desde móvil + voz + WhatsApp | Transcripción automática con IA |
-| **Compliance de muestras** | Límites automáticos + firma electrónica + trazabilidad | Reportes COFEPRIS automáticos |
-| **Briefings pre-visita** | Resumen manual del historial | Briefing automático por IA antes de cada visita |
-| **Dashboard nacional** | KPIs por región + comparativos | Mapas interactivos, drill-down avanzado |
-| **WhatsApp integrado** | Canal de registro y consultas básicas | Agentes IA autónomos, flujos conversacionales |
+| **Registro de visitas** | Móvil + voz + WhatsApp + offline | Transcripción automática con IA avanzada |
+| **Compliance de muestras** | Límites + firma electrónica + trazabilidad | Reportes COFEPRIS automáticos |
+| **Briefings pre-visita** | Resumen de historial + alertas | Briefing automático por IA con sugerencias |
+| **Dashboard nacional** | KPIs por región + comparativos | Mapas interactivos, drill-down, predicciones |
+| **WhatsApp integrado** | Registro + consultas + alertas | Agentes IA conversacionales completos |
 
 ---
 
-# 6. LO QUE SIEMPRE PUEDE CRECER
+# 6. CÓMO EMPEZAR
 
-## Incluido en los 2,500€:
+## El Formulario de Descubrimiento
 
-- ✓ Todo el Core (identidad + estructura + interfaces móvil/web)
-- ✓ 5 focos con alcance inicial acordado
-- ✓ Acompañamiento durante implementación
-- ✓ Ajustes menores en el primer mes
+Para darte una propuesta real, necesitamos entender tu situación. Tienes dos caminos:
 
-## NO incluido (se cotiza aparte si lo necesitan):
+### Opción A: Explora el Catálogo
 
-| Capacidad | Precio Orientativo |
-|-----------|-------------------|
-| **Integraciones con sistemas externos** (ERP, facturación) | +1,000 - 2,000€ |
-| **WhatsApp Business API** (más allá de registro básico) | +500 - 800€ |
-| **Portal para usuarios externos** (médicos, clientes, farmacias) | +1,500€ |
-| **IA avanzada** (predicciones, agentes autónomos, transcripción) | Mensualidad según uso |
-| **Apps nativas** (si la PWA no es suficiente) | +2,000€ |
-| **Hosting** (si no tienes infraestructura propia) | Desde 50€/mes |
+Revisa nuestro **Catálogo Completo de Capacidades** — más de 1,000 funcionalidades organizadas por área. Marca lo que te interesa y envíanoslo.
 
-## Siempre puede crecer:
+El catálogo te sirve como **referencia** para pensar qué necesitas. No es un menú donde "compras funciones", es una guía para que entiendas lo que es posible.
 
-- Cada foco puede profundizarse en fases siguientes
-- Nuevos focos se pueden agregar
-- El sistema nunca está "terminado", evoluciona contigo
+### Opción B: Cuéntanos Directamente
+
+Graba un **audio de 3-5 minutos** respondiendo:
+
+> *"¿Cuáles son los 5 dolores más grandes que tienes hoy en tu operación comercial? Cuéntanoslo con tus palabras, como si estuvieras hablando con un colega."*
+
+No necesitas ser técnico. No necesitas saber "qué módulos" quieres. Solo cuéntanos qué te duele.
+
+### Lo mejor: Ambas opciones
+
+Puedes revisar el catálogo para tener contexto Y grabar un audio con tu situación real. Juntos nos dan la información completa para hacerte una propuesta a medida.
 
 ---
 
-# 7. FORMULARIO DE DESCUBRIMIENTO
-
-Para darte una propuesta real, necesitamos entender tu situación.
-
-## Sección 1: Tu Contexto
-
-- ¿Cómo se llama tu empresa?
-- ¿A qué te dedicas? (sector farmacéutico, distribución, visita médica, etc.)
-- ¿Cuántas personas usarían el sistema?
-- ¿Qué roles tienen? (agentes de campo, supervisores, directores, administrativos, otros)
-- ¿Usan algo actualmente? (Excel, otro CRM, nada)
-
-## Sección 2: Tus 5 Prioridades
-
-Para cada una (1 a 5):
-
-- **Descríbela** (texto libre)
-- **O cuéntanosla** (audio de hasta 2 minutos)
-- **¿Qué pasa hoy?** (cómo lo resuelves actualmente)
-- **¿Cómo sabrías que está resuelto?** (qué cambiaría)
-
-## Sección 3: Contexto Adicional
-
-- ¿Hay algo que sea urgente?
-- ¿Tienes presupuesto definido o es flexible?
-- ¿Algo más que debamos saber?
-
----
-
-# 8. PRÓXIMOS PASOS
-
-## El Siguiente Paso es Simple
-
-**CUÉNTANOS TUS 5 DOLORES**
-
-Llena el formulario o agenda una llamada de 30 minutos.
-
-Sin compromiso. Sin presentaciones corporativas aburridas.
-Solo platicar sobre tu negocio y cómo podemos ayudarte.
-
----
-
-## Proceso
+## El Proceso
 
 | Paso | Qué hacemos |
 |------|-------------|
-| **1. Descubrimiento** | Recibes el formulario o platicamos 30 min. Entendemos tus 5 focos. |
+| **1. Descubrimiento** | Recibes el catálogo y/o grabas tu audio. Entendemos tus 5 focos. |
 | **2. Propuesta** | En 48 horas te enviamos propuesta específica con alcance por foco. |
 | **3. Acuerdo** | Definimos juntos qué entra en Fase 1 y qué queda para después. |
 | **4. Construcción** | Entregas cada 2 semanas. Ajustes según tu feedback. |
@@ -303,15 +318,49 @@ Solo platicar sobre tu negocio y cómo podemos ayudarte.
 
 ---
 
-## Lo que Logra Este Modelo
+## Lo que Siempre Incluye
 
-| Aspecto | Cómo lo resolvemos |
-|---------|-------------------|
-| **Flexibilidad total** | Tú describes, nosotros proponemos |
-| **Adaptabilidad** | Siempre hay "Fase 2" |
-| **No parece producto enlatado** | Cada propuesta es única |
-| **Transparencia** | Queda claro qué sí y qué no |
-| **Precio predecible** | 2,500€ para empezar, creces a tu ritmo |
+Incluido en los 2,500€:
+
+- ✓ Todo el Core (identidad + hasta 4 roles + interfaces móvil/web)
+- ✓ 5 focos con alcance inicial acordado
+- ✓ Capacidades de IA disponibles según profundidad de focos
+- ✓ WhatsApp como canal de trabajo
+- ✓ Compliance integrado
+- ✓ Acompañamiento durante implementación
+- ✓ Ajustes menores en el primer mes
+
+## Lo que Siempre Puede Crecer
+
+Todo es posible. Estas son cosas que típicamente se profundizan en fases posteriores:
+
+- Roles adicionales (más de 4)
+- Portal para usuarios externos (médicos, clientes)
+- Integraciones con sistemas externos (ERP, facturación)
+- Agentes IA autónomos avanzados
+- Predicciones y scoring avanzado
+- Apps nativas (si la PWA no es suficiente)
+
+**No son "extras que cuestan más".** Son profundizaciones naturales del sistema que se construyen cuando las necesites.
+
+---
+
+## Hosting
+
+Tú puedes usar tu infraestructura propia. Si no tienes, te lo facilitamos desde **50€/mes**.
+
+---
+
+# 7. PRÓXIMOS PASOS
+
+## El Siguiente Paso es Simple
+
+**CUÉNTANOS TUS 5 DOLORES**
+
+Revisa el catálogo, graba un audio, o ambos. Agenda una llamada de 30 minutos si prefieres platicar.
+
+Sin compromiso. Sin presentaciones corporativas aburridas.
+Solo entender tu negocio y cómo podemos ayudarte.
 
 ---
 
