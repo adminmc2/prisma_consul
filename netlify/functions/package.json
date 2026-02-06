@@ -1,0 +1,10 @@
+{
+  "name": "apex-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for APEX Discovery Form",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.0",
+    "busboy": "^1.6.0",
+    "form-data": "^4.0.0"
+  }
+}

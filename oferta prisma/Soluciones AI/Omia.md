@@ -1,19 +1,19 @@
-# NOVIA — Asistente IA de Ventas
+# OMIA — Asistente IA de Ventas
 
 > Tu copiloto inteligente de ventas, listo para usar en días, no meses
 
 ---
 
-## ¿Qué es NOVIA?
+## ¿Qué es OMIA?
 
-NOVIA es una plataforma de asistente IA especializada en ventas que se personaliza para tu marca y productos. Ya está desarrollada, solo la configuramos para ti.
+OMIA es una plataforma de asistente IA especializada en ventas que se personaliza para tu marca y productos. Ya está desarrollada, solo la configuramos para ti.
 
 ### Funcionalidades principales
 
 - Responde preguntas sobre TUS productos al instante
 - Sugiere cómo manejar objeciones de clientes
 - Compara vs competencia con argumentos sólidos
-- Funciona por voz ("Hola, Novia") o texto
+- Funciona por voz ("Hola, Omia") o texto
 - Disponible en cualquier dispositivo (web, móvil)
 - **Plataforma de gestión** para supervisar el uso del equipo
 
@@ -43,7 +43,7 @@ NOVIA es una plataforma de asistente IA especializada en ventas que se personali
 └─────────────────────────────────────────────────────┘
 ```
 
-El desarrollo incluye la personalización completa de NOVIA para tu empresa: carga de productos, entrenamiento con tu contenido, configuración de marca y capacitación inicial.
+El desarrollo incluye la personalización completa de OMIA para tu empresa: carga de productos, entrenamiento con tu contenido, configuración de marca y capacitación inicial.
 
 ### Planes de Suscripción
 
@@ -127,7 +127,7 @@ Para empresas con equipos grandes y necesidades avanzadas de control.
 
 ## Plataforma de Gestión (Admin)
 
-Incluida en ambos planes. Permite supervisar y controlar el uso de NOVIA por parte del equipo.
+Incluida en ambos planes. Permite supervisar y controlar el uso de OMIA por parte del equipo.
 
 ### Funcionalidades por Plan
 
@@ -172,7 +172,7 @@ Incluida en ambos planes. Permite supervisar y controlar el uso de NOVIA por par
 
 ## ¿Qué incluye el Desarrollo Inicial?
 
-El desarrollo es el trabajo de personalización para que NOVIA conozca TU negocio:
+El desarrollo es el trabajo de personalización para que OMIA conozca TU negocio:
 
 - Configuración de tu cuenta y usuarios
 - Personalización de interfaz (logo, colores corporativos)
@@ -208,20 +208,20 @@ El desarrollo es el trabajo de personalización para que NOVIA conozca TU negoci
 | Integración CRM adicional | 250-400€ | $5,000-8,000 | Una vez |
 | Carga masiva de contenido nuevo | 100€ | $2,000 | Una vez |
 | Capacitación adicional (2 horas) | 80€ | $1,600 | Una vez |
-| Dominio personalizado (novia.tumarca.com) | 40€/mes | $800/mes | Mensual |
+| Dominio personalizado (omia.tumarca.com) | 40€/mes | $800/mes | Mensual |
 
 ---
 
-## Ejemplo: NOVIA para Novacutan
+## Ejemplo: OMIA para empresa de Omega 3
 
-Así quedaría configurado NOVIA específicamente para el equipo de ventas de Novacutan:
+Así quedaría configurado OMIA para un equipo de ventas de suplementos:
 
 ### Contenido a cargar:
-- **Productos:** BioPRO, FBio DVS Light, FBio DVS Medium, FBio DVS Volume
-- **Protocolos:** V-Lift, D-Lift, técnicas de aplicación por zona facial
-- **Comparativas:** vs Profhilo, Juvederm, Radiesse, Sculptra
-- **Objeciones:** precio, duración del efecto, efectos secundarios, evidencia clínica
-- **Argumentos de venta** por perfil de médico (dermatólogos, cirujanos plásticos, medicina estética)
+- **Productos:** Omega 3 Premium, Omega 3 Kids, Omega 3 Cardio, Omega 3 Sport
+- **Beneficios:** salud cardiovascular, función cerebral, antiinflamatorio, desarrollo infantil
+- **Comparativas:** vs Nordic Naturals, Solgar, NOW Foods, Nature Made
+- **Objeciones:** precio, concentración EPA/DHA, origen del pescado, certificaciones
+- **Argumentos de venta** por perfil de cliente (farmacias, tiendas naturistas, médicos)
 
 ### Plan recomendado: PROFESIONAL
 
@@ -238,10 +238,6 @@ Así quedaría configurado NOVIA específicamente para el equipo de ventas de No
 ### Si necesitan más usuarios:
 - 15 usuarios: 99€ + (5 × 20€) = **199€/mes** ($3,980 MXN)
 - 20 usuarios: 99€ + (10 × 20€) = **299€/mes** ($5,980 MXN)
-
----
-
-*© 2026 NOVIA para Novacutan - Prisma Soluciones AI. Todos los derechos reservados.*
 
 ---
 
@@ -268,17 +264,17 @@ Así quedaría configurado NOVIA específicamente para el equipo de ventas de No
 
 ---
 
-## ¿Por qué NOVIA es competitivo?
+## ¿Por qué OMIA es competitivo?
 
 | Solución | Precio base | Usuarios | IA incluida |
 |----------|-------------|----------|-------------|
-| **NOVIA Profesional** | **99€/mes** | 10 | ✓ Completa |
+| **OMIA Profesional** | **99€/mes** | 10 | ✓ Completa |
 | Gong.io | ~$1,200/mes | 3 | Parcial |
 | Outreach | ~$100/usuario | 1 | Limitada |
 | Salesforce Einstein | ~$150/usuario | 1 | Add-on |
 | Clari | ~$80/usuario | 1 | Limitada |
 
-**NOVIA ofrece más valor por menos inversión.**
+**OMIA ofrece más valor por menos inversión.**
 
 ---
 
@@ -287,17 +283,17 @@ Así quedaría configurado NOVIA específicamente para el equipo de ventas de No
 1. Elige tu plan
 2. Envíanos tu material (fichas de productos, objeciones)
 3. Pago del desarrollo (500€ / $10,000 MXN con oferta)
-4. Configuramos NOVIA en 3-5 días
+4. Configuramos OMIA en 3-5 días
 5. Capacitamos a tu equipo
 6. ¡2 meses GRATIS para probar!
 7. Si te convence, continúas con la suscripción
 
 ---
 
-> *"Hola, Novia... ayúdame a cerrar esta venta"*
+> *"Hola, Omia... ayúdame a cerrar esta venta"*
 
 ---
 
 *Precios + IVA | Tipo de cambio referencia: $20 MXN/EUR | Febrero 2026*
 
-*© 2026 NOVIA - Prisma Soluciones AI. Todos los derechos reservados.*
+*© 2026 OMIA - PRISMA Solutions. Todos los derechos reservados.*

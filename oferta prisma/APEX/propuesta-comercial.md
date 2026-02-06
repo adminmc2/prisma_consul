@@ -10,7 +10,7 @@
 **PROPUESTA COMERCIAL**
 Documento Ejecutivo para Tomadores de Decisión
 
-Versión 3.4 — Febrero 2026
+Versión 4.0 — Febrero 2026
 
 ---
 
@@ -123,9 +123,9 @@ La Interfaz Estructurada es **ilimitada** — no consume tokens. El Lienzo IA co
 
 | Plan | Uso del Lienzo IA |
 |------|-------------------|
-| **Básico (20€)** | Briefings diarios + consultas básicas |
-| **Profesional (30€)** | Proactividad completa + análisis |
-| **Avanzado (45€)** | Sin límites + agentes autónomos |
+| **Base (9€)** | Solo interfaz estructurada, sin IA |
+| **Esencial (19€)** | IA reactiva: consultas + dictado por voz |
+| **Pro (29€)** | IA proactiva: briefings + agentes autónomos |
 
 ---
 
@@ -137,11 +137,11 @@ El sistema se construye con un pago inicial de **2,500€** y después funciona 
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  TU FUNDACIÓN                          1,000€      │
-│  Identidad + Roles + Interfaces + Datos base       │
+│  ESTRUCTURA BASE                         900€      │
+│  Infraestructura, usuarios, roles, interfaces      │
 ├─────────────────────────────────────────────────────┤
-│  TUS 4 FOCOS                           1,500€      │
-│  Los 4 problemas que TÚ defines como prioritarios  │
+│  TUS 4 DOLORES                         1,600€      │
+│  Crédito para resolver tus 4 problemas prioritarios│
 ├─────────────────────────────────────────────────────┤
 │  TOTAL CONSTRUCCIÓN INICIAL            2,500€      │
 └─────────────────────────────────────────────────────┘
@@ -149,16 +149,20 @@ El sistema se construye con un pago inicial de **2,500€** y después funciona 
 
 ---
 
-## Tu Fundación (1,000€)
+## Estructura Base (900€)
 
-Lo que todo sistema necesita para funcionar, pero configurado para TI:
+Lo que todo sistema necesita para funcionar, configurado para TI:
 
-| Elemento | Qué es | Por qué importa |
-|----------|--------|-----------------|
-| **Tu Identidad** | Tu logo, colores, nombre en todo el sistema | Es TU herramienta, no "un CRM genérico" |
-| **Estructura de Roles** | 3 roles a elegir + Admin siempre incluido | Cada quien ve lo que necesita, nada más |
-| **Interfaz por Contexto** | Móvil para campo, web para oficina | El agente de ventas no usa lo mismo que el director |
-| **Núcleo de Datos** | Contactos, usuarios, registro básico de actividad | La base sobre la que TODO lo demás se construye |
+| Elemento | Qué incluye |
+|----------|-------------|
+| **Usuarios ilimitados** | Login, perfiles, sin límite de cantidad |
+| **Roles configurables** | Permisos personalizados por tipo de usuario |
+| **Interfaz dual** | Web para oficina + móvil para campo |
+| **Tu identidad** | Logo, colores, nombre — es TU sistema |
+| **Base de datos** | Estructura preparada para tus entidades |
+| **Motor de eventos** | Registro completo de actividad |
+| **Motor IA** | Infraestructura lista para funcionar |
+| **Notificaciones** | Sistema listo para configurar alertas |
 
 ### Las 6 Experiencias Disponibles
 
@@ -173,7 +177,7 @@ El sistema tiene 6 experiencias diseñadas para cada tipo de usuario:
 | **Médico/Cliente** | Usuarios externos | "¿Qué productos tengo y cómo conseguir más?" |
 | **Administrador** | Configuración | "¿Cómo configuro sin depender del proveedor?" |
 
-**Eliges 3 experiencias de las 5 disponibles.** Admin siempre está incluido. Las otras 2 se pueden añadir después.
+**Todas las experiencias están disponibles.** Las configuras según tus necesidades.
 
 ### 🎁 Regalo Inicial
 
@@ -181,9 +185,19 @@ Durante los primeros **6 meses**, la gestión de administración está supervisa
 
 ---
 
-## Tus 4 Focos (1,500€)
+## Tus 4 Dolores (1,600€)
 
-> *"Cuéntanos tus 4 mayores dolores. Nosotros les damos CUERPO COMPLETO y definimos el alcance inicial."*
+> *"Cuéntanos tus 4 mayores dolores. Tienes 1,600€ de crédito para resolverlos."*
+
+Cada dolor tiene un presupuesto de **400€ de esfuerzo**. Por cada uno configuramos:
+
+| Por cada dolor | Qué se configura |
+|----------------|------------------|
+| **Entidades** | Tipos de contacto/dato con campos específicos |
+| **Flujos** | Procesos de trabajo del área |
+| **Reportes** | Visualizaciones y métricas |
+| **IA** | Sugerencias y alertas del contexto |
+| **Integraciones** | Conexiones básicas necesarias |
 
 No te damos 4 cosas a medias. A cada dolor le ponemos **cuerpo completo**: diseñamos la solución ideal (con IA integrada desde el inicio). Luego acordamos juntos qué parte construimos ahora y qué dejamos para cuando estés listo.
 
@@ -191,32 +205,53 @@ No te damos 4 cosas a medias. A cada dolor le ponemos **cuerpo completo**: dise�
 
 ## Suscripción Mensual
 
-Después de la construcción inicial, pagas una suscripción mensual:
+Después de la construcción inicial, pagas una suscripción mensual por usuario.
 
-### Qué Incluye
+### Qué Incluye Cada Plan
 
 | Concepto | Qué significa |
 |----------|---------------|
-| **Uso de la Plataforma** | Acceso para todos tus usuarios, hosting incluido, actualizaciones |
-| **Soporte Técnico** | Atención cuando algo no funcione, resolución de dudas, ajustes menores |
-| **IA Integrada** | Consultas, sugerencias, informes automáticos. Límites según tu plan. |
+| **Uso de la Plataforma** | Acceso completo, hosting incluido, actualizaciones |
+| **Soporte Técnico** | Atención cuando algo no funcione, resolución de dudas |
+| **IA Integrada** | Según el plan que elijas |
 
-### Planes de Suscripción
+### Tú Eliges: ¿Cuánta IA Necesitas?
 
-**Filosofía: Todas las funciones disponibles en todos los planes.** Lo que varía es cuánto puedes usar.
+El sistema tiene dos capas: la **Interfaz Estructurada** (fichas, listas, reportes) y el **Lienzo IA** (proactivo, conversacional). Todos los planes incluyen la interfaz completa. Lo que varía es el acceso a IA.
 
-| Capacidad | Básico | Profesional | Avanzado |
-|-----------|--------|-------------|----------|
-| Interacciones IA / día | 30 | 100 | Ilimitadas |
-| Dictar por voz / día | 10 | 30 | Ilimitadas |
-| Reportes IA / mes | 5 | 20 | Ilimitados |
-| Predicciones y scoring | ✓ | ✓ | ✓ |
-| Agentes autónomos | 2 activos | 5 activos | 15 activos |
-| Interfaz estructurada | ✓ Completa | ✓ Completa | ✓ Completa |
-| Lienzo IA proactivo | ✓ Completo | ✓ Completo | ✓ Completo |
-| **Precio por persona** | **20€/mes** | **30€/mes** | **45€/mes** |
+| Capacidad | Base | Esencial | Pro |
+|-----------|------|----------|-----|
+| **Interfaz estructurada** | ✓ Completa | ✓ Completa | ✓ Completa |
+| **Fichas, listas, reportes** | ✓ | ✓ | ✓ |
+| **Consultas IA / día** | ❌ | 30 | 100 |
+| **Dictado por voz / día** | ❌ | 10 | 30 |
+| **Lienzo IA** | ❌ | Reactivo | Proactivo |
+| **Briefings automáticos** | ❌ | ❌ | ✓ |
+| **Agentes autónomos** | ❌ | ❌ | 2 activos |
+| **Reportes IA / mes** | ❌ | 5 | 20 |
+| **Precio por usuario** | **9€/mes** | **19€/mes** | **29€/mes** |
 
-**Nota:** La interfaz estructurada (fichas, listas, formularios) no consume interacciones. Solo el Lienzo IA consume según tu uso.
+### ¿Qué Plan Elegir?
+
+| Si tu equipo... | Recomendamos |
+|-----------------|--------------|
+| Solo necesita registrar y consultar datos | **Base (9€)** |
+| Quiere dictar visitas por voz y recibir sugerencias | **Esencial (19€)** |
+| Necesita briefings automáticos y IA proactiva | **Pro (29€)** |
+
+### Comparativa con el Mercado
+
+| CRM | Plan con IA básica | Plan con IA completa |
+|-----|-------------------|---------------------|
+| **APEX** | **19€** | **29€** |
+| Freshsales | 39€ | 59€ |
+| Zoho CRM | 40€ | 52€ |
+| Pipedrive | 50€ | 75€ |
+| HubSpot | 100€ | 150€ |
+
+**APEX es ~50% más económico que la competencia.**
+
+**Nota:** La interfaz estructurada (fichas, listas, formularios) no consume IA. Solo el Lienzo IA consume según tu uso.
 
 ---
 
@@ -257,26 +292,32 @@ POTENCIALIDADES (Cuando quieras crecer)
 → Dashboard avanzado
 ```
 
-### Importante: La IA está desde el inicio
+### Importante: La IA está lista desde el inicio
 
-Incluso en el alcance inicial, la IA hace algo útil: resumir, sugerir, detectar. **No es un "añadido premium".**
+El sistema se construye con el motor de IA preparado. Las capacidades de IA se activan según el plan de suscripción que elijas:
+
+- **Plan Base (9€):** Sistema completo sin IA — ideal para equipos que solo necesitan registrar y consultar
+- **Plan Esencial (19€):** IA reactiva — dictado por voz, consultas, sugerencias
+- **Plan Pro (29€):** IA proactiva — briefings automáticos, alertas inteligentes, agentes
 
 ---
 
-## Capacidades Siempre Disponibles
+## Capacidades Disponibles
 
-### Inteligencia Artificial (inherente)
+### Inteligencia Artificial (según tu plan)
 
-La IA no es un módulo extra. Es parte del sistema desde el día 1:
+La IA no es un módulo extra que se compra aparte. Está integrada en el sistema y disponible según el plan que elijas:
 
-| Capacidad | Qué hace |
-|-----------|----------|
-| **Registro por voz** | Dictas la visita, el sistema completa los campos |
-| **Sugerencias** | Próximos pasos, seguimientos, oportunidades |
-| **Briefings** | Resumen del médico antes de cada visita |
-| **Alertas inteligentes** | Detecta anomalías, riesgos, oportunidades |
-| **Transcripción** | Convierte audio en texto estructurado |
-| **Agentes autónomos** | Ejecutan tareas sin intervención humana |
+| Capacidad | Qué hace | Disponible en |
+|-----------|----------|---------------|
+| **Registro por voz** | Dictas la visita, el sistema completa los campos | Esencial, Pro |
+| **Sugerencias** | Próximos pasos, seguimientos, oportunidades | Esencial, Pro |
+| **Briefings** | Resumen del médico antes de cada visita | Pro |
+| **Alertas inteligentes** | Detecta anomalías, riesgos, oportunidades | Pro |
+| **Transcripción** | Convierte audio en texto estructurado | Esencial, Pro |
+| **Agentes autónomos** | Ejecutan tareas sin intervención humana | Pro |
+
+**Nota:** El plan Base (9€) incluye toda la interfaz estructurada pero sin capacidades de IA.
 
 ### Canal WhatsApp (inherente)
 
@@ -303,7 +344,7 @@ El cumplimiento regulatorio está integrado:
 
 ## Ejemplo 1: Laboratorio pequeño (8 reps)
 
-### Sus 4 focos (lo que nos contaron en audio):
+### Sus 4 dolores (lo que nos contaron en audio):
 
 1. "Necesito saber qué hace cada rep cada día, ahora mismo no tengo idea"
 2. "Las muestras son un desastre, no sé quién tiene qué ni a quién se las dio"
@@ -312,27 +353,25 @@ El cumplimiento regulatorio está integrado:
 
 ### Cómo les dimos Cuerpo Completo:
 
-| Dolor | Alcance Inicial (2,500€) | Potencialidades (después) |
-|-------|--------------------------|---------------------------|
+| Dolor | Alcance Inicial (400€ c/u) | Potencialidades (después) |
+|-------|----------------------------|---------------------------|
 | **Actividad de reps** | Registro diario + historial + IA resume el día | Geolocalización, alertas, predicción de cobertura |
 | **Control de muestras** | Inventario por rep + entrega + IA alerta stock bajo | Predicción de consumo, límites automáticos, trazabilidad |
 | **Reportes** | 3 reportes configurados + IA genera resúmenes | Informes automáticos, envío programado, análisis avanzado |
 | **Migración Excel** | Importación de datos + estructura + validación IA | Integración bidireccional con ERP |
 
-### Experiencias que eligieron (3 de 5 + Admin):
+### Su suscripción:
 
-- ✓ Representante (móvil para campo)
-- ✓ Supervisor (web + alertas móvil)
-- ✓ Comercial (pipeline + cobranza)
-- ✓ Admin (gestión supervisada 6 meses gratis)
+- 8 reps en **Esencial (19€)** — necesitan dictado por voz
+- 2 supervisores en **Pro (29€)** — necesitan briefings automáticos
 
-Portal para médicos y Director no se incluyeron. Se pueden añadir después.
+**Total mensual:** 8×19 + 2×29 = **210€/mes**
 
 ---
 
 ## Ejemplo 2: Distribuidor mediano (15 personas)
 
-### Sus 4 focos:
+### Sus 4 dolores:
 
 1. "La cobranza es un caos"
 2. "Los vendedores dan descuentos sin control"
@@ -341,18 +380,26 @@ Portal para médicos y Director no se incluyeron. Se pueden añadir después.
 
 ### Cómo les dimos Cuerpo Completo:
 
-| Dolor | Alcance Inicial | Potencialidades |
-|-------|-----------------|-----------------|
+| Dolor | Alcance Inicial (400€) | Potencialidades |
+|-------|------------------------|-----------------|
 | **Cobranza** | Antigüedad de saldos + gestiones + recordatorios | Recordatorios WhatsApp, predicción de impago |
 | **Control descuentos** | Matriz de límites + aprobación supervisor | Análisis de impacto en margen |
-| **Reportes ejecutivos** | 3 reportes clave + envío semanal | Generación con IA, dashboards personalizables |
+| **Reportes ejecutivos** | 3 reportes clave + envío semanal | Generación con IA avanzada |
 | **Alertas** | 5 alertas configuradas (las más urgentes) | Sistema completo de notificaciones inteligentes |
+
+### Su suscripción:
+
+- 10 comerciales en **Esencial (19€)** — necesitan consultas IA
+- 3 supervisores en **Pro (29€)** — necesitan alertas proactivas
+- 2 administrativos en **Base (9€)** — solo consultan datos
+
+**Total mensual:** 10×19 + 3×29 + 2×9 = **295€/mes**
 
 ---
 
 ## Ejemplo 3: Laboratorio con visita médica (20 reps)
 
-### Sus 4 focos:
+### Sus 4 dolores:
 
 1. "Los reps no registran las visitas a tiempo"
 2. "Tenemos problemas de compliance con las muestras"
@@ -361,12 +408,20 @@ Portal para médicos y Director no se incluyeron. Se pueden añadir después.
 
 ### Cómo les dimos Cuerpo Completo:
 
-| Dolor | Alcance Inicial | Potencialidades |
-|-------|-----------------|-----------------|
+| Dolor | Alcance Inicial (400€) | Potencialidades |
+|-------|------------------------|-----------------|
 | **Registro de visitas** | Móvil + voz + WhatsApp + offline | Transcripción automática con IA avanzada |
 | **Compliance muestras** | Límites + firma electrónica + trazabilidad | Reportes COFEPRIS automáticos |
 | **Briefings pre-visita** | Resumen de historial + alertas | Briefing automático por IA con sugerencias |
 | **Dashboard nacional** | KPIs por región + comparativos | Mapas interactivos, drill-down, predicciones |
+
+### Su suscripción:
+
+- 20 reps en **Pro (29€)** — necesitan briefings automáticos y dictado extenso
+- 4 supervisores en **Pro (29€)** — necesitan IA proactiva
+- 2 directores en **Pro (29€)** — necesitan agentes autónomos
+
+**Total mensual:** 26×29 = **754€/mes**
 
 ---
 
@@ -454,11 +509,11 @@ Puedes revisar el catálogo para tener contexto Y grabar un audio con tu situaci
 
 | Paso | Qué hacemos |
 |------|-------------|
-| **1. Descubrimiento** | Recibes el catálogo y/o grabas tu audio. Entendemos tus 4 focos. |
-| **2. Propuesta** | En 48 horas te enviamos propuesta con Cuerpo Completo de cada foco. |
+| **1. Descubrimiento** | Recibes el catálogo y/o grabas tu audio. Entendemos tus 4 dolores. |
+| **2. Propuesta** | En 48 horas te enviamos propuesta con Cuerpo Completo de cada dolor. |
 | **3. Acuerdo** | Definimos juntos alcance inicial y potencialidades. |
 | **4. Construcción** | Entregas cada 2 semanas. Ajustes según tu feedback. |
-| **5. Crecimiento** | Cuando estés listo, profundizamos focos o añadimos nuevos. |
+| **5. Crecimiento** | Cuando estés listo, profundizamos dolores o añadimos nuevos. |
 
 ---
 
@@ -481,17 +536,22 @@ Solo entender tu negocio y cómo podemos ayudarte.
 
 | Concepto | Precio |
 |----------|--------|
-| Tu Fundación (identidad + 3 roles + Admin + interfaces + datos) | 1,000€ |
-| Tus 4 Focos (con cuerpo completo y alcance inicial) | 1,500€ |
+| Estructura base (usuarios ilimitados, roles, interfaces, motor IA) | 900€ |
+| Tus 4 dolores (400€ de crédito por dolor) | 1,600€ |
 | **TOTAL** | **2,500€ + IVA** |
 
 ### Suscripción Mensual
 
-Incluye: Uso de plataforma + Soporte técnico + IA integrada
+| Plan | Precio | Para quién |
+|------|--------|------------|
+| **Base** | 9€/usuario/mes | CRM completo sin IA |
+| **Esencial** | 19€/usuario/mes | CRM + IA limitada |
+| **Pro** | 29€/usuario/mes | CRM + IA completa |
 
-**Desde 20€/persona/mes**
-
-*(Ejemplo: equipo de 10 personas en plan básico = 200€/mes)*
+**Ejemplo:** Equipo de 10 personas
+- Todos en Base: 90€/mes
+- Todos en Esencial: 190€/mes
+- Mix (5 Base + 5 Pro): 190€/mes
 
 ---
 

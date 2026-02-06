@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="APEX - Automatización de Procesos y Experiencias. Cuéntanos qué te duele y diseñamos tu sistema único.">
+
+  <title>APEX | Formulario de Descubrimiento</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="form.css">
+</head>
+<body>
+  <!-- Progress Bar -->
+  <div class="progress-bar">
+    <div class="progress-bar__fill" id="progressFill"></div>
+  </div>
+
+
+  <!-- Container principal del formulario -->
+  <main class="form-container" id="formContainer">
+
+    <!-- ==================== PANTALLA DE BIENVENIDA ==================== -->
+    <section class="form-screen active" data-screen="welcome">
+      <div class="screen-content">
+        <div class="welcome-logo">
+          <img src="../images/google-workspace-logo.png" alt="PRISMA">
+        </div>
+        <h1 class="welcome-title">Descubre APEX</h1>
+        <p class="welcome-subtitle">
+          <strong>A</strong>utomatización de <strong>P</strong>rocesos y <strong>EX</strong>periencias.<br>
+          Cuéntanos qué te duele y diseñamos tu sistema único.
+        </p>
+        <div class="welcome-time">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          <span>5-7 minutos</span>
+        </div>
+        <button class="btn-primary btn-start" id="btnStart">
+          <span>Empezar</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== FASE 1: PREGUNTAS FIJAS ==================== -->
+
+    <!-- Pregunta 1.1: Tamaño del equipo -->
+    <section class="form-screen" data-screen="q1-1" data-phase="1">
+      <div class="screen-content">
+        <div class="question-number">1 <span class="question-total">/ 5</span></div>
+        <h2 class="question-title">¿Cuántas personas usarían el sistema?</h2>
+        <p class="question-hint">Incluye representantes, supervisores y personal administrativo</p>
+
+        <div class="options-list" data-question="team_size">
+          <button class="option-btn" data-value="1-5">
+            <span class="option-key">A</span>
+            <span class="option-text">1-5 personas</span>
+          </button>
+          <button class="option-btn" data-value="6-15">
+            <span class="option-key">B</span>
+            <span class="option-text">6-15 personas</span>
+          </button>
+          <button class="option-btn" data-value="16-30">
+            <span class="option-key">C</span>
+            <span class="option-text">16-30 personas</span>
+          </button>
+          <button class="option-btn" data-value="30+">
+            <span class="option-key">D</span>
+            <span class="option-text">Más de 30 personas</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pregunta 1.2: Equipo de campo -->
+    <section class="form-screen" data-screen="q1-2" data-phase="1">
+      <div class="screen-content">
+        <div class="question-number">2 <span class="question-total">/ 5</span></div>
+        <h2 class="question-title">¿Tienes equipo que visita clientes en campo?</h2>
+        <p class="question-hint">Representantes, vendedores, visitadores médicos, técnicos de servicio</p>
+
+        <div class="options-list" data-question="has_field_team">
+          <button class="option-btn" data-value="yes">
+            <span class="option-key">A</span>
+            <span class="option-text">Sí, tenemos equipo de campo</span>
+          </button>
+          <button class="option-btn" data-value="no">
+            <span class="option-key">B</span>
+            <span class="option-text">No, todo es desde oficina o remoto</span>
+          </button>
+          <button class="option-btn" data-value="both">
+            <span class="option-key">C</span>
+            <span class="option-text">Ambos (parte en campo, parte en oficina)</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pregunta 1.3: Sector -->
+    <section class="form-screen" data-screen="q1-3" data-phase="1">
+      <div class="screen-content">
+        <div class="question-number">3 <span class="question-total">/ 5</span></div>
+        <h2 class="question-title">¿En qué sector está tu empresa?</h2>
+
+        <div class="options-list" data-question="sector">
+          <button class="option-btn" data-value="pharma">
+            <span class="option-key">A</span>
+            <span class="option-text">Farmacéutico / Dispositivos médicos</span>
+          </button>
+          <button class="option-btn" data-value="distribution">
+            <span class="option-key">B</span>
+            <span class="option-text">Distribución / Mayorista</span>
+          </button>
+          <button class="option-btn" data-value="manufacturing">
+            <span class="option-key">C</span>
+            <span class="option-text">Manufactura / Producción</span>
+          </button>
+          <button class="option-btn" data-value="services">
+            <span class="option-key">D</span>
+            <span class="option-text">Servicios profesionales</span>
+          </button>
+          <button class="option-btn" data-value="retail">
+            <span class="option-key">E</span>
+            <span class="option-text">Retail / Comercio</span>
+          </button>
+          <button class="option-btn" data-value="other" data-has-input="true">
+            <span class="option-key">F</span>
+            <span class="option-text">Otro</span>
+          </button>
+        </div>
+
+        <div class="other-input-container hidden" id="sectorOtherContainer">
+          <input type="text" class="other-input" id="sectorOther" placeholder="Escribe tu sector...">
+        </div>
+      </div>
+    </section>
+
+    <!-- Pregunta 1.4: Tecnología actual -->
+    <section class="form-screen" data-screen="q1-4" data-phase="1">
+      <div class="screen-content">
+        <div class="question-number">4 <span class="question-total">/ 5</span></div>
+        <h2 class="question-title">¿Cómo gestionas hoy la información de tu operación comercial?</h2>
+        <p class="question-hint">Puedes seleccionar varias opciones</p>
+
+        <div class="options-list multi-select" data-question="current_tech" data-multi="true">
+          <button class="option-btn" data-value="excel">
+            <span class="option-checkbox"></span>
+            <span class="option-text">Excel / Google Sheets</span>
+          </button>
+          <button class="option-btn" data-value="crm">
+            <span class="option-checkbox"></span>
+            <span class="option-text">Un CRM (Salesforce, HubSpot, Zoho, otro)</span>
+          </button>
+          <button class="option-btn" data-value="erp">
+            <span class="option-checkbox"></span>
+            <span class="option-text">ERP con módulo comercial</span>
+          </button>
+          <button class="option-btn" data-value="informal">
+            <span class="option-checkbox"></span>
+            <span class="option-text">Libretas / WhatsApp / Email</span>
+          </button>
+          <button class="option-btn" data-value="nothing">
+            <span class="option-checkbox"></span>
+            <span class="option-text">No tenemos nada centralizado</span>
+          </button>
+        </div>
+
+        <button class="btn-continue hidden" id="btnContinueQ4">
+          <span>Continuar</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Pregunta 1.5: Motivación -->
+    <section class="form-screen" data-screen="q1-5" data-phase="1">
+      <div class="screen-content">
+        <div class="question-number">5 <span class="question-total">/ 5</span></div>
+        <h2 class="question-title">¿Qué te motivó a buscar una solución?</h2>
+        <p class="question-hint">Selecciona la razón principal</p>
+
+        <div class="options-list" data-question="motivation">
+          <button class="option-btn" data-value="no_visibility">
+            <span class="option-key">A</span>
+            <span class="option-text">No tengo visibilidad de lo que pasa</span>
+          </button>
+          <button class="option-btn" data-value="no_adoption">
+            <span class="option-key">B</span>
+            <span class="option-text">El equipo no registra la información</span>
+          </button>
+          <button class="option-btn" data-value="losing_sales">
+            <span class="option-key">C</span>
+            <span class="option-text">Pierdo ventas o clientes</span>
+          </button>
+          <button class="option-btn" data-value="compliance">
+            <span class="option-key">D</span>
+            <span class="option-text">Problemas con auditorías o regulación</span>
+          </button>
+          <button class="option-btn" data-value="system_fails">
+            <span class="option-key">E</span>
+            <span class="option-text">El sistema actual no funciona</span>
+          </button>
+          <button class="option-btn" data-value="growth">
+            <span class="option-key">F</span>
+            <span class="option-text">Quiero crecer y necesito orden</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TRANSICIÓN A FASE 2 ==================== -->
+    <section class="form-screen" data-screen="transition-phase2">
+      <div class="screen-content">
+        <div class="transition-icon">
+          <div class="loading-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <h2 class="transition-title">Analizando tu situación...</h2>
+        <p class="transition-subtitle">Preparando preguntas personalizadas</p>
+      </div>
+    </section>
+
+    <!-- ==================== FASE 2: PREGUNTAS ADAPTATIVAS ==================== -->
+    <section class="form-screen" data-screen="phase2-questions" data-phase="2">
+      <div class="screen-content">
+        <div class="question-number" id="adaptiveQuestionNumber">6 <span class="question-total">/ 8</span></div>
+        <h2 class="question-title" id="adaptiveQuestionTitle">Cargando pregunta...</h2>
+        <p class="question-hint" id="adaptiveQuestionHint"></p>
+
+        <div class="options-list" id="adaptiveOptions" data-question="adaptive">
+          <!-- Las opciones se generan dinámicamente -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TRANSICIÓN A FASE 3 ==================== -->
+    <section class="form-screen" data-screen="transition-phase3">
+      <div class="screen-content">
+        <div class="transition-icon">
+          <div class="loading-brain">
+            <svg viewBox="0 0 60 60" fill="none">
+              <circle cx="30" cy="30" r="28" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+              <path class="brain-path" d="M20 35c0-8 5-15 10-15s10 7 10 15" stroke="currentColor" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+        </div>
+        <h2 class="transition-title">Detectando tus dolores...</h2>
+        <p class="transition-subtitle">Analizando las respuestas con IA</p>
+      </div>
+    </section>
+
+    <!-- ==================== FASE 3: PAINS DETECTADOS ==================== -->
+    <section class="form-screen" data-screen="pains-detected" data-phase="3">
+      <div class="screen-content screen-content--wide">
+        <h2 class="pains-title">Según lo que nos contaste, estos son tus</h2>
+        <h1 class="pains-highlight">4 DOLORES PRINCIPALES</h1>
+
+        <div class="pains-list" id="painsList">
+          <!-- Los pains se generan dinámicamente -->
+          <div class="pain-card" data-pain="1">
+            <div class="pain-number">1</div>
+            <div class="pain-content">
+              <h3 class="pain-title">Cargando...</h3>
+              <p class="pain-description">Analizando tu situación</p>
+            </div>
+          </div>
+          <div class="pain-card" data-pain="2">
+            <div class="pain-number">2</div>
+            <div class="pain-content">
+              <h3 class="pain-title">Cargando...</h3>
+              <p class="pain-description">Analizando tu situación</p>
+            </div>
+          </div>
+          <div class="pain-card" data-pain="3">
+            <div class="pain-number">3</div>
+            <div class="pain-content">
+              <h3 class="pain-title">Cargando...</h3>
+              <p class="pain-description">Analizando tu situación</p>
+            </div>
+          </div>
+          <div class="pain-card" data-pain="4">
+            <div class="pain-number">4</div>
+            <div class="pain-content">
+              <h3 class="pain-title">Cargando...</h3>
+              <p class="pain-description">Analizando tu situación</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="pains-question">¿Estos reflejan tus dolores principales?</p>
+
+        <div class="pains-actions">
+          <button class="btn-confirm" id="btnConfirmPains">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            <span>Sí, son correctos</span>
+          </button>
+          <button class="btn-adjust" id="btnAdjustPains">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            <span>No, quiero ajustar</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== FASE 4: AUDIO ==================== -->
+    <section class="form-screen" data-screen="audio-record" data-phase="4">
+      <div class="screen-content">
+        <div class="audio-icon">
+          <svg viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="38" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+            <rect x="30" y="20" width="20" height="35" rx="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M25 40v5a15 15 0 0030 0v-5" stroke="currentColor" stroke-width="2"/>
+            <line x1="40" y1="60" x2="40" y2="70" stroke="currentColor" stroke-width="2"/>
+            <line x1="32" y1="70" x2="48" y2="70" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </div>
+
+        <h2 class="audio-title" id="audioTitle">Ahora cuéntanos más con tus palabras</h2>
+        <p class="audio-subtitle" id="audioSubtitle">
+          Graba un audio de 1-2 minutos explicando:
+        </p>
+
+        <ul class="audio-prompts" id="audioPrompts">
+          <li>¿Cuál de estos 4 dolores te afecta MÁS?</li>
+          <li>¿Qué has intentado hacer para resolverlo?</li>
+          <li>¿Hay algo más que debamos saber?</li>
+        </ul>
+
+        <div class="audio-recorder" id="audioRecorder">
+          <div class="recorder-visualizer" id="recorderVisualizer">
+            <div class="visualizer-bars">
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="recorder-timer" id="recorderTimer">0:00</div>
+
+          <button class="recorder-btn" id="recorderBtn">
+            <span class="recorder-btn__record">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="8"/>
+              </svg>
+            </span>
+            <span class="recorder-btn__stop hidden">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="6" width="12" height="12" rx="2"/>
+              </svg>
+            </span>
+          </button>
+
+          <p class="recorder-status" id="recorderStatus">Toca para grabar</p>
+        </div>
+
+        <div class="audio-preview hidden" id="audioPreview">
+          <audio id="audioPlayer" controls></audio>
+          <div class="audio-preview-actions">
+            <button class="btn-rerecord" id="btnRerecord">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 4v6h6M23 20v-6h-6"/>
+                <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+              </svg>
+              <span>Grabar de nuevo</span>
+            </button>
+            <button class="btn-primary btn-use-audio" id="btnUseAudio">
+              <span>Usar este audio</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <p class="audio-note">
+          El audio nos ayuda a preparar una propuesta más personalizada para ti.
+        </p>
+      </div>
+    </section>
+
+    <!-- ==================== TRANSICIÓN: PROCESANDO AUDIO ==================== -->
+    <section class="form-screen" data-screen="processing-audio">
+      <div class="screen-content">
+        <div class="transition-icon">
+          <div class="loading-wave">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <h2 class="transition-title">Procesando tu audio...</h2>
+        <p class="transition-subtitle">Transcribiendo y analizando</p>
+      </div>
+    </section>
+
+    <!-- ==================== FASE 5: CONFIRMACIÓN FINAL ==================== -->
+    <section class="form-screen" data-screen="final-pains" data-phase="5">
+      <div class="screen-content screen-content--wide">
+        <h2 class="final-title">Estos son tus 4 DOLORES que resolveremos juntos:</h2>
+
+        <div class="final-pains-list" id="finalPainsList">
+          <!-- Los pains finales se generan dinámicamente -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== DATOS DE CONTACTO ==================== -->
+    <section class="form-screen" data-screen="contact-info" data-phase="5">
+      <div class="screen-content">
+        <h2 class="contact-title">Para enviarte la propuesta:</h2>
+
+        <form class="contact-form" id="contactForm">
+          <div class="form-field">
+            <label for="contactName">Nombre</label>
+            <input type="text" id="contactName" name="name" required placeholder="Tu nombre completo">
+          </div>
+
+          <div class="form-field">
+            <label for="contactCompany">Empresa</label>
+            <input type="text" id="contactCompany" name="company" required placeholder="Nombre de tu empresa">
+          </div>
+
+          <div class="form-field">
+            <label for="contactEmail">Email</label>
+            <input type="email" id="contactEmail" name="email" required placeholder="tu@email.com">
+          </div>
+
+          <div class="form-field">
+            <label for="contactWhatsapp">WhatsApp</label>
+            <input type="tel" id="contactWhatsapp" name="whatsapp" placeholder="+52 55 1234 5678">
+          </div>
+
+          <button type="submit" class="btn-primary btn-submit">
+            <span>Enviar y recibir mi propuesta</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================== PANTALLA DE GRACIAS ==================== -->
+    <section class="form-screen" data-screen="thank-you">
+      <div class="screen-content">
+        <div class="thanks-icon">
+          <svg viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="38" stroke="currentColor" stroke-width="2"/>
+            <path d="M25 42l10 10 20-24" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <h1 class="thanks-title">¡Gracias, <span id="thanksName">amigo</span>!</h1>
+
+        <div class="thanks-info">
+          <p>En las próximas <strong>48 horas</strong> recibirás una propuesta personalizada para resolver tus 4 dolores.</p>
+        </div>
+
+        <div class="thanks-summary">
+          <h3>La propuesta incluirá:</h3>
+          <ul>
+            <li>
+              <strong>CUERPO COMPLETO</strong> de cada dolor
+              <span>(todo lo que se puede hacer)</span>
+            </li>
+            <li>
+              <strong>ALCANCE INICIAL</strong>
+              <span>(qué construimos con los 2,500€)</span>
+            </li>
+            <li>
+              <strong>SUSCRIPCIÓN</strong> según tus necesidades
+              <span>Base (9€), Esencial (19€) o Pro (29€) por usuario</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="thanks-contact">
+          <p>¿Dudas? Escríbenos:</p>
+          <a href="mailto:hola@prismaconsul.com" class="contact-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            hola@prismaconsul.com
+          </a>
+          <a href="https://wa.me/34644327898" class="contact-link" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            +34 644 327 898
+          </a>
+        </div>
+
+        <a href="../" class="btn-back-home">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span>Volver a PRISMA Consul</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Navigation Buttons (Fixed) -->
+  <nav class="form-nav hidden" id="formNav">
+    <button class="nav-btn nav-btn--prev" id="btnPrev">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div class="nav-progress">
+      <span id="navCurrent">1</span> / <span id="navTotal">5</span>
+    </div>
+    <button class="nav-btn nav-btn--next hidden" id="btnNext">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Keyboard Shortcut Hints (Desktop) -->
+  <div class="keyboard-hints" id="keyboardHints">
+    <span class="hint"><kbd>Enter</kbd> para continuar</span>
+    <span class="hint"><kbd>A</kbd>-<kbd>F</kbd> para seleccionar</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="form.js"></script>
+</body>
+</html>

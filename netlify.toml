@@ -1,0 +1,17 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Redirige /apex a la carpeta apex
+[[redirects]]
+  from = "/apex"
+  to = "/apex/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/apex/*"
+  to = "/apex/:splat"
+  status = 200

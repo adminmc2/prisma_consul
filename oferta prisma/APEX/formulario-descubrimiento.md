@@ -5,7 +5,7 @@
 
 ## Tu CRM, Tu Ritmo
 
-Versión 3.0 — Febrero 2026
+Versión 4.0 — Febrero 2026
 
 ---
 
@@ -50,9 +50,9 @@ Este formulario usa **IA** para entender tu situación y detectar tus dolores pr
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
 │  FASE 5: CONFIRMACIÓN FINAL                                     │
-│  (Muestra los 4 pains definitivos + datos de contacto)          │
+│  (Muestra los 4 dolores definitivos + datos de contacto)        │
 │                                                                 │
-│  TUS 4 FOCOS:                                                   │
+│  TUS 4 DOLORES:                                                 │
 │  1. ________________________                                    │
 │  2. ________________________                                    │
 │  3. ________________________                                    │
@@ -328,6 +328,7 @@ FORMATO DE SALIDA:
     // ... 3 más
   ],
   "experiencias_sugeridas": ["Representante", "Supervisor", "Admin"],
+  "plan_recomendado": "Esencial",
   "requiere_compliance": true
 }
 ```
@@ -462,25 +463,25 @@ FORMATO DE SALIDA:
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                 │
-│   Estos son tus 4 FOCOS que resolveremos juntos:               │
+│   Estos son tus 4 DOLORES que resolveremos juntos:             │
 │                                                                 │
 │   ┌─────────────────────────────────────────────────────────┐  │
-│   │  FOCO 1: NO SÉ QUÉ HACE MI EQUIPO                       │  │
+│   │  DOLOR 1: NO SÉ QUÉ HACE MI EQUIPO                      │  │
 │   │  "Necesito visibilidad en tiempo real de las visitas"   │  │
 │   └─────────────────────────────────────────────────────────┘  │
 │                                                                 │
 │   ┌─────────────────────────────────────────────────────────┐  │
-│   │  FOCO 2: MIS MUESTRAS SON UN CAOS                       │  │
+│   │  DOLOR 2: MIS MUESTRAS SON UN CAOS                      │  │
 │   │  "Quiero trazabilidad completa para auditorías"         │  │
 │   └─────────────────────────────────────────────────────────┘  │
 │                                                                 │
 │   ┌─────────────────────────────────────────────────────────┐  │
-│   │  FOCO 3: REPORTES MANUALES                              │  │
+│   │  DOLOR 3: REPORTES MANUALES                             │  │
 │   │  "Que los reportes se generen automáticamente"          │  │
 │   └─────────────────────────────────────────────────────────┘  │
 │                                                                 │
 │   ┌─────────────────────────────────────────────────────────┐  │
-│   │  FOCO 4: AUDITORÍAS ME PREOCUPAN                        │  │
+│   │  DOLOR 4: AUDITORÍAS ME PREOCUPAN                       │  │
 │   │  "Cumplir con COFEPRIS sin complicaciones"              │  │
 │   └─────────────────────────────────────────────────────────┘  │
 │                                                                 │
@@ -516,7 +517,7 @@ FORMATO DE SALIDA:
 │   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
 │                                                                 │
 │   En las próximas 48 horas recibirás una propuesta             │
-│   personalizada para resolver tus 4 focos:                     │
+│   personalizada para resolver tus 4 dolores:                   │
 │                                                                 │
 │   1. No sé qué hace mi equipo                                  │
 │   2. Mis muestras son un caos                                  │
@@ -527,14 +528,14 @@ FORMATO DE SALIDA:
 │                                                                 │
 │   La propuesta incluirá:                                       │
 │                                                                 │
-│   • CUERPO COMPLETO de cada foco                               │
+│   • CUERPO COMPLETO de cada dolor                              │
 │     (todo lo que se puede hacer)                               │
 │                                                                 │
 │   • ALCANCE INICIAL                                            │
 │     (qué construimos con los 2,500€)                           │
 │                                                                 │
-│   • POTENCIALIDADES                                            │
-│     (cómo puede crecer después)                                │
+│   • SUSCRIPCIÓN según tus necesidades                          │
+│     Base (9€), Esencial (19€) o Pro (29€) por usuario          │
 │                                                                 │
 │   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
 │                                                                 │
@@ -688,6 +689,7 @@ Equipo Prisma recibe notificación con todo el contexto
   ],
 
   "experiencias_sugeridas": ["Representante", "Supervisor", "Admin"],
+  "plan_recomendado": "Esencial",
   "requiere_compliance": true,
 
   "notas_para_propuesta": "URGENTE: Auditoría COFEPRIS en marzo. Priorizar trazabilidad de muestras."
@@ -703,13 +705,14 @@ Equipo Prisma recibe notificación con todo el contexto
 | `empresa.tamaño` | Cálculo suscripción mensual |
 | `empresa.sector` | Determina si aplica muestras/compliance |
 | `empresa.tiene_campo` | Experiencia Representante sí/no |
-| `pains_finales[0-3]` | Los 4 Focos con Cuerpo Completo |
+| `pains_finales[0-3]` | Los 4 Dolores (400€ c/u = 1,600€) |
 | `pains_finales[].contexto_audio` | Personalización del alcance |
-| `experiencias_sugeridas` | 3 experiencias + Admin |
+| `experiencias_sugeridas` | Experiencias a configurar |
+| `plan_recomendado` | Base (9€), Esencial (19€) o Pro (29€) |
 | `notas_para_propuesta` | Contexto para el equipo |
 
 ---
 
-*Versión 3.0 — Febrero 2026*
+*Versión 4.0 — Febrero 2026*
 
 *© 2026 APEX - Prisma. Todos los derechos reservados.*

@@ -4,6 +4,37 @@
 
 ---
 
+## Modelo de Precios
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                                                                     │
+│   💡 DESARROLLO A PARTIR DE 50€                                     │
+│                                                                     │
+│   Cada solución de IA se personaliza para tu empresa.               │
+│   El precio de desarrollo depende de la complejidad y alcance.      │
+│                                                                     │
+│   ─────────────────────────────────────────────────────────────     │
+│                                                                     │
+│   🎁 35% DE DESCUENTO SI YA TIENES UN PRODUCTO CONTRATADO           │
+│                                                                     │
+│   Si ya tienes una solución con nosotros que comparte la misma      │
+│   base de conocimiento (productos, objeciones, competencia...),     │
+│   el desarrollo de la nueva solución tiene un 35% de descuento.     │
+│                                                                     │
+│   Ejemplo:                                                          │
+│   • Ya tienes NOVIA (asistente de ventas) → base de conocimiento    │
+│   • Quieres añadir un Chatbot de Atención al Cliente                │
+│   • El chatbot usa la MISMA base de productos/objeciones            │
+│   • Resultado: 35% menos en el desarrollo del chatbot               │
+│                                                                     │
+│   La base de conocimiento ya está creada, solo la reutilizamos.     │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## Estructura del Catálogo
 
 | Sección | Descripción |
