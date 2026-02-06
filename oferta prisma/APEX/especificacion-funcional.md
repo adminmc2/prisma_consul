@@ -1,907 +1,885 @@
 # APEX — Especificación Funcional
 
-> **APEX** = **A**utomatización de **P**rocesos y **EX**periencias
+## Sistema de Inteligencia Autónoma para la Industria Farmacéutica
 
-Documento técnico de referencia organizado por las 5 experiencias del sistema.
+> **APEX** = El CRM Invisible para Pharma
+> Un sistema que no requiere que entres en él para que funcione.
 
 ---
 
 ## Índice
 
-1. [Experiencia 1: MI DÍA](#experiencia-1-mi-día) — Representante en campo
-2. [Experiencia 2: MIS CLIENTES](#experiencia-2-mis-clientes) — Vista 360° del cliente
-3. [Experiencia 3: MI EQUIPO](#experiencia-3-mi-equipo) — Gerente/Supervisor
-4. [Experiencia 4: INTELIGENCIA COMERCIAL](#experiencia-4-inteligencia-comercial) — Marketing/Dirección
-5. [Experiencia 5: CONFIGURACIÓN Y ADMINISTRACIÓN](#experiencia-5-configuración-y-administración) — Admin/IT
-6. [Capacidades Transversales](#capacidades-transversales) — IA, Integraciones, Seguridad
-7. [Servicios Profesionales](#servicios-profesionales) — Implementación y Soporte
+1. [Arquitectura del Sistema](#1-arquitectura-del-sistema)
+2. [Interfaz WhatsApp-First](#2-interfaz-whatsapp-first)
+3. [Los 4 Agentes de IA](#3-los-4-agentes-de-ia)
+4. [Las 5 Experiencias Adaptativas](#4-las-5-experiencias-adaptativas)
+5. [Generative UI (Dashboard Adaptativo)](#5-generative-ui-dashboard-adaptativo)
+6. [Motor de Compliance Farmacéutico](#6-motor-de-compliance-farmacéutico)
+7. [Integraciones](#7-integraciones)
+8. [Seguridad y Gobernanza de IA](#8-seguridad-y-gobernanza-de-ia)
+9. [Servicios Profesionales](#9-servicios-profesionales)
 
 ---
 
-# EXPERIENCIA 1: MI DÍA
+# 1. ARQUITECTURA DEL SISTEMA
 
-**Usuario principal:** Representante de campo
+## 1.1 Filosofía: Sistema de Acción Autónoma
 
-**Pregunta que responde:** *"¿Qué hago hoy y cómo registro lo que hice?"*
+APEX no es un "sistema de registro" tradicional. Es un **Sistema de Inteligencia Autónoma** que:
 
----
+| Paradigma Tradicional | Paradigma APEX |
+|-----------------------|----------------|
+| Usuario entra al sistema | Sistema va al usuario |
+| Usuario busca información | Información aparece automáticamente |
+| Usuario ejecuta acciones | Sistema ejecuta acciones (supervisadas) |
+| Módulos fijos | Contextos adaptativos |
+| Dashboard estático | Generative UI |
 
-## 1.1 Planificación y Agenda
+## 1.2 Componentes Principales
 
-### Vista de Agenda Diaria
-- [ ] Calendario con visitas programadas y prioridades
-- [ ] Vista semanal/mensual con cobertura de territorio
-- [ ] Ciclos de visita y frecuencia por categoría de médico
-- [ ] Mapa interactivo con ubicaciones de visitas del día
-- [ ] Indicadores de urgencia y oportunidad
-- [ ] Filtros por tipo de actividad (visita, evento, seguimiento)
-
-### Planificación Inteligente
-- [ ] Optimización automática de rutas basada en valor del HCP
-- [ ] Sugerencias de próximo paso basadas en historial
-- [ ] Alertas proactivas: "Hace X días que no visitas al Dr. Rodríguez"
-- [ ] Detección de momento óptimo de contacto
-- [ ] Recomendación de siguiente mejor acción (Next Best Action)
-- [ ] Priorización automática de leads y HCPs
-
----
-
-## 1.2 Registro de Actividad
-
-### Registro Rápido de Visitas
-- [ ] Botón único "Registrar Actividad" - flujo continuo en <90 segundos
-- [ ] Checkin/checkout geolocalizado automático
-- [ ] Registro de tiempo automático
-- [ ] Plantillas predefinidas por tipo de visita
-- [ ] Autocompletado inteligente basado en patrones históricos
-
-### Registro por Voz
-- [ ] Transcripción automática de visitas: graba y transcribe la conversación
-- [ ] Registro conversacional: "Acabo de visitar al Dr. García, dejé 3 muestras de X..."
-- [ ] Análisis semántico: extrae temas, objeciones, compromisos, sentimiento
-- [ ] Generación automática de reportes: de voz a informe estructurado
-- [ ] Acceso a estudios clínicos y fichas técnicas por voz
-
-### Gestión de Muestras y Material
-- [ ] Control de inventario de muestras por representante
-- [ ] Registro de muestras entregadas integrado en flujo de visita
-- [ ] Límites automáticos de muestras por HCP (compliance)
-- [ ] Firma electrónica de recepción del médico
-- [ ] Material promocional disponible según aprobación
-- [ ] Trazabilidad completa para auditorías
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        CAPA DE INTERFAZ                         │
+├──────────────────┬──────────────────┬──────────────────────────┤
+│   WhatsApp API   │   App Móvil      │   Dashboard Web          │
+│   (Reps - 90%)   │   (Opcional)     │   (Gerentes/Admin)       │
+└────────┬─────────┴────────┬─────────┴────────────┬─────────────┘
+         │                  │                      │
+         ▼                  ▼                      ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    MOTOR DE IA AGÉNTICA                         │
+├────────────────┬────────────────┬────────────────┬──────────────┤
+│ Agente Visita  │ Agente Comply  │ Agente Prep    │ Agente Alert │
+└────────┬───────┴────────┬───────┴────────┬───────┴──────┬───────┘
+         │                │                │              │
+         ▼                ▼                ▼              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    NÚCLEO DE DATOS                              │
+├──────────────┬──────────────┬──────────────┬───────────────────┤
+│     HCPs     │   Visitas    │  Inventario  │   Compliance      │
+│   (Médicos)  │              │  (Muestras)  │   (Reglas)        │
+└──────────────┴──────────────┴──────────────┴───────────────────┘
+         │                │                │              │
+         ▼                ▼                ▼              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    INTEGRACIONES                                │
+├──────────────┬──────────────┬──────────────┬───────────────────┤
+│     ERP      │  Datos IQVIA │   Email      │   Calendario      │
+└──────────────┴──────────────┴──────────────┴───────────────────┘
+```
 
 ---
 
-## 1.3 Preparación de Visitas
+# 2. INTERFAZ WHATSAPP-FIRST
 
-### Briefing Inteligente Pre-Visita
-- [ ] Resumen automático del médico antes de llegar
-- [ ] Historial completo de interacciones previas
-- [ ] Preferencias y datos relevantes del HCP
-- [ ] Última interacción y compromisos pendientes
-- [ ] Alertas de fechas importantes (cumpleaños, congresos)
-- [ ] Preparación de visitas por voz: "Prepárame para la visita con el Dr. García"
+## 2.1 Principio Fundamental
 
-### Argumentación y Soporte
-- [ ] Base de conocimiento conversacional de productos
-- [ ] Respuestas instantáneas a objeciones
-- [ ] Argumentarios por tipo de prescriptor
-- [ ] Resúmenes de estudios clínicos
-- [ ] Casos de éxito adaptados al contexto del médico
-- [ ] Asistente de argumentación: sugiere respuestas en tiempo real
+> "El representante farmacéutico vive en WhatsApp. APEX vive ahí también."
+
+El 90% de las interacciones del representante de campo se realizan a través de WhatsApp Business API, sin necesidad de abrir otra aplicación.
+
+## 2.2 Capacidades de Procesamiento
+
+### Entrada de Datos
+- [ ] **Texto informal:** "Acabo de ver al Dr. García, le dejé 3 muestras"
+- [ ] **Notas de voz:** Transcripción automática + extracción de entidades
+- [ ] **Imágenes:** Fotos de recetas, tarjetas de presentación, material
+- [ ] **Ubicación:** Geolocalización automática para check-in
+
+### Procesamiento de Lenguaje Natural (NLP)
+- [ ] Detección de entidades: médicos, productos, cantidades, fechas
+- [ ] Comprensión de intenciones múltiples en una frase
+- [ ] Manejo de contexto conversacional (memoria de hilo)
+- [ ] Variantes regionales de español (México, España, LATAM)
+- [ ] Interpretación de expresiones coloquiales ("te aviso luego", "lo estamos viendo")
+
+### Respuestas del Sistema
+- [ ] Confirmaciones estructuradas de acciones tomadas
+- [ ] Briefings pre-visita automáticos
+- [ ] Alertas proactivas de compliance
+- [ ] Documentos adjuntos (estudios, fichas técnicas)
+- [ ] Botones de acción rápida (WhatsApp Flows)
+
+## 2.3 Flujos de Conversación
+
+### Registro de Visita
+```
+Rep: [Nota de voz] "Acabo de salir de ver al Dr. Martínez en
+     el Hospital San José. Le dejé dos muestras del Losartán
+     de 50mg. Está muy interesado pero me pidió el estudio
+     de eficacia comparativa. Hay que darle seguimiento la
+     próxima semana."
+
+APEX: ✓ Visita registrada
+      📍 Hospital San José (11:42 AM)
+      👤 Dr. Martínez - Cardiólogo
+      💊 2 muestras Losartán 50mg descontadas
+      📊 Estado: Interesado - Pendiente estudio
+      📎 Te adjunto: Estudio_Eficacia_Losartan.pdf
+      📅 Recordatorio creado: Seguimiento 12 Feb
+
+      ¿Comparto el estudio directamente al Dr. Martínez?
+      [Sí, enviar] [No, lo hago yo] [Editar visita]
+```
+
+### Consulta de Cliente
+```
+Rep: "Dame el resumen del Dr. García"
+
+APEX: 👤 Dr. Juan García Hernández
+      🏥 Cardiólogo - Hospital Ángeles Pedregal
+
+      📊 POTENCIAL: A (Alto prescriptor)
+      📈 Tendencia: ↑ Incrementando prescripciones
+
+      📅 Última visita: 15 Ene 2026 (hace 22 días)
+      💊 Muestras este mes: 4/6 (disponibles: 2)
+
+      ⚠️ ALERTA: Próximo a límite mensual de muestras
+
+      📝 Última nota: "Interesado en estudios de
+         combinación con IECA"
+
+      🎯 Acción sugerida: Visitar con estudio COMBINE-2024
+
+      [Ver historial completo] [Programar visita] [Llamar]
+```
+
+### Alerta de Compliance
+```
+APEX: ⚠️ ALERTA DE COMPLIANCE
+
+      Antes de tu visita al Dr. Rodríguez:
+
+      💊 Ha recibido 5 de 6 muestras permitidas este mes
+      📋 Solo puedes entregar 1 muestra más
+
+      Si necesitas entregar más, debes:
+      [Solicitar excepción] [Continuar con límite]
+```
+
+## 2.4 WhatsApp Business API - Requisitos Técnicos
+
+### Configuración
+- [ ] Número de WhatsApp Business verificado
+- [ ] Integración vía API oficial de Meta
+- [ ] Plantillas de mensaje aprobadas
+- [ ] Webhook para recepción de mensajes
+- [ ] Cifrado end-to-end
+
+### WhatsApp Flows
+- [ ] Formularios interactivos dentro del chat
+- [ ] Selección de productos con catálogo visual
+- [ ] Firma digital de recepción de muestras
+- [ ] Encuestas de satisfacción post-visita
 
 ---
 
-## 1.4 Funcionalidades Móviles
+# 3. LOS 4 AGENTES DE IA
 
-### App Móvil Nativa
-- [ ] Acceso completo offline con sincronización automática
-- [ ] Planificación de visitas con mapa integrado
-- [ ] Consulta de catálogo y precios sin conexión
-- [ ] Toma de pedidos en campo
-- [ ] Notificaciones push de recordatorios y alertas
-- [ ] Firma digital del médico
+## 3.1 Arquitectura Multi-Agente
 
-### Modo Offline Completo
-- [ ] Almacenamiento local de datos esenciales
-- [ ] Registro de visitas sin conexión
-- [ ] Cola de sincronización inteligente
-- [ ] Resolución de conflictos automática
-- [ ] Indicador de estado de sincronización
+APEX utiliza un ecosistema de agentes especializados que trabajan en paralelo, cada uno con su dominio de responsabilidad.
 
----
-
-## 1.5 Seguimiento Post-Visita
-
-### Acciones Automáticas
-- [ ] Propone próximos pasos post-visita
-- [ ] Actualización automática del sistema sin intervención del representante
-- [ ] Generación de emails de seguimiento personalizados
-- [ ] Follow-up automatizado con contenido relevante
-- [ ] Programación de siguiente visita sugerida
-
-### Consultas y Reportes
-- [ ] Estado de visitas vs. objetivo personal
-- [ ] Historial de actividad semanal/mensual
-- [ ] Consultas por voz: "¿Cómo fueron mis visitas esta semana?"
-- [ ] Acceso rápido a métricas personales
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   ORQUESTADOR CENTRAL                       │
+│         (Decide qué agente responde a cada input)           │
+└─────────────────────────────────────────────────────────────┘
+         │           │            │            │
+         ▼           ▼            ▼            ▼
+    ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
+    │ AGENTE  │ │ AGENTE  │ │ AGENTE  │ │ AGENTE  │
+    │ VISITA  │ │COMPLIANCE│ │ PREP   │ │ ALERTAS │
+    └─────────┘ └─────────┘ └─────────┘ └─────────┘
+```
 
 ---
 
-# EXPERIENCIA 2: MIS CLIENTES
+## 3.2 Agente de Visita
 
-**Usuario principal:** Representante de campo
+**Función:** Capturar, estructurar y registrar interacciones con HCPs
 
-**Pregunta que responde:** *"¿Qué necesito saber sobre este médico/farmacia antes de visitarlo?"*
+### Capacidades
+
+#### Captura de Información
+- [ ] Transcripción de notas de voz con precisión >95%
+- [ ] Extracción de entidades (NER): médicos, productos, cantidades, fechas
+- [ ] Interpretación de texto informal y coloquial
+- [ ] Procesamiento de imágenes (recetas, tarjetas, material)
+- [ ] Geolocalización automática (check-in/check-out)
+
+#### Estructuración Automática
+- [ ] Mapeo de médico mencionado a registro de HCP
+- [ ] Clasificación de tipo de visita (promoción, seguimiento, evento)
+- [ ] Extracción de compromisos y próximos pasos
+- [ ] Análisis de sentimiento de la interacción
+- [ ] Detección de objeciones mencionadas
+
+#### Acciones Autónomas
+- [ ] Registro de visita en el sistema
+- [ ] Actualización de estado del HCP en pipeline
+- [ ] Descuento de muestras del inventario
+- [ ] Creación de recordatorios de seguimiento
+- [ ] Generación de email de seguimiento (borrador o envío)
+- [ ] Adjuntar material relevante mencionado
+
+### Ejemplo de Procesamiento
+
+**Input (voz):**
+> "Acabo de ver al Dr. Martínez, cardiólogo del Hospital San José.
+> Le dejé dos muestras de Losartán. Está interesado pero me pidió
+> el estudio de eficacia. Hay que darle seguimiento la próxima semana."
+
+**Procesamiento del Agente:**
+```json
+{
+  "entidades_detectadas": {
+    "hcp": "Dr. Martínez",
+    "especialidad": "cardiólogo",
+    "institucion": "Hospital San José",
+    "producto": "Losartán",
+    "cantidad_muestras": 2,
+    "estado": "interesado",
+    "solicitud": "estudio de eficacia",
+    "seguimiento": "próxima semana"
+  },
+  "acciones_ejecutadas": [
+    "visita_registrada",
+    "inventario_actualizado",
+    "estado_hcp_actualizado",
+    "documento_adjuntado",
+    "recordatorio_creado"
+  ],
+  "sentimiento": "positivo",
+  "probabilidad_cierre": 0.72
+}
+```
 
 ---
 
-## 2.1 Perfil del Cliente (Vista 360°)
+## 3.3 Agente de Compliance
 
-### Datos Básicos
-- [ ] Perfil completo: datos de contacto, especialidad, institución
-- [ ] Gestión de contactos múltiples por cuenta
-- [ ] Preferencias de comunicación y horarios
-- [ ] Clasificación y segmentación (A/B/C/D)
-- [ ] Potencial de prescripción estimado
-- [ ] Foto y datos de identificación
+**Función:** Garantizar cumplimiento regulatorio en tiempo real
 
-### Información Profesional
-- [ ] Especialidades y subespecialidades
+### Capacidades
+
+#### Verificación Preventiva
+- [ ] Validar límites de muestras ANTES de entrega
+- [ ] Verificar frecuencia de visitas según regulación
+- [ ] Controlar material promocional aprobado
+- [ ] Validar que HCP puede recibir muestras (licencia activa)
+
+#### Alertas en Tiempo Real
+- [ ] Alerta cuando se aproxima al límite de muestras
+- [ ] Aviso de visita a HCP con restricciones
+- [ ] Notificación de material no aprobado para el territorio
+- [ ] Bloqueo de acciones que violarían regulación
+
+#### Registro y Trazabilidad
+- [ ] Firma electrónica de recepción de muestras
+- [ ] Audit trail inmutable de todas las interacciones
+- [ ] Timestamps y geolocalización verificables
+- [ ] Registro de excepciones aprobadas
+
+#### Reportes Automáticos
+- [ ] Generación de reportes de transparencia (Sunshine Act)
+- [ ] Informes de distribución de muestras
+- [ ] Documentación para auditorías
+- [ ] Alertas de vencimiento de certificaciones
+
+### Reglas de Compliance Configurables
+
+| Regulación | Parámetro | Valor Ejemplo |
+|------------|-----------|---------------|
+| Límite muestras/HCP/mes | `max_samples_per_hcp_monthly` | 6 |
+| Límite muestras/HCP/año | `max_samples_per_hcp_yearly` | 36 |
+| Frecuencia mínima visitas | `min_days_between_visits` | 14 |
+| Requiere firma digital | `require_digital_signature` | true |
+| Valor máximo obsequios | `max_gift_value_usd` | 50 |
+
+---
+
+## 3.4 Agente de Preparación
+
+**Función:** Preparar al representante antes de cada visita
+
+### Capacidades
+
+#### Briefing Automático Pre-Visita
+El sistema detecta la próxima visita programada y envía por WhatsApp:
+
+- [ ] **Resumen del HCP:** Nombre, especialidad, institución, foto
+- [ ] **Historial reciente:** Últimas 5 visitas con notas clave
+- [ ] **Muestras entregadas:** Qué productos, cuántas, disponibilidad actual
+- [ ] **Objeciones registradas:** Qué ha dicho antes y cómo se manejó
+- [ ] **Material recomendado:** Estudios relevantes para su especialidad
+- [ ] **Alertas:** Tiempo sin visita, cambios detectados, noticias
+
+#### Auto-Populated Context
+Cuando el rep menciona un HCP, el sistema automáticamente busca y presenta:
+
+| Dato | Fuente | Actualización |
+|------|--------|---------------|
+| Perfil completo | Base de HCPs | Tiempo real |
+| Historial de visitas | Registros APEX | Tiempo real |
+| Muestras entregadas | Inventario | Tiempo real |
+| Potencial/Scoring | Motor IA | Diario |
+| Noticias del hospital | Fuentes externas | Semanal |
+| Publicaciones recientes | PubMed/Scholar | Semanal |
+
+#### Sugerencias de Acción
+- [ ] Mejor momento para visitar (basado en histórico)
+- [ ] Productos a promocionar según perfil
+- [ ] Argumentos personalizados por especialidad
+- [ ] Estudios clínicos relevantes para compartir
+
+### Ejemplo de Briefing
+
+```
+📋 BRIEFING PRE-VISITA
+━━━━━━━━━━━━━━━━━━━━━
+
+👤 Dr. Juan García Hernández
+🏥 Cardiólogo | Hospital Ángeles Pedregal
+⭐ Potencial: A (Alto)
+
+📊 HISTORIAL
+• Última visita: 15 Ene (hace 22 días)
+• Total visitas 2026: 3
+• Tendencia: ↑ Receptivo
+
+💊 MUESTRAS (Enero)
+• Losartán 50mg: 4 entregadas (quedan 2)
+• Amlodipino: 0 entregadas (disponibles 6)
+
+⚠️ ALERTAS
+• Próximo a límite mensual de Losartán
+• Publicó artículo sobre HTA resistente (ver adjunto)
+
+💡 SUGERENCIAS
+• Llevar estudio COMBINE-2024 (combina ARAII + BCC)
+• Mencionar caso de éxito Dr. Pérez
+
+📎 MATERIAL ADJUNTO
+• Estudio_COMBINE_2024.pdf
+• Articulo_DrGarcia_HTA.pdf
+```
+
+---
+
+## 3.5 Agente de Alertas
+
+**Función:** Detección proactiva de oportunidades y riesgos
+
+### Capacidades
+
+#### Análisis de Sentimiento
+- [ ] Detectar cambio en tono de interacciones
+- [ ] Identificar frustración o desinterés en notas
+- [ ] Alertar cuando HCP pasa de positivo a neutral/negativo
+
+#### Alertas de Oportunidad
+- [ ] HCPs con alta actividad que no hemos visitado
+- [ ] Médicos que solicitaron información pendiente
+- [ ] Oportunidades de venta cruzada detectadas
+- [ ] Eventos/congresos donde estará el HCP
+
+#### Alertas de Riesgo
+- [ ] HCPs sin visita por más de X días (configurable)
+- [ ] Caída en frecuencia de interacciones
+- [ ] Objetivos mensuales en riesgo
+- [ ] Competidor ganando terreno (si hay datos)
+
+#### Alertas Externas
+- [ ] Cambio de hospital del HCP
+- [ ] Nueva publicación científica del HCP
+- [ ] Noticias del hospital/institución
+- [ ] Cambios regulatorios que afectan al territorio
+
+### Tipos de Alertas
+
+| Prioridad | Tipo | Ejemplo | Canal |
+|-----------|------|---------|-------|
+| 🔴 Crítica | Compliance | "Límite de muestras alcanzado" | WhatsApp inmediato |
+| 🟠 Alta | Riesgo | "Dr. X sin visita hace 45 días" | WhatsApp diario |
+| 🟡 Media | Oportunidad | "Dr. Y publicó sobre tu producto" | Resumen semanal |
+| 🟢 Info | Contexto | "Congreso de cardio próxima semana" | Dashboard |
+
+---
+
+# 4. LAS 5 EXPERIENCIAS ADAPTATIVAS
+
+Las experiencias no son "módulos" sino **contextos que se adaptan** al usuario, momento y situación.
+
+---
+
+## 4.1 Experiencia: MI DÍA
+
+**Usuario:** Representante de campo
+**Interfaz principal:** WhatsApp (90%) + App móvil (10%)
+
+### Funcionalidades WhatsApp
+
+#### Agenda del Día
+- [ ] Recibir agenda matutina automática a las 7:00 AM
+- [ ] Lista de visitas programadas con prioridad
+- [ ] Ruta optimizada entre visitas
+- [ ] Alertas de HCPs no visitados recientemente en la zona
+
+#### Registro de Actividad
+- [ ] Registro por nota de voz (transcripción automática)
+- [ ] Registro por texto informal
+- [ ] Check-in/check-out por ubicación
+- [ ] Confirmación de acciones tomadas
+
+#### Consultas Rápidas
+- [ ] "¿Cuántas muestras le he dejado a [médico]?"
+- [ ] "¿Cuándo fue mi última visita a [hospital]?"
+- [ ] "¿Qué tengo pendiente para hoy?"
+
+### Funcionalidades App Móvil (Opcional)
+
+#### Modo Offline Completo
+- [ ] Base de datos de HCPs del territorio
+- [ ] Catálogo de productos con fichas
+- [ ] Inventario de muestras actual
+- [ ] Cola de registros pendientes de sincronizar
+
+#### Visualización
+- [ ] Mapa con ubicaciones de HCPs
+- [ ] Timeline de actividad del día
+- [ ] KPIs personales (visitas vs objetivo)
+
+---
+
+## 4.2 Experiencia: MIS CLIENTES
+
+**Usuario:** Representante de campo
+**Interfaz:** WhatsApp (consultas) + App/Web (exploración)
+
+### Vista 360° del HCP
+
+#### Perfil Básico
+- [ ] Datos de contacto completos
+- [ ] Foto (si disponible)
+- [ ] Especialidad y subespecialidades
 - [ ] Instituciones donde ejerce
-- [ ] Afiliaciones a sociedades médicas
-- [ ] Participación en congresos y eventos
-- [ ] Publicaciones y áreas de interés
+- [ ] Horarios de atención preferidos
+
+#### Historial de Interacciones
+- [ ] Timeline cronológico de todas las visitas
+- [ ] Notas y compromisos de cada interacción
+- [ ] Muestras entregadas (producto, cantidad, fecha)
+- [ ] Material compartido
+- [ ] Emails enviados y respuestas
+
+#### Inteligencia con IA
+- [ ] Scoring de potencial (A/B/C/D)
+- [ ] Propensión a prescribir
+- [ ] Análisis de sentimiento acumulado
+- [ ] Predicción de mejor momento de contacto
+- [ ] Productos recomendados para promocionar
+
+#### Acciones Sugeridas
+- [ ] Próximo mejor paso (Next Best Action)
+- [ ] Material relevante para compartir
+- [ ] Objeciones comunes y respuestas sugeridas
+- [ ] Médicos similares con éxito para benchmark
 
 ---
 
-## 2.2 Historial de Interacciones
+## 4.3 Experiencia: MI EQUIPO
 
-### Timeline Cronológico
-- [ ] Historial completo de todas las interacciones
-- [ ] Visitas realizadas con notas y compromisos
-- [ ] Muestras entregadas con fechas y cantidades
-- [ ] Material promocional compartido
-- [ ] Emails y comunicaciones enviadas
-- [ ] Eventos a los que ha asistido
+**Usuario:** Gerente / Supervisor de distrito
+**Interfaz:** Dashboard web adaptativo + WhatsApp (alertas)
 
-### Análisis de Interacciones
-- [ ] Frecuencia de visitas vs. objetivo
-- [ ] Efectividad de visitas (conversión)
-- [ ] Análisis de sentimiento en interacciones
-- [ ] Temas recurrentes y objeciones comunes
-- [ ] Detección de señales de interés: analiza engagement digital del HCP
+### Dashboard Gerencial (Generative UI)
 
----
+El dashboard no es fijo. Se adapta a:
+- Hora del día (mañana: actividad en curso, tarde: resumen)
+- Día de la semana (lunes: semana anterior, viernes: proyección)
+- Alertas activas (prioriza lo urgente)
+- Preguntas frecuentes del gerente
 
-## 2.3 Inteligencia del Cliente con IA
+#### KPIs en Tiempo Real
+- [ ] Visitas realizadas hoy vs. programadas
+- [ ] Cobertura de territorio (% HCPs visitados)
+- [ ] Inventario de muestras por rep
+- [ ] Cumplimiento de objetivos MTD
 
-### Scoring y Predicción
-- [ ] Scoring predictivo de clientes: predice valor futuro
-- [ ] Propensión a prescripción: qué producto y cuándo
-- [ ] Detección de churn: identifica riesgo de abandono
-- [ ] Estimación de lifetime value (LTV) por cliente
-- [ ] Segmentación dinámica con ML: clusters automáticos
+#### Sistema de Alertas
+- [ ] Rep sin actividad en X horas
+- [ ] Seguimientos vencidos
+- [ ] Metas en riesgo
+- [ ] Anomalías en patrones de actividad
 
-### Recomendaciones
-- [ ] Próximas acciones sugeridas por IA basadas en perfil y comportamiento
-- [ ] Recomendador de productos: sugiere venta cruzada y upselling
-- [ ] Momento óptimo de contacto: cuándo responderá positivamente
-- [ ] Contenido relevante según perfil y especialidad
-- [ ] Alertas de oportunidades detectadas
+#### Drill-Down por Representante
+- [ ] Detalle de actividad individual
+- [ ] Comparativo vs. promedio del equipo
+- [ ] Fortalezas y áreas de mejora (IA)
+- [ ] Historial de cumplimiento
 
----
+### Coaching Automático
 
-## 2.4 Gestión de Actividades
+- [ ] Identificación de gaps de desempeño
+- [ ] Sugerencias de formación personalizadas
+- [ ] Comparativo con mejores performers
+- [ ] Alertas de necesidad de acompañamiento
 
-### Pendientes y Seguimientos
-- [ ] Acciones pendientes y próximos pasos programados
-- [ ] Compromisos adquiridos en visitas anteriores
-- [ ] Recordatorios automáticos de seguimiento
-- [ ] Alertas de vencimiento de compromisos
+### Consultas en Lenguaje Natural
 
-### Planificación
-- [ ] Programación de próximas visitas
-- [ ] Asignación a ciclos de visita
-- [ ] Priorización según potencial y estado
+```
+Gerente: "¿Quién no ha visitado a sus médicos A esta semana?"
 
----
+APEX: 📊 Representantes con HCPs categoría A sin visitar:
 
-## 2.5 Base de Datos de HCPs
+      • María López: 3 de 8 HCPs A sin visitar
+        - Dr. García (25 días)
+        - Dr. Fernández (18 días)
+        - Dra. Ruiz (15 días)
 
-### Gestión de Prescriptores
-- [ ] Base de datos completa de profesionales de salud (HCPs)
-- [ ] Perfiles de prescriptores con especialidad, institución, preferencias
-- [ ] Clasificación de potencial y segmentación
-- [ ] Gestión de territorios y asignación de cuentas
-- [ ] Detección automática de duplicados
-- [ ] Enriquecimiento desde fuentes externas
+      • Carlos Sánchez: 2 de 6 HCPs A sin visitar
+        - Dr. Morales (20 días)
+        - Dr. Jiménez (12 días)
 
-### Compliance de Datos
-- [ ] Gestión de consentimientos GDPR
-- [ ] Trazabilidad de interacciones con HCPs
-- [ ] Cumplimiento de códigos éticos farmacéuticos
-- [ ] Control de frecuencia de visitas según regulación
+      [Ver detalles] [Enviar recordatorio] [Programar reunión]
+```
 
 ---
 
-# EXPERIENCIA 3: MI EQUIPO
+## 4.4 Experiencia: INTELIGENCIA COMERCIAL
 
-**Usuario principal:** Gerente / Supervisor de distrito
+**Usuario:** Marketing / Dirección Comercial / Analistas
+**Interfaz:** Dashboard web + Reportes automatizados
 
-**Pregunta que responde:** *"¿Cómo va mi equipo y dónde necesito intervenir?"*
+### Business Intelligence
 
----
+#### Dashboards Predefinidos
+- [ ] Ventas por producto, territorio, rep
+- [ ] Cobertura y frecuencia de visitas
+- [ ] Efectividad de campañas y materiales
+- [ ] ROI de la fuerza de ventas
 
-## 3.1 Dashboard Gerencial
+#### Consultas Conversacionales
+- [ ] Preguntas en español natural
+- [ ] Generación de vistas dinámicas según pregunta
+- [ ] Exportación a Excel/PDF con un clic
 
-### KPIs en Tiempo Real
-- [ ] Visitas realizadas vs. planeadas por representante
-- [ ] Cobertura de territorio: % de HCPs visitados
-- [ ] Cumplimiento de objetivos por rep/territorio
-- [ ] Tendencia de actividad (comparativo con períodos anteriores)
-- [ ] Métricas de efectividad de visitas
+### Analytics Predictivo
 
-### Comparativos
-- [ ] Ranking de representantes por KPIs
-- [ ] Comparativos de rendimiento entre territorios
-- [ ] Benchmarking vs. mejores performers
-- [ ] Análisis de desviaciones y causas
-
----
-
-## 3.2 Sistema de Alertas
-
-### Alertas de Actividad
-- [ ] Representante que no ha reportado en X días
-- [ ] Seguimientos vencidos sin atender
-- [ ] Metas en riesgo de no cumplirse
-- [ ] Cliente importante sin actividad reciente
-- [ ] Desviación significativa en patrones de actividad
-
-### Alertas Predictivas
-- [ ] Objetivos en riesgo (predicción antes de que ocurra)
-- [ ] Representantes con probable bajo rendimiento
-- [ ] Territorios con oportunidades no atendidas
-- [ ] Prescriptores con comportamiento anómalo
-
----
-
-## 3.3 Gestión de Equipo
-
-### Vista Drill-Down por Representante
-- [ ] Detalle completo de actividad individual
-- [ ] Pipeline personal de cada rep
-- [ ] Historial de cumplimiento de objetivos
-- [ ] Fortalezas y áreas de mejora detectadas
-- [ ] Evolución en el tiempo
-
-### Aprobaciones y Excepciones
-- [ ] Aprobaciones pendientes (gastos, solicitudes, excepciones)
-- [ ] Flujos de aprobación de descuentos
-- [ ] Gestión de solicitudes especiales
-- [ ] Workflow de autorizaciones configurables
-
----
-
-## 3.4 Coaching y Desarrollo
-
-### Coaching Automático con IA
-- [ ] Sugerencias de IA sobre áreas de mejora de cada rep
-- [ ] Análisis de llamadas y visitas con retroalimentación
-- [ ] Identificación de necesidades de formación
-- [ ] Recomendaciones personalizadas de desarrollo
-- [ ] Alertas de necesidad de refuerzo
-
-### Herramientas de Acompañamiento
-- [ ] Acompañamiento virtual en visitas
-- [ ] Evaluación de desempeño asistida
-- [ ] Plantillas de feedback estructurado
-- [ ] Seguimiento de planes de mejora
-- [ ] Reconocimiento de logros
-
----
-
-## 3.5 Planificación de Territorios
-
-### Gestión de Territorios
-- [ ] Definición y asignación de territorios
-- [ ] Balanceo de carga de trabajo
-- [ ] Reasignación de cuentas
-- [ ] Análisis de cobertura geográfica
-
-### Objetivos y Cuotas
-- [ ] Definición de objetivos por rep/territorio
-- [ ] Seguimiento de cumplimiento
-- [ ] Ajuste dinámico de cuotas
-- [ ] Cálculo automático de comisiones
-
----
-
-## 3.6 Reportes Gerenciales
-
-### Informes Automáticos
-- [ ] Reportes de actividad semanal/mensual
-- [ ] Informes de pipeline por equipo
-- [ ] Preparación de reuniones de equipo con insights
-- [ ] Generación de presentaciones automáticas
-- [ ] Exportación a múltiples formatos
-
-### Analytics de Equipo
-- [ ] Análisis de productividad por representante
-- [ ] Métricas de coaching y desarrollo
-- [ ] Correlación entre actividad y resultados
-- [ ] Identificación de mejores prácticas
-
----
-
-# EXPERIENCIA 4: INTELIGENCIA COMERCIAL
-
-**Usuario principal:** Marketing / Dirección Comercial / Analistas
-
-**Pregunta que responde:** *"¿Qué está funcionando y qué debemos cambiar?"*
-
----
-
-## 4.1 Business Intelligence Core
-
-### Dashboards Personalizables
-- [ ] Dashboards configurables por rol y preferencia
-- [ ] Visualizaciones interactivas con drill-down multinivel
-- [ ] Reportes predefinidos para industria farmacéutica
-- [ ] Acceso móvil a dashboards
-- [ ] Exportación a múltiples formatos
-- [ ] Programación y distribución automática por email
-
-### Cuadros de Mando Especializados
-- [ ] **Comercial:** Ventas por producto, cliente, territorio, representante
-- [ ] **Marketing:** ROI de campañas, efectividad de canales, conversión
-- [ ] **Financiero:** Rentabilidad, márgenes, cash flow, cartera
-- [ ] **Operaciones:** Inventarios, rotación, entregas, devoluciones
-- [ ] **Fuerza de ventas:** Cobertura, efectividad de visitas, cumplimiento de objetivos
-- [ ] **Prescriptores:** Análisis de prescripción por médico, especialidad, zona
-
----
-
-## 4.2 Segmentación y Análisis
-
-### Segmentación Dinámica de HCPs
-- [ ] Segmentación por múltiples criterios (especialidad, potencial, comportamiento)
-- [ ] Clusters que se actualizan automáticamente con ML
+#### Segmentación Dinámica
+- [ ] Clusters de HCPs actualizados automáticamente
 - [ ] Micro-segmentos para campañas específicas
-- [ ] Análisis de patrones de prescripción
+- [ ] Identificación de perfiles de éxito
 
-### Análisis de Efectividad
-- [ ] Efectividad de campañas y materiales promocionales
-- [ ] ROI por canal de comunicación
-- [ ] Análisis de conversión por tipo de acción
-- [ ] Correlación entre actividad y prescripción
+#### Predicciones
+- [ ] Demanda por producto/territorio
+- [ ] Probabilidad de prescripción por HCP
+- [ ] Riesgo de pérdida de médicos clave
+- [ ] Efectividad esperada de campañas
 
----
+### Integración de Datos Externos
 
-## 4.3 BI Aumentada con IA
-
-### Consultas Conversacionales
-- [ ] Preguntas en lenguaje natural, respuestas con gráficos
-- [ ] "¿Cuáles fueron los 10 médicos con más potencial no visitados este mes?"
-- [ ] Dashboards autoconfigurados según preguntas del usuario
-- [ ] Narrativas automáticas: explica los datos en lenguaje natural
-
-### Insights Automáticos
-- [ ] Descubrimiento de patrones que humanos no verían
-- [ ] Alertas proactivas de anomalías y tendencias
-- [ ] Comparativas inteligentes con benchmarks relevantes
-- [ ] Detección de causas raíz: explica por qué cambió un indicador
+- [ ] IQVIA: Datos de mercado y prescripción
+- [ ] Close-Up: Auditoría de prescripciones
+- [ ] Fuentes públicas: Noticias, publicaciones
 
 ---
 
-## 4.4 Analytics Predictivo
+## 4.5 Experiencia: CONFIGURACIÓN
 
-### Predicción de Demanda y Ventas
-- [ ] Predicción de demanda por producto, zona, temporada
-- [ ] Forecasting de ventas con intervalos de confianza
-- [ ] Predicción de demanda estacional de medicamentos
-- [ ] Previsión de ventas por territorio
+**Usuario:** Administrador del sistema / IT
+**Interfaz:** Panel de administración web
 
-### Predicción de Comportamiento
-- [ ] Propensión a compra/prescripción por cliente
-- [ ] Predicción de churn (abandono de clientes)
-- [ ] Predicción de efectividad de campañas
-- [ ] Predicción de impagos
+### Gestión de Usuarios
 
----
+- [ ] Alta/baja de usuarios
+- [ ] Asignación de roles y permisos
+- [ ] Configuración de territorios
+- [ ] Jerarquías organizacionales
 
-## 4.5 Analytics Prescriptivo
+### Catálogos
 
-### Recomendaciones Accionables
-- [ ] Recomendaciones de acción concretas (no solo insights)
-- [ ] Simulación de escenarios comerciales
-- [ ] Optimización de territorios y cuotas
-- [ ] Asignación óptima de recursos comerciales
-
-### Optimización
-- [ ] Planificación de campañas con maximización de ROI
-- [ ] Optimización de precios según demanda y competencia
-- [ ] Recomendación de mix de productos por cliente
-- [ ] Optimización de rutas de entrega
-
----
-
-## 4.6 Análisis Geográfico
-
-### Mapas y Cobertura
-- [ ] Mapas de cobertura geográfica
-- [ ] Heat maps de actividad y oportunidades
-- [ ] Análisis de densidad de HCPs por zona
-- [ ] Identificación de territorios desatendidos
-
-### Tendencias por Zona
-- [ ] Participación de mercado por región
-- [ ] Tendencias de prescripción geográficas
-- [ ] Análisis de competencia por territorio
-
----
-
-## 4.7 Integraciones de Datos
-
-### Fuentes Externas
-- [ ] Integración con datos de mercado (IQVIA, Close-Up, etc.)
-- [ ] Conexión con bases de datos de medicamentos
-- [ ] Datos de prescripción del mercado
-- [ ] Información de competencia
-
-### Unificación de Datos
-- [ ] Vista única del cliente (Customer 360)
-- [ ] Unificación de datos de múltiples fuentes
-- [ ] Data lake/warehouse diseñado para IA
-- [ ] APIs de acceso a datos unificados
-
----
-
-## 4.8 Análisis de Texto y Voz
-
-### Text Analytics
-- [ ] Análisis de sentimiento en interacciones con clientes
-- [ ] Extracción de temas de llamadas y reuniones
-- [ ] Clasificación automática de feedback
-- [ ] Detección de quejas y urgencias
-- [ ] Monitorización de redes sociales y foros de salud
-
-### Procesamiento de Documentos
-- [ ] Resumen automático de documentos extensos
-- [ ] Extracción de información de fichas técnicas
-- [ ] Text analytics para datos no estructurados
-- [ ] Detección temprana de problemas de producto (farmacovigilancia básica)
-
----
-
-# EXPERIENCIA 5: CONFIGURACIÓN Y ADMINISTRACIÓN
-
-**Usuario principal:** Administrador del sistema / IT
-
-**Pregunta que responde:** *"¿Cómo configuro y mantengo el sistema?"*
-
----
-
-## 5.1 Gestión de Usuarios
-
-### Administración de Cuentas
-- [ ] Gestión de usuarios, roles y permisos granulares
-- [ ] Control de acceso basado en roles (RBAC)
-- [ ] Single Sign-On (SSO) con protocolos estándar
-- [ ] Autenticación multifactor (MFA)
-- [ ] Gestión de sesiones
-
-### Estructura Organizacional
-- [ ] Definición de jerarquías y equipos
-- [ ] Asignación de territorios a usuarios
-- [ ] Configuración de visibilidad por rol
-- [ ] Gestión de perfiles y capacidades
-
----
-
-## 5.2 Catálogos y Datos Maestros
-
-### Gestión de Catálogos
-- [ ] Productos: medicamentos, dispositivos, material promocional
+- [ ] Productos (nombre, presentación, código)
 - [ ] Territorios y zonas geográficas
-- [ ] Instituciones: hospitales, clínicas, farmacias
+- [ ] Instituciones (hospitales, clínicas, farmacias)
 - [ ] Especialidades médicas
 - [ ] Tipos de visita y actividades
 
-### Master Data Management
-- [ ] Repositorio centralizado de datos maestros
-- [ ] Workflow de aprobación de cambios
-- [ ] Versionado e historial de modificaciones
-- [ ] Sincronización con sistemas conectados
-- [ ] Importación/exportación masiva
+### Reglas de Compliance
+
+- [ ] Límites de muestras por regulación
+- [ ] Frecuencias de visita
+- [ ] Material promocional aprobado
+- [ ] Excepciones y aprobaciones
+
+### Integraciones
+
+- [ ] Configuración de ERPs conectados
+- [ ] APIs de terceros
+- [ ] WhatsApp Business API
+- [ ] Sincronización de datos
+
+### Auditoría
+
+- [ ] Logs de actividad completos
+- [ ] Reportes de compliance
+- [ ] Exportación para auditorías externas
 
 ---
 
-## 5.3 Reglas de Negocio
+# 5. GENERATIVE UI (DASHBOARD ADAPTATIVO)
 
-### Configuración de Validaciones
-- [ ] Reglas de negocio configurables sin código
-- [ ] Validaciones de datos en formularios
-- [ ] Restricciones por tipo de usuario
-- [ ] Alertas automáticas por condiciones
+## 5.1 Concepto
 
-### Compliance y Regulación
-- [ ] Límites de muestras por HCP según regulación
-- [ ] Control de frecuencia de visitas
-- [ ] Reglas de aprobación de material promocional
-- [ ] Configuración de retención de datos
+El dashboard no muestra siempre la misma información. Se **construye dinámicamente** según:
+
+- **Rol del usuario:** Rep, gerente, director, marketing
+- **Momento del día:** Mañana (planificación), tarde (ejecución), noche (resumen)
+- **Contexto actual:** Alertas activas, proximidad a cierre de mes
+- **Historial de uso:** Qué consulta más frecuentemente este usuario
+
+## 5.2 Principios de Diseño
+
+### Contextualidad Total
+El sistema reconoce si la necesidad actual es:
+- Planificación (mostrar agenda, rutas)
+- Ejecución (mostrar HCP actual, inventario)
+- Análisis (mostrar KPIs, comparativos)
+- Emergencia (mostrar alerta prioritaria)
+
+### Reducción de Carga Cognitiva
+- Solo mostrar información relevante para el siguiente paso
+- Ocultar opciones que no aplican al contexto
+- Priorizar acciones sobre información
+
+### Navegación en Lenguaje Natural
+- Barra de búsqueda como interfaz principal
+- Preguntas → Vistas dinámicas
+- Sin necesidad de navegar menús complejos
+
+## 5.3 Ejemplos de Adaptación
+
+| Contexto | Dashboard Muestra |
+|----------|-------------------|
+| Lunes 8:00 AM | Resumen semana anterior + agenda de hoy |
+| Rep cerca de HCP | Briefing de ese HCP específico |
+| Último día del mes | Objetivos vs. actual + HCPs pendientes |
+| Alerta de compliance | Panel de compliance primero |
+| Gerente en reunión | KPIs consolidados del equipo |
 
 ---
 
-## 5.4 Gestión de Muestras
+# 6. MOTOR DE COMPLIANCE FARMACÉUTICO
 
-### Inventario de Muestras
-- [ ] Stock de muestras por representante
-- [ ] Movimientos y asignaciones
-- [ ] Alertas de stock bajo
-- [ ] Caducidades y FEFO
+## 6.1 Regulaciones Soportadas
 
-### Trazabilidad y Compliance
-- [ ] Audit trail de entregas
-- [ ] Firmas electrónicas de recepción
-- [ ] Reportes de transparencia (Sunshine Act)
-- [ ] Cumplimiento NOM-059/NOM-072 (México)
+### México
+- [ ] NOM-059-SSA1: Control de muestras médicas
+- [ ] NOM-072-SSA1: Material promocional
+- [ ] COFEPRIS: Trazabilidad y firma digital
+
+### Estados Unidos
+- [ ] FDA 21 CFR Part 11: Registros electrónicos
+- [ ] Sunshine Act: Reportes de transparencia
+- [ ] PhRMA Code: Límites de interacciones
+
+### Europa
+- [ ] GDPR: Protección de datos de HCPs
+- [ ] EFPIA Code: Ética en promoción
+
+### Internacional
+- [ ] IFPMA Code: Estándares globales
+- [ ] Códigos locales: AMIIF (México), FARMAINDUSTRIA (España)
+
+## 6.2 Funcionalidades de Compliance
+
+### Prevención (Antes de la acción)
+- [ ] Validación de límites antes de entrega
+- [ ] Bloqueo de acciones no permitidas
+- [ ] Alertas de aproximación a límites
+
+### Registro (Durante la acción)
+- [ ] Firma electrónica de recepción
+- [ ] Timestamps inmutables
+- [ ] Geolocalización verificable
+- [ ] Fotos de evidencia (opcional)
+
+### Auditoría (Después de la acción)
+- [ ] Audit trail completo
+- [ ] Reportes de transparencia automáticos
+- [ ] Exportación para auditorías
+- [ ] Alertas de anomalías
 
 ---
 
-## 5.5 Integraciones
+# 7. INTEGRACIONES
+
+## 7.1 WhatsApp Business API
+
+### Requisitos
+- [ ] Cuenta de WhatsApp Business verificada
+- [ ] Número dedicado para APEX
+- [ ] Plantillas de mensaje aprobadas por Meta
+- [ ] Webhook configurado
+
+### Funcionalidades
+- [ ] Mensajes de texto bidireccionales
+- [ ] Notas de voz (envío y recepción)
+- [ ] Imágenes y documentos
+- [ ] Botones de acción (WhatsApp Flows)
+- [ ] Ubicación compartida
+
+## 7.2 ERPs
 
 ### Conectores Disponibles
-- [ ] **ERPs:** SAP, Dynamics, Odoo, Sage
-- [ ] **Comunicación:** Microsoft 365, Google Workspace
-- [ ] **CRMs externos:** Veeva, Salesforce, HubSpot (migración)
-- [ ] **Datos de mercado:** IQVIA, Close-Up
-- [ ] **Logística:** WMS, transportistas
-- [ ] **Financieros:** Banca, facturación electrónica
+- [ ] SAP Business One / S/4HANA
+- [ ] Microsoft Dynamics 365
+- [ ] Odoo
+- [ ] Sage
 
-### APIs y Desarrollo
-- [ ] API REST completa de la plataforma
-- [ ] Webhooks para eventos en tiempo real
-- [ ] SDK para desarrolladores
-- [ ] Documentación técnica completa
-- [ ] Sandbox de pruebas
+### Datos Sincronizados
+- [ ] Productos y catálogos
+- [ ] Inventario de muestras
+- [ ] Pedidos y facturación
+- [ ] Clientes y proveedores
+
+## 7.3 Datos de Mercado
+
+### Proveedores Soportados
+- [ ] IQVIA
+- [ ] Close-Up International
+- [ ] Veeva Data Cloud
+
+### Datos Integrados
+- [ ] Prescripciones por HCP
+- [ ] Participación de mercado
+- [ ] Tendencias de mercado
+
+## 7.4 Comunicación
+
+### Microsoft 365
+- [ ] Outlook (calendario, email)
+- [ ] Teams (notificaciones)
+- [ ] SharePoint (documentos)
+
+### Google Workspace
+- [ ] Gmail y Calendar
+- [ ] Google Drive
 
 ---
 
-## 5.6 Auditoría y Seguridad
+# 8. SEGURIDAD Y GOBERNANZA DE IA
 
-### Logs y Trazabilidad
-- [ ] Logs de auditoría completos
-- [ ] Audit trail inmutable
-- [ ] Registro de accesos y modificaciones
-- [ ] Trazabilidad de decisiones de IA
+## 8.1 Seguridad de Datos
 
-### Seguridad de Datos
-- [ ] Encriptación de datos en tránsito y reposo
-- [ ] Backups automatizados y recuperación
-- [ ] Protección contra ataques comunes
+### Autenticación
+- [ ] Multi-factor authentication (MFA)
+- [ ] Single Sign-On (SSO)
+- [ ] Gestión de sesiones
+
+### Cifrado
+- [ ] Datos en tránsito: TLS 1.3
+- [ ] Datos en reposo: AES-256
+- [ ] WhatsApp: End-to-end encryption
+
+### Control de Acceso
+- [ ] RBAC (Role-Based Access Control)
+- [ ] Permisos granulares por territorio
+- [ ] Auditoría de accesos
+
+## 8.2 Gobernanza de IA
+
+### Transparencia
+- [ ] Explicaciones de por qué la IA sugiere algo
+- [ ] Trazabilidad de decisiones automatizadas
+- [ ] Logs de acciones de agentes
+
+### Supervisión Humana
+- [ ] Configuración de qué acciones requieren aprobación
+- [ ] Revisión de acciones autónomas
+- [ ] Override manual siempre disponible
+
+### Privacidad
+- [ ] Datos no compartidos con terceros
+- [ ] Modelos entrenados localmente (opción)
 - [ ] Cumplimiento GDPR
-- [ ] Gestión de consentimientos
 
 ---
 
-## 5.7 Personalización
+# 9. SERVICIOS PROFESIONALES
 
-### Branding y Apariencia
-- [ ] Logo y colores corporativos
-- [ ] Dominio personalizado (opcional)
-- [ ] Personalización de terminología
+## 9.1 Implementación (6 semanas)
 
-### Configuración de Flujos
-- [ ] Diseñador visual de flujos de trabajo
-- [ ] Automatización de procesos sin código
-- [ ] Configuración de notificaciones
-- [ ] Plantillas de comunicación
+| Semana | Fase | Entregables |
+|--------|------|-------------|
+| 1 | Discovery | Mapeo de procesos, reglas de compliance, catálogos |
+| 2 | Configuración | Sistema configurado, WhatsApp API activa |
+| 3 | Migración | Datos de HCPs, históricos, inventarios |
+| 4 | Entrenamiento IA | Agentes calibrados con vocabulario del cliente |
+| 5 | Capacitación | Training por rol completado |
+| 6 | Go-Live | Sistema en producción, soporte intensivo |
 
----
+## 9.2 Capacitación
 
-## 5.8 Monitorización y Soporte
+### Por Rol
+- [ ] Representantes: WhatsApp, voz, flujos básicos (2 horas)
+- [ ] Gerentes: Dashboard, alertas, coaching (3 horas)
+- [ ] Administradores: Configuración, compliance (4 horas)
 
-### Centro de Control
-- [ ] Dashboard de estado de sistemas
-- [ ] Monitorización de integraciones
-- [ ] Métricas de rendimiento
-- [ ] Alertas de fallos técnicos
+### Materiales
+- [ ] Videos tutoriales por funcionalidad
+- [ ] Guías rápidas descargables
+- [ ] Sandbox de práctica
 
-### Soporte y Mantenimiento
-- [ ] Gestión de incidencias
-- [ ] Logs centralizados
-- [ ] Escalado automático
-- [ ] Reportes de servicio
+## 9.3 Soporte
 
----
+### Niveles
 
-# CAPACIDADES TRANSVERSALES
+| Plan | Canales | Horario | SLA |
+|------|---------|---------|-----|
+| Esencial | Email | L-V 9-18 | 24h |
+| Profesional | Email + WhatsApp + Tel | L-V 8-20 | 8h |
+| Enterprise | Dedicado | 24/7 | 2h |
 
-> Funcionalidades que aplican a múltiples experiencias
-
----
-
-## T1. Inteligencia Artificial
-
-### IA Nivel 1: Asistencia Básica (Incluida)
-- [ ] Autocompletado inteligente basado en patrones históricos
-- [ ] Detección automática de duplicados
-- [ ] Alertas inteligentes basadas en reglas
-- [ ] Alertas de inactividad
-- [ ] Corrección automática de errores comunes
-
-### IA Nivel 2: Análisis Predictivo (Módulo opcional)
-- [ ] Scoring de potencial de HCPs
-- [ ] Recomendación de siguiente mejor acción (NBA)
-- [ ] Optimización de rutas
-- [ ] Predicción de churn
-- [ ] Briefing pre-visita automático
-
-### IA Nivel 3: Asistente Conversacional (Módulo premium)
-- [ ] Chat integrado con consultas en lenguaje natural
-- [ ] Registro y consultas por voz
-- [ ] Preparación de visitas por voz
-- [ ] Entrenamiento virtual (roleplay con IA)
-- [ ] Coaching en tiempo real durante llamadas
-
-### IA "En Celdas"
-- [ ] Activación de IA a nivel de campo individual
-- [ ] Resumen automático de notas largas
-- [ ] Scoring predictivo por campo
-- [ ] Clasificación automática de objeciones
-- [ ] Sugerencias contextuales por tipo de dato
-
----
-
-## T2. Agentes IA Autónomos
-
-### Agente Asistente del Representante
-- [ ] Prepara briefings personalizados antes de cada visita
-- [ ] Resume historial del médico en segundos
-- [ ] Sugiere argumentarios según perfil
-- [ ] Responde preguntas técnicas en tiempo real
-- [ ] Transcribe y analiza visitas automáticamente
-- [ ] Actualiza sistema sin intervención
-
-### Agente de Atención al Cliente 24/7
-- [ ] Responde consultas sobre productos, disponibilidad
-- [ ] Gestiona pedidos conversacionalmente
-- [ ] Procesa devoluciones y reclamaciones
-- [ ] Escala a humano cuando detecta complejidad
-- [ ] Multicanal: WhatsApp, web, voz
-
-### Agente de Compliance
-- [ ] Monitoriza cambios regulatorios
-- [ ] Genera documentación para auditorías
-- [ ] Valida cumplimiento de comunicaciones
-- [ ] Mantiene trazabilidad de interacciones
-- [ ] Prepara reportes de transparencia
-
----
-
-## T3. Canales de Comunicación
-
-### Canales Soportados
-- [ ] WhatsApp Business API
-- [ ] Widget web embebido
-- [ ] Bot de voz (llamadas telefónicas)
-- [ ] Email integrado
-- [ ] SMS bidireccional
-- [ ] Microsoft Teams / Slack (uso interno)
-
-### Capacidades Multicanal
-- [ ] Procesamiento de imágenes (identificación de productos)
-- [ ] Procesamiento de voz (mensajes de audio)
-- [ ] Envío de catálogos interactivos
-- [ ] Campañas de broadcast segmentadas
-
----
-
-## T4. Generación de Contenido con IA
-
-### Contenido Comercial
-- [ ] Emails de prospección personalizados
-- [ ] Propuestas comerciales adaptadas
-- [ ] Fichas de producto dinámicas
-- [ ] Comparativas de productos
-- [ ] Newsletters automatizadas
-
-### Contenido para Fuerza de Ventas
-- [ ] Argumentarios por tipo de prescriptor
-- [ ] Respuestas a objeciones generadas por IA
-- [ ] Material de apoyo para visitas
-- [ ] Resúmenes de estudios clínicos
-- [ ] Casos de éxito adaptados al contexto
-
-### Documentación
-- [ ] Borradores de documentos regulatorios
-- [ ] Fichas técnicas de producto
-- [ ] Procedimientos operativos (SOPs)
-- [ ] Traducciones y adaptaciones multilingüe
-
----
-
-## T5. Formación y Capacitación
-
-### Plataforma LMS
-- [ ] Catálogo de cursos por rol y competencia
-- [ ] Rutas de aprendizaje configurables
-- [ ] Evaluaciones y certificaciones digitales
-- [ ] Seguimiento de progreso y cumplimiento
-- [ ] Gamificación (puntos, badges, rankings)
-
-### Formación con IA
-- [ ] Rutas personalizadas según gaps detectados
-- [ ] Evaluación adaptativa según desempeño
-- [ ] Microlearning generado por IA
-- [ ] Chatbot tutor 24/7
-- [ ] Simulador de visita médica (IA como prescriptor)
-- [ ] Escenarios de negociación con feedback
-
----
-
-## T6. Compliance Farmacéutico
-
-### Regulaciones Cubiertas
-- [ ] NOM-059-SSA1 y NOM-072-SSA1 (México)
-- [ ] COFEPRIS: Trazabilidad de muestras con firma digital
-- [ ] FDA 21 CFR Part 11 (EUA): Registros y firmas electrónicas
-- [ ] GDPR (Europa): Protección de datos de HCPs
-- [ ] Códigos de ética IFPMA/AMIIF
-
-### Funcionalidades de Compliance Automático
-- [ ] Límites automáticos de muestras por HCP
-- [ ] Firma electrónica de recepción
-- [ ] Audit trail inmutable
-- [ ] Solo material aprobado disponible
-- [ ] Reportes de transparencia automáticos
-
----
-
-# SERVICIOS PROFESIONALES
-
-> Consultoría, implementación y acompañamiento
-
----
-
-## S1. Consultoría Estratégica
-
-### Diagnóstico y Roadmap
-- [ ] Evaluación de sistemas actuales
-- [ ] Análisis de procesos de negocio
-- [ ] Identificación de gaps tecnológicos
-- [ ] Benchmark con mejores prácticas del sector
-- [ ] Roadmap de transformación digital
-- [ ] Business case y ROI por iniciativa
-
-### Consultoría de IA
-- [ ] Identificación de casos de uso de IA
-- [ ] Evaluación de viabilidad
-- [ ] Diseño de solución
-- [ ] Governance de IA
-
----
-
-## S2. Implementación
-
-### Proceso de Implementación (4-8 semanas)
-
-| Fase | Actividades | Duración |
-|------|-------------|----------|
-| Discovery | Análisis de procesos, catálogos, reglas de negocio | 1 semana |
-| Configuración | Setup sistema, carga catálogos, personalización | 2 semanas |
-| Migración | Importación datos históricos, validación | 1-2 semanas |
-| Capacitación | Training por rol, materiales, certificación | 1 semana |
-| Go-Live | Lanzamiento, soporte intensivo, ajustes | 2 semanas |
-
-### Incluye
-- [ ] Configuración completa del ambiente
-- [ ] Migración de datos de sistema anterior
-- [ ] Carga de catálogos (productos, territorios, HCPs)
-- [ ] Personalización de branding
-- [ ] Configuración de reglas de compliance
-- [ ] Capacitación presencial o virtual por rol
-- [ ] Materiales de capacitación en español
-- [ ] Soporte prioritario primeras 4 semanas
-
----
-
-## S3. Gestión del Cambio
-
-### Comunicación y Adopción
-- [ ] Plan de comunicación
-- [ ] Sesiones de presentación
-- [ ] Gestión de resistencias
-- [ ] Embajadores internos
-
-### Formación
-- [ ] Diseño de plan de formación
-- [ ] Formación a formadores
-- [ ] Formación a usuarios finales
-- [ ] Evaluación de conocimientos
-- [ ] Refuerzo post-go-live
-
----
-
-## S4. Soporte y Mantenimiento
-
-### Soporte Técnico
-- [ ] Mesa de ayuda multicanal
-- [ ] SLAs definidos por criticidad
-- [ ] Base de conocimiento
-- [ ] Escalado a desarrollo
-
-### Mantenimiento Evolutivo
+### Incluido
 - [ ] Actualizaciones de plataforma
 - [ ] Nuevas funcionalidades
-- [ ] Optimización de rendimiento
 - [ ] Adaptación a cambios regulatorios
-
----
-
-## S5. Servicios de Datos
-
-### Calidad de Datos
-- [ ] Auditoría de calidad de datos
-- [ ] Detección y merge de duplicados
-- [ ] Normalización y estandarización
-- [ ] Enriquecimiento desde fuentes externas
-- [ ] Mantenimiento continuo de calidad
-
-### Ciencia de Datos
-- [ ] Desarrollo de modelos predictivos
-- [ ] Segmentación avanzada
-- [ ] Detección de patrones
-- [ ] Recomendaciones accionables
-
----
-
-## S6. Servicios de IA
-
-### Desarrollo Personalizado
-- [ ] Entrenamiento de modelos específicos
-- [ ] Fine-tuning con datos del cliente
-- [ ] Despliegue y monitorización
-- [ ] Reentrenamiento periódico
-
-### Configuración de Asistentes
-- [ ] Configuración de base de conocimiento
-- [ ] Definición de personalidad y tono
-- [ ] Pruebas con usuarios reales
-- [ ] Mejora continua basada en feedback
+- [ ] Reentrenamiento de modelos IA
 
 ---
 
 # ANEXOS
 
-## Modelo de Precios
+## A. Glosario
 
-| Concepto | ESENCIAL | PROFESIONAL | ENTERPRISE |
-|----------|----------|-------------|------------|
-| Usuarios incluidos | Hasta 10 | Hasta 50 | Ilimitados |
-| Setup inicial | $1,500 USD | $3,500 USD | Cotización |
-| Mensualidad | $299 USD | $699 USD | Cotización |
-| IA Nivel 1 | Incluida | Incluida | Incluida |
-| IA Nivel 2 (Predictiva) | +$99/mes | Incluida | Incluida |
-| IA Nivel 3 (Asistente) | +$199/mes | +$149/mes | Incluida |
-| Soporte | Email + Chat | + Telefónico | Dedicado 24/7 |
+| Término | Definición |
+|---------|------------|
+| HCP | Healthcare Professional (Profesional de Salud) |
+| Agente IA | Componente autónomo que ejecuta tareas específicas |
+| Generative UI | Interfaz que se construye dinámicamente según contexto |
+| NER | Named Entity Recognition (extracción de entidades) |
+| WhatsApp-First | Diseño donde WhatsApp es la interfaz principal |
 
----
+## B. Requisitos Técnicos Mínimos
 
-## Resultados Esperados
+### Para Representantes
+- Smartphone con WhatsApp instalado
+- Conexión a internet (3G mínimo)
+- Opcional: App móvil APEX (iOS 14+ / Android 10+)
 
-| Métrica | Impacto Esperado |
-|---------|------------------|
-| Tiempo de registro por visita | Reducción del 70% (de 5 min a <90 seg) |
-| Adopción del sistema | +85% de uso activo diario |
-| Visibilidad gerencial | Tiempo real vs. reportes semanales |
-| Cumplimiento regulatorio | 100% automatizado y auditable |
-| ROI estimado | Recuperación en 4-6 meses |
+### Para Gerentes/Admin
+- Navegador moderno (Chrome, Firefox, Safari, Edge)
+- Conexión a internet estable
+
+### Para Integraciones
+- Acceso a APIs de sistemas a integrar
+- VPN si es requerido por políticas de seguridad
 
 ---
 
 *© 2026 APEX - Prisma. Todos los derechos reservados.*
 
-> *"Un sistema que se adapta a tu equipo, no un equipo que se adapta al sistema"*
+> *"No cambies cómo trabaja tu equipo. Haz que el sistema trabaje como ellos."*
