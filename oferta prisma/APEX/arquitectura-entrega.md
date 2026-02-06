@@ -3,7 +3,7 @@
 > **Documento Interno** — Estructura de producto, focos y modelo de negocio
 > Para uso de Prisma Consul(ing) — No compartir con clientes
 
-Versión 2.0 — Febrero 2026
+Versión 2.1 — Febrero 2026
 
 ---
 
@@ -255,19 +255,21 @@ El cliente describe sus dolores con sus palabras. Prisma mapea esos dolores a lo
 
 ---
 
-### Foco 8: Marketing y Promoción
-**Dolor:** "No sé qué material funciona ni qué promover con quién"
+### Foco 8: Marketing, Promoción y Eventos
+**Dolor:** "No sé qué material funciona, qué promover con quién, ni cómo medir mis eventos"
 
 **Alcance Inicial:**
 - Biblioteca digital de material promocional
 - Registro de uso de material por visita
 - Envío de material digital post-visita
 - Catálogo de productos con fichas
+- Calendario de eventos/congresos del sector
+- Registro de asistencia de médicos a eventos
 - La IA recomienda material según especialidad, producto y perfil del médico
 
-**Pains resueltos:** J01, J02, J03, J06, J08
+**Pains resueltos:** J01, J02, J03, J06, J08, N01, N02
 
-**Potencialidades:** Impacto en ventas (J04) · Input de campo (J05) · Presentaciones personalizadas (J07) · A/B testing · Tracking de apertura · Integración email marketing
+**Potencialidades:** Impacto en ventas (J04) · Input de campo (J05) · Presentaciones personalizadas (J07) · A/B testing · Tracking de apertura · Integración email marketing · Seguimiento post-evento (N03) · ROI de eventos (N04) · Invitaciones automatizadas
 
 ---
 
@@ -476,6 +478,6 @@ El bot/formulario detecta pains → los mapea a focos → prioriza 4 → genera 
 
 ---
 
-*Documento interno — Versión 2.0 — Febrero 2026*
+*Documento interno — Versión 2.1 — Febrero 2026*
 
 *© 2026 APEX - Prisma Consul(ing). Uso interno.*

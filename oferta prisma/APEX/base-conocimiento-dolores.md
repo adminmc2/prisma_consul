@@ -5,14 +5,14 @@
 
 ## Documento Interno para Bot Conversacional y Formulario
 
-Versión 1.0 — Febrero 2026
+Versión 1.1 — Febrero 2026
 
 ---
 
 ## Propósito de este Documento
 
 Este documento contiene:
-1. **161 dolores** exhaustivos del sector PyME/Farmacéutico
+1. **169 dolores** exhaustivos del sector PyME/Farmacéutico (161 originales + 8 de IA)
 2. **Mapeo a Focos** — cómo los dolores se agrupan en soluciones
 3. **Mapeo a Experiencias** — qué experiencia de APEX resuelve cada dolor
 4. **Mapeo a Capacidades** — qué componentes técnicos aplican
@@ -547,6 +547,7 @@ Cuando el usuario marca varios dolores, estos se agrupan naturalmente en "focos"
 | **"No tengo historial de mis médicos"** | B01-B15, I03, I04, I11 | Representante, Médico |
 | **"Necesito cumplir con regulación"** | L01-L08, C11 | Admin, Compliance |
 | **"Quiero automatizar con IA"** | P01-P08 | Todas (IA transversal) |
+| **"Mis eventos no generan seguimiento"** | N01-N05, J01-J08 | Supervisor, Director |
 
 ---
 
@@ -635,6 +636,6 @@ Estos dolores aplican al 90%+ de los prospectos:
 
 ---
 
-*Versión 1.0 — Febrero 2026*
+*Versión 1.1 — Febrero 2026*
 
 *© 2026 APEX - Prisma. Documento interno.*
