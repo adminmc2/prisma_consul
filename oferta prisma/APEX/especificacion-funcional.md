@@ -1,5 +1,8 @@
 # APEX — Especificación Funcional
 
+> **A**utomatización de **P**rocesos y **EX**periencias
+> **A**utomation of **P**rocesses and **EX**periences
+
 ## Sistema de Gestión Comercial para la Industria Farmacéutica
 
 > Especificación completa: Experiencias, Campos, Flujos, IA y Componentes

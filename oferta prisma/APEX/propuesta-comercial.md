@@ -1,5 +1,8 @@
 # APEX
 
+> **A**utomatización de **P**rocesos y **EX**periencias
+> **A**utomation of **P**rocesses and **EX**periences
+
 ## Gestión Comercial Inteligente para la Industria Farmacéutica
 
 > *"No es un software que compras. Es tu gestión empresarial que crece con tus posibilidades."*

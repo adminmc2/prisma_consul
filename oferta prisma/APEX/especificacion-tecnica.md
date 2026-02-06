@@ -1,6 +1,9 @@
 # APEX — Especificación Técnica
 
-> **CRM Farmacéutico con IA Agéntica**
+> **A**utomatización de **P**rocesos y **EX**periencias
+> **A**utomation of **P**rocesses and **EX**periences
+>
+> CRM Farmacéutico con IA Agéntica
 > Arquitectura, Stack Tecnológico y Especificaciones de Desarrollo
 
 ---
