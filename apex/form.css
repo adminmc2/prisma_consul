@@ -1404,6 +1404,84 @@ body {
   animation: searchRotate 1.5s ease-in-out infinite;
 }
 
+/* Research screen styles */
+.research-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+}
+
+.research-icon {
+  flex-shrink: 0;
+}
+
+.research-icon .loading-search {
+  width: 50px;
+  height: 50px;
+}
+
+.research-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.research-info {
+  margin-bottom: var(--spacing-xl);
+}
+
+.research-description {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-lg);
+}
+
+.research-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.research-benefit {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+}
+
+.research-benefit svg {
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+.research-privacy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.research-privacy svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.btn-continue-research {
+  max-width: 200px;
+  margin: 0 auto;
+  display: flex;
+}
+
 /* Desktop styles for company input */
 @media (min-width: 768px) {
   .company-input-wrapper {

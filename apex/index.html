@@ -90,20 +90,66 @@
       </div>
     </section>
 
-    <!-- Transición: Investigando empresa -->
+    <!-- Pantalla: Investigando empresa -->
     <section class="form-screen" data-screen="researching-company">
       <div class="screen-content">
-        <div class="transition-icon">
-          <div class="loading-search">
-            <svg viewBox="0 0 60 60" fill="none">
-              <circle cx="26" cy="26" r="18" stroke="currentColor" stroke-width="3" opacity="0.3"/>
-              <circle class="search-circle" cx="26" cy="26" r="18" stroke="currentColor" stroke-width="3"/>
-              <line x1="40" y1="40" x2="52" y2="52" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-            </svg>
+        <div class="research-header">
+          <div class="research-icon">
+            <div class="loading-search">
+              <svg viewBox="0 0 60 60" fill="none">
+                <circle cx="26" cy="26" r="18" stroke="currentColor" stroke-width="3" opacity="0.3"/>
+                <circle class="search-circle" cx="26" cy="26" r="18" stroke="currentColor" stroke-width="3"/>
+                <line x1="40" y1="40" x2="52" y2="52" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
           </div>
+          <h2 class="research-title" id="companyResearchStatus">Investigando tu empresa...</h2>
         </div>
-        <h2 class="transition-title">Investigando tu empresa...</h2>
-        <p class="transition-subtitle" id="companyResearchStatus">Buscando información para personalizar las preguntas</p>
+
+        <div class="research-info">
+          <p class="research-description">
+            Estamos analizando información pública de tu empresa para entender mejor tu contexto y hacerte preguntas más relevantes.
+          </p>
+
+          <div class="research-benefits">
+            <div class="research-benefit">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <span>Personalizamos las preguntas a tu industria</span>
+            </div>
+            <div class="research-benefit">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <span>Identificamos dolores comunes en empresas similares</span>
+            </div>
+            <div class="research-benefit">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <span>Preparamos una propuesta más acertada</span>
+            </div>
+          </div>
+
+          <p class="research-privacy">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Solo usamos información pública. Tu privacidad es importante.
+          </p>
+        </div>
+
+        <button class="btn-primary btn-continue-research" id="btnContinueResearch">
+          <span>Continuar</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
       </div>
     </section>
 
@@ -244,34 +290,41 @@
       <div class="screen-content">
         <div class="question-number">5 <span class="question-total">/ 5</span></div>
         <h2 class="question-title">¿Qué te motivó a buscar una solución?</h2>
-        <p class="question-hint">Selecciona la razón principal</p>
+        <p class="question-hint">Puedes seleccionar varias opciones</p>
 
-        <div class="options-list" data-question="motivation">
+        <div class="options-list multi-select" data-question="motivation" data-multi="true">
           <button class="option-btn" data-value="no_visibility">
-            <span class="option-key">A</span>
+            <span class="option-checkbox"></span>
             <span class="option-text">No tengo visibilidad de lo que pasa</span>
           </button>
           <button class="option-btn" data-value="no_adoption">
-            <span class="option-key">B</span>
+            <span class="option-checkbox"></span>
             <span class="option-text">El equipo no registra la información</span>
           </button>
           <button class="option-btn" data-value="losing_sales">
-            <span class="option-key">C</span>
+            <span class="option-checkbox"></span>
             <span class="option-text">Pierdo ventas o clientes</span>
           </button>
           <button class="option-btn" data-value="compliance">
-            <span class="option-key">D</span>
+            <span class="option-checkbox"></span>
             <span class="option-text">Problemas con auditorías o regulación</span>
           </button>
           <button class="option-btn" data-value="system_fails">
-            <span class="option-key">E</span>
+            <span class="option-checkbox"></span>
             <span class="option-text">El sistema actual no funciona</span>
           </button>
           <button class="option-btn" data-value="growth">
-            <span class="option-key">F</span>
+            <span class="option-checkbox"></span>
             <span class="option-text">Quiero crecer y necesito orden</span>
           </button>
         </div>
+
+        <button class="btn-continue hidden" id="btnContinueQ5">
+          <span>Continuar</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
       </div>
     </section>
 

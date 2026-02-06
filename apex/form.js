@@ -422,6 +422,8 @@ function initDOM() {
     // Botones especiales
     btnStart: document.getElementById('btnStart'),
     btnContinueQ4: document.getElementById('btnContinueQ4'),
+    btnContinueQ5: document.getElementById('btnContinueQ5'),
+    btnContinueResearch: document.getElementById('btnContinueResearch'),
   };
 }
 
@@ -584,6 +586,13 @@ async function handleCompanySubmit() {
 
 async function handleResearchCompany() {
   const statusEl = DOM.companyResearchStatus;
+  const btnContinue = DOM.btnContinueResearch;
+
+  // Deshabilitar botón mientras investiga
+  if (btnContinue) {
+    btnContinue.disabled = true;
+    btnContinue.querySelector('span').textContent = 'Investigando...';
+  }
 
   try {
     // Actualizar estado visual
@@ -606,7 +615,7 @@ async function handleResearchCompany() {
       FormState.company.profile = data.profile;
       FormState.company.researchComplete = true;
 
-      statusEl.textContent = `Encontramos información sobre ${data.profile.empresa.nombre || 'tu empresa'}...`;
+      statusEl.textContent = `Encontramos información sobre ${data.profile.empresa.nombre || 'tu empresa'}`;
 
       // Pre-rellenar sector si lo detectamos
       if (data.profile.empresa.sector) {
@@ -616,21 +625,24 @@ async function handleResearchCompany() {
         FormState.responses.phase1.has_field_team = data.profile.empresa.tiene_equipo_campo ? 'yes' : 'no';
       }
     } else {
-      statusEl.textContent = 'Preparando preguntas personalizadas...';
+      statusEl.textContent = 'Listo para continuar';
       FormState.company.profile = data.profile;  // Perfil por defecto
     }
 
-    await sleep(1500);
-
-    // Continuar al formulario
-    await goToScreen('q1-1');
-
   } catch (error) {
     console.error('Error researching company:', error);
-    statusEl.textContent = 'Continuando con las preguntas...';
-    await sleep(1000);
-    await goToScreen('q1-1');
+    statusEl.textContent = 'Listo para continuar';
   }
+
+  // Habilitar botón para que el usuario continúe cuando quiera
+  if (btnContinue) {
+    btnContinue.disabled = false;
+    btnContinue.querySelector('span').textContent = 'Continuar';
+  }
+}
+
+async function handleContinueFromResearch() {
+  await goToScreen('q1-1');
 }
 
 // ============================================================
@@ -736,53 +748,59 @@ async function generateAdaptiveQuestions() {
   // Construir contexto completo con la base de conocimiento
   const relevantClusters = getRelevantClusters(phase1, companyProfile);
 
-  const systemPrompt = `Eres un experto consultor de negocios especializado en detectar dolores operativos en empresas.
+  const systemPrompt = `Eres un consultor experto en detectar dolores operativos. Generas preguntas ÚNICAS y ESPECÍFICAS para cada empresa.
 
-Tu tarea es generar 4-5 preguntas PROFUNDAS y ESPECÍFICAS para entender los dolores reales del usuario.
+REGLAS OBLIGATORIAS:
+1. NUNCA uses preguntas genéricas. Cada pregunta debe mencionar algo específico de ESTA empresa (nombre, sector, productos, etc.)
+2. Si hay "preguntas sugeridas por investigación", DEBES usarlas como base (puedes adaptarlas)
+3. Las opciones van de "no me pasa" (gravedad 0) a "es un caos" (gravedad 3)
+4. Tutea al usuario, sé conversacional
+5. Usa los códigos de dolor exactos del catálogo
 
-REGLAS CRÍTICAS:
-1. Las preguntas deben ser ESPECÍFICAS para el contexto de la empresa, no genéricas
-2. Cada pregunta debe profundizar en UN dolor específico del catálogo
-3. Las opciones deben reflejar NIVELES DE GRAVEDAD del dolor (de "no me pasa" a "es un caos")
-4. Usa lenguaje conversacional y directo (tutear)
-5. Cada opción debe mapear a códigos de dolor específicos
-
-BASE DE CONOCIMIENTO DE DOLORES:
+CATÁLOGO DE DOLORES RELEVANTES:
 ${Object.entries(relevantClusters).map(([key, cluster]) =>
   `${key}: "${cluster.title}" - ${cluster.description}`
 ).join('\n')}
 
-SEÑALES DE DETECCIÓN:
-${Object.entries(PAIN_CATALOG).filter(([code, pain]) =>
+SEÑALES QUE INDICAN CADA DOLOR:
+${Object.entries(PAIN_CATALOG).filter(([, pain]) =>
   relevantClusters[pain.cluster]
-).slice(0, 30).map(([code, pain]) =>
-  `${code} (${pain.cluster}): "${pain.signals.join('", "')}"`
+).slice(0, 25).map(([, pain]) =>
+  `${pain.cluster}: "${pain.signals.slice(0, 3).join('", "')}"`
 ).join('\n')}
 
-Responde SOLO con JSON válido, sin texto adicional.`;
+Responde SOLO con JSON válido.`;
 
-  const userPrompt = `CONTEXTO DE LA EMPRESA:
+  const userPrompt = `INFORMACIÓN DE LA EMPRESA (de investigación web):
 ${companyProfile ? `
 - Nombre: ${companyProfile.empresa?.nombre || FormState.company.name || 'No especificado'}
-- Sector detectado: ${companyProfile.empresa?.sector || phase1.sector}
+- Sector: ${companyProfile.empresa?.sector || phase1.sector}
 - Descripción: ${companyProfile.empresa?.descripcion || 'No disponible'}
+- Productos/Servicios: ${JSON.stringify(companyProfile.empresa?.productos_servicios || [])}
+- Clientes objetivo: ${companyProfile.empresa?.clientes_objetivo || 'No especificado'}
 - Modelo de negocio: ${companyProfile.empresa?.modelo_negocio || 'B2B'}
-- Tiene equipo de campo: ${companyProfile.empresa?.tiene_equipo_campo ? 'Sí' : 'No especificado'}
-- Maneja muestras médicas: ${companyProfile.empresa?.tiene_muestras_medicas ? 'Sí' : 'No'}
-- Regulado: ${companyProfile.empresa?.regulado ? 'Sí' : 'No'}
-- Dolores probables detectados: ${JSON.stringify(companyProfile.dolores_probables?.prioridad_alta || [])}
-` : ''}
+- Tiene equipo de campo: ${companyProfile.empresa?.tiene_equipo_campo ? 'SÍ - importante preguntar sobre visibilidad' : 'No'}
+- Maneja muestras médicas: ${companyProfile.empresa?.tiene_muestras_medicas ? 'SÍ - importante preguntar sobre control de muestras' : 'No'}
+- Regulado: ${companyProfile.empresa?.regulado ? 'SÍ - importante preguntar sobre compliance' : 'No'}
+- Actividades principales: ${JSON.stringify(companyProfile.contexto?.actividades_principales || [])}
+- Retos del sector: ${JSON.stringify(companyProfile.contexto?.retos_sector || [])}
+- Dolores probables (prioridad alta): ${JSON.stringify(companyProfile.dolores_probables?.prioridad_alta || [])}
+- Dolores probables (prioridad media): ${JSON.stringify(companyProfile.dolores_probables?.prioridad_media || [])}
+- Señales detectadas: ${JSON.stringify(companyProfile.dolores_probables?.señales_detectadas || [])}
+- Confianza de la investigación: ${companyProfile.confianza || 0.5}
+- Fuente: ${companyProfile.fuente_informacion || 'inferencia'}
+` : 'No hay información de investigación disponible'}
 
-RESPUESTAS DEL USUARIO:
+RESPUESTAS DEL USUARIO EN FORMULARIO:
 - Tamaño equipo: ${phase1.team_size || 'no especificado'}
 - Tiene equipo de campo: ${phase1.has_field_team || 'no especificado'}
-- Sector: ${phase1.sector || 'no especificado'}
+- Sector seleccionado: ${phase1.sector || 'no especificado'}
 - Tecnología actual: ${JSON.stringify(phase1.current_tech || [])}
-- Motivación principal: ${phase1.motivation || 'no especificado'}
+- Motivaciones para buscar solución: ${JSON.stringify(phase1.motivation || [])}
 
 ${companyProfile?.preguntas_sugeridas?.length > 0 ? `
-PREGUNTAS SUGERIDAS POR INVESTIGACIÓN:
-${companyProfile.preguntas_sugeridas.map(q => `- ${q.pregunta} (objetivo: ${q.objetivo})`).join('\n')}
+PREGUNTAS SUGERIDAS POR LA INVESTIGACIÓN (DEBES USAR ESTAS O SIMILARES):
+${companyProfile.preguntas_sugeridas.map(q => `- "${q.pregunta}" → objetivo: ${q.objetivo}, detecta: ${q.categoria_dolor}`).join('\n')}
 ` : ''}
 
 Genera 4-5 preguntas en este formato JSON:
@@ -818,11 +836,13 @@ Genera 4-5 preguntas en este formato JSON:
   ]
 }
 
-IMPORTANTE:
-- Si el sector es pharma/dispositivos médicos, DEBES incluir preguntas sobre muestras (C-*) y compliance (L-*)
-- Si tiene equipo de campo, DEBES profundizar en visibilidad (A-*)
-- Las preguntas deben sentirse como conversación, no como interrogatorio
-- Usa las señales de detección para inspirar las opciones`;
+INSTRUCCIONES FINALES:
+- Si hay preguntas sugeridas por investigación, ÚSALAS como base
+- Menciona el nombre de la empresa o su sector en al menos 2 preguntas
+- Si es pharma/dispositivos médicos: OBLIGATORIO preguntar sobre muestras y compliance
+- Si tiene equipo de campo: OBLIGATORIO preguntar sobre visibilidad y registro
+- Las preguntas deben sentirse personalizadas, como si conocieras la empresa
+- NO repitas la misma estructura en todas las preguntas, varía el enfoque`;
 
   const response = await fetch(CONFIG.chatApiUrl, {
     method: 'POST',
@@ -868,7 +888,8 @@ function getRelevantClusters(phase1, companyProfile) {
   });
 
   // Incluir nivel 2 basado en contexto
-  if (phase1.motivation === 'losing_sales' || phase1.current_tech?.includes('nothing')) {
+  const motivations = Array.isArray(phase1.motivation) ? phase1.motivation : [];
+  if (motivations.includes('losing_sales') || phase1.current_tech?.includes('nothing')) {
     Object.entries(PAIN_CLUSTERS).forEach(([key, cluster]) => {
       if (cluster.category === 'E') relevant[key] = cluster;
     });
@@ -1071,12 +1092,16 @@ async function detectPainsWithAI() {
     'growth': ['K-PLANIFICACION', 'D-PIPELINE', 'F-DASHBOARDS']
   };
 
-  if (phase1.motivation && motivationMapping[phase1.motivation]) {
-    motivationMapping[phase1.motivation].forEach((cluster, i) => {
-      allDetections.push(cluster);
-      detectionWeights[cluster] = (detectionWeights[cluster] || 0) + (3 - i) * 2;
-    });
-  }
+  // Motivación ahora es un array (multi-select)
+  const motivations = Array.isArray(phase1.motivation) ? phase1.motivation : (phase1.motivation ? [phase1.motivation] : []);
+  motivations.forEach(motivation => {
+    if (motivationMapping[motivation]) {
+      motivationMapping[motivation].forEach((cluster, i) => {
+        allDetections.push(cluster);
+        detectionWeights[cluster] = (detectionWeights[cluster] || 0) + (3 - i) * 2;
+      });
+    }
+  });
 
   // De tecnología actual
   const techMapping = {
@@ -1743,6 +1768,14 @@ function init() {
   // Event Listeners - Multi-select continue
   if (DOM.btnContinueQ4) {
     DOM.btnContinueQ4.addEventListener('click', advanceFromCurrentQuestion);
+  }
+  if (DOM.btnContinueQ5) {
+    DOM.btnContinueQ5.addEventListener('click', advanceFromCurrentQuestion);
+  }
+
+  // Event Listeners - Research continue
+  if (DOM.btnContinueResearch) {
+    DOM.btnContinueResearch.addEventListener('click', handleContinueFromResearch);
   }
 
   // Event Listeners - Pains
