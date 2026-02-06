@@ -55,12 +55,64 @@
       </div>
     </section>
 
+    <!-- ==================== FASE 0: IDENTIFICACIÓN DE EMPRESA ==================== -->
+
+    <!-- Pregunta 0: Empresa -->
+    <section class="form-screen" data-screen="q0-company" data-phase="0">
+      <div class="screen-content">
+        <div class="question-number">0 <span class="question-total">/ 7</span></div>
+        <h2 class="question-title">¿De qué empresa vienes?</h2>
+        <p class="question-hint">Escribe el nombre de tu empresa o su sitio web para personalizar las preguntas</p>
+
+        <div class="company-input-wrapper">
+          <input
+            type="text"
+            id="companyInput"
+            class="company-input"
+            placeholder="ej: Laboratorios Pharmax o pharmax.com.mx"
+            autocomplete="organization"
+          >
+          <button class="btn-primary btn-research" id="btnResearchCompany">
+            <span>Continuar</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
+        <p class="company-hint">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4M12 8h.01"/>
+          </svg>
+          Esto nos ayuda a hacer preguntas más relevantes para tu industria
+        </p>
+      </div>
+    </section>
+
+    <!-- Transición: Investigando empresa -->
+    <section class="form-screen" data-screen="researching-company">
+      <div class="screen-content">
+        <div class="transition-icon">
+          <div class="loading-search">
+            <svg viewBox="0 0 60 60" fill="none">
+              <circle cx="26" cy="26" r="18" stroke="currentColor" stroke-width="3" opacity="0.3"/>
+              <circle class="search-circle" cx="26" cy="26" r="18" stroke="currentColor" stroke-width="3"/>
+              <line x1="40" y1="40" x2="52" y2="52" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <h2 class="transition-title">Investigando tu empresa...</h2>
+        <p class="transition-subtitle" id="companyResearchStatus">Buscando información para personalizar las preguntas</p>
+      </div>
+    </section>
+
     <!-- ==================== FASE 1: PREGUNTAS FIJAS ==================== -->
 
     <!-- Pregunta 1.1: Tamaño del equipo -->
     <section class="form-screen" data-screen="q1-1" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">1 <span class="question-total">/ 5</span></div>
+        <div class="question-number">1 <span class="question-total">/ 7</span></div>
         <h2 class="question-title">¿Cuántas personas usarían el sistema?</h2>
         <p class="question-hint">Incluye representantes, supervisores y personal administrativo</p>
 
