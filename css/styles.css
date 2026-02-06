@@ -460,7 +460,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(26, 37, 53, 0.98);
+  background: #1a2535;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -3440,7 +3440,7 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(26, 37, 53, 0.98);
+    background: #1a2535;
     flex-direction: column;
     justify-content: center;
     align-items: center;
