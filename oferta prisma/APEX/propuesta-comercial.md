@@ -10,7 +10,7 @@
 **PROPUESTA COMERCIAL**
 Documento Ejecutivo para Tomadores de Decisión
 
-Versión 3.3 — Febrero 2026
+Versión 3.4 — Febrero 2026
 
 ---
 
@@ -203,14 +203,20 @@ Después de la construcción inicial, pagas una suscripción mensual:
 
 ### Planes de Suscripción
 
+**Filosofía: Todas las funciones disponibles en todos los planes.** Lo que varía es cuánto puedes usar.
+
 | Capacidad | Básico | Profesional | Avanzado |
 |-----------|--------|-------------|----------|
-| Consultas IA / día | 20 | 100 | Ilimitadas |
-| Informes automáticos / mes | 2 | 10 | Ilimitados |
-| Dictar por voz | — | ✓ | ✓ |
-| Predicciones y scoring | — | ✓ | ✓ |
-| Agentes autónomos | — | Básicos | Completos |
+| Interacciones IA / día | 30 | 100 | Ilimitadas |
+| Dictar por voz / día | 10 | 30 | Ilimitadas |
+| Reportes IA / mes | 5 | 20 | Ilimitados |
+| Predicciones y scoring | ✓ | ✓ | ✓ |
+| Agentes autónomos | 2 activos | 5 activos | 15 activos |
+| Interfaz estructurada | ✓ Completa | ✓ Completa | ✓ Completa |
+| Lienzo IA proactivo | ✓ Completo | ✓ Completo | ✓ Completo |
 | **Precio por persona** | **20€/mes** | **30€/mes** | **45€/mes** |
+
+**Nota:** La interfaz estructurada (fichas, listas, formularios) no consume interacciones. Solo el Lienzo IA consume según tu uso.
 
 ---
 
@@ -503,13 +509,15 @@ Incluye: Uso de plataforma + Soporte técnico + IA integrada
 
 ## Información de Contacto
 
-**APEX by Prisma**
+**APEX by Prisma Consul(ing)**
 
 *Tu CRM, Tu Ritmo*
 
-- **Email:** hola@tucrm.com
-- **WhatsApp:** +34 600 000 000
-- **Web:** [pendiente]
+- **Email:** info@prismaconsul.com
+- **WhatsApp:** +34 644 327 898
+- **Web:** www.prismaconsul.com
+
+> **APEX** es el producto. **Prisma Consul(ing)** es la empresa que lo construye y te acompaña.
 
 ---
 

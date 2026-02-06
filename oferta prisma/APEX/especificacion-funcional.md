@@ -7,7 +7,7 @@
 
 > Especificación completa: Experiencias, Campos, Flujos, IA y Componentes
 
-Versión 2.3 — Febrero 2026
+Versión 2.4 — Febrero 2026
 
 ---
 
@@ -643,18 +643,22 @@ La IA está siempre disponible para todos. Los límites dependen del consumo y p
 | **Generación informes** | Crear reportes narrativos automáticos con análisis | Alto (~2000 tokens) |
 | **Agente autónomo** | Ejecutar acciones: enviar recordatorios, actualizar datos | Variable |
 
-## 10.2 Límites según Plan
+## 10.2 Límites según Plan (Modelo Token-Gated)
 
-| CAPACIDAD | INICIAL | PROFESIONAL | AVANZADO |
-|-----------|---------|-------------|----------|
+**Filosofía:** Todas las capacidades disponibles en todos los planes. Lo que varía es el consumo.
+
+| CAPACIDAD | BÁSICO | PROFESIONAL | AVANZADO |
+|-----------|--------|-------------|----------|
 | Tokens / mes | 50,000 | 200,000 | 500,000+ |
-| Consultas IA / día | 20 | 100 | Ilimitadas |
+| Interacciones IA / día | 30 | 100 | Ilimitadas |
 | Texto (sugerencias) | ✓ | ✓ | ✓ |
-| Voz (dictar) | — | ✓ | ✓ |
-| Imagen (análisis) | — | Limitado | ✓ |
-| Informes auto / mes | 2 | 10 | Ilimitados |
-| Predicciones | — | ✓ | ✓ |
-| Agentes autónomos | — | Básicos | Completos |
+| Voz (dictar) / día | 10 | 30 | Ilimitadas |
+| Imagen (análisis) | ✓ Limitado | ✓ | ✓ |
+| Informes auto / mes | 5 | 20 | Ilimitados |
+| Predicciones | ✓ | ✓ | ✓ |
+| Agentes autónomos | 2 activos | 5 activos | 15 activos |
+
+**Nota:** La interfaz estructurada (fichas, listas, formularios) NO consume tokens.
 
 ## 10.3 Los 4 Agentes de IA
 
@@ -804,6 +808,6 @@ El sistema se conecta con otras herramientas para crear un ecosistema completo.
 
 ---
 
-*Versión 2.3 — Febrero 2026*
+*Versión 2.4 — Febrero 2026*
 
 *© 2026 APEX - Prisma. Todos los derechos reservados.*
