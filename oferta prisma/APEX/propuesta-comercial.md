@@ -3,14 +3,14 @@
 > **A**utomatización de **P**rocesos y **EX**periencias
 > **A**utomation of **P**rocesses and **EX**periences
 
-## Gestión Comercial Inteligente para la Industria Farmacéutica
+## Tu CRM, Tu Ritmo
 
-> *"No es un software que compras. Es tu gestión empresarial que crece con tus posibilidades."*
+> *"No te vendemos un producto. Te ayudamos a construir TU sistema, empezando por lo que MÁS te duele."*
 
 **PROPUESTA COMERCIAL**
 Documento Ejecutivo para Tomadores de Decisión
 
-Versión 2.1 — Febrero 2026
+Versión 3.0 — Febrero 2026
 
 ---
 
@@ -18,13 +18,12 @@ Versión 2.1 — Febrero 2026
 
 1. Nuestra Filosofía
 2. El Problema que Resolvemos
-3. Nuestra Solución: Experiencias, No Módulos
-4. WhatsApp como Canal Principal
-5. Inteligencia Artificial Integrada
-6. Compliance Farmacéutico
-7. Cómo Trabajamos Contigo
-8. Inversión
-9. Próximos Pasos
+3. Cómo Funciona APEX
+4. Inversión: Core + Tus 5 Focos
+5. Ejemplos Reales
+6. Lo Que Siempre Puede Crecer
+7. Formulario de Descubrimiento
+8. Próximos Pasos
 
 ---
 
@@ -41,7 +40,7 @@ Por eso creamos algo diferente: **un sistema que se adapta a ti, no al revés**.
 ## Tres Principios que nos Definen
 
 ### Flexibilidad Real
-El sistema te pregunta: "¿Qué quieres hacer?" No te obliga a navegar veinte menús para descubrirlo. Cada persona ve exactamente lo que necesita, nada más, nada menos.
+No hay "paquetes" predefinidos. Tú nos cuentas qué te duele, nosotros te decimos qué podemos resolver ahora y qué queda para después. Cada propuesta es única porque cada empresa es única.
 
 ### Co-creación Continua
 No te entregamos un sistema cerrado. Trabajamos contigo, entendemos tu operación, ajustamos sobre la marcha. Ves avances cada dos semanas. Si algo no funciona para tu equipo, lo cambiamos juntos.
@@ -63,390 +62,256 @@ La industria del CRM vendió durante años una promesa que no cumplió: "Compra 
 | "Fácil de usar" | 5 pantallas para registrar una visita |
 | "Tu equipo lo adoptará rápido" | El 60% lo evita porque "quita tiempo" |
 | "Visibilidad en tiempo real" | Datos incompletos porque nadie captura |
-| "Implementación en semanas" | 6 meses después sigues configurando |
+| "Elige el paquete que necesitas" | Paquetes rígidos que no encajan con nadie |
 
-## El Error de Fondo: Diseñar desde la Tecnología
+## El Error de Fondo
 
-Los CRM tradicionales se diseñaron desde la perspectiva del dato, no del usuario. Crearon "módulos" porque así se organizan las bases de datos: un módulo de contactos, uno de visitas, uno de muestras, uno de reportes...
+Los CRM tradicionales te venden **paquetes cerrados**:
+- "Básico" = muy limitado
+- "Profesional" = pagas cosas que no usas
+- "Enterprise" = carísimo y complejo
 
-Pero tu representante de ventas no piensa en módulos. Piensa:
+Pero tu realidad no encaja en paquetes. Tus dolores son específicos. Lo que para una empresa es crítico, para otra es irrelevante.
 
-> "Acabo de ver al Dr. García, le dejé muestras, le interesó el producto nuevo, tengo que volver en dos semanas."
-
-Eso es **UNA acción**, no cuatro módulos diferentes.
-
-**El problema no es la tecnología. Es que obligaron al usuario a adaptarse al sistema, en lugar de adaptar el sistema al usuario.**
-
-## La Realidad del Representante Farmacéutico
-
-Tu equipo de campo vive en el carro, entre visitas. No tienen tiempo de abrir una laptop, navegar por módulos y llenar formularios. La realidad es:
-
-- **WhatsApp** para coordinarse con el médico
-- **Notas de voz** para recordar lo que pasó
-- **El CRM** queda para "después"... y ese después nunca llega
+**El problema no es la tecnología. Es que te obligan a adaptarte a sus cajas, en lugar de construir algo para ti.**
 
 ---
 
-# 3. NUESTRA SOLUCIÓN: EXPERIENCIAS, NO MÓDULOS
+# 3. CÓMO FUNCIONA APEX
 
-## Diseñado desde Quien lo Usa
+## Estructura de la Propuesta: 2,500€ + IVA
 
-En lugar de preguntarnos "¿qué datos necesitamos guardar?", nos preguntamos: **"¿Quién va a usar esto y qué necesita lograr?"**
-
-La respuesta nos llevó a diseñar EXPERIENCIAS personalizadas por rol.
-
-## Arquitectura del Sistema
+Tu inversión se divide en dos partes claras:
 
 ```
-CAPA 1: EXPERIENCIAS
-Lo que cada persona ve y usa según su rol.
-Interfaces adaptativas que muestran exactamente lo necesario.
-
-CAPA 2: INTELIGENCIA ARTIFICIAL
-Siempre disponible para todos. Asiste, sugiere, predice, automatiza.
-Límites según consumo, no según "activar o no".
-
-CAPA 3: COMPONENTES
-Las piezas técnicas que se combinan automáticamente.
-Tú no las ves, solo funcionan.
+┌─────────────────────────────────────────────────────┐
+│  PARTE 1: FUNDACIÓN UNIVERSAL          1,000€      │
+│  Lo que SIEMPRE incluye tu sistema                 │
+├─────────────────────────────────────────────────────┤
+│  PARTE 2: TUS 5 FOCOS                  1,500€      │
+│  Los 5 dolores que TÚ eliges resolver              │
+├─────────────────────────────────────────────────────┤
+│  TOTAL DESARROLLO INICIAL              2,500€      │
+└─────────────────────────────────────────────────────┘
 ```
 
-## Las Experiencias del Sistema
+---
 
-Cada persona entra a **SU** sistema. No a un sistema genérico donde tiene que buscar qué le corresponde.
+# 4. INVERSIÓN: CORE + TUS 5 FOCOS
 
-### EXPERIENCIA: REPRESENTANTE DE VENTAS
+## PARTE 1: Fundación Universal (1,000€)
 
-**Pregunta que responde:** *"¿Qué hago hoy y cómo registro lo que hice en 60 segundos?"*
+Lo que SIEMPRE incluye tu sistema, sin negociación:
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Pantalla de inicio** | Agenda del día con próximas visitas priorizadas por la IA |
-| **Acción principal** | Un botón para registrar actividad (visita + muestras + notas + compromiso en UN flujo) |
-| **IA integrada** | Dicta tu visita por voz o WhatsApp, el sistema completa los campos automáticamente |
-| **Dispositivo** | Móvil primero, funciona offline en zonas sin señal |
-| **Canal principal** | WhatsApp (90% del trabajo sin abrir otra app) |
+| Elemento | Qué es | Por qué no es negociable |
+|----------|--------|--------------------------|
+| **Identidad** | Tu logo, colores, nombre en todo el sistema | Es TU herramienta, no "un CRM genérico" |
+| **Estructura de roles** | Cada perfil ve lo que necesita | Sin esto, no hay experiencia diferenciada |
+| **Interfaz móvil para campo** | Los agentes de ventas trabajan desde el móvil | El rep vive en la calle, no en escritorio |
+| **Interfaz web para oficina** | Supervisores y directores en pantalla completa | Análisis y gestión requieren más espacio |
+| **Núcleo de datos** | Contactos/clientes + Usuarios + Registro de actividad | Sin datos, no hay CRM |
+| **Dashboard por rol** | El agente ve "mi día", el supervisor ve "mi equipo", el director ve "el negocio" | Cada quien ve su realidad, no un panel genérico |
 
-### EXPERIENCIA: SUPERVISOR / GERENTE DE DISTRITO
+### Lo que NO es el Core:
 
-**Pregunta que responde:** *"¿Cómo va mi equipo y dónde necesito intervenir?"*
+- No es "3 usuarios y ya"
+- No es solo escritorio
+- No es una plantilla que llenamos
 
-| Aspecto | Detalle |
-|---------|---------|
-| **Pantalla de inicio** | Estado del equipo en tiempo real (quién visitó, quién no, alertas) |
-| **Acción principal** | Drill-down por representante, aprobar solicitudes, asignar tareas |
-| **IA integrada** | Alertas proactivas de desviaciones, sugerencias de coaching |
-| **Dispositivo** | Web + móvil para alertas urgentes |
+### Lo que SÍ es:
 
-### EXPERIENCIA: DIRECTOR / DUEÑO
-
-**Pregunta que responde:** *"¿El negocio va bien? ¿Dónde están las oportunidades y riesgos?"*
-
-| Aspecto | Detalle |
-|---------|---------|
-| **Pantalla de inicio** | KPIs ejecutivos, tendencias, forecast |
-| **Acción principal** | Análisis comparativos, decisiones estratégicas con datos |
-| **IA integrada** | Reportes automáticos semanales sin pedirlos, predicciones de cierre |
-| **Dispositivo** | Web para análisis profundo, resúmenes por email/WhatsApp |
-
-### EXPERIENCIA: COMERCIAL / VENTAS
-
-**Pregunta que responde:** *"¿Cómo van mis ventas y qué clientes necesitan atención?"*
-
-| Aspecto | Detalle |
-|---------|---------|
-| **Pantalla de inicio** | Pipeline visual, oportunidades por cerrar, cobranza pendiente |
-| **Incluye** | Cotizaciones, descuentos con aprobación, inventario del rep, recordatorios de cobro |
-| **IA integrada** | Scoring de oportunidades, alertas de clientes en riesgo de pérdida |
-| **Dispositivo** | Web + móvil |
-
-### EXPERIENCIA: MÉDICO / HCP (Usuario Externo)
-
-**Pregunta que responde:** *"¿Qué productos tengo, qué necesito, cómo lo consigo fácil?"*
-
-| Aspecto | Detalle |
-|---------|---------|
-| **El médico puede** | Actualizar su ficha, solicitar muestras, consultar material científico |
-| **La IA le avisa** | "Se te está acabando el producto X, ¿lo solicitas?" (predicción de consumo) |
-| **Valor para él** | Conveniencia, servicio proactivo, menos llamadas al rep |
-| **Acceso** | App de la empresa o portal web sencillo |
-
-### EXPERIENCIA: ADMINISTRADOR / CONFIGURACIÓN
-
-**Pregunta que responde:** *"¿Cómo configuro el sistema sin depender del proveedor?"*
-
-| Aspecto | Detalle |
-|---------|---------|
-| **Funciones** | Usuarios, permisos, catálogos, reglas de negocio, compliance |
-| **Principio** | Lo que puedas hacer tú mismo, no deberías pagar por ello |
-| **Dispositivo** | Web completo |
+- La base sobre la que TODO lo demás se construye
+- Adaptada a los roles que TÚ tienes (no roles genéricos)
+- Lista para crecer con tus 5 focos
 
 ---
 
-# 4. WHATSAPP COMO CANAL PRINCIPAL
+## PARTE 2: Tus 5 Focos (1,500€)
 
-## El Rep No Necesita Abrir Otra App
+Aquí es donde entra la **flexibilidad total**.
 
-El 90% del trabajo del representante puede hacerse desde WhatsApp. Así funciona:
+En lugar de "elige de este menú", el modelo es:
 
-```
-Rep: [Nota de voz] "Acabo de ver al Dr. García en Hospital Ángeles.
-     Le dejé 3 muestras de Omeprazol. Está interesado pero quiere
-     ver los estudios de eficacia. Hay que darle seguimiento
-     la próxima semana."
+> **"Cuéntanos tus 5 mayores dolores. Nosotros te decimos qué podemos resolver en esta fase y qué queda para después."**
 
-APEX: ✓ Visita registrada (10:34 AM, Hospital Ángeles)
-      ✓ 3 muestras de Omeprazol descontadas de tu inventario
-      ✓ Dr. García movido a "Interesado - Pendiente estudios"
-      ✓ Te envío el PDF del estudio para que lo compartas
-      ✓ Recordatorio creado: Seguimiento en 5 días
+### Cómo funciona:
 
-      ¿Algo más sobre esta visita?
-```
+1. **Tú describes** (en texto o audio) tus 5 prioridades
+2. **Nosotros traducimos** cada prioridad en funcionalidad concreta
+3. **Acordamos juntos** el alcance inicial de cada una
+4. **Queda claro** qué entra ahora y qué es "Fase 2"
 
-**Tiempo invertido por el rep:** 15 segundos de nota de voz.
-**Trabajo hecho:** Registro completo, inventario actualizado, siguiente paso programado.
+### El límite real
 
-## ¿Qué Puede Hacer el Rep desde WhatsApp?
+No es "complejidad" ni "precio por función".
 
-| Acción | Ejemplo |
-|--------|---------|
-| **Registrar visita** | Nota de voz o texto informal |
-| **Consultar médico** | "Dame el resumen del Dr. García" |
-| **Ver agenda** | "¿Qué tengo programado para hoy?" |
-| **Consultar inventario** | "¿Cuántas muestras me quedan de Losartán?" |
-| **Recibir briefing** | Automático antes de cada visita programada |
-| **Alertas de compliance** | "Solo puedes entregar 2 muestras más a este médico" |
+El límite es: **profundidad inicial por foco**.
 
-## ¿Por Qué WhatsApp?
-
-- **80%+ de consumidores hispanohablantes** prefieren WhatsApp sobre cualquier otro canal
-- El rep **ya vive en WhatsApp** entre visitas
-- **Cero curva de aprendizaje** — ya saben usar la herramienta
-- **Funciona con datos móviles básicos** — no necesita WiFi
+Todos pueden tener control de cobranza. Pero unos tendrán recordatorios manuales y otros tendrán recordatorios automáticos por WhatsApp. Ambos son válidos. Empiezas por donde puedes, creces cuando quieras.
 
 ---
 
-# 5. INTELIGENCIA ARTIFICIAL INTEGRADA
+# 5. EJEMPLOS REALES
 
-## Siempre Contigo, No Como Módulo Extra
+## Ejemplo 1: Laboratorio pequeño (5 reps)
 
-La IA no es un "módulo adicional". Está integrada desde el primer día para todos.
+### Sus 5 focos:
 
-### Cómo Funciona
+1. "Necesito saber qué hace cada rep cada día"
+2. "Quiero controlar las muestras que entregan"
+3. "Los médicos se quejan de que no les damos seguimiento"
+4. "No sé cuánto vendemos realmente"
+5. "Todo está en Excel y se pierde información"
 
-Todos los usuarios tienen acceso a la inteligencia artificial. Lo que varía son los límites de uso según el plan: cantidad de consultas, tipos de funciones (texto, voz, imagen), profundidad de análisis.
+### Lo que proponemos para Fase 1:
 
-Es como tu plan de telefonía: todos pueden llamar, pero algunos tienen más minutos que otros.
-
-| CAPACIDAD | INICIAL | PROFESIONAL | AVANZADO |
-|-----------|---------|-------------|----------|
-| Consultas IA / día | 20 | 100 | Ilimitadas |
-| Texto (autocompletar, sugerencias) | ✓ | ✓ | ✓ |
-| Voz (dictar visitas, comandos) | — | ✓ | ✓ |
-| Imagen (análisis, reconocimiento) | — | Limitado | ✓ |
-| Informes automáticos / mes | 2 | 10 | Ilimitados |
-| Predicciones y scoring | — | ✓ | ✓ |
-| Agentes autónomos | — | Básicos | Completos |
-
-### Los 4 Agentes de IA
-
-APEX tiene agentes especializados que trabajan en paralelo:
-
-#### Agente de Visita
-- Captura por voz o texto informal
-- Transcribe y estructura la información
-- Actualiza el sistema sin intervención del rep
-- Genera email de seguimiento personalizado
-
-#### Agente de Compliance
-- Verifica límites de muestras **antes** de que el rep las entregue
-- Alerta si una entrega violaría regulación
-- Genera firma electrónica en el momento
-- Mantiene audit trail automático
-
-#### Agente de Preparación
-- **Antes de cada visita**, envía briefing al rep por WhatsApp
-- Historial del médico, últimas muestras, objeciones previas
-- Estudios clínicos relevantes para su especialidad
-- Alertas: "Hace 45 días que no lo visitas"
-
-#### Agente de Alertas
-- Detecta médicos en riesgo de perderse (análisis de sentimiento)
-- Identifica oportunidades no atendidas
-- Alerta de objetivos en riesgo antes del cierre de mes
-
-### Qué Puede Hacer la IA por Ti
-
-| Para el Rep | Dictarle la visita por voz, autocompletar campos, sugerir próximo paso |
-| Para el Supervisor | Alertas de quién no está cumpliendo, resúmenes del equipo, sugerencias de coaching |
-| Para el Director | Reportes automáticos semanales, predicciones de cierre, análisis de tendencias |
-| Para el Médico | "Se te acaba el producto X, ¿lo solicitas?" antes de que lo pida |
-| Para Cobranza | Recordatorios automáticos, priorización de cartera por riesgo |
+| Foco | Alcance Inicial | Queda para Fase 2 |
+|------|-----------------|-------------------|
+| **Actividad de reps** | Registro diario + historial por médico | Geolocalización validada, alertas de inactividad |
+| **Control de muestras** | Inventario por rep + registro de entrega + límites | Predicción de consumo, alertas automáticas |
+| **Seguimiento a médicos** | Compromisos registrados + recordatorios | Portal para que el médico consulte |
+| **Visibilidad de ventas** | Dashboard con KPIs básicos | Forecast con IA, comparativos avanzados |
+| **Migración de Excel** | Importación de datos + estructura ordenada | Integración con ERP |
 
 ---
 
-# 6. COMPLIANCE FARMACÉUTICO
+## Ejemplo 2: Distribuidor mediano (15 personas)
 
-## Integrado, No Agregado Después
+### Sus 5 focos:
 
-La industria farmacéutica tiene regulaciones estrictas. No las vemos como una carga, sino como parte natural del flujo de trabajo. **El cumplimiento está integrado.**
+1. "La cobranza es un caos"
+2. "Los vendedores dan descuentos sin control"
+3. "No tengo reportes para el dueño"
+4. "Quiero que el sistema me avise cuando algo está mal"
+5. "Necesito integrar con mi facturación"
 
-### Cómo lo Resolvemos
+### Lo que proponemos para Fase 1:
 
-| Funcionalidad | Beneficio |
-|---------------|-----------|
-| **Límites automáticos de muestras** | El sistema no permite exceder las cuotas por médico |
-| **Firma electrónica** | Evidencia legal de entrega de muestras |
-| **Trazabilidad completa** | Quién entregó qué, a quién, cuándo, dónde |
-| **Material aprobado** | Solo se puede compartir material que pasó por compliance |
-| **Auditoría inmutable** | Logs de todo lo que pasó, para cualquier inspección |
-| **Reportes regulatorios** | COFEPRIS, FDA, GDPR listos para generar |
+| Foco | Alcance Inicial | Queda para Fase 2 |
+|------|-----------------|-------------------|
+| **Cobranza** | Antigüedad de saldos + registro de gestiones + recordatorios manuales | Recordatorios automáticos por WhatsApp |
+| **Control de descuentos** | Matriz de límites + aprobación del supervisor | Análisis de impacto en margen |
+| **Reportes ejecutivos** | 3 reportes clave configurados + envío semanal | Generación con IA, personalizables |
+| **Alertas** | 5 alertas configuradas (las que más le duelan) | Sistema completo de notificaciones |
+| **Integración facturación** | *Fase 2 (requiere análisis técnico)* | Sincronización bidireccional |
 
-### Compliance en Acción
-
-```
-Rep: "Voy a dejarle 5 muestras de Lipitor al Dr. Rodríguez"
-
-APEX: ⚠️ Alerta de Compliance
-      El Dr. Rodríguez ya recibió 3 muestras este mes.
-      Límite mensual: 6 muestras.
-
-      ¿Confirmas entrega de 5 muestras? (Solo puedes entregar 3)
-
-      [Entregar 3] [Solicitar excepción] [Cancelar]
-```
-
-**El rep no puede violar la regulación por error.** El sistema lo previene en tiempo real.
-
-### Regulaciones Cubiertas
-
-- **NOM-059/NOM-072 (México):** Control de muestras y material
-- **COFEPRIS:** Trazabilidad con firma digital
-- **FDA 21 CFR Part 11 (EUA):** Registros electrónicos
-- **GDPR (Europa):** Protección de datos de HCPs
-- **Sunshine Act:** Reportes de transparencia automáticos
-- **Códigos IFPMA/AMIIF:** Límites configurables
+> **Nota:** La integración con facturación queda fuera del presupuesto inicial porque requiere trabajo técnico específico. Se cotiza aparte.
 
 ---
 
-# 7. CÓMO TRABAJAMOS CONTIGO
+## Ejemplo 3: Laboratorio con visita médica (20 reps)
 
-## Co-creación Real
+### Sus 5 focos:
 
-No te vendemos un sistema terminado. Construimos juntos lo que necesitas, a tu ritmo, según tus posibilidades.
+1. "Los reps no registran las visitas a tiempo"
+2. "Tenemos problemas de compliance con las muestras"
+3. "Quiero que los reps reciban briefings antes de cada visita"
+4. "Necesito un dashboard para ver todo el país"
+5. "Queremos usar WhatsApp para todo"
 
-| PASO | QUÉ HACEMOS |
-|------|-------------|
-| **1. PLATIQUEMOS** | Cuéntanos tu situación. Entendemos tu negocio, tus dolores, tus recursos. |
-| **2. DEFINIMOS JUNTOS** | ¿Qué experiencias necesitas? ¿Cuántos usuarios? ¿Qué nivel de IA? Diseñamos tu configuración. |
-| **3. CONSTRUIMOS** | Entregas cada 2 semanas que puedes probar. Ajustamos según tu feedback. Sin sorpresas. |
-| **4. CRECEMOS JUNTOS** | Cuando estés listo, añadimos más experiencias, más capacidades. A tu ritmo. |
+### Lo que proponemos para Fase 1:
 
-## Pagos que Tienen Sentido
-
-Pagos pequeños vinculados a entregas reales. **Nunca pagas por algo que no has visto funcionando.**
-
-- Anticipo mínimo para arrancar (20-30%)
-- Pagos quincenales o mensuales según avance
-- Solo pagas cuando ves la entrega funcionando
-- Puedes pausar entre fases si lo necesitas
-- **El código es tuyo, 100%**
+| Foco | Alcance Inicial | Queda para Fase 2 |
+|------|-----------------|-------------------|
+| **Registro de visitas** | Registro desde móvil + voz + WhatsApp | Transcripción automática con IA |
+| **Compliance de muestras** | Límites automáticos + firma electrónica + trazabilidad | Reportes COFEPRIS automáticos |
+| **Briefings pre-visita** | Resumen manual del historial | Briefing automático por IA antes de cada visita |
+| **Dashboard nacional** | KPIs por región + comparativos | Mapas interactivos, drill-down avanzado |
+| **WhatsApp integrado** | Canal de registro y consultas básicas | Agentes IA autónomos, flujos conversacionales |
 
 ---
 
-# 8. INVERSIÓN
+# 6. LO QUE SIEMPRE PUEDE CRECER
 
-Tu inversión depende de qué experiencias necesitas y cuántos usuarios tendrás.
+## Incluido en los 2,500€:
 
-## Configuración: Equipo de Ventas Pequeño
+- ✓ Todo el Core (identidad + estructura + interfaces móvil/web)
+- ✓ 5 focos con alcance inicial acordado
+- ✓ Acompañamiento durante implementación
+- ✓ Ajustes menores en el primer mes
 
-*"Tengo 5-10 representantes y necesito organizar visitas y ventas"*
+## NO incluido (se cotiza aparte si lo necesitan):
 
-| Concepto | Detalle |
-|----------|---------|
-| **Experiencias** | Rep + Supervisor |
-| **IA** | Nivel Inicial (texto, sugerencias básicas) |
-| **Usuarios** | Hasta 15 |
-| **WhatsApp integrado** | ✓ Incluido |
-| **DESARROLLO** | $6,000 - $8,000 USD |
-| **Mensualidad** | $180 - $250 USD/mes |
+| Capacidad | Precio Orientativo |
+|-----------|-------------------|
+| **Integraciones con sistemas externos** (ERP, facturación) | +1,000 - 2,000€ |
+| **WhatsApp Business API** (más allá de registro básico) | +500 - 800€ |
+| **Portal para usuarios externos** (médicos, clientes, farmacias) | +1,500€ |
+| **IA avanzada** (predicciones, agentes autónomos, transcripción) | Mensualidad según uso |
+| **Apps nativas** (si la PWA no es suficiente) | +2,000€ |
+| **Hosting** (si no tienes infraestructura propia) | Desde 50€/mes |
 
-## Configuración: Equipo Completo con IA Avanzada
+## Siempre puede crecer:
 
-*"Tengo 20-30 personas, quiero visitas + comercial + reportes + IA que prediga"*
-
-| Concepto | Detalle |
-|----------|---------|
-| **Experiencias** | Rep + Supervisor + Director + Comercial |
-| **IA** | Nivel Profesional (voz, predicciones, scoring, agentes) |
-| **Usuarios** | Hasta 50 |
-| **WhatsApp integrado** | ✓ Incluido |
-| **DESARROLLO** | $15,000 - $20,000 USD |
-| **Mensualidad** | $400 - $600 USD/mes |
-
-## Configuración: Enterprise con Portal Médico
-
-*"Quiero todo: equipo completo + portal para médicos + IA avanzada + integraciones ERP"*
-
-| Concepto | Detalle |
-|----------|---------|
-| **Experiencias** | Todas (Rep + Supervisor + Director + Comercial + Médico + Admin) |
-| **IA** | Nivel Avanzado (ilimitado, agentes autónomos completos) |
-| **Usuarios** | Ilimitados |
-| **Integraciones** | WhatsApp + ERP + Facturación |
-| **DESARROLLO** | Cotización personalizada |
-| **Mensualidad** | Cotización personalizada |
+- Cada foco puede profundizarse en fases siguientes
+- Nuevos focos se pueden agregar
+- El sistema nunca está "terminado", evoluciona contigo
 
 ---
 
-## ¿Qué Incluye la Mensualidad?
+# 7. FORMULARIO DE DESCUBRIMIENTO
 
-| Concepto | Incluido |
-|----------|----------|
-| Hosting en la nube (AWS/GCP) | ✓ |
-| Soporte técnico | ✓ |
-| Actualizaciones de seguridad | ✓ |
-| Consumo de IA (según plan) | ✓ |
-| WhatsApp Business API | ✓ |
-| Backups diarios | ✓ |
+Para darte una propuesta real, necesitamos entender tu situación.
+
+## Sección 1: Tu Contexto
+
+- ¿Cómo se llama tu empresa?
+- ¿A qué te dedicas? (sector farmacéutico, distribución, visita médica, etc.)
+- ¿Cuántas personas usarían el sistema?
+- ¿Qué roles tienen? (agentes de campo, supervisores, directores, administrativos, otros)
+- ¿Usan algo actualmente? (Excel, otro CRM, nada)
+
+## Sección 2: Tus 5 Prioridades
+
+Para cada una (1 a 5):
+
+- **Descríbela** (texto libre)
+- **O cuéntanosla** (audio de hasta 2 minutos)
+- **¿Qué pasa hoy?** (cómo lo resuelves actualmente)
+- **¿Cómo sabrías que está resuelto?** (qué cambiaría)
+
+## Sección 3: Contexto Adicional
+
+- ¿Hay algo que sea urgente?
+- ¿Tienes presupuesto definido o es flexible?
+- ¿Algo más que debamos saber?
 
 ---
 
-# 9. PRÓXIMOS PASOS
+# 8. PRÓXIMOS PASOS
 
 ## El Siguiente Paso es Simple
 
-**CUÉNTANOS LO QUE NECESITAS**
+**CUÉNTANOS TUS 5 DOLORES**
 
-Una conversación de 30 minutos para entender tu situación.
+Llena el formulario o agenda una llamada de 30 minutos.
 
 Sin compromiso. Sin presentaciones corporativas aburridas.
 Solo platicar sobre tu negocio y cómo podemos ayudarte.
 
 ---
 
-## Proceso de Evaluación
+## Proceso
 
-1. **Llamada de Descubrimiento (30 min)**
-   - Entender tu operación actual
-   - Identificar puntos de dolor
+| Paso | Qué hacemos |
+|------|-------------|
+| **1. Descubrimiento** | Recibes el formulario o platicamos 30 min. Entendemos tus 5 focos. |
+| **2. Propuesta** | En 48 horas te enviamos propuesta específica con alcance por foco. |
+| **3. Acuerdo** | Definimos juntos qué entra en Fase 1 y qué queda para después. |
+| **4. Construcción** | Entregas cada 2 semanas. Ajustes según tu feedback. |
+| **5. Crecimiento** | Cuando estés listo, profundizamos focos o añadimos nuevos. |
 
-2. **Demo Personalizada (60 min)**
-   - Ver APEX funcionando con tu tipo de datos
-   - Simular el flujo de WhatsApp con un rep
+---
 
-3. **Propuesta Detallada**
-   - Cotización específica
-   - Plan de implementación por fases
+## Lo que Logra Este Modelo
 
-4. **Piloto (Opcional)**
-   - 30 días con un equipo reducido
-   - Métricas de adopción y resultados
-
-5. **Construcción**
-   - Entregas cada 2 semanas
-   - Ajustes según feedback
+| Aspecto | Cómo lo resolvemos |
+|---------|-------------------|
+| **Flexibilidad total** | Tú describes, nosotros proponemos |
+| **Adaptabilidad** | Siempre hay "Fase 2" |
+| **No parece producto enlatado** | Cada propuesta es única |
+| **Transparencia** | Queda claro qué sí y qué no |
+| **Precio predecible** | 2,500€ para empezar, creces a tu ritmo |
 
 ---
 
@@ -466,7 +331,7 @@ Solo platicar sobre tu negocio y cómo podemos ayudarte.
 
 **APEX by Prisma**
 
-*Gestión Comercial Inteligente para Pharma*
+*Tu CRM, Tu Ritmo*
 
 - **Email:** [pendiente]
 - **Teléfono:** [pendiente]
@@ -474,11 +339,11 @@ Solo platicar sobre tu negocio y cómo podemos ayudarte.
 
 ---
 
-> *"No es un software que compras. Es tu gestión empresarial que crece con tus posibilidades."*
+> *"No te vendemos un producto. Te ayudamos a construir TU sistema, empezando por lo que MÁS te duele."*
 
 ---
 
 *Vigencia de esta propuesta: 60 días*
-*Precios en USD | Febrero 2026*
+*Precios en EUR + IVA | Febrero 2026*
 
 *© 2026 APEX - Prisma. Todos los derechos reservados.*
