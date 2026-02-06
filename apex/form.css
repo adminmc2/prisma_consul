@@ -158,8 +158,8 @@ body {
 
 /* ==================== WELCOME SCREEN ==================== */
 .welcome-logo {
-  width: 180px;
-  margin: 0 auto var(--spacing-lg);
+  width: 280px;
+  margin: 0 auto var(--spacing-xl);
 }
 
 .welcome-logo img {
@@ -225,22 +225,26 @@ body {
   justify-content: center;
   gap: var(--spacing-xs);
   width: 100%;
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: 14px 28px;
   font-family: var(--font-heading);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   color: var(--prisma-navy);
-  background: linear-gradient(135deg, var(--tech-cyan), var(--pure-cyan));
-  border: none;
-  border-radius: var(--radius-md);
+  background: var(--tech-cyan);
+  border: 1px solid var(--tech-cyan);
+  border-radius: 4px 25px 25px 4px;
   cursor: pointer;
   transition: all var(--transition-normal);
-  box-shadow: var(--shadow-glow);
 }
 
 .btn-primary:hover {
+  background: var(--clinical-white);
+  border-color: var(--clinical-white);
+  color: var(--prisma-navy);
   transform: translateY(-2px);
-  box-shadow: 0 0 30px var(--accent-glow);
+  box-shadow: 0 8px 25px rgba(49, 190, 239, 0.3);
 }
 
 .btn-primary:active {
@@ -261,14 +265,16 @@ body {
   width: 100%;
   max-width: 200px;
   margin: var(--spacing-lg) auto 0;
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: 12px 24px;
   font-family: var(--font-heading);
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   color: var(--text-primary);
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px 25px 25px 4px;
   cursor: pointer;
   transition: all var(--transition-normal);
 }
@@ -276,6 +282,7 @@ body {
 .btn-continue:hover {
   background: rgba(255, 255, 255, 0.05);
   border-color: var(--accent);
+  transform: translateY(-2px);
 }
 
 /* ==================== QUESTIONS ==================== */
@@ -629,35 +636,40 @@ body {
   justify-content: center;
   gap: var(--spacing-xs);
   width: 100%;
-  padding: var(--spacing-md);
+  padding: 14px 28px;
   font-family: var(--font-heading);
   font-size: 1rem;
   font-weight: 500;
-  border-radius: var(--radius-md);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 4px 25px 25px 4px;
   cursor: pointer;
   transition: all var(--transition-normal);
 }
 
 .btn-confirm {
   color: var(--prisma-navy);
-  background: linear-gradient(135deg, var(--tech-cyan), var(--pure-cyan));
-  border: none;
-  box-shadow: var(--shadow-glow);
+  background: var(--tech-cyan);
+  border: 1px solid var(--tech-cyan);
 }
 
 .btn-confirm:hover {
+  background: var(--clinical-white);
+  border-color: var(--clinical-white);
   transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(49, 190, 239, 0.3);
 }
 
 .btn-adjust {
   color: var(--text-primary);
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .btn-adjust:hover {
-  background: var(--bg-card-hover);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent);
+  transform: translateY(-2px);
 }
 
 /* ==================== AUDIO RECORDER ==================== */
