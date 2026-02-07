@@ -60,7 +60,7 @@
     <!-- Pregunta 0: Empresa -->
     <section class="form-screen" data-screen="q0-company" data-phase="0">
       <div class="screen-content">
-        <div class="question-number">0 <span class="question-total">/ 7</span></div>
+        <div class="question-number">0 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿De qué empresa vienes?</h2>
         <p class="question-hint">Escribe el nombre de tu empresa o su sitio web para personalizar las preguntas</p>
 
@@ -153,8 +153,8 @@
               <div class="finding-label">Sector</div>
               <div class="finding-value" id="findingSector">-</div>
             </div>
-            <div class="finding-card">
-              <div class="finding-label">Descripción</div>
+            <div class="finding-card finding-card-full">
+              <div class="finding-label">Cómo operan</div>
               <div class="finding-value finding-description" id="findingDescription">-</div>
             </div>
             <div class="finding-card" id="findingFieldTeamCard" style="display: none;">
@@ -164,6 +164,14 @@
             <div class="finding-card" id="findingSamplesCard" style="display: none;">
               <div class="finding-label">Muestras médicas</div>
               <div class="finding-value" id="findingSamples">-</div>
+            </div>
+            <div class="finding-card finding-card-full" id="findingProcessesCard" style="display: none;">
+              <div class="finding-label">Procesos detectados</div>
+              <div class="finding-value finding-list" id="findingProcesses">-</div>
+            </div>
+            <div class="finding-card finding-card-full" id="findingSourcesCard" style="display: none;">
+              <div class="finding-label">Fuentes</div>
+              <div class="finding-value finding-sources" id="findingSources">-</div>
             </div>
           </div>
 
@@ -190,7 +198,7 @@
     <!-- Pregunta 1.1: Tamaño del equipo -->
     <section class="form-screen" data-screen="q1-1" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">1 <span class="question-total">/ 7</span></div>
+        <div class="question-number">1 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿Cuántas personas usarían el sistema?</h2>
         <p class="question-hint">Incluye representantes, supervisores y personal administrativo</p>
 
@@ -218,7 +226,7 @@
     <!-- Pregunta 1.2: Equipo de campo -->
     <section class="form-screen" data-screen="q1-2" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">2 <span class="question-total">/ 5</span></div>
+        <div class="question-number">2 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿Tienes equipo que visita clientes en campo?</h2>
         <p class="question-hint">Representantes, vendedores, visitadores médicos, técnicos de servicio</p>
 
@@ -242,7 +250,7 @@
     <!-- Pregunta 1.3: Sector -->
     <section class="form-screen" data-screen="q1-3" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">3 <span class="question-total">/ 5</span></div>
+        <div class="question-number">3 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿En qué sector está tu empresa?</h2>
 
         <div class="options-list" data-question="sector">
@@ -281,7 +289,7 @@
     <!-- Pregunta 1.4: Tecnología actual -->
     <section class="form-screen" data-screen="q1-4" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">4 <span class="question-total">/ 5</span></div>
+        <div class="question-number">4 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿Cómo gestionas hoy la información de tu operación comercial?</h2>
         <p class="question-hint">Puedes seleccionar varias opciones</p>
 
@@ -320,7 +328,7 @@
     <!-- Pregunta 1.5: Motivación -->
     <section class="form-screen" data-screen="q1-5" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">5 <span class="question-total">/ 5</span></div>
+        <div class="question-number">5 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿Qué te motivó a buscar una solución?</h2>
         <p class="question-hint">Puedes seleccionar varias opciones</p>
 
@@ -357,6 +365,129 @@
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
         </button>
+      </div>
+    </section>
+
+    <!-- Pregunta 1.6: Calidad de datos de clientes (Categoría B-CALIDAD) -->
+    <section class="form-screen" data-screen="q1-6" data-phase="1">
+      <div class="screen-content">
+        <div class="question-number">6 <span class="question-total">/ 9</span></div>
+        <h2 class="question-title">¿Qué tan actualizada está tu base de clientes?</h2>
+        <p class="question-hint">Datos de contacto, historial de compras, etc.</p>
+
+        <div class="options-list" data-question="data_quality">
+          <button class="option-btn" data-value="updated">
+            <span class="option-key">A</span>
+            <span class="option-text">Muy actualizada, tenemos proceso</span>
+          </button>
+          <button class="option-btn" data-value="somewhat">
+            <span class="option-key">B</span>
+            <span class="option-text">Más o menos, hay datos viejos</span>
+          </button>
+          <button class="option-btn" data-value="outdated">
+            <span class="option-key">C</span>
+            <span class="option-text">Bastante desactualizada</span>
+          </button>
+          <button class="option-btn" data-value="unknown">
+            <span class="option-key">D</span>
+            <span class="option-text">No sé, nadie lo revisa</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pregunta 1.7: Pipeline de ventas (Categoría D) - MULTI-SELECT -->
+    <section class="form-screen" data-screen="q1-7" data-phase="1">
+      <div class="screen-content">
+        <div class="question-number">7 <span class="question-total">/ 9</span></div>
+        <h2 class="question-title">¿Cómo llevas el seguimiento de oportunidades de venta?</h2>
+        <p class="question-hint">Puedes seleccionar varias opciones</p>
+
+        <div class="options-list multi-select" data-question="sales_pipeline" data-multi="true">
+          <button class="option-btn" data-value="system">
+            <span class="option-checkbox"></span>
+            <span class="option-text">Pipeline en sistema/CRM</span>
+          </button>
+          <button class="option-btn" data-value="excel">
+            <span class="option-checkbox"></span>
+            <span class="option-text">En Excel o Google Sheets</span>
+          </button>
+          <button class="option-btn" data-value="per_seller">
+            <span class="option-checkbox"></span>
+            <span class="option-text">Cada vendedor lleva lo suyo</span>
+          </button>
+          <button class="option-btn" data-value="memory">
+            <span class="option-checkbox"></span>
+            <span class="option-text">En la cabeza del vendedor</span>
+          </button>
+          <button class="option-btn" data-value="none">
+            <span class="option-checkbox"></span>
+            <span class="option-text">No llevamos seguimiento formal</span>
+          </button>
+        </div>
+
+        <button class="btn-continue hidden" id="btnContinueQ7">
+          <span>Continuar</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- Pregunta 1.8: Cobranza (Categoría E) -->
+    <section class="form-screen" data-screen="q1-8" data-phase="1">
+      <div class="screen-content">
+        <div class="question-number">8 <span class="question-total">/ 9</span></div>
+        <h2 class="question-title">¿Vendes a crédito?</h2>
+        <p class="question-hint">Facturas con plazo de pago</p>
+
+        <div class="options-list" data-question="sells_credit">
+          <button class="option-btn" data-value="yes_controlled">
+            <span class="option-key">A</span>
+            <span class="option-text">Sí, y tenemos buen control</span>
+          </button>
+          <button class="option-btn" data-value="yes_some_overdue">
+            <span class="option-key">B</span>
+            <span class="option-text">Sí, pero hay facturas vencidas</span>
+          </button>
+          <button class="option-btn" data-value="yes_problem">
+            <span class="option-key">C</span>
+            <span class="option-text">Sí, y es un problema frecuente</span>
+          </button>
+          <button class="option-btn" data-value="no_cash">
+            <span class="option-key">D</span>
+            <span class="option-text">No, todo es de contado</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pregunta 1.9: Reportes (Categoría F) -->
+    <section class="form-screen" data-screen="q1-9" data-phase="1">
+      <div class="screen-content">
+        <div class="question-number">9 <span class="question-total">/ 9</span></div>
+        <h2 class="question-title">¿Cuánto tardas en generar un reporte para dirección?</h2>
+        <p class="question-hint">Reporte de ventas, visitas, resultados del mes</p>
+
+        <div class="options-list" data-question="report_time">
+          <button class="option-btn" data-value="minutes">
+            <span class="option-key">A</span>
+            <span class="option-text">Minutos (tengo dashboards)</span>
+          </button>
+          <button class="option-btn" data-value="hours">
+            <span class="option-key">B</span>
+            <span class="option-text">Horas (busco y armo datos)</span>
+          </button>
+          <button class="option-btn" data-value="days">
+            <span class="option-key">C</span>
+            <span class="option-text">Días (armo todo en Excel)</span>
+          </button>
+          <button class="option-btn" data-value="none">
+            <span class="option-key">D</span>
+            <span class="option-text">No genero reportes formales</span>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -775,6 +906,7 @@
 
   <!-- Scripts -->
   <script src="pain-knowledge-base.js"></script>
+  <script src="signal-detector.js"></script>
   <script src="form.js"></script>
 </body>
 </html>

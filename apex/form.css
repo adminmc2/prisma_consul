@@ -1677,6 +1677,43 @@ body {
   color: var(--text-secondary);
 }
 
+.finding-card-full {
+  grid-column: 1 / -1;
+}
+
+.finding-list {
+  font-size: 0.9rem;
+}
+
+.finding-list ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  list-style: disc;
+}
+
+.finding-list li {
+  margin-bottom: 0.3rem;
+  color: var(--text-secondary);
+}
+
+.finding-sources {
+  font-size: 0.8rem;
+}
+
+.finding-sources a {
+  color: var(--accent);
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.3rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.finding-sources a:hover {
+  text-decoration: underline;
+}
+
 .research-icon-done {
   animation: none;
 }

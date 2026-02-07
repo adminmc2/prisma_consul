@@ -88,6 +88,10 @@ const FormState = {
   finalPains: [],
   painsConfirmed: null,
 
+  // Sistema de detección de FOCOS (signal-detector.js)
+  clusterAccumulator: null,  // Se inicializa al empezar Phase 2
+  focosDetectados: [],       // FOCOS calculados
+
   // Audio
   audioBlob: null,
   audioUrl: null,
@@ -103,7 +107,7 @@ const FormState = {
 
   // Navegación
   screenHistory: ['welcome'],
-  totalQuestions: 7,
+  totalQuestions: 9,  // 9 preguntas fijas en Fase 1
   answeredQuestions: 0
 };
 
@@ -175,6 +179,7 @@ function initDOM() {
     btnStart: document.getElementById('btnStart'),
     btnContinueQ4: document.getElementById('btnContinueQ4'),
     btnContinueQ5: document.getElementById('btnContinueQ5'),
+    btnContinueQ7: document.getElementById('btnContinueQ7'),
     btnContinueResearch: document.getElementById('btnContinueResearch'),
   };
 }
@@ -353,13 +358,8 @@ async function handleResearchCompany() {
       FormState.company.profile = data.profile;
       FormState.company.researchComplete = true;
 
-      // Pre-rellenar sector si lo detectamos
-      if (data.profile.empresa?.sector) {
-        FormState.responses.phase1.sector = data.profile.empresa.sector;
-      }
-      if (data.profile.empresa?.tiene_equipo_campo !== undefined) {
-        FormState.responses.phase1.has_field_team = data.profile.empresa.tiene_equipo_campo ? 'yes' : 'no';
-      }
+      // Pre-rellenar respuestas con lo detectado (para saltar preguntas)
+      prefillFromDetected(data.profile);
 
       // Mostrar resultados
       showResearchResults(data.profile, data.hadWebSearch);
@@ -377,6 +377,35 @@ async function handleResearchCompany() {
   if (btnContinue) {
     btnContinue.disabled = false;
     btnContinue.querySelector('span').textContent = 'Continuar';
+  }
+}
+
+// Pre-rellenar FormState con información detectada
+// Esto permite saltar preguntas que ya conocemos
+function prefillFromDetected(profile) {
+  if (!profile) return;
+
+  const detectado = profile.detectado || {};
+  const porPreguntar = profile.por_preguntar || {};
+
+  console.log('Prefilling from detected:', { detectado, porPreguntar });
+
+  // Sector: pre-rellenar si NO vamos a preguntar
+  if (!porPreguntar.sector && detectado.sector) {
+    FormState.responses.phase1.sector = detectado.sector;
+    console.log('Prefilled sector:', detectado.sector);
+  }
+
+  // Equipo de campo: pre-rellenar si NO vamos a preguntar
+  if (!porPreguntar.tiene_equipo_campo && detectado.tiene_equipo_campo !== null) {
+    FormState.responses.phase1.has_field_team = detectado.tiene_equipo_campo ? 'yes' : 'no';
+    console.log('Prefilled has_field_team:', detectado.tiene_equipo_campo);
+  }
+
+  // Tamaño del equipo: pre-rellenar si NO vamos a preguntar
+  if (!porPreguntar.tamaño_equipo && detectado.tamaño_estimado) {
+    FormState.responses.phase1.team_size = detectado.tamaño_estimado;
+    console.log('Prefilled team_size:', detectado.tamaño_estimado);
   }
 }
 
@@ -405,35 +434,90 @@ function showResearchResults(profile, hadWebSearch) {
   const fieldTeamEl = document.getElementById('findingFieldTeam');
   const samplesCard = document.getElementById('findingSamplesCard');
   const samplesEl = document.getElementById('findingSamples');
+  const processesCard = document.getElementById('findingProcessesCard');
+  const processesEl = document.getElementById('findingProcesses');
+  const sourcesCard = document.getElementById('findingSourcesCard');
+  const sourcesEl = document.getElementById('findingSources');
   const confidenceEl = document.getElementById('researchConfidence');
 
   if (profile && profile.empresa) {
-    if (nameEl) nameEl.textContent = profile.empresa.nombre || FormState.company.name || 'Tu empresa';
-    if (sectorEl) sectorEl.textContent = sectorNames[profile.empresa.sector] || profile.empresa.sector || 'No identificado';
-    if (descEl) descEl.textContent = profile.empresa.descripcion || 'Sin descripción disponible';
+    const porPreguntar = profile.por_preguntar || {};
+    const detectado = profile.detectado || {};
 
-    // Mostrar equipo de campo si aplica
-    if (profile.empresa.tiene_equipo_campo !== undefined && fieldTeamCard) {
-      fieldTeamCard.style.display = 'block';
-      if (fieldTeamEl) fieldTeamEl.textContent = profile.empresa.tiene_equipo_campo ? 'Sí, cuenta con equipo en campo' : 'No detectado';
+    // Nombre - siempre mostrar
+    if (nameEl) nameEl.textContent = profile.empresa.nombre || FormState.company.name || 'Tu empresa';
+
+    // Sector - solo mostrar si NO vamos a preguntar (ya lo detectamos)
+    if (sectorEl) {
+      if (!porPreguntar.sector && detectado.sector) {
+        sectorEl.textContent = sectorNames[detectado.sector] || detectado.sector;
+      } else {
+        sectorEl.textContent = 'Te preguntaremos en el siguiente paso';
+      }
     }
 
-    // Mostrar muestras si es pharma
-    if (profile.empresa.sector === 'pharma' && samplesCard) {
-      samplesCard.style.display = 'block';
-      if (samplesEl) samplesEl.textContent = profile.empresa.tiene_muestras_medicas ? 'Sí, maneja muestras médicas' : 'No detectado';
+    // Descripción de procesos - OBLIGATORIA siempre
+    const descripcion = profile.empresa.descripcion_procesos || profile.tavily_answer || '';
+    if (descEl) {
+      descEl.textContent = descripcion || 'No se encontró información sobre cómo opera esta empresa. Te haremos algunas preguntas para entender mejor.';
+    }
+
+    // Equipo de campo - solo mostrar si NO vamos a preguntar
+    if (fieldTeamCard) {
+      if (!porPreguntar.tiene_equipo_campo && detectado.tiene_equipo_campo !== null && detectado.tiene_equipo_campo !== undefined) {
+        fieldTeamCard.style.display = 'block';
+        if (fieldTeamEl) fieldTeamEl.textContent = detectado.tiene_equipo_campo ? 'Sí, cuenta con equipo en campo' : 'No, operan desde oficina';
+      } else {
+        fieldTeamCard.style.display = 'none';
+      }
+    }
+
+    // Muestras médicas - solo mostrar si es pharma y NO vamos a preguntar muestras
+    if (samplesCard) {
+      if (detectado.sector === 'pharma' && detectado.maneja_muestras !== null && detectado.maneja_muestras !== undefined) {
+        samplesCard.style.display = 'block';
+        if (samplesEl) samplesEl.textContent = detectado.maneja_muestras ? 'Sí, maneja muestras médicas' : 'No maneja muestras';
+      } else {
+        samplesCard.style.display = 'none';
+      }
+    }
+
+    // Mostrar procesos detectados
+    if (profile.procesos_detectados && profile.procesos_detectados.length > 0 && processesCard) {
+      processesCard.style.display = 'block';
+      if (processesEl) {
+        const listItems = profile.procesos_detectados.map(p => `<li>${p}</li>`).join('');
+        processesEl.innerHTML = `<ul>${listItems}</ul>`;
+      }
+    }
+
+    // Mostrar fuentes de Tavily
+    if (profile.sources && profile.sources.length > 0 && sourcesCard) {
+      sourcesCard.style.display = 'block';
+      if (sourcesEl) {
+        const sourceLinks = profile.sources
+          .slice(0, 3) // máximo 3 fuentes
+          .map(s => `<a href="${s.url}" target="_blank" rel="noopener">${s.title || s.url}</a>`)
+          .join('');
+        sourcesEl.innerHTML = sourceLinks;
+      }
     }
 
     if (confidenceEl) {
-      confidenceEl.textContent = hadWebSearch
-        ? 'Información obtenida de búsqueda web en tiempo real'
-        : 'Información inferida del nombre de la empresa';
+      const confianza = profile.detectado?.confianza || 0;
+      if (hadWebSearch && confianza >= 0.6) {
+        confidenceEl.textContent = 'Información verificada de búsqueda web en tiempo real';
+      } else if (hadWebSearch) {
+        confidenceEl.textContent = 'Información parcial de búsqueda web - te haremos algunas preguntas adicionales';
+      } else {
+        confidenceEl.textContent = 'Sin información web disponible - te haremos preguntas para conocerte mejor';
+      }
     }
   } else {
     // Sin resultados
     if (nameEl) nameEl.textContent = FormState.company.name || 'Tu empresa';
     if (sectorEl) sectorEl.textContent = 'Te preguntaremos en el siguiente paso';
-    if (descEl) descEl.textContent = 'No encontramos información pública, pero las siguientes preguntas nos ayudarán a entender tu contexto.';
+    if (descEl) descEl.textContent = 'No encontramos información pública sobre esta empresa. Las siguientes preguntas nos ayudarán a entender tu contexto y detectar oportunidades de mejora.';
     if (confidenceEl) confidenceEl.textContent = 'Continuaremos con preguntas personalizadas';
   }
 }
@@ -449,13 +533,17 @@ function getFirstQuestionToShow() {
   const profile = FormState.company.profile;
   const porPreguntar = profile?.por_preguntar || {};
 
-  // Orden de preguntas
+  // Orden de preguntas (9 preguntas en Fase 1)
   const questions = [
     { screen: 'q1-1', field: 'tamaño_equipo' },
     { screen: 'q1-2', field: 'tiene_equipo_campo' },
     { screen: 'q1-3', field: 'sector' },
     { screen: 'q1-4', field: 'tecnologia_actual' },
-    { screen: 'q1-5', field: 'motivacion' }
+    { screen: 'q1-5', field: 'motivacion' },
+    { screen: 'q1-6', field: 'client_info' },
+    { screen: 'q1-7', field: 'sales_pipeline' },
+    { screen: 'q1-8', field: 'sells_credit' },
+    { screen: 'q1-9', field: 'report_time' }
   ];
 
   for (const q of questions) {
@@ -475,7 +563,7 @@ function getNextScreen(currentScreen) {
   const porPreguntar = profile?.por_preguntar || {};
   const detectado = profile?.detectado || {};
 
-  const fullFlow = ['q1-1', 'q1-2', 'q1-3', 'q1-4', 'q1-5', 'transition-phase2'];
+  const fullFlow = ['q1-1', 'q1-2', 'q1-3', 'q1-4', 'q1-5', 'q1-6', 'q1-7', 'q1-8', 'q1-9', 'transition-phase2'];
 
   // Mapeo de pantallas a campos de por_preguntar
   const screenToField = {
@@ -483,7 +571,11 @@ function getNextScreen(currentScreen) {
     'q1-2': 'tiene_equipo_campo',
     'q1-3': 'sector',
     'q1-4': 'tecnologia_actual',
-    'q1-5': 'motivacion'
+    'q1-5': 'motivacion',
+    'q1-6': 'data_quality',
+    'q1-7': 'sales_pipeline',
+    'q1-8': 'sells_credit',
+    'q1-9': 'report_time'
   };
 
   const currentIndex = fullFlow.indexOf(currentScreen);
@@ -612,13 +704,13 @@ async function handleTransitionToPhase2() {
     console.log('Generated', questions.length, 'adaptive questions:', questions.map(q => q.texto));
     FormState.responses.adaptiveQuestions = questions;
     FormState.responses.currentAdaptiveIndex = 0;
-    FormState.totalQuestions = 5 + questions.length;
+    FormState.totalQuestions = 9 + questions.length;
   } catch (error) {
     console.error('Error generating adaptive questions, using fallback:', error);
     console.log('Fallback reason:', error.message);
     FormState.responses.adaptiveQuestions = getFallbackQuestions();
     FormState.responses.currentAdaptiveIndex = 0;
-    FormState.totalQuestions = 5 + FormState.responses.adaptiveQuestions.length;
+    FormState.totalQuestions = 9 + FormState.responses.adaptiveQuestions.length;
   }
 
   await goToScreen('phase2-questions');
@@ -628,185 +720,228 @@ async function generateAdaptiveQuestions() {
   const { phase1 } = FormState.responses;
   const companyProfile = FormState.company.profile;
 
-  console.log('=== GENERATING ADAPTIVE QUESTIONS ===');
-  console.log('Company profile:', companyProfile ? {
-    nombre: companyProfile.empresa?.nombre,
-    sector: companyProfile.empresa?.sector,
-    tiene_equipo_campo: companyProfile.empresa?.tiene_equipo_campo,
-    fuente: companyProfile.fuente_informacion,
-    preguntas_sugeridas: companyProfile.preguntas_sugeridas?.length || 0
-  } : 'NO PROFILE');
+  console.log('=== GENERATING ADAPTIVE QUESTIONS WITH FOCOS ===');
   console.log('Phase1 responses:', phase1);
 
-  // Construir contexto completo con la base de conocimiento
-  const relevantClusters = getRelevantClusters(phase1, companyProfile);
+  // ========================================
+  // PASO 1: Procesar respuestas Phase 1 y calcular FOCOS
+  // ========================================
 
-  const systemPrompt = `Eres un consultor experto en detectar DOLORES OPERATIVOS de empresas.
+  // Crear acumulador de clusters
+  const accumulator = new ClusterAccumulator();
 
-IMPORTANTE - ENFÓCATE EN PROCESOS, NO EN PRODUCTOS:
-- NO preguntes sobre los productos que vende la empresa
-- SÍ pregunta sobre CÓMO TRABAJAN: sus procesos, flujos, formas de operar
-- Queremos detectar DOLORES OPERATIVOS que APEX puede resolver
-
-REGLAS OBLIGATORIAS:
-1. Preguntas sobre PROCESOS: ¿Cómo registran? ¿Cómo controlan? ¿Cómo reportan?
-2. Si hay "preguntas_procesos" de la investigación, ÚSALAS como base
-3. Las opciones van de "no me pasa" (gravedad 0) a "es un caos" (gravedad 3)
-4. Tutea al usuario, sé conversacional
-5. Cada pregunta debe ayudar a detectar UN dolor operativo específico
-
-CATÁLOGO DE DOLORES OPERATIVOS:
-${Object.entries(relevantClusters).map(([key, cluster]) =>
-  `${key}: "${cluster.title}" - ${cluster.description}`
-).join('\n')}
-
-EJEMPLOS DE BUENAS PREGUNTAS (sobre procesos):
-- "¿Cómo te enteras de lo que hizo tu equipo hoy?" → detecta A-VISIBILIDAD
-- "¿Cuándo registra tu equipo las visitas que hace?" → detecta A-REGISTRO
-- "¿Cómo controlas las muestras que entrega tu equipo?" → detecta C-TRAZABILIDAD
-- "¿Cuánto tardas en generar un reporte para dirección?" → detecta F-REPORTES
-- "¿Dónde guardan la información de clientes?" → detecta B-CENTRALIZACION
-
-EJEMPLOS DE MALAS PREGUNTAS (sobre productos - NO HACER):
-- "¿Cómo vendes tus rellenos dérmicos?" ❌
-- "¿Tus productos tienen trazabilidad?" ❌
-- "¿Cuántas unidades de MyFiller vendes?" ❌
-
-Responde SOLO con JSON válido, sin markdown.`;
-
-  // Determinar valores (de investigación o formulario)
-  const tieneEquipoCampo = companyProfile?.detectado?.tiene_equipo_campo ?? (phase1.has_field_team === 'yes' || phase1.has_field_team === 'both');
-  const sector = companyProfile?.detectado?.sector || companyProfile?.empresa?.sector || phase1.sector;
-  const esRegulado = companyProfile?.detectado?.es_regulado ?? (sector === 'pharma');
-  const manejaMuestras = companyProfile?.detectado?.maneja_muestras ?? esRegulado;
-
-  const userPrompt = `CONTEXTO DE LA EMPRESA:
-- Nombre: ${companyProfile?.empresa?.nombre || FormState.company.name || 'No especificado'}
-- Sector: ${sector || 'no especificado'}
-- Cómo operan: ${companyProfile?.empresa?.descripcion_procesos || 'No disponible'}
-
-PROCESOS DETECTADOS:
-${companyProfile?.procesos_detectados?.length > 0
-  ? companyProfile.procesos_detectados.map(p => `- ${p}`).join('\n')
-  : '- No se detectaron procesos específicos'}
-
-CARACTERÍSTICAS OPERATIVAS:
-- Tiene equipo de campo: ${tieneEquipoCampo ? 'SÍ → preguntar sobre visibilidad y registro' : 'NO'}
-- Maneja muestras/material: ${manejaMuestras ? 'SÍ → preguntar sobre control y trazabilidad' : 'NO'}
-- Es regulado: ${esRegulado ? 'SÍ → preguntar sobre compliance' : 'NO'}
-
-RESPUESTAS DEL FORMULARIO:
-- Tamaño equipo: ${phase1.team_size || 'no especificado'}
-- Tecnología actual: ${JSON.stringify(phase1.current_tech || [])}
-- Motivación: ${JSON.stringify(phase1.motivation || [])}
-
-DOLORES PROBABLES (de investigación):
-- Alta prioridad: ${JSON.stringify(companyProfile?.dolores_probables?.prioridad_alta || [])}
-- Media prioridad: ${JSON.stringify(companyProfile?.dolores_probables?.prioridad_media || [])}
-- Razón: ${companyProfile?.dolores_probables?.razon || 'No especificada'}
-
-${companyProfile?.preguntas_procesos?.length > 0 ? `
-PREGUNTAS SOBRE PROCESOS SUGERIDAS (USA ESTAS O SIMILARES):
-${companyProfile.preguntas_procesos.map(q => `- "${q.pregunta}" → detecta: ${q.detecta_dolor} (${q.contexto})`).join('\n')}
-` : ''}
-
-Genera 4-5 preguntas en este formato JSON:
-{
-  "preguntas": [
-    {
-      "texto": "¿Pregunta específica para esta empresa?",
-      "hint": "Contexto o aclaración breve",
-      "profundiza_en": "Nombre del dolor que profundiza",
-      "opciones": [
-        {
-          "texto": "Opción que indica NO tener el problema",
-          "detecta": [],
-          "gravedad": 0
-        },
-        {
-          "texto": "Opción que indica problema LEVE",
-          "detecta": ["A-VISIBILIDAD"],
-          "gravedad": 1
-        },
-        {
-          "texto": "Opción que indica problema MODERADO",
-          "detecta": ["A-VISIBILIDAD", "A-REGISTRO"],
-          "gravedad": 2
-        },
-        {
-          "texto": "Opción que indica problema GRAVE",
-          "detecta": ["A-VISIBILIDAD", "A-REGISTRO", "A-CONOCIMIENTO"],
-          "gravedad": 3
-        }
-      ]
-    }
-  ]
-}
-
-INSTRUCCIONES FINALES:
-- Si hay preguntas sugeridas por investigación, ÚSALAS como base
-- Menciona el nombre de la empresa o su sector en al menos 2 preguntas
-- Si es pharma/dispositivos médicos: OBLIGATORIO preguntar sobre muestras y compliance
-- Si tiene equipo de campo: OBLIGATORIO preguntar sobre visibilidad y registro
-- Las preguntas deben sentirse personalizadas, como si conocieras la empresa
-- NO repitas la misma estructura en todas las preguntas, varía el enfoque`;
-
-  const response = await fetch(CONFIG.chatApiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: CONFIG.groqModel,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ],
-      temperature: 0.7,
-      max_tokens: 2500
-    })
+  // Procesar cada respuesta de Phase 1
+  Object.entries(phase1).forEach(([question, value]) => {
+    accumulator.processPhase1Response(question, value);
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error('Groq API error:', response.status, errorText);
-    throw new Error(`Groq API error: ${response.status}`);
+  // Procesar dolores de investigación si existen
+  if (companyProfile?.dolores_probables) {
+    accumulator.processResearchDolores(companyProfile.dolores_probables);
   }
 
-  const data = await response.json();
+  // Calcular FOCOS
+  accumulator.calculateFocos();
 
-  if (!data.choices?.[0]?.message?.content) {
-    console.error('Invalid Groq response structure:', data);
-    throw new Error('Invalid response from Groq');
-  }
+  // Guardar en FormState para uso posterior
+  FormState.clusterAccumulator = accumulator;
+  FormState.focosDetectados = accumulator.focos;
 
-  let content = data.choices[0].message.content;
-  console.log('Raw Groq response (first 300 chars):', content.substring(0, 300));
+  console.log('=== FOCOS DETECTADOS ===');
+  console.log(accumulator.getSummary());
 
-  // Limpiar markdown code blocks si existen
-  content = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '');
+  // ========================================
+  // PASO 2: Banco de preguntas por categoría
+  // ========================================
 
-  // Parsear JSON de la respuesta
-  const jsonMatch = content.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) {
-    console.error('No JSON found in cleaned response:', content.substring(0, 500));
-    throw new Error('No valid JSON in response');
-  }
+  const QUESTION_BANK = {
+    // Si tiene equipo de campo
+    field_team: [
+      {
+        texto: "¿Cómo te enteras de lo que hizo tu equipo hoy?",
+        hint: "Visitas, llamadas, reuniones",
+        profundiza_en: "Visibilidad",
+        opciones: [
+          { texto: "Tengo un dashboard en tiempo real", detecta: [], gravedad: 0 },
+          { texto: "Me mandan WhatsApp o correo", detecta: ["A-VISIBILIDAD"], gravedad: 1 },
+          { texto: "Les pregunto uno por uno", detecta: ["A-VISIBILIDAD", "A-REGISTRO"], gravedad: 2 },
+          { texto: "No sé hasta que me dicen", detecta: ["A-VISIBILIDAD", "A-REGISTRO", "G-ADOPCION"], gravedad: 3 }
+        ]
+      },
+      {
+        texto: "¿Cuándo registran las visitas a clientes?",
+        hint: "En el momento, al final del día, cuando pueden",
+        profundiza_en: "Registro",
+        opciones: [
+          { texto: "En el momento, desde el celular", detecta: [], gravedad: 0 },
+          { texto: "Al final del día", detecta: ["A-REGISTRO"], gravedad: 1 },
+          { texto: "Cuando se acuerdan o pueden", detecta: ["A-REGISTRO", "G-ADOPCION"], gravedad: 2 },
+          { texto: "La verdad casi no registran", detecta: ["A-REGISTRO", "A-VISIBILIDAD", "G-ADOPCION"], gravedad: 3 }
+        ]
+      },
+      {
+        texto: "¿Sabes qué clientes no han sido visitados?",
+        hint: "Cobertura de cartera",
+        profundiza_en: "Cobertura",
+        opciones: [
+          { texto: "Sí, tengo alertas automáticas", detecta: [], gravedad: 0 },
+          { texto: "Lo reviso manualmente en reportes", detecta: ["A-VISIBILIDAD"], gravedad: 1 },
+          { texto: "Más o menos, depende del vendedor", detecta: ["A-VISIBILIDAD", "D-SEGUIMIENTO"], gravedad: 2 },
+          { texto: "No tengo forma de saberlo", detecta: ["A-VISIBILIDAD", "D-SEGUIMIENTO", "B-CENTRALIZACION"], gravedad: 3 }
+        ]
+      }
+    ],
+    // Si usa Excel
+    excel_user: [
+      {
+        texto: "¿Cuánto tardas en armar un reporte para dirección?",
+        hint: "Ventas, visitas, resultados",
+        profundiza_en: "Reportes",
+        opciones: [
+          { texto: "Minutos, está automatizado", detecta: [], gravedad: 0 },
+          { texto: "Un par de horas", detecta: ["F-TIEMPO"], gravedad: 1 },
+          { texto: "Me toma casi todo el día", detecta: ["F-TIEMPO", "F-REPORTES"], gravedad: 2 },
+          { texto: "Días, junto info de todos lados", detecta: ["F-TIEMPO", "F-REPORTES", "B-CENTRALIZACION"], gravedad: 3 }
+        ]
+      },
+      {
+        texto: "¿Cada cuánto se desactualiza tu Excel?",
+        hint: "Datos de clientes, precios, inventario",
+        profundiza_en: "Datos",
+        opciones: [
+          { texto: "Casi nunca, está sincronizado", detecta: [], gravedad: 0 },
+          { texto: "A veces hay datos viejos", detecta: ["B-DATOS"], gravedad: 1 },
+          { texto: "Seguido, es difícil mantenerlo", detecta: ["B-DATOS", "G-EXCEL"], gravedad: 2 },
+          { texto: "Siempre hay problemas con versiones", detecta: ["B-DATOS", "G-EXCEL", "B-CENTRALIZACION"], gravedad: 3 }
+        ]
+      }
+    ],
+    // Si es pharma o regulado
+    pharma: [
+      {
+        texto: "¿Cómo controlas las muestras médicas?",
+        hint: "Entrega, inventario, vencimiento",
+        profundiza_en: "Muestras",
+        opciones: [
+          { texto: "Sistema con trazabilidad completa", detecta: [], gravedad: 0 },
+          { texto: "Excel con firmas escaneadas", detecta: ["C-TRAZABILIDAD"], gravedad: 1 },
+          { texto: "Cada rep lleva su control", detecta: ["C-TRAZABILIDAD", "C-COMPLIANCE"], gravedad: 2 },
+          { texto: "Es un problema constante", detecta: ["C-TRAZABILIDAD", "C-COMPLIANCE", "A-VISIBILIDAD"], gravedad: 3 }
+        ]
+      },
+      {
+        texto: "¿Estás listo para una auditoría mañana?",
+        hint: "Visitas, muestras, documentación",
+        profundiza_en: "Compliance",
+        opciones: [
+          { texto: "Sí, todo está en sistema", detecta: [], gravedad: 0 },
+          { texto: "Necesito unas horas para preparar", detecta: ["C-COMPLIANCE"], gravedad: 1 },
+          { texto: "Sería complicado juntarlo todo", detecta: ["C-COMPLIANCE", "C-TRAZABILIDAD"], gravedad: 2 },
+          { texto: "Me daría un infarto", detecta: ["C-COMPLIANCE", "C-TRAZABILIDAD", "F-REPORTES"], gravedad: 3 }
+        ]
+      }
+    ],
+    // Si vende a crédito
+    credit_sales: [
+      {
+        texto: "¿Tienes visibilidad de tu cartera vencida?",
+        hint: "Facturas pendientes, días de mora",
+        profundiza_en: "Cobranza",
+        opciones: [
+          { texto: "Sí, con alertas automáticas", detecta: [], gravedad: 0 },
+          { texto: "Reviso reportes semanalmente", detecta: ["E-COBRANZA"], gravedad: 1 },
+          { texto: "Más o menos, a veces se me pasa", detecta: ["E-COBRANZA", "F-REPORTES"], gravedad: 2 },
+          { texto: "Es un dolor de cabeza constante", detecta: ["E-COBRANZA", "F-REPORTES", "B-DATOS"], gravedad: 3 }
+        ]
+      }
+    ],
+    // Si tiene CRM pero problemas de adopción
+    crm_adoption: [
+      {
+        texto: "¿Tu equipo realmente usa el CRM?",
+        hint: "Registros diarios, actualizaciones",
+        profundiza_en: "Adopción",
+        opciones: [
+          { texto: "Sí, es parte del proceso", detecta: [], gravedad: 0 },
+          { texto: "Algunos lo usan, otros no tanto", detecta: ["G-ADOPCION"], gravedad: 1 },
+          { texto: "Lo usan solo cuando los obligo", detecta: ["G-ADOPCION", "A-REGISTRO"], gravedad: 2 },
+          { texto: "Casi nadie lo usa realmente", detecta: ["G-ADOPCION", "A-REGISTRO", "A-VISIBILIDAD"], gravedad: 3 }
+        ]
+      }
+    ],
+    // General - siempre aplica
+    general: [
+      {
+        texto: "¿Cómo das seguimiento a oportunidades de venta?",
+        hint: "Prospectos, cotizaciones, cierres",
+        profundiza_en: "Pipeline",
+        opciones: [
+          { texto: "Pipeline en sistema con etapas", detecta: [], gravedad: 0 },
+          { texto: "Lista en Excel que actualizo", detecta: ["D-PIPELINE"], gravedad: 1 },
+          { texto: "Cada vendedor tiene su método", detecta: ["D-PIPELINE", "D-SEGUIMIENTO"], gravedad: 2 },
+          { texto: "Se nos pierden oportunidades", detecta: ["D-PIPELINE", "D-SEGUIMIENTO", "A-VISIBILIDAD"], gravedad: 3 }
+        ]
+      },
+      {
+        texto: "¿Qué pasa cuando un vendedor se va?",
+        hint: "Clientes, historial, conocimiento",
+        profundiza_en: "Continuidad",
+        opciones: [
+          { texto: "Todo queda en el sistema", detecta: [], gravedad: 0 },
+          { texto: "Hay que pedirle que entregue sus archivos", detecta: ["B-CENTRALIZACION"], gravedad: 1 },
+          { texto: "Se pierde algo de información", detecta: ["B-CENTRALIZACION", "B-DATOS"], gravedad: 2 },
+          { texto: "Se lleva todo en la cabeza", detecta: ["B-CENTRALIZACION", "B-DATOS", "D-SEGUIMIENTO"], gravedad: 3 }
+        ]
+      }
+    ]
+  };
 
-  try {
-    const parsed = JSON.parse(jsonMatch[0]);
+  // ========================================
+  // PASO 3: Seleccionar preguntas basadas en FOCOS
+  // ========================================
 
-    if (!parsed.preguntas || !Array.isArray(parsed.preguntas) || parsed.preguntas.length === 0) {
-      console.error('No preguntas array in response:', parsed);
-      throw new Error('Response missing preguntas array');
+  // Obtener categorías prioritarias basadas en FOCOS detectados
+  const priorityCategories = accumulator.getQuestionCategories(5);
+  console.log('Priority categories from FOCOS:', priorityCategories);
+
+  const selectedQuestions = [];
+  const usedTextos = new Set();
+
+  // Primera pasada: una pregunta por categoría prioritaria
+  priorityCategories.forEach(category => {
+    if (QUESTION_BANK[category] && selectedQuestions.length < 5) {
+      const categoryQuestions = QUESTION_BANK[category];
+      for (const q of categoryQuestions) {
+        if (!usedTextos.has(q.texto)) {
+          selectedQuestions.push(q);
+          usedTextos.add(q.texto);
+          break; // Solo una por categoría en primera pasada
+        }
+      }
     }
+  });
 
-    console.log('Successfully generated', parsed.preguntas.length, 'adaptive questions');
-    return parsed.preguntas;
-  } catch (parseError) {
-    console.error('JSON parse error:', parseError.message, 'Content:', jsonMatch[0].substring(0, 300));
-    throw new Error('Failed to parse questions JSON');
+  // Segunda pasada: completar con más preguntas si faltan
+  if (selectedQuestions.length < 5) {
+    priorityCategories.forEach(category => {
+      if (QUESTION_BANK[category]) {
+        const categoryQuestions = QUESTION_BANK[category];
+        for (const q of categoryQuestions) {
+          if (!usedTextos.has(q.texto) && selectedQuestions.length < 5) {
+            selectedQuestions.push(q);
+            usedTextos.add(q.texto);
+          }
+        }
+      }
+    });
   }
+
+  console.log('=== PREGUNTAS SELECCIONADAS (basadas en FOCOS) ===');
+  selectedQuestions.forEach((q, i) => {
+    console.log(`  ${i+1}. "${q.texto}" → ${q.profundiza_en}`);
+  });
+
+  return selectedQuestions;
 }
 
 function getRelevantClusters(phase1, companyProfile) {
@@ -940,8 +1075,8 @@ async function renderAdaptiveQuestion() {
   }
 
   const question = questions[index];
-  const questionNum = 6 + index;
-  const totalQuestions = 5 + questions.length;
+  const questionNum = 10 + index;  // 9 preguntas fijas + 1 (índice empieza en 0)
+  const totalQuestions = 9 + questions.length;
 
   // Actualizar UI
   DOM.adaptiveQuestionNumber.innerHTML = `${questionNum} <span class="question-total">/ ${totalQuestions}</span>`;
@@ -976,11 +1111,18 @@ function handleAdaptiveOptionClick(e) {
   const detects = JSON.parse(btn.dataset.detects || '[]');
   const gravedad = parseInt(btn.dataset.gravedad || '0');
 
-  FormState.responses.phase2[`q2-${index}`] = {
+  const response = {
     value: btn.dataset.value,
     detects: detects,
     gravedad: gravedad
   };
+
+  FormState.responses.phase2[`q2-${index}`] = response;
+
+  // Acumular en el ClusterAccumulator para detección de pains
+  if (FormState.clusterAccumulator) {
+    FormState.clusterAccumulator.processPhase2Response(response);
+  }
 
   FormState.answeredQuestions++;
 
@@ -1009,78 +1151,30 @@ async function handleTransitionToPhase3() {
 }
 
 async function detectPainsWithAI() {
-  // Recopilar todas las respuestas y detecciones
-  const allDetections = [];
-  const detectionWeights = {};
-
-  // De fase 1 (motivación)
   const { phase1 } = FormState.responses;
-  const motivationMapping = {
-    'no_visibility': ['A-VISIBILIDAD', 'F-DASHBOARDS', 'A-REGISTRO'],
-    'no_adoption': ['G-ADOPCION', 'A-REGISTRO', 'P-TIEMPO'],
-    'losing_sales': ['D-SEGUIMIENTO', 'D-PIPELINE', 'D-FORECAST'],
-    'compliance': ['L-TRAZABILIDAD', 'C-COMPLIANCE', 'L-REPORTES'],
-    'system_fails': ['G-ADOPCION', 'G-OBSOLESCENCIA', 'G-INTEGRACION'],
-    'growth': ['K-PLANIFICACION', 'D-PIPELINE', 'F-DASHBOARDS']
-  };
 
-  // Motivación ahora es un array (multi-select)
-  const motivations = Array.isArray(phase1.motivation) ? phase1.motivation : (phase1.motivation ? [phase1.motivation] : []);
-  motivations.forEach(motivation => {
-    if (motivationMapping[motivation]) {
-      motivationMapping[motivation].forEach((cluster, i) => {
-        allDetections.push(cluster);
-        detectionWeights[cluster] = (detectionWeights[cluster] || 0) + (3 - i) * 2;
-      });
-    }
-  });
+  // ========================================
+  // USAR FOCOS CALCULADOS POR ClusterAccumulator
+  // ========================================
 
-  // De tecnología actual
-  const techMapping = {
-    'excel': ['G-EXCEL', 'F-AUTOMATIZACION', 'B-CENTRALIZACION'],
-    'informal': ['H-CANALES', 'B-CENTRALIZACION', 'A-REGISTRO'],
-    'nothing': ['B-CENTRALIZACION', 'D-VISIBILIDAD', 'G-FRAGMENTACION']
-  };
-
-  (phase1.current_tech || []).forEach(tech => {
-    if (techMapping[tech]) {
-      techMapping[tech].forEach((cluster, i) => {
-        allDetections.push(cluster);
-        detectionWeights[cluster] = (detectionWeights[cluster] || 0) + (3 - i);
-      });
-    }
-  });
-
-  // De fase 2 (con gravedad)
-  Object.values(FormState.responses.phase2).forEach(response => {
-    if (response.detects) {
-      response.detects.forEach((cluster, i) => {
-        allDetections.push(cluster);
-        // Peso basado en gravedad y posición
-        const weight = (response.gravedad || 1) * (3 - i);
-        detectionWeights[cluster] = (detectionWeights[cluster] || 0) + weight;
-      });
-    }
-  });
-
-  // De investigación de empresa (si existe)
-  if (FormState.company.profile?.dolores_probables) {
-    const { prioridad_alta = [], prioridad_media = [] } = FormState.company.profile.dolores_probables;
-    prioridad_alta.forEach(cluster => {
-      allDetections.push(cluster);
-      detectionWeights[cluster] = (detectionWeights[cluster] || 0) + 3;
-    });
-    prioridad_media.forEach(cluster => {
-      allDetections.push(cluster);
-      detectionWeights[cluster] = (detectionWeights[cluster] || 0) + 1;
-    });
+  // Recalcular FOCOS con todas las respuestas (Phase 1 + Phase 2)
+  const accumulator = FormState.clusterAccumulator;
+  if (accumulator) {
+    accumulator.calculateFocos();
+    FormState.focosDetectados = accumulator.focos;
   }
 
-  // Ordenar por peso
-  const sortedClusters = Object.entries(detectionWeights)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 6)
-    .map(([cluster]) => cluster);
+  console.log('=== DETECTANDO PAINS BASADOS EN FOCOS ===');
+  console.log('FOCOS detectados:', FormState.focosDetectados?.map(f => ({ nombre: f.nombre, score: f.score })));
+  console.log('Clusters acumulados:', accumulator?.clusterScores);
+
+  // Obtener los top clusters del acumulador
+  const sortedClusters = accumulator
+    ? Object.entries(accumulator.clusterScores)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6)
+        .map(([cluster]) => cluster)
+    : [];
 
   // Usar IA para refinar y personalizar los dolores
   const systemPrompt = `Eres un experto analista que genera res��menes personalizados de dolores empresariales.
@@ -1775,7 +1869,12 @@ function prepareFormData() {
       sector: FormState.responses.phase1.sector,
       tiene_campo: FormState.responses.phase1.has_field_team,
       tecnologia_actual: FormState.responses.phase1.current_tech,
-      motivacion: FormState.responses.phase1.motivation
+      motivacion: FormState.responses.phase1.motivation,
+      // Nuevas preguntas fase 1
+      calidad_datos: FormState.responses.phase1.data_quality,
+      pipeline_ventas: FormState.responses.phase1.sales_pipeline,
+      vende_credito: FormState.responses.phase1.sells_credit,
+      tiempo_reportes: FormState.responses.phase1.report_time
     },
 
     investigacion_empresa: FormState.company.profile,
@@ -1858,12 +1957,15 @@ function init() {
       DOM.btnPrev.addEventListener('click', goBack);
     }
 
-  // Event Listeners - Multi-select continue
+  // Event Listeners - Multi-select continue buttons
   if (DOM.btnContinueQ4) {
     DOM.btnContinueQ4.addEventListener('click', advanceFromCurrentQuestion);
   }
   if (DOM.btnContinueQ5) {
     DOM.btnContinueQ5.addEventListener('click', advanceFromCurrentQuestion);
+  }
+  if (DOM.btnContinueQ7) {
+    DOM.btnContinueQ7.addEventListener('click', advanceFromCurrentQuestion);
   }
 
   // Event Listeners - Research continue

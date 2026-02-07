@@ -65,6 +65,7 @@ exports.handler = async (event) => {
     let tavilySources = [];
 
     // PASO 1: Búsqueda web con TAVILY
+    console.log('TAVILY_API_KEY configured:', !!TAVILY_API_KEY);
     if (TAVILY_API_KEY) {
       try {
         console.log('Searching with Tavily for:', searchQuery);
@@ -149,19 +150,19 @@ Genera este JSON:
 
   "detectado": {
     "tiene_equipo_campo": true|false|null,
-    "sector": "pharma|distribution|...|null",
+    "sector": "pharma|distribution|manufacturing|services|retail|other|null",
     "es_regulado": true|false|null,
     "maneja_muestras": true|false|null,
     "tamaño_estimado": "1-5|6-15|16-30|30+|null",
-    "confianza": 0.0-1.0
-  },
 
-  "por_preguntar": {
-    "tamaño_equipo": true|false,
-    "tiene_equipo_campo": true|false,
-    "sector": true|false,
-    "tecnologia_actual": true,
-    "motivacion": true
+    "usa_crm_o_sistema": true|false|null,
+    "info_clientes_centralizada": true|false|null,
+    "tiene_pipeline_ventas": true|false|null,
+    "vende_a_credito": true|false|null,
+    "tiene_cobranza_problematica": true|false|null,
+    "tiene_dashboards_reportes": true|false|null,
+
+    "confianza": 0.0-1.0
   },
 
   "procesos_detectados": [
@@ -172,27 +173,28 @@ Genera este JSON:
     "prioridad_alta": ["CODIGO-DOLOR"],
     "prioridad_media": ["CODIGO-DOLOR"],
     "razon": "Por qué estos dolores basado en lo encontrado"
-  },
-
-  "preguntas_procesos": [
-    {
-      "pregunta": "Pregunta específica sobre sus procesos",
-      "detecta_dolor": "CODIGO-DOLOR",
-      "contexto": "Por qué preguntamos esto"
-    }
-  ]
+  }
 }
 
-REGLAS:
-- Si la búsqueda NO encontró información clara sobre algo → detectado.X = null y por_preguntar.X = true
+REGLAS ESTRICTAS:
 - Solo marca detectado.X con valor si hay EVIDENCIA CLARA en la búsqueda
+- Si NO hay información clara → detectado.X = null
 - confianza = 0.8+ solo si hay información explícita
-- confianza = 0.5 si es inferido
+- confianza = 0.5 si es inferido del contexto
 - confianza = 0.2 si no hay información
 
+PISTAS PARA DETECTAR:
+- tiene_equipo_campo: vendedores, representantes, visitadores, reps en calle
+- usa_crm_o_sistema: mencionan Salesforce, HubSpot, Zoho, SAP, sistema CRM
+- info_clientes_centralizada: base de datos de clientes, CRM, sistema centralizado
+- tiene_pipeline_ventas: embudo de ventas, pipeline, seguimiento de oportunidades
+- vende_a_credito: plazos de pago, facturas, crédito a clientes, distribuidores
+- tiene_cobranza_problematica: cartera vencida, cobranza, morosos
+- tiene_dashboards_reportes: dashboards, reportes automáticos, BI, analytics
+
 CÓDIGOS DE DOLOR:
-A-VISIBILIDAD, A-REGISTRO, A-COBERTURA, B-CENTRALIZACION, C-INVENTARIO, C-TRAZABILIDAD,
-C-COMPLIANCE, D-PIPELINE, D-SEGUIMIENTO, F-REPORTES, G-EXCEL, G-ADOPCION, H-CANALES, P-TIEMPO`;
+A-VISIBILIDAD, A-REGISTRO, B-CENTRALIZACION, B-DATOS, C-TRAZABILIDAD, C-COMPLIANCE,
+D-PIPELINE, D-SEGUIMIENTO, E-COBRANZA, F-REPORTES, F-TIEMPO, G-EXCEL, G-ADOPCION`;
 
     const groqResponse = await fetchWithTimeout(
       'https://api.groq.com/openai/v1/chat/completions',
@@ -234,12 +236,42 @@ C-COMPLIANCE, D-PIPELINE, D-SEGUIMIENTO, F-REPORTES, G-EXCEL, G-ADOPCION, H-CANA
 
     // Asegurar estructura correcta
     profile.detectado = profile.detectado || {};
-    profile.por_preguntar = profile.por_preguntar || {
-      tamaño_equipo: true,
-      tiene_equipo_campo: true,
-      sector: true,
+
+    // LÓGICA DE SALTO: Si detectado.X tiene valor concreto → NO preguntar
+    // Si detectado.X es null → SÍ preguntar
+    const det = profile.detectado;
+
+    // Helper para verificar si un valor está detectado
+    const isDetected = (val) => val !== null && val !== undefined;
+
+    profile.por_preguntar = {
+      // 1.1 Tamaño: preguntar si no se detectó
+      tamaño_equipo: !isDetected(det.tamaño_estimado),
+
+      // 1.2 Equipo campo: preguntar si no se detectó
+      tiene_equipo_campo: !isDetected(det.tiene_equipo_campo),
+
+      // 1.3 Sector: preguntar si no se detectó
+      sector: !isDetected(det.sector),
+
+      // 1.4 Tecnología: SIEMPRE preguntar (preferencias del usuario)
       tecnologia_actual: true,
-      motivacion: true
+
+      // 1.5 Motivación: SIEMPRE preguntar (es subjetivo)
+      motivacion: true,
+
+      // 1.6 Calidad de datos: SIEMPRE preguntar (subjetivo, no detectable)
+      data_quality: true,
+
+      // 1.7 Pipeline ventas: preguntar si no detectamos que tienen pipeline
+      sales_pipeline: !isDetected(det.tiene_pipeline_ventas),
+
+      // 1.8 Crédito: preguntar si no detectamos si venden a crédito
+      // PERO si es distribución/pharma, probablemente sí venden a crédito
+      sells_credit: !isDetected(det.vende_a_credito),
+
+      // 1.9 Reportes: preguntar si no detectamos dashboards
+      report_time: !isDetected(det.tiene_dashboards_reportes)
     };
 
     // Si NO hubo búsqueda exitosa, preguntar TODO
@@ -249,19 +281,13 @@ C-COMPLIANCE, D-PIPELINE, D-SEGUIMIENTO, F-REPORTES, G-EXCEL, G-ADOPCION, H-CANA
         tiene_equipo_campo: true,
         sector: true,
         tecnologia_actual: true,
-        motivacion: true
+        motivacion: true,
+        data_quality: true,
+        sales_pipeline: true,
+        sells_credit: true,
+        report_time: true
       };
       profile.detectado.confianza = 0.1;
-    }
-
-    // Siempre preguntar tecnología y motivación (no se pueden inferir)
-    profile.por_preguntar.tecnologia_actual = true;
-    profile.por_preguntar.motivacion = true;
-
-    // Solo saltar preguntas si hay alta confianza
-    if (profile.detectado.confianza < 0.6) {
-      profile.por_preguntar.tiene_equipo_campo = true;
-      profile.por_preguntar.sector = true;
     }
 
     profile.fuente_informacion = searchExecuted ? 'tavily_web_search' : 'none';
@@ -291,7 +317,7 @@ C-COMPLIANCE, D-PIPELINE, D-SEGUIMIENTO, F-REPORTES, G-EXCEL, G-ADOPCION, H-CANA
   } catch (error) {
     console.error('Error researching company:', error);
 
-    // Perfil por defecto - preguntar todo
+    // Perfil por defecto - preguntar todo (9 preguntas)
     return {
       statusCode: 200,
       headers,
@@ -306,6 +332,12 @@ C-COMPLIANCE, D-PIPELINE, D-SEGUIMIENTO, F-REPORTES, G-EXCEL, G-ADOPCION, H-CANA
             es_regulado: null,
             maneja_muestras: null,
             tamaño_estimado: null,
+            usa_crm_o_sistema: null,
+            info_clientes_centralizada: null,
+            tiene_pipeline_ventas: null,
+            vende_a_credito: null,
+            tiene_cobranza_problematica: null,
+            tiene_dashboards_reportes: null,
             confianza: 0.1
           },
           por_preguntar: {
@@ -313,7 +345,11 @@ C-COMPLIANCE, D-PIPELINE, D-SEGUIMIENTO, F-REPORTES, G-EXCEL, G-ADOPCION, H-CANA
             tiene_equipo_campo: true,
             sector: true,
             tecnologia_actual: true,
-            motivacion: true
+            motivacion: true,
+            data_quality: true,
+            sales_pipeline: true,
+            sells_credit: true,
+            report_time: true
           },
           procesos_detectados: [],
           dolores_probables: {
@@ -321,7 +357,6 @@ C-COMPLIANCE, D-PIPELINE, D-SEGUIMIENTO, F-REPORTES, G-EXCEL, G-ADOPCION, H-CANA
             prioridad_media: [],
             razon: 'Sin información - se harán todas las preguntas'
           },
-          preguntas_procesos: [],
           fuente_informacion: 'none'
         }
       })

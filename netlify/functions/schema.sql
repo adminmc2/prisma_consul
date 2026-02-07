@@ -14,7 +14,14 @@ CREATE TABLE IF NOT EXISTS apex_submissions (
   empresa_sector TEXT,
   empresa_tiene_campo TEXT,
   empresa_tecnologia_actual JSONB,
-  empresa_motivacion TEXT,
+  empresa_motivacion JSONB,
+  empresa_calidad_datos TEXT,
+  empresa_pipeline_ventas JSONB,
+  empresa_vende_credito TEXT,
+  empresa_tiempo_reportes TEXT,
+
+  -- Investigación de empresa (Tavily + Groq)
+  investigacion_empresa JSONB,
 
   -- Respuestas del formulario
   respuestas_fase1 JSONB,
