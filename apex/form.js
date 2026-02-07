@@ -34,267 +34,19 @@ const CONFIG = {
 };
 
 // ============================================================
-// BASE DE CONOCIMIENTO COMPLETA DE DOLORES (169 dolores)
+// BASE DE CONOCIMIENTO DE DOLORES (500+ dolores)
+// Cargada desde pain-knowledge-base.js
 // ============================================================
 
-const PAIN_CATALOG = {
-  // ==================== A. VISIBILIDAD Y CONTROL DEL EQUIPO (14) ====================
-  'A01': { cluster: 'A-VISIBILIDAD', title: 'No sé qué hacen mis representantes durante el día', signals: ['no tengo visibilidad', 'no me reportan', 'cada quien hace lo suyo'], focus: 1 },
-  'A02': { cluster: 'A-VISIBILIDAD', title: 'No sé si mis reps realmente visitaron al médico', signals: ['no puedo verificar', 'confío en su palabra', 'no hay forma de saber'], focus: 1 },
-  'A03': { cluster: 'A-UBICACION', title: 'No tengo forma de saber dónde están mis reps en tiempo real', signals: ['no sé dónde andan', 'se supone que están en campo'], focus: 1 },
-  'A04': { cluster: 'A-REGISTRO', title: 'Mis reps registran las visitas al final del día y se les olvida', signals: ['registran después', 'se les olvida', 'al final del día'], focus: 1 },
-  'A05': { cluster: 'A-UBICACION', title: 'No sé cuánto tiempo pasa cada rep en cada visita', signals: ['no sé si realmente estuvo', 'pudo haber sido 5 minutos'], focus: 1 },
-  'A06': { cluster: 'A-COBERTURA', title: 'Mis reps visitan a los médicos que les caen bien, no a los correctos', signals: ['visitan a sus amigos', 'los fáciles', 'no siguen la ruta'], focus: 1 },
-  'A07': { cluster: 'A-COBERTURA', title: 'Mis reps trabajan sin agenda, van donde quieren', signals: ['sin plan', 'improvisan', 'no hay ruta'], focus: 1 },
-  'A08': { cluster: 'A-VISIBILIDAD', title: 'No tengo cómo verificar que un rep realmente estuvo en el consultorio', signals: ['no hay prueba', 'me tengo que creer', 'no hay evidencia'], focus: 1 },
-  'A09': { cluster: 'A-CONOCIMIENTO', title: 'Cuando un rep se va de la empresa, se lleva toda la información', signals: ['se fue y perdimos todo', 'no dejó nada documentado', 'empezar de cero'], focus: 1 },
-  'A10': { cluster: 'A-PRODUCTIVIDAD', title: 'No tengo forma de comparar la productividad entre reps', signals: ['no puedo comparar', 'no sé quién es mejor', 'todos dicen que trabajan'], focus: 1 },
-  'A11': { cluster: 'A-REGISTRO', title: 'Mis reps no registran las visitas fallidas', signals: ['solo registran las buenas', 'no documentan los fallos'], focus: 1 },
-  'A12': { cluster: 'A-PRODUCTIVIDAD', title: 'No sé cuántas visitas efectivas hace cada rep al día', signals: ['no tengo el número real', 'dicen que muchas'], focus: 1 },
-  'A13': { cluster: 'A-CONOCIMIENTO', title: 'Los reps nuevos tardan meses en conocer su territorio', signals: ['el nuevo no sabe nada', 'tarda en arrancar', 'curva de aprendizaje larga'], focus: 1 },
-  'A14': { cluster: 'A-RUTAS', title: 'No tengo rutas optimizadas para mis reps', signals: ['dan muchas vueltas', 'ineficientes', 'gastan gasolina'], focus: 1 },
+// La base de conocimientos se carga desde pain-knowledge-base.js
+// Las variables PAIN_CATALOG, PAIN_CLUSTERS y CLUSTER_QUESTIONS ya están disponibles globalmente
 
-  // ==================== B. GESTIÓN DE CONTACTOS Y MÉDICOS (15) ====================
-  'B01': { cluster: 'B-DATOS', title: 'Los datos de los médicos están desactualizados', signals: ['información vieja', 'teléfonos que no sirven', 'ya no está ahí'], focus: 2 },
-  'B02': { cluster: 'B-CENTRALIZACION', title: 'Cada rep tiene su propia libreta/Excel con los datos', signals: ['cada quien tiene lo suyo', 'no hay base central', 'en su celular'], focus: 2 },
-  'B03': { cluster: 'B-INVENTARIO', title: 'No sé cuántos médicos activos tengo en total', signals: ['no tengo el número', 'nadie sabe cuántos son'], focus: 2 },
-  'B04': { cluster: 'B-SEGMENTACION', title: 'No tengo los médicos categorizados por importancia', signals: ['todos son iguales', 'no hay prioridad', 'no sé cuáles son los buenos'], focus: 2 },
-  'B05': { cluster: 'B-COBERTURA', title: 'No sé qué especialidades estoy cubriendo y cuáles no', signals: ['no tengo mapeado', 'hay huecos'], focus: 2 },
-  'B06': { cluster: 'B-TRANSICION', title: 'Cuando cambio un rep de territorio, la transición es un caos', signals: ['se pierde todo', 'el nuevo no sabe nada', 'caos en la transición'], focus: 2 },
-  'B07': { cluster: 'B-DATOS', title: 'Hay médicos duplicados en mis registros', signals: ['el mismo médico varias veces', 'duplicados', 'datos sucios'], focus: 2 },
-  'B08': { cluster: 'B-METRICAS', title: 'No sé cuántos médicos nuevos hemos captado este mes', signals: ['no mido captación', 'no sé si estamos creciendo'], focus: 2 },
-  'B09': { cluster: 'B-HISTORIAL', title: 'No tengo el historial completo de la relación con cada médico', signals: ['no sé qué pasó antes', 'historial incompleto', 'empezar de cero cada visita'], focus: 2 },
-  'B10': { cluster: 'B-PERSONALIZACION', title: 'No sé las preferencias de cada médico', signals: ['no sé cuándo visitarlo', 'no sé qué le interesa'], focus: 2 },
-  'B11': { cluster: 'B-SEGUIMIENTO', title: 'Los médicos se quejan de que nunca les damos seguimiento', signals: ['se quejan', 'prometemos y no cumplimos', 'no les regresamos'], focus: 2 },
-  'B12': { cluster: 'B-CHURN', title: 'No sé qué médicos dejamos de visitar y por qué', signals: ['médicos perdidos', 'ya no los visitamos', 'no sé por qué'], focus: 2 },
-  'B13': { cluster: 'B-SEGMENTACION', title: 'No tengo segmentado mi universo médico por potencial', signals: ['no sé su potencial', 'no tengo scoring'], focus: 2 },
-  'B14': { cluster: 'B-DATOS', title: 'No registro los datos del consultorio/hospital donde trabaja', signals: ['solo tengo el nombre', 'no sé dónde trabaja'], focus: 2 },
-  'B15': { cluster: 'B-COMPETENCIA', title: 'No sé qué médicos atiende la competencia', signals: ['no sé quién más los visita', 'la competencia'], focus: 2 },
-
-  // ==================== C. MUESTRAS MÉDICAS E INVENTARIO (14) ====================
-  'C01': { cluster: 'C-INVENTARIO', title: 'No sé cuántas muestras tiene cada rep en su maletín', signals: ['no sé qué tienen', 'cada quien sabe lo suyo'], focus: 3 },
-  'C02': { cluster: 'C-TRAZABILIDAD', title: 'Las muestras se entregan pero nadie registra a quién', signals: ['no hay registro', 'se dan y ya', 'no documentamos'], focus: 3 },
-  'C03': { cluster: 'C-TRAZABILIDAD', title: 'No puedo rastrear un lote específico de muestras', signals: ['no hay trazabilidad', 'no sé dónde terminó', 'auditoría'], focus: 3 },
-  'C04': { cluster: 'C-CONTROL', title: 'Los reps piden más muestras de las que necesitan', signals: ['acumulan', 'piden de más', 'por si acaso'], focus: 3 },
-  'C05': { cluster: 'C-ANALISIS', title: 'No sé qué productos son los más solicitados', signals: ['no sé qué piden más', 'demanda'], focus: 3 },
-  'C06': { cluster: 'C-CADUCIDAD', title: 'Las muestras caducan en el maletín del rep', signals: ['caducadas', 'se echan a perder', 'desperdicio'], focus: 3 },
-  'C07': { cluster: 'C-CONTROL', title: 'No tengo límites automáticos de entrega por médico', signals: ['dan lo que quieren', 'sin límite', 'abuso'], focus: 3 },
-  'C08': { cluster: 'C-PROCESO', title: 'El proceso de solicitud de muestras es por email/teléfono', signals: ['por email', 'llaman para pedir', 'manual'], focus: 3 },
-  'C09': { cluster: 'C-COSTOS', title: 'No sé el costo real de las muestras entregadas por médico', signals: ['no sé cuánto me cuesta', 'costo por médico'], focus: 3 },
-  'C10': { cluster: 'C-PROCESO', title: 'No tenemos proceso de devolución de muestras no entregadas', signals: ['no regresan', 'se quedan con ellas'], focus: 3 },
-  'C11': { cluster: 'C-COMPLIANCE', title: 'No puedo generar el reporte de trazabilidad para regulación', signals: ['auditoría', 'COFEPRIS', 'no tengo el reporte'], focus: 10 },
-  'C12': { cluster: 'C-ESTRATEGIA', title: 'Las muestras se usan como regalo, no como promoción', signals: ['las regalan', 'no promueven', 'sin estrategia'], focus: 3 },
-  'C13': { cluster: 'C-INVENTARIO', title: 'No tengo alertas de stock bajo en el almacén', signals: ['me entero cuando ya no hay', 'sin alertas'], focus: 3 },
-  'C14': { cluster: 'C-INVENTARIO', title: 'El inventario de muestras se reconcilia manualmente', signals: ['una vez al mes', 'manual', 'nunca cuadra'], focus: 3 },
-
-  // ==================== D. VENTAS Y OPORTUNIDADES (15) ====================
-  'D01': { cluster: 'D-VISIBILIDAD', title: 'Las oportunidades de venta están en la cabeza del vendedor', signals: ['en la cabeza', 'no hay registro', 'solo él sabe'], focus: 4 },
-  'D02': { cluster: 'D-PIPELINE', title: 'No tengo un pipeline visual de mis oportunidades', signals: ['no veo el embudo', 'no sé en qué etapa'], focus: 4 },
-  'D03': { cluster: 'D-PIPELINE', title: 'No sé en qué etapa está cada negociación', signals: ['no sé cómo va', 'cada quien lleva lo suyo'], focus: 4 },
-  'D04': { cluster: 'D-FORECAST', title: 'No sé cuánto voy a vender este mes hasta que llega el cierre', signals: ['sorpresa a fin de mes', 'no puedo predecir'], focus: 4 },
-  'D05': { cluster: 'D-COTIZACIONES', title: 'Las cotizaciones se hacen en Word/Excel', signals: ['en Word', 'no hay historial de cotizaciones'], focus: 4 },
-  'D06': { cluster: 'D-COTIZACIONES', title: 'No hay proceso estándar de cotización', signals: ['cada quien a su manera', 'no hay formato'], focus: 4 },
-  'D07': { cluster: 'D-DESCUENTOS', title: 'Los descuentos se dan sin control ni aprobación', signals: ['descuentos locos', 'sin autorización', 'regalan margen'], focus: 4 },
-  'D08': { cluster: 'D-SEGUIMIENTO', title: 'No sé qué oportunidades están estancadas', signals: ['deals parados', 'no se mueven', 'olvidados'], focus: 4 },
-  'D09': { cluster: 'D-SCORING', title: 'No tengo scoring para priorizar oportunidades', signals: ['no sé cuáles son las buenas', 'sin prioridad'], focus: 4 },
-  'D10': { cluster: 'D-SEGUIMIENTO', title: 'Pierdo oportunidades por falta de seguimiento', signals: ['se nos fueron', 'no dimos seguimiento', 'se enfrió'], focus: 4 },
-  'D11': { cluster: 'D-ANALISIS', title: 'No registro por qué perdí una venta', signals: ['no sé por qué perdimos', 'no documentamos'], focus: 4 },
-  'D12': { cluster: 'D-FORECAST', title: 'No puedo hacer forecast de ventas con precisión', signals: ['forecast poco confiable', 'siempre falla'], focus: 4 },
-  'D13': { cluster: 'D-PRECIOS', title: 'No tengo precios actualizados accesibles para el equipo', signals: ['precios viejos', 'no saben el precio actual'], focus: 4 },
-  'D14': { cluster: 'D-DESCUENTOS', title: 'El proceso de aprobación de descuentos es por WhatsApp', signals: ['por WhatsApp', 'mandan mensaje para aprobar'], focus: 4 },
-  'D15': { cluster: 'D-METRICAS', title: 'No sé cuál es el ticket promedio por cliente', signals: ['no tengo métricas', 'no sé el promedio'], focus: 4 },
-
-  // ==================== E. COBRANZA Y FINANZAS (12) ====================
-  'E01': { cluster: 'E-SEGUIMIENTO', title: 'Hay facturas vencidas que nadie está cobrando', signals: ['facturas olvidadas', 'nadie cobra', 'se acumulan'], focus: 5 },
-  'E02': { cluster: 'E-VISIBILIDAD', title: 'No sé la antigüedad de mis cuentas por cobrar', signals: ['no sé hace cuánto', 'antigüedad de saldos'], focus: 5 },
-  'E03': { cluster: 'E-AUTOMATIZACION', title: 'Los recordatorios de pago se hacen manualmente', signals: ['llamamos uno por uno', 'no hay recordatorios'], focus: 5 },
-  'E04': { cluster: 'E-SCORING', title: 'No sé qué clientes son buenos pagadores', signals: ['no tengo historial', 'todos igual'], focus: 5 },
-  'E05': { cluster: 'E-ALERTAS', title: 'Me entero de facturas vencidas cuando ya pasaron 60 días', signals: ['me entero tarde', 'ya venció hace rato'], focus: 5 },
-  'E06': { cluster: 'E-PROCESO', title: 'No tengo proceso escalonado de cobranza', signals: ['no hay proceso', 'improvisamos'], focus: 5 },
-  'E07': { cluster: 'E-VISIBILIDAD', title: 'No puedo ver todo lo que me deben en un solo lugar', signals: ['disperso', 'no hay vista consolidada'], focus: 5 },
-  'E08': { cluster: 'E-SEGUIMIENTO', title: 'Las promesas de pago no se registran', signals: ['prometen y no pagan', 'no documentamos'], focus: 5 },
-  'E09': { cluster: 'E-ANALISIS', title: 'No sé el impacto de la morosidad en mi flujo de caja', signals: ['no mido el impacto', 'flujo de caja'], focus: 5 },
-  'E10': { cluster: 'E-COMUNICACION', title: 'Ventas no sabe que su cliente tiene facturas vencidas', signals: ['venden a morosos', 'no se enteran'], focus: 5 },
-  'E11': { cluster: 'E-REPORTES', title: 'No tengo reportes de cobranza automáticos', signals: ['hago el reporte a mano', 'Excel'], focus: 5 },
-  'E12': { cluster: 'E-METRICAS', title: 'No sé cuánto tiempo promedio tardan en pagarme', signals: ['DSO', 'días de cobro', 'no tengo la métrica'], focus: 5 },
-
-  // ==================== F. REPORTES E INFORMACIÓN (14) ====================
-  'F01': { cluster: 'F-TIEMPO', title: 'Tardo días en armar un reporte para dirección', signals: ['me toma días', 'semanas para un reporte'], focus: 9 },
-  'F02': { cluster: 'F-ESTANDARIZACION', title: 'Los reportes se hacen en Excel y cada vez son diferentes', signals: ['en Excel', 'cada vez distinto', 'no hay formato'], focus: 9 },
-  'F03': { cluster: 'F-KPIS', title: 'No tengo KPIs definidos ni forma de medirlos', signals: ['no tengo KPIs', 'no sé qué medir'], focus: 9 },
-  'F04': { cluster: 'F-COMPARATIVOS', title: 'No puedo comparar el desempeño mes a mes fácilmente', signals: ['comparar es difícil', 'no tengo histórico'], focus: 9 },
-  'F05': { cluster: 'F-DISPONIBILIDAD', title: 'Dirección pide información y nadie la tiene lista', signals: ['siempre corremos', 'no está lista', 'improvisar'], focus: 9 },
-  'F06': { cluster: 'F-DASHBOARDS', title: 'No tengo dashboards en tiempo real', signals: ['no hay dashboard', 'no veo en tiempo real'], focus: 9 },
-  'F07': { cluster: 'F-SEGMENTACION', title: 'Los reportes no separan por territorio/producto/rep', signals: ['todo junto', 'no puedo filtrar', 'sin desglose'], focus: 9 },
-  'F08': { cluster: 'F-TENDENCIAS', title: 'No puedo ver tendencias, solo fotos del momento', signals: ['solo el hoy', 'sin tendencias', 'no veo hacia dónde va'], focus: 9 },
-  'F09': { cluster: 'F-PREDICCION', title: 'Mis reportes no incluyen información predictiva', signals: ['no predice', 'solo histórico', 'quisiera saber qué va a pasar'], focus: 9 },
-  'F10': { cluster: 'F-EFECTIVIDAD', title: 'No tengo forma de medir la efectividad de las visitas', signals: ['no sé si las visitas sirven', 'ROI de visitas'], focus: 9 },
-  'F11': { cluster: 'F-INTEGRACION', title: 'No puedo cruzar datos de visitas con datos de ventas', signals: ['no cruzo información', 'silos de datos'], focus: 9 },
-  'F12': { cluster: 'F-ALERTAS', title: 'Me llegan los problemas cuando ya es tarde para actuar', signals: ['me entero tarde', 'reactivo', 'ya pasó'], focus: 9 },
-  'F13': { cluster: 'F-AUTOMATIZACION', title: 'No tengo reportes automáticos que se envíen solos', signals: ['los hago a mano', 'nadie los manda'], focus: 9 },
-  'F14': { cluster: 'F-FUENTE_UNICA', title: 'Cada gerente calcula los números de forma diferente', signals: ['cada quien sus números', 'no cuadran', 'sin fuente única'], focus: 9 },
-
-  // ==================== G. TECNOLOGÍA Y SISTEMAS (13) ====================
-  'G01': { cluster: 'G-EXCEL', title: 'Todo está en Excel y cada quien tiene su versión', signals: ['en Excel', 'cada quien su archivo', 'versiones'], focus: 9 },
-  'G02': { cluster: 'G-INTEGRACION', title: 'Tenemos un ERP pero no está conectado con nada', signals: ['ERP aislado', 'no se conecta', 'isla'], focus: 9 },
-  'G03': { cluster: 'G-ADOPCION', title: 'Compramos un CRM pero nadie lo usa', signals: ['nadie lo usa', 'muy complicado', 'abandonado'], focus: 9 },
-  'G04': { cluster: 'G-FRAGMENTACION', title: 'La información está en 5 sistemas diferentes', signals: ['en varios sistemas', 'disperso', 'no centralizado'], focus: 9 },
-  'G05': { cluster: 'G-MOVIL', title: 'No tenemos app móvil para el equipo de campo', signals: ['sin app', 'todo en web', 'no funciona en móvil'], focus: 9 },
-  'G06': { cluster: 'G-OFFLINE', title: 'Nuestro sistema no funciona sin internet', signals: ['sin internet no sirve', 'necesita conexión', 'offline no'], focus: 9 },
-  'G07': { cluster: 'G-OBSOLESCENCIA', title: 'El sistema que tenemos está obsoleto', signals: ['obsoleto', 'sin soporte', 'viejo'], focus: 9 },
-  'G08': { cluster: 'G-ADOPCION', title: 'Pagamos por un sistema que usamos al 10%', signals: ['pagamos de más', 'no lo usamos', 'desperdicio'], focus: 9 },
-  'G09': { cluster: 'G-DEPENDENCIA', title: 'Dependemos de una persona para sacar información', signals: ['solo él sabe', 'dependemos de uno', 'si se va...'], focus: 9 },
-  'G10': { cluster: 'G-INTEGRACION', title: 'No tenemos API para conectar sistemas', signals: ['sin API', 'no se puede conectar', 'cerrado'], focus: 9 },
-  'G11': { cluster: 'G-MIGRACION', title: 'La migración de datos nos da miedo', signals: ['miedo a migrar', 'perder datos', 'riesgo'], focus: 9 },
-  'G12': { cluster: 'G-SEGURIDAD', title: 'No tenemos backup de nuestra información', signals: ['sin respaldo', 'no hay backup', 'si se pierde...'], focus: 9 },
-  'G13': { cluster: 'G-FRAGMENTACION', title: 'Cada departamento usa herramientas diferentes', signals: ['cada quien lo suyo', 'herramientas diferentes'], focus: 9 },
-
-  // ==================== H. COMUNICACIÓN INTERNA (9) ====================
-  'H01': { cluster: 'H-CANALES', title: 'Las instrucciones del gerente se pierden en WhatsApp', signals: ['en WhatsApp', 'se pierden mensajes', 'no hay registro'], focus: 6 },
-  'H02': { cluster: 'H-CANALES', title: 'No hay canal oficial para comunicar cambios', signals: ['no sé por dónde comunicar', 'se enteran por otros'], focus: 6 },
-  'H03': { cluster: 'H-FEEDBACK', title: 'Los supervisores no dan retroalimentación estructurada', signals: ['feedback informal', 'no hay proceso', 'cuando se acuerdan'], focus: 6 },
-  'H04': { cluster: 'H-APROBACIONES', title: 'Las solicitudes de aprobación van por WhatsApp', signals: ['por WhatsApp', 'por mensaje', 'no hay flujo'], focus: 6 },
-  'H05': { cluster: 'H-DESARROLLO', title: 'No tenemos proceso formal de coaching', signals: ['sin coaching', 'no hay desarrollo', 'cada quien aprende solo'], focus: 6 },
-  'H06': { cluster: 'H-VISIBILIDAD', title: 'Las reuniones son la única forma de saber qué pasa', signals: ['solo en las juntas', 'si no hay junta, no sé'], focus: 6 },
-  'H07': { cluster: 'H-OBJETIVOS', title: 'Los objetivos del mes se comunican verbalmente', signals: ['verbal', 'se olvidan', 'no quedan escritos'], focus: 6 },
-  'H08': { cluster: 'H-VISIBILIDAD', title: 'No hay visibilidad de lo que hacen otros equipos', signals: ['no sé qué hacen los otros', 'silos'], focus: 6 },
-  'H09': { cluster: 'H-SILOS', title: 'La información se queda en silos', signals: ['silos', 'no se comparte', 'cada área lo suyo'], focus: 6 },
-
-  // ==================== I. RELACIÓN CON CLIENTES POST-VENTA (12) ====================
-  'I01': { cluster: 'I-ACCESO', title: 'Los médicos no tienen forma de contactarnos', signals: ['no saben cómo contactarnos', 'solo cuando viene el rep'], focus: 7 },
-  'I02': { cluster: 'I-AUTOSERVICIO', title: 'No tenemos portal para que el médico solicite muestras', signals: ['tienen que llamar', 'dependen del rep', 'sin autoservicio'], focus: 7 },
-  'I03': { cluster: 'I-COMPROMISOS', title: 'Los compromisos con los médicos no se registran', signals: ['promesas no documentadas', 'se olvidan'], focus: 7 },
-  'I04': { cluster: 'I-SEGUIMIENTO', title: 'No damos seguimiento a las solicitudes de los médicos', signals: ['pedían algo y no se dio', 'sin seguimiento'], focus: 7 },
-  'I05': { cluster: 'I-VALOR', title: 'Los médicos reciben visitas pero no material de valor', signals: ['solo visitas vacías', 'sin contenido', 'no aportan'], focus: 7 },
-  'I06': { cluster: 'I-PRESCRIPCION', title: 'No sabemos qué médicos están prescribiendo nuestros productos', signals: ['no sé quién prescribe', 'no tengo datos de prescripción'], focus: 7 },
-  'I07': { cluster: 'I-SATISFACCION', title: 'No medimos la satisfacción de nuestros clientes', signals: ['no preguntamos', 'no medimos satisfacción'], focus: 7 },
-  'I08': { cluster: 'I-COMUNICACION', title: 'Los médicos se enteran de productos nuevos por la competencia', signals: ['la competencia les cuenta', 'llegamos tarde'], focus: 7 },
-  'I09': { cluster: 'I-FIDELIZACION', title: 'No tenemos programa de fidelización para médicos', signals: ['sin programa', 'no fidelizamos'], focus: 7 },
-  'I10': { cluster: 'I-PERSONALIZACION', title: 'No personalizamos la comunicación según intereses', signals: ['todo igual para todos', 'sin personalización'], focus: 7 },
-  'I11': { cluster: 'I-CONTINUIDAD', title: 'El médico tiene que repetir info cada vez que cambia de rep', signals: ['empezar de cero', 'no saben nada de mí'], focus: 7 },
-  'I12': { cluster: 'I-PROACTIVIDAD', title: 'No enviamos recordatorios de reabastecimiento', signals: ['se les acaba y no avisamos', 'reactivos'], focus: 7 },
-
-  // ==================== J. MARKETING Y MATERIAL PROMOCIONAL (8) ====================
-  'J01': { cluster: 'J-EFECTIVIDAD', title: 'No sé qué material promocional funciona mejor', signals: ['no mido qué funciona', 'todo igual'], focus: 8 },
-  'J02': { cluster: 'J-ACTUALIZACION', title: 'Los reps no llevan el material actualizado', signals: ['material viejo', 'desactualizado', 'versiones anteriores'], focus: 8 },
-  'J03': { cluster: 'J-DIGITAL', title: 'No puedo enviar material digital después de la visita', signals: ['solo físico', 'no puedo enviar después'], focus: 8 },
-  'J04': { cluster: 'J-ROI', title: 'No mido el impacto de las campañas en las ventas', signals: ['no sé si la campaña funcionó', 'sin ROI'], focus: 8 },
-  'J05': { cluster: 'J-ALINEACION', title: 'Marketing crea material sin input del equipo de campo', signals: ['marketing no pregunta', 'desconectados'], focus: 8 },
-  'J06': { cluster: 'J-CATALOGO', title: 'No tenemos catálogo digital de productos', signals: ['sin catálogo digital', 'PDF viejo'], focus: 8 },
-  'J07': { cluster: 'J-PERSONALIZACION', title: 'Las presentaciones son las mismas para todos', signals: ['misma presentación', 'sin personalizar'], focus: 8 },
-  'J08': { cluster: 'J-ESTRATEGIA', title: 'No sé qué productos promover con qué especialidad', signals: ['promueven lo que sea', 'sin estrategia'], focus: 8 },
-
-  // ==================== K. PLANIFICACIÓN Y ESTRATEGIA (10) ====================
-  'K01': { cluster: 'K-PLANIFICACION', title: 'No tengo plan de visitas basado en potencial', signals: ['visitan sin plan', 'no hay prioridad'], focus: 9 },
-  'K02': { cluster: 'K-TERRITORIOS', title: 'Los territorios están mal distribuidos', signals: ['mal repartido', 'unos con mucho, otros con nada'], focus: 9 },
-  'K03': { cluster: 'K-SIMULACION', title: 'No puedo simular escenarios', signals: ['no puedo simular', 'sin escenarios'], focus: 9 },
-  'K04': { cluster: 'K-OBJETIVOS', title: 'No tengo objetivos claros por rep/territorio/producto', signals: ['objetivos vagos', 'no están claros'], focus: 9 },
-  'K05': { cluster: 'K-PLANIFICACION', title: 'La planificación del mes se hace sobre la marcha', signals: ['improvisamos', 'sin plan', 'día a día'], focus: 9 },
-  'K06': { cluster: 'K-COSTOS', title: 'No sé cuál es mi costo por visita', signals: ['no sé cuánto cuesta una visita', 'sin métrica de costo'], focus: 9 },
-  'K07': { cluster: 'K-COBERTURA', title: 'No tengo estrategia de cobertura por segmento', signals: ['sin estrategia de cobertura', 'todo igual'], focus: 9 },
-  'K08': { cluster: 'K-ROI', title: 'No puedo medir el ROI de mi fuerza de ventas', signals: ['no sé si rinden', 'ROI de equipo'], focus: 9 },
-  'K09': { cluster: 'K-PRIORIZACION', title: 'No tengo forma de priorizar clientes', signals: ['todos igual', 'sin priorización'], focus: 9 },
-  'K10': { cluster: 'K-CUOTAS', title: 'La cuota de ventas se asigna sin datos reales', signals: ['cuota al azar', 'sin fundamento', 'porque sí'], focus: 9 },
-
-  // ==================== L. PROCESOS REGULATORIOS Y COMPLIANCE (8) ====================
-  'L01': { cluster: 'L-TRAZABILIDAD', title: 'No puedo demostrar a reguladores a quién le di qué muestra', signals: ['no tengo prueba', 'auditoría', 'COFEPRIS'], focus: 10 },
-  'L02': { cluster: 'L-TRAZABILIDAD', title: 'No tengo trazabilidad de lotes hasta el destinatario', signals: ['no sé dónde terminó', 'lotes perdidos'], focus: 10 },
-  'L03': { cluster: 'L-NORMATIVA', title: 'No cumplo con los registros de normativa de muestras', signals: ['no cumplo', 'normativa', 'fuera de regla'], focus: 10 },
-  'L04': { cluster: 'L-POLITICAS', title: 'No tengo políticas de visita documentadas', signals: ['sin políticas', 'no está escrito'], focus: 10 },
-  'L05': { cluster: 'L-REPORTES', title: 'No puedo generar reportes de auditoría rápidamente', signals: ['auditoría = pánico', 'tardo días'], focus: 10 },
-  'L06': { cluster: 'L-PERMISOS', title: 'No tengo control de quién accede a qué información', signals: ['todos ven todo', 'sin permisos'], focus: 10 },
-  'L07': { cluster: 'L-PRIVACIDAD', title: 'Los datos personales no están protegidos según RGPD', signals: ['sin protección de datos', 'RGPD', 'privacidad'], focus: 10 },
-  'L08': { cluster: 'L-AUDITORIA', title: 'No tengo log de quién modificó qué dato', signals: ['sin registro de cambios', 'no sé quién cambió'], focus: 10 },
-
-  // ==================== M. RECURSOS HUMANOS Y EQUIPO (7) ====================
-  'M01': { cluster: 'M-ROTACION', title: 'La rotación de reps es alta y empezamos de cero', signals: ['rotación alta', 'se van y empezamos de nuevo'], focus: 11 },
-  'M02': { cluster: 'M-EVALUACION', title: 'No tengo métricas objetivas para evaluar reps', signals: ['evaluación subjetiva', 'sin métricas'], focus: 11 },
-  'M03': { cluster: 'M-ONBOARDING', title: 'El onboarding de un rep nuevo tarda semanas', signals: ['onboarding lento', 'tarda en arrancar'], focus: 11 },
-  'M04': { cluster: 'M-CAPACITACION', title: 'No tengo programa de capacitación continua', signals: ['sin capacitación', 'aprenden solos'], focus: 11 },
-  'M05': { cluster: 'M-DESARROLLO', title: 'No sé qué habilidades le faltan a cada rep', signals: ['no sé qué reforzar', 'gaps de habilidades'], focus: 11 },
-  'M06': { cluster: 'M-COMISIONES', title: 'Las comisiones se calculan manualmente con errores', signals: ['comisiones a mano', 'errores en pago', 'reclamos'], focus: 11 },
-  'M07': { cluster: 'M-MOTIVACION', title: 'No tengo visibilidad de la motivación del equipo', signals: ['no sé cómo están', 'motivación', 'engagement'], focus: 11 },
-
-  // ==================== N. GESTIÓN DE EVENTOS (5) ====================
-  'N01': { cluster: 'N-REGISTRO', title: 'No registro la asistencia de médicos a eventos', signals: ['no sé quién vino', 'sin registro'], focus: 8 },
-  'N02': { cluster: 'N-SEGUIMIENTO', title: 'No doy seguimiento a médicos que asisten a eventos', signals: ['vienen y ya', 'sin seguimiento post-evento'], focus: 8 },
-  'N03': { cluster: 'N-ROI', title: 'No mido el ROI de los eventos', signals: ['no sé si valió la pena', 'sin ROI'], focus: 8 },
-  'N04': { cluster: 'N-LOGISTICA', title: 'La logística de eventos es manual', signals: ['todo manual', 'Excel para eventos'], focus: 8 },
-  'N05': { cluster: 'N-CALENDARIO', title: 'No tengo calendario centralizado de eventos del sector', signals: ['no sé qué eventos hay', 'me entero tarde'], focus: 8 },
-
-  // ==================== O. COMPETENCIA Y MERCADO (5) ====================
-  'O01': { cluster: 'O-INTELIGENCIA', title: 'No registro información sobre la competencia', signals: ['no documento', 'se me olvida'], focus: 9 },
-  'O02': { cluster: 'O-PRODUCTOS', title: 'No sé qué productos de la competencia ganan terreno', signals: ['no sé qué venden', 'perdiendo share'], focus: 9 },
-  'O03': { cluster: 'O-REGISTRO', title: 'Los reps escuchan info del mercado pero no la registran', signals: ['info se pierde', 'no documentan'], focus: 9 },
-  'O04': { cluster: 'O-ANALISIS', title: 'No tengo análisis de participación de mercado', signals: ['sin market share', 'sin análisis'], focus: 9 },
-  'O05': { cluster: 'O-INSIGHTS', title: 'No sé por qué los médicos prefieren a la competencia', signals: ['perdemos vs competencia', 'no sé por qué'], focus: 9 },
-
-  // ==================== P. AUTOMATIZACIÓN E IA (8) ====================
-  'P01': { cluster: 'P-TIEMPO', title: 'Paso demasiado tiempo llenando formularios', signals: ['mucho tiempo registrando', 'formularios eternos', 'quita tiempo'], focus: 9 },
-  'P02': { cluster: 'P-PREPARACION', title: 'No tengo tiempo para preparar cada visita', signals: ['voy sin preparar', 'improviso', 'no me da tiempo'], focus: 9 },
-  'P03': { cluster: 'P-REPORTES', title: 'Los informes los hago a mano cada semana', signals: ['horas en reportes', 'cada semana lo mismo'], focus: 9 },
-  'P04': { cluster: 'P-CONTEXTO', title: 'No sé qué decirle a cada médico, voy sin contexto', signals: ['no sé qué pasó antes', 'sin briefing'], focus: 9 },
-  'P05': { cluster: 'P-VOZ', title: 'Quisiera dictar las visitas en lugar de escribir', signals: ['escribir es lento', 'mejor hablar', 'voz'], focus: 9 },
-  'P06': { cluster: 'P-ALERTAS', title: 'Nadie me avisa cuando algo importante pasa', signals: ['me entero tarde', 'sin alertas'], focus: 9 },
-  'P07': { cluster: 'P-AUTOMATICO', title: 'Quisiera que el sistema hiciera cosas solo', signals: ['automático', 'que se haga solo'], focus: 9 },
-  'P08': { cluster: 'P-SUGERENCIAS', title: 'No tengo sugerencias de qué hacer', signals: ['sin sugerencias', 'yo tengo que decidir todo'], focus: 9 },
-};
-
-// Clusters para agrupación
-const PAIN_CLUSTERS = {
-  // Categoría A
-  'A-VISIBILIDAD': { title: 'No sé qué hace mi equipo', description: 'Sin visibilidad de actividades de representantes', codes: ['A01', 'A02', 'A08'], category: 'A', focus: 1 },
-  'A-UBICACION': { title: 'No sé dónde están mis reps', description: 'Sin tracking de ubicación del equipo', codes: ['A03', 'A05'], category: 'A', focus: 1 },
-  'A-REGISTRO': { title: 'Registran tarde o mal', description: 'El equipo no documenta en tiempo real', codes: ['A04', 'A11'], category: 'A', focus: 1 },
-  'A-COBERTURA': { title: 'No siguen el plan de visitas', description: 'Visitan a quien quieren, no a quien deben', codes: ['A06', 'A07'], category: 'A', focus: 1 },
-  'A-CONOCIMIENTO': { title: 'La información se va con ellos', description: 'Pérdida de conocimiento cuando se van', codes: ['A09', 'A13'], category: 'A', focus: 1 },
-  'A-PRODUCTIVIDAD': { title: 'No puedo medir rendimiento', description: 'Sin métricas objetivas de productividad', codes: ['A10', 'A12'], category: 'A', focus: 1 },
-  'A-RUTAS': { title: 'Rutas ineficientes', description: 'Sin optimización de recorridos', codes: ['A14'], category: 'A', focus: 1 },
-
-  // Categoría B
-  'B-DATOS': { title: 'Datos desactualizados', description: 'Información de contactos vieja o duplicada', codes: ['B01', 'B07', 'B14'], category: 'B', focus: 2 },
-  'B-CENTRALIZACION': { title: 'Cada quien tiene su libreta', description: 'Sin base de datos central', codes: ['B02'], category: 'B', focus: 2 },
-  'B-SEGMENTACION': { title: 'No sé cuáles son importantes', description: 'Contactos sin categorizar por prioridad', codes: ['B04', 'B13'], category: 'B', focus: 2 },
-  'B-HISTORIAL': { title: 'Sin historial de relación', description: 'No hay registro de interacciones previas', codes: ['B09'], category: 'B', focus: 2 },
-
-  // Categoría C
-  'C-INVENTARIO': { title: 'No sé qué muestras hay', description: 'Sin control de inventario de muestras', codes: ['C01', 'C13', 'C14'], category: 'C', focus: 3 },
-  'C-TRAZABILIDAD': { title: 'Muestras sin trazabilidad', description: 'No sé a quién se entregó cada muestra', codes: ['C02', 'C03'], category: 'C', focus: 3 },
-  'C-CONTROL': { title: 'Sin límites de muestras', description: 'Sin control de cantidades entregadas', codes: ['C04', 'C07'], category: 'C', focus: 3 },
-  'C-COMPLIANCE': { title: 'Auditoría de muestras', description: 'No puedo generar reportes regulatorios', codes: ['C11'], category: 'C', focus: 10 },
-
-  // Categoría D
-  'D-VISIBILIDAD': { title: 'Oportunidades en la cabeza', description: 'Las ventas no están registradas', codes: ['D01'], category: 'D', focus: 4 },
-  'D-PIPELINE': { title: 'Sin pipeline visual', description: 'Sin visibilidad del embudo de ventas', codes: ['D02', 'D03'], category: 'D', focus: 4 },
-  'D-FORECAST': { title: 'No puedo predecir ventas', description: 'Forecast poco confiable', codes: ['D04', 'D12'], category: 'D', focus: 4 },
-  'D-SEGUIMIENTO': { title: 'Oportunidades abandonadas', description: 'Pierdo ventas por falta de seguimiento', codes: ['D08', 'D10'], category: 'D', focus: 4 },
-
-  // Categoría E
-  'E-SEGUIMIENTO': { title: 'Facturas sin cobrar', description: 'Nadie está gestionando facturas vencidas', codes: ['E01', 'E08'], category: 'E', focus: 5 },
-  'E-VISIBILIDAD': { title: 'No veo lo que me deben', description: 'Sin visibilidad consolidada de CxC', codes: ['E02', 'E07'], category: 'E', focus: 5 },
-  'E-PROCESO': { title: 'Sin proceso de cobranza', description: 'Sin escalamiento formal', codes: ['E06'], category: 'E', focus: 5 },
-
-  // Categoría F
-  'F-TIEMPO': { title: 'Reportes tardan días', description: 'Armar información toma demasiado', codes: ['F01'], category: 'F', focus: 9 },
-  'F-DASHBOARDS': { title: 'Sin dashboards', description: 'Sin visualizaciones en tiempo real', codes: ['F06'], category: 'F', focus: 9 },
-  'F-AUTOMATIZACION': { title: 'Reportes manuales', description: 'Se hacen a mano cada semana', codes: ['F13'], category: 'F', focus: 9 },
-
-  // Categoría G
-  'G-EXCEL': { title: 'Todo está en Excel', description: 'Información en hojas de cálculo', codes: ['G01'], category: 'G', focus: 9 },
-  'G-ADOPCION': { title: 'CRM que nadie usa', description: 'Sistema que el equipo no adopta', codes: ['G03', 'G08'], category: 'G', focus: 9 },
-
-  // Categoría H
-  'H-CANALES': { title: 'Todo por WhatsApp', description: 'Comunicaciones se pierden en mensajería', codes: ['H01', 'H02'], category: 'H', focus: 6 },
-  'H-APROBACIONES': { title: 'Aprobaciones informales', description: 'Sin flujo formal de aprobación', codes: ['H04'], category: 'H', focus: 6 },
-
-  // Categoría L
-  'L-TRAZABILIDAD': { title: 'Sin trazabilidad regulatoria', description: 'No puedo demostrar a reguladores', codes: ['L01', 'L02'], category: 'L', focus: 10 },
-  'L-REPORTES': { title: 'Auditoría = pánico', description: 'Generar reportes de compliance toma días', codes: ['L05'], category: 'L', focus: 10 },
-
-  // Categoría P
-  'P-TIEMPO': { title: 'Mucho tiempo registrando', description: 'Formularios quitan demasiado tiempo', codes: ['P01'], category: 'P', focus: 9 },
-  'P-VOZ': { title: 'Prefiero dictar', description: 'Quiero registrar hablando', codes: ['P05'], category: 'P', focus: 9 },
-};
+// Log de carga
+if (typeof PAIN_CATALOG !== 'undefined' && Object.keys(PAIN_CATALOG).length > 0) {
+  console.log(`APEX: Base de conocimientos cargada (${Object.keys(PAIN_CATALOG).length} dolores, ${Object.keys(PAIN_CLUSTERS).length} clusters)`);
+} else {
+  console.warn('APEX: Base de conocimientos no encontrada o vacía');
+}
 
 // Prioridades de exploración por contexto
 const EXPLORATION_PRIORITY = {
@@ -687,7 +439,39 @@ function showResearchResults(profile, hadWebSearch) {
 }
 
 async function handleContinueFromResearch() {
+  // Siempre empezamos por tamaño del equipo (q1-1)
+  // Las demás se saltan automáticamente si ya las conocemos
   await goToScreen('q1-1');
+}
+
+// Determinar siguiente pantalla saltando las que ya conocemos
+function getNextScreen(currentScreen) {
+  const profile = FormState.company.profile;
+  const hasFieldTeamInfo = profile?.empresa?.tiene_equipo_campo !== undefined;
+  const hasSectorInfo = profile?.empresa?.sector && profile.empresa.sector !== 'other';
+
+  const fullFlow = ['q1-1', 'q1-2', 'q1-3', 'q1-4', 'q1-5', 'transition-phase2'];
+
+  // Preguntas que podemos saltar si ya tenemos la info
+  const skipIfKnown = {
+    'q1-2': hasFieldTeamInfo,  // Equipo de campo
+    'q1-3': hasSectorInfo      // Sector
+  };
+
+  const currentIndex = fullFlow.indexOf(currentScreen);
+  if (currentIndex === -1) return null;
+
+  // Buscar siguiente pantalla que no debamos saltar
+  for (let i = currentIndex + 1; i < fullFlow.length; i++) {
+    const nextScreen = fullFlow[i];
+    if (!skipIfKnown[nextScreen]) {
+      return nextScreen;
+    }
+    // Si saltamos, igual contamos como respondida
+    FormState.answeredQuestions++;
+  }
+
+  return 'transition-phase2';
 }
 
 // ============================================================
@@ -750,15 +534,8 @@ function advanceFromCurrentQuestion() {
   const screen = FormState.currentScreen;
   FormState.answeredQuestions++;
 
-  const screenMap = {
-    'q1-1': 'q1-2',
-    'q1-2': 'q1-3',
-    'q1-3': 'q1-4',
-    'q1-4': 'q1-5',
-    'q1-5': 'transition-phase2'
-  };
-
-  const nextScreen = screenMap[screen];
+  // Usar lógica inteligente que salta preguntas ya conocidas
+  const nextScreen = getNextScreen(screen);
   if (nextScreen) {
     goToScreen(nextScreen);
   }
@@ -1870,7 +1647,7 @@ function init() {
   }
 
 
-  console.log('APEX Discovery Form initialized with full pain catalog (169 pains)');
+  console.log(`APEX Discovery Form initialized (${Object.keys(PAIN_CATALOG).length} pains, ${Object.keys(PAIN_CLUSTERS).length} clusters)`);
 
   } catch (error) {
     console.error('Error initializing form:', error);
