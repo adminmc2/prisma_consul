@@ -1,11 +1,12 @@
 /**
  * Netlify Function: Research Company
- * Busca PROCESOS de la empresa (no productos) para personalizar el formulario APEX
+ * Busca PROCESOS de la empresa usando Tavily API para personalizar el formulario APEX
  *
  * OBJETIVO: Detectar qué preguntas ya están respondidas para no repetirlas
  */
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
 
 // Helper para fetch con timeout
 async function fetchWithTimeout(url, options, timeoutMs = 15000) {
@@ -60,71 +61,79 @@ exports.handler = async (event) => {
     const searchQuery = website || companyName;
     let webSearchResults = null;
     let searchExecuted = false;
+    let tavilyAnswer = null;
+    let tavilySources = [];
 
-    // PASO 1: Búsqueda web enfocada en PROCESOS (no productos)
-    try {
-      console.log('Searching PROCESSES for:', searchQuery);
+    // PASO 1: Búsqueda web con TAVILY
+    if (TAVILY_API_KEY) {
+      try {
+        console.log('Searching with Tavily for:', searchQuery);
 
-      const compoundResponse = await fetchWithTimeout(
-        'https://api.groq.com/openai/v1/chat/completions',
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${GROQ_API_KEY}`,
-            'Content-Type': 'application/json'
+        const tavilyResponse = await fetchWithTimeout(
+          'https://api.tavily.com/search',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              api_key: TAVILY_API_KEY,
+              query: `${searchQuery} empresa qué hace cómo opera equipo ventas distribuidores`,
+              search_depth: 'advanced',
+              include_answer: true,
+              max_results: 5
+            })
           },
-          body: JSON.stringify({
-            model: 'groq/compound',
-            messages: [
-              {
-                role: 'system',
-                content: `Eres un investigador de PROCESOS empresariales.
-NO te interesa qué PRODUCTOS vende la empresa.
-Te interesa CÓMO TRABAJAN: sus procesos comerciales, operativos, de ventas.
-Responde en español, conciso.`
-              },
-              {
-                role: 'user',
-                content: `Investiga los PROCESOS de "${searchQuery}":
+          20000
+        );
 
-1. ¿Tiene vendedores o representantes que visitan clientes en campo?
-2. ¿En qué sector opera? (farmacéutico, distribución, servicios, etc.)
-3. ¿Es una empresa regulada? (necesita cumplir normativas como COFEPRIS, FDA)
-4. ¿Cómo es su proceso de ventas? (visitas, teléfono, digital)
-5. ¿Maneja muestras, demos o material que entrega a clientes?
-6. ¿Qué tamaño aproximado tiene? (empleados, alcance)
+        if (tavilyResponse.ok) {
+          const tavilyData = await tavilyResponse.json();
 
-NO me digas qué productos venden. Solo cómo OPERAN.`
-              }
-            ],
-            temperature: 0.2,
-            max_tokens: 1000
-          })
-        },
-        12000
-      );
+          // Obtener respuesta resumida
+          tavilyAnswer = tavilyData.answer || null;
 
-      if (compoundResponse.ok) {
-        const compoundData = await compoundResponse.json();
-        webSearchResults = compoundData.choices[0]?.message?.content;
-        if (webSearchResults) {
-          searchExecuted = true;
-          console.log('Process search successful');
+          // Combinar contenido de las fuentes
+          if (tavilyData.results && tavilyData.results.length > 0) {
+            tavilySources = tavilyData.results.map(r => ({
+              title: r.title,
+              url: r.url,
+              content: r.content
+            }));
+
+            // Construir texto de resultados
+            webSearchResults = tavilyData.results
+              .map(r => `${r.title}: ${r.content}`)
+              .join('\n\n');
+
+            searchExecuted = true;
+            console.log('Tavily search successful, found', tavilyData.results.length, 'results');
+          }
+        } else {
+          console.error('Tavily error:', tavilyResponse.status);
         }
+      } catch (tavilyError) {
+        console.error('Tavily search failed:', tavilyError.message);
       }
-    } catch (compoundError) {
-      console.error('Search failed:', compoundError.message);
+    } else {
+      console.log('No TAVILY_API_KEY configured');
     }
 
-    // PASO 2: Estructurar información detectada vs por preguntar
+    // PASO 2: Usar Groq para estructurar la información
     const systemPrompt = `Eres un analista que detecta PROCESOS empresariales para un sistema CRM.
 
-${webSearchResults ? `INFORMACIÓN ENCONTRADA:\n${webSearchResults}` : 'No hay información web. Infiere del nombre.'}
+${webSearchResults ? `INFORMACIÓN ENCONTRADA EN BÚSQUEDA WEB:
+${tavilyAnswer ? `RESUMEN: ${tavilyAnswer}\n\n` : ''}
+DETALLES:
+${webSearchResults}` : 'No hay información web disponible. El usuario deberá responder todas las preguntas.'}
 
 Tu objetivo es determinar:
-1. Qué información YA SABEMOS (no preguntar de nuevo)
-2. Qué información DEBEMOS PREGUNTAR
+1. Qué información YA SABEMOS con certeza (basado en la búsqueda)
+2. Qué información NO SABEMOS y debemos preguntar
 3. Qué PROCESOS tiene la empresa para detectar sus dolores operativos
+
+IMPORTANTE: Solo marca como "detectado" lo que esté EXPLÍCITAMENTE en la búsqueda.
+NO asumas nada. Si no está claro, pon null y por_preguntar = true.
 
 Responde SOLO con JSON válido, sin markdown.`;
 
@@ -133,9 +142,9 @@ Responde SOLO con JSON válido, sin markdown.`;
 Genera este JSON:
 {
   "empresa": {
-    "nombre": "${searchQuery}",
-    "sector": "pharma|distribution|manufacturing|services|retail|other",
-    "descripcion_procesos": "Describe CÓMO TRABAJAN, no qué venden (2-3 oraciones)"
+    "nombre": "Nombre encontrado o el que buscamos",
+    "sector": "pharma|distribution|manufacturing|services|retail|other|null",
+    "descripcion_procesos": "Describe CÓMO TRABAJAN basado en la búsqueda (2-3 oraciones). Si no hay info, dejar vacío."
   },
 
   "detectado": {
@@ -156,52 +165,34 @@ Genera este JSON:
   },
 
   "procesos_detectados": [
-    "Descripción de proceso 1 que tienen",
-    "Descripción de proceso 2 que tienen"
+    "Proceso específico encontrado en la búsqueda"
   ],
 
   "dolores_probables": {
-    "prioridad_alta": ["A-VISIBILIDAD", "C-INVENTARIO"],
-    "prioridad_media": ["F-REPORTES", "G-EXCEL"],
-    "razon": "Por qué estos dolores basado en sus procesos"
+    "prioridad_alta": ["CODIGO-DOLOR"],
+    "prioridad_media": ["CODIGO-DOLOR"],
+    "razon": "Por qué estos dolores basado en lo encontrado"
   },
 
   "preguntas_procesos": [
     {
-      "pregunta": "¿Cómo sabe tu equipo a quién visitar cada día?",
-      "detecta_dolor": "A-COBERTURA",
-      "contexto": "Porque detectamos que tienen visitadores"
-    },
-    {
-      "pregunta": "¿Cómo controlas las muestras que entrega tu equipo?",
-      "detecta_dolor": "C-TRAZABILIDAD",
-      "contexto": "Porque es pharma y maneja muestras"
+      "pregunta": "Pregunta específica sobre sus procesos",
+      "detecta_dolor": "CODIGO-DOLOR",
+      "contexto": "Por qué preguntamos esto"
     }
   ]
 }
 
 REGLAS:
-- "detectado" = información que YA SABEMOS con confianza
-- "por_preguntar" = true si NO lo sabemos y debemos preguntar
-- Si detectado.X tiene valor, por_preguntar.X debe ser false
-- Las preguntas_procesos deben ser sobre CÓMO TRABAJAN, no sobre productos
-- Enfócate en detectar DOLORES OPERATIVOS
+- Si la búsqueda NO encontró información clara sobre algo → detectado.X = null y por_preguntar.X = true
+- Solo marca detectado.X con valor si hay EVIDENCIA CLARA en la búsqueda
+- confianza = 0.8+ solo si hay información explícita
+- confianza = 0.5 si es inferido
+- confianza = 0.2 si no hay información
 
 CÓDIGOS DE DOLOR:
-A-VISIBILIDAD: No saber qué hace el equipo
-A-REGISTRO: No registran o registran tarde
-A-COBERTURA: No siguen plan de visitas
-B-CENTRALIZACION: Datos dispersos
-C-INVENTARIO: Sin control de muestras/stock
-C-TRAZABILIDAD: Sin seguimiento de entregas
-C-COMPLIANCE: Problemas regulatorios
-D-PIPELINE: Sin visibilidad de ventas
-D-SEGUIMIENTO: Oportunidades perdidas
-F-REPORTES: Reportes manuales
-G-EXCEL: Dependencia de Excel
-G-ADOPCION: CRM que nadie usa
-H-CANALES: Todo por WhatsApp
-P-TIEMPO: Mucho tiempo en admin`;
+A-VISIBILIDAD, A-REGISTRO, A-COBERTURA, B-CENTRALIZACION, C-INVENTARIO, C-TRAZABILIDAD,
+C-COMPLIANCE, D-PIPELINE, D-SEGUIMIENTO, F-REPORTES, G-EXCEL, G-ADOPCION, H-CANALES, P-TIEMPO`;
 
     const groqResponse = await fetchWithTimeout(
       'https://api.groq.com/openai/v1/chat/completions',
@@ -217,7 +208,7 @@ P-TIEMPO: Mucho tiempo en admin`;
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt }
           ],
-          temperature: 0.4,
+          temperature: 0.3,
           max_tokens: 2000
         })
       },
@@ -251,23 +242,36 @@ P-TIEMPO: Mucho tiempo en admin`;
       motivacion: true
     };
 
-    // Si detectamos algo con confianza, no preguntar
-    if (profile.detectado.tiene_equipo_campo !== null && profile.detectado.confianza > 0.6) {
-      profile.por_preguntar.tiene_equipo_campo = false;
-    }
-    if (profile.detectado.sector && profile.detectado.sector !== 'other' && profile.detectado.confianza > 0.6) {
-      profile.por_preguntar.sector = false;
+    // Si NO hubo búsqueda exitosa, preguntar TODO
+    if (!searchExecuted) {
+      profile.por_preguntar = {
+        tamaño_equipo: true,
+        tiene_equipo_campo: true,
+        sector: true,
+        tecnologia_actual: true,
+        motivacion: true
+      };
+      profile.detectado.confianza = 0.1;
     }
 
     // Siempre preguntar tecnología y motivación (no se pueden inferir)
     profile.por_preguntar.tecnologia_actual = true;
     profile.por_preguntar.motivacion = true;
 
-    profile.fuente_informacion = searchExecuted ? 'groq_compound_web_search' : 'inferencia';
+    // Solo saltar preguntas si hay alta confianza
+    if (profile.detectado.confianza < 0.6) {
+      profile.por_preguntar.tiene_equipo_campo = true;
+      profile.por_preguntar.sector = true;
+    }
+
+    profile.fuente_informacion = searchExecuted ? 'tavily_web_search' : 'none';
+    profile.tavily_answer = tavilyAnswer;
+    profile.sources = tavilySources;
 
     console.log('Research complete:', {
       company: searchQuery,
       hadWebSearch: searchExecuted,
+      confidence: profile.detectado.confianza,
       detected: profile.detectado,
       toAsk: profile.por_preguntar
     });
@@ -279,7 +283,8 @@ P-TIEMPO: Mucho tiempo en admin`;
         success: true,
         profile,
         searchedFor: searchQuery,
-        hadWebSearch: searchExecuted
+        hadWebSearch: searchExecuted,
+        searchMethod: searchExecuted ? 'tavily' : 'none'
       })
     };
 
@@ -294,14 +299,14 @@ P-TIEMPO: Mucho tiempo en admin`;
         success: false,
         error: error.message,
         profile: {
-          empresa: { nombre: '', sector: 'other', descripcion_procesos: '' },
+          empresa: { nombre: '', sector: null, descripcion_procesos: '' },
           detectado: {
             tiene_equipo_campo: null,
             sector: null,
             es_regulado: null,
             maneja_muestras: null,
             tamaño_estimado: null,
-            confianza: 0.2
+            confianza: 0.1
           },
           por_preguntar: {
             tamaño_equipo: true,
@@ -312,12 +317,12 @@ P-TIEMPO: Mucho tiempo en admin`;
           },
           procesos_detectados: [],
           dolores_probables: {
-            prioridad_alta: ['A-VISIBILIDAD', 'D-PIPELINE'],
-            prioridad_media: ['F-REPORTES', 'G-EXCEL'],
-            razon: 'Valores por defecto'
+            prioridad_alta: [],
+            prioridad_media: [],
+            razon: 'Sin información - se harán todas las preguntas'
           },
           preguntas_procesos: [],
-          fuente_informacion: 'default'
+          fuente_informacion: 'none'
         }
       })
     };
