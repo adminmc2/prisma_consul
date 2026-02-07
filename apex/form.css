@@ -626,6 +626,151 @@ body {
   line-height: 1.5;
 }
 
+/* Pain card actions (confirm/record buttons) */
+.pain-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-shrink: 0;
+}
+
+.pain-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.pain-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.pain-btn--confirm:hover {
+  background: rgba(0, 212, 255, 0.2);
+  border-color: var(--tech-cyan);
+  color: var(--tech-cyan);
+}
+
+.pain-btn--confirm.confirmed {
+  background: var(--tech-cyan);
+  border-color: var(--tech-cyan);
+  color: var(--prisma-navy);
+}
+
+.pain-btn--record:hover {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.pain-btn--record.has-audio {
+  background: #ff6b6b;
+  border-color: #ff6b6b;
+  color: white;
+}
+
+/* Pain individual audio recorder */
+.pain-audio-recorder {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: var(--radius-md);
+}
+
+.pain-audio-prompt {
+  font-size: 0.875rem;
+  color: #ff6b6b;
+  margin-bottom: var(--spacing-xs);
+}
+
+.pain-recorder-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.pain-recorder-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 2px solid #ff6b6b;
+  background: transparent;
+  color: #ff6b6b;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.pain-recorder-btn:hover {
+  background: rgba(255, 107, 107, 0.2);
+}
+
+.pain-recorder-btn.recording {
+  background: #ff6b6b;
+  color: white;
+  animation: pulse 1s infinite;
+}
+
+.pain-recorder-timer {
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.pain-recorder-status {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Pain card states */
+.pain-card.confirmed {
+  border-color: var(--tech-cyan);
+  background: rgba(0, 212, 255, 0.05);
+}
+
+.pain-card.has-audio {
+  border-color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.05);
+}
+
+/* Pains instruction and continue */
+.pains-instruction {
+  font-size: 0.9375rem;
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.pains-continue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+.pains-continue-hint {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.btn-continue-pains {
+  min-width: 200px;
+}
+
 .pains-question {
   font-size: 1rem;
   text-align: center;

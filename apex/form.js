@@ -141,10 +141,10 @@ function initDOM() {
     adaptiveQuestionHint: document.getElementById('adaptiveQuestionHint'),
     adaptiveOptions: document.getElementById('adaptiveOptions'),
 
-    // Fase 3 - Pains
+    // Fase 3 - Pains (con confirmación individual)
     painsList: document.getElementById('painsList'),
-    btnConfirmPains: document.getElementById('btnConfirmPains'),
-    btnAdjustPains: document.getElementById('btnAdjustPains'),
+    btnContinuePains: document.getElementById('btnContinuePains'),
+    painsContinueHint: document.getElementById('painsContinueHint'),
 
     // Fase 4 - Audio
     audioTitle: document.getElementById('audioTitle'),
@@ -439,35 +439,82 @@ function showResearchResults(profile, hadWebSearch) {
 }
 
 async function handleContinueFromResearch() {
-  // Siempre empezamos por tamaño del equipo (q1-1)
-  // Las demás se saltan automáticamente si ya las conocemos
-  await goToScreen('q1-1');
+  // Determinar primera pregunta a mostrar
+  const firstScreen = getFirstQuestionToShow();
+  await goToScreen(firstScreen);
+}
+
+// Obtener primera pregunta que debemos mostrar
+function getFirstQuestionToShow() {
+  const profile = FormState.company.profile;
+  const porPreguntar = profile?.por_preguntar || {};
+
+  // Orden de preguntas
+  const questions = [
+    { screen: 'q1-1', field: 'tamaño_equipo' },
+    { screen: 'q1-2', field: 'tiene_equipo_campo' },
+    { screen: 'q1-3', field: 'sector' },
+    { screen: 'q1-4', field: 'tecnologia_actual' },
+    { screen: 'q1-5', field: 'motivacion' }
+  ];
+
+  for (const q of questions) {
+    // Si debemos preguntar (por_preguntar.X es true o undefined)
+    if (porPreguntar[q.field] !== false) {
+      return q.screen;
+    }
+  }
+
+  // Si todo ya está respondido, ir a fase 2
+  return 'transition-phase2';
 }
 
 // Determinar siguiente pantalla saltando las que ya conocemos
 function getNextScreen(currentScreen) {
   const profile = FormState.company.profile;
-  const hasFieldTeamInfo = profile?.empresa?.tiene_equipo_campo !== undefined;
-  const hasSectorInfo = profile?.empresa?.sector && profile.empresa.sector !== 'other';
+  const porPreguntar = profile?.por_preguntar || {};
+  const detectado = profile?.detectado || {};
 
   const fullFlow = ['q1-1', 'q1-2', 'q1-3', 'q1-4', 'q1-5', 'transition-phase2'];
 
-  // Preguntas que podemos saltar si ya tenemos la info
-  const skipIfKnown = {
-    'q1-2': hasFieldTeamInfo,  // Equipo de campo
-    'q1-3': hasSectorInfo      // Sector
+  // Mapeo de pantallas a campos de por_preguntar
+  const screenToField = {
+    'q1-1': 'tamaño_equipo',
+    'q1-2': 'tiene_equipo_campo',
+    'q1-3': 'sector',
+    'q1-4': 'tecnologia_actual',
+    'q1-5': 'motivacion'
   };
 
   const currentIndex = fullFlow.indexOf(currentScreen);
   if (currentIndex === -1) return null;
 
-  // Buscar siguiente pantalla que no debamos saltar
+  // Buscar siguiente pantalla que debamos mostrar
   for (let i = currentIndex + 1; i < fullFlow.length; i++) {
     const nextScreen = fullFlow[i];
-    if (!skipIfKnown[nextScreen]) {
+
+    // Si es transición, siempre mostrar
+    if (nextScreen === 'transition-phase2') {
       return nextScreen;
     }
-    // Si saltamos, igual contamos como respondida
+
+    const field = screenToField[nextScreen];
+
+    // Si debemos preguntar (por_preguntar.X es true o undefined)
+    if (porPreguntar[field] !== false) {
+      return nextScreen;
+    }
+
+    // Si saltamos, guardar el valor detectado en las respuestas
+    if (field === 'tiene_equipo_campo' && detectado.tiene_equipo_campo !== null) {
+      FormState.responses.phase1.has_field_team = detectado.tiene_equipo_campo ? 'yes' : 'no';
+      console.log('Skipping q1-2, using detected value:', detectado.tiene_equipo_campo);
+    }
+    if (field === 'sector' && detectado.sector) {
+      FormState.responses.phase1.sector = detectado.sector;
+      console.log('Skipping q1-3, using detected value:', detectado.sector);
+    }
+
     FormState.answeredQuestions++;
   }
 
@@ -594,59 +641,73 @@ async function generateAdaptiveQuestions() {
   // Construir contexto completo con la base de conocimiento
   const relevantClusters = getRelevantClusters(phase1, companyProfile);
 
-  const systemPrompt = `Eres un consultor experto en detectar dolores operativos. Generas preguntas ÚNICAS y ESPECÍFICAS para cada empresa.
+  const systemPrompt = `Eres un consultor experto en detectar DOLORES OPERATIVOS de empresas.
+
+IMPORTANTE - ENFÓCATE EN PROCESOS, NO EN PRODUCTOS:
+- NO preguntes sobre los productos que vende la empresa
+- SÍ pregunta sobre CÓMO TRABAJAN: sus procesos, flujos, formas de operar
+- Queremos detectar DOLORES OPERATIVOS que APEX puede resolver
 
 REGLAS OBLIGATORIAS:
-1. NUNCA uses preguntas genéricas. Cada pregunta debe mencionar algo específico de ESTA empresa (nombre, sector, productos, etc.)
-2. Si hay "preguntas sugeridas por investigación", DEBES usarlas como base (puedes adaptarlas)
+1. Preguntas sobre PROCESOS: ¿Cómo registran? ¿Cómo controlan? ¿Cómo reportan?
+2. Si hay "preguntas_procesos" de la investigación, ÚSALAS como base
 3. Las opciones van de "no me pasa" (gravedad 0) a "es un caos" (gravedad 3)
 4. Tutea al usuario, sé conversacional
-5. Usa los códigos de dolor exactos del catálogo
+5. Cada pregunta debe ayudar a detectar UN dolor operativo específico
 
-CATÁLOGO DE DOLORES RELEVANTES:
+CATÁLOGO DE DOLORES OPERATIVOS:
 ${Object.entries(relevantClusters).map(([key, cluster]) =>
   `${key}: "${cluster.title}" - ${cluster.description}`
 ).join('\n')}
 
-SEÑALES QUE INDICAN CADA DOLOR:
-${Object.entries(PAIN_CATALOG).filter(([, pain]) =>
-  relevantClusters[pain.cluster]
-).slice(0, 25).map(([, pain]) =>
-  `${pain.cluster}: "${pain.signals.slice(0, 3).join('", "')}"`
-).join('\n')}
+EJEMPLOS DE BUENAS PREGUNTAS (sobre procesos):
+- "¿Cómo te enteras de lo que hizo tu equipo hoy?" → detecta A-VISIBILIDAD
+- "¿Cuándo registra tu equipo las visitas que hace?" → detecta A-REGISTRO
+- "¿Cómo controlas las muestras que entrega tu equipo?" → detecta C-TRAZABILIDAD
+- "¿Cuánto tardas en generar un reporte para dirección?" → detecta F-REPORTES
+- "¿Dónde guardan la información de clientes?" → detecta B-CENTRALIZACION
 
-Responde SOLO con JSON válido.`;
+EJEMPLOS DE MALAS PREGUNTAS (sobre productos - NO HACER):
+- "¿Cómo vendes tus rellenos dérmicos?" ❌
+- "¿Tus productos tienen trazabilidad?" ❌
+- "¿Cuántas unidades de MyFiller vendes?" ❌
 
-  const userPrompt = `INFORMACIÓN DE LA EMPRESA (de investigación web):
-${companyProfile ? `
-- Nombre: ${companyProfile.empresa?.nombre || FormState.company.name || 'No especificado'}
-- Sector: ${companyProfile.empresa?.sector || phase1.sector}
-- Descripción: ${companyProfile.empresa?.descripcion || 'No disponible'}
-- Productos/Servicios: ${JSON.stringify(companyProfile.empresa?.productos_servicios || [])}
-- Clientes objetivo: ${companyProfile.empresa?.clientes_objetivo || 'No especificado'}
-- Modelo de negocio: ${companyProfile.empresa?.modelo_negocio || 'B2B'}
-- Tiene equipo de campo: ${companyProfile.empresa?.tiene_equipo_campo ? 'SÍ - importante preguntar sobre visibilidad' : 'No'}
-- Maneja muestras médicas: ${companyProfile.empresa?.tiene_muestras_medicas ? 'SÍ - importante preguntar sobre control de muestras' : 'No'}
-- Regulado: ${companyProfile.empresa?.regulado ? 'SÍ - importante preguntar sobre compliance' : 'No'}
-- Actividades principales: ${JSON.stringify(companyProfile.contexto?.actividades_principales || [])}
-- Retos del sector: ${JSON.stringify(companyProfile.contexto?.retos_sector || [])}
-- Dolores probables (prioridad alta): ${JSON.stringify(companyProfile.dolores_probables?.prioridad_alta || [])}
-- Dolores probables (prioridad media): ${JSON.stringify(companyProfile.dolores_probables?.prioridad_media || [])}
-- Señales detectadas: ${JSON.stringify(companyProfile.dolores_probables?.señales_detectadas || [])}
-- Confianza de la investigación: ${companyProfile.confianza || 0.5}
-- Fuente: ${companyProfile.fuente_informacion || 'inferencia'}
-` : 'No hay información de investigación disponible'}
+Responde SOLO con JSON válido, sin markdown.`;
 
-RESPUESTAS DEL USUARIO EN FORMULARIO:
+  // Determinar valores (de investigación o formulario)
+  const tieneEquipoCampo = companyProfile?.detectado?.tiene_equipo_campo ?? (phase1.has_field_team === 'yes' || phase1.has_field_team === 'both');
+  const sector = companyProfile?.detectado?.sector || companyProfile?.empresa?.sector || phase1.sector;
+  const esRegulado = companyProfile?.detectado?.es_regulado ?? (sector === 'pharma');
+  const manejaMuestras = companyProfile?.detectado?.maneja_muestras ?? esRegulado;
+
+  const userPrompt = `CONTEXTO DE LA EMPRESA:
+- Nombre: ${companyProfile?.empresa?.nombre || FormState.company.name || 'No especificado'}
+- Sector: ${sector || 'no especificado'}
+- Cómo operan: ${companyProfile?.empresa?.descripcion_procesos || 'No disponible'}
+
+PROCESOS DETECTADOS:
+${companyProfile?.procesos_detectados?.length > 0
+  ? companyProfile.procesos_detectados.map(p => `- ${p}`).join('\n')
+  : '- No se detectaron procesos específicos'}
+
+CARACTERÍSTICAS OPERATIVAS:
+- Tiene equipo de campo: ${tieneEquipoCampo ? 'SÍ → preguntar sobre visibilidad y registro' : 'NO'}
+- Maneja muestras/material: ${manejaMuestras ? 'SÍ → preguntar sobre control y trazabilidad' : 'NO'}
+- Es regulado: ${esRegulado ? 'SÍ → preguntar sobre compliance' : 'NO'}
+
+RESPUESTAS DEL FORMULARIO:
 - Tamaño equipo: ${phase1.team_size || 'no especificado'}
-- Tiene equipo de campo: ${phase1.has_field_team || 'no especificado'}
-- Sector seleccionado: ${phase1.sector || 'no especificado'}
 - Tecnología actual: ${JSON.stringify(phase1.current_tech || [])}
-- Motivaciones para buscar solución: ${JSON.stringify(phase1.motivation || [])}
+- Motivación: ${JSON.stringify(phase1.motivation || [])}
 
-${companyProfile?.preguntas_sugeridas?.length > 0 ? `
-PREGUNTAS SUGERIDAS POR LA INVESTIGACIÓN (DEBES USAR ESTAS O SIMILARES):
-${companyProfile.preguntas_sugeridas.map(q => `- "${q.pregunta}" → objetivo: ${q.objetivo}, detecta: ${q.categoria_dolor}`).join('\n')}
+DOLORES PROBABLES (de investigación):
+- Alta prioridad: ${JSON.stringify(companyProfile?.dolores_probables?.prioridad_alta || [])}
+- Media prioridad: ${JSON.stringify(companyProfile?.dolores_probables?.prioridad_media || [])}
+- Razón: ${companyProfile?.dolores_probables?.razon || 'No especificada'}
+
+${companyProfile?.preguntas_procesos?.length > 0 ? `
+PREGUNTAS SOBRE PROCESOS SUGERIDAS (USA ESTAS O SIMILARES):
+${companyProfile.preguntas_procesos.map(q => `- "${q.pregunta}" → detecta: ${q.detecta_dolor} (${q.contexto})`).join('\n')}
 ` : ''}
 
 Genera 4-5 preguntas en este formato JSON:
@@ -1180,41 +1241,229 @@ function renderDetectedPains() {
       card.querySelector('.pain-title').textContent = pain.title;
       card.querySelector('.pain-description').textContent = pain.description;
       card.style.animationDelay = `${index * 0.1}s`;
+
+      // Reset card state
+      card.classList.remove('confirmed', 'has-audio');
     }
   });
+
+  // Setup individual pain confirmation handlers
+  setupPainConfirmation();
 }
 
-function handleConfirmPains() {
-  FormState.painsConfirmed = true;
-  FormState.finalPains = [...FormState.detectedPains];
-  updateAudioScreenContent(true);
-  goToScreen('audio-record');
+// Estado de confirmación de pains individuales
+const painConfirmationState = {
+  1: { confirmed: false, hasAudio: false, audioBlob: null },
+  2: { confirmed: false, hasAudio: false, audioBlob: null },
+  3: { confirmed: false, hasAudio: false, audioBlob: null },
+  4: { confirmed: false, hasAudio: false, audioBlob: null }
+};
+
+let currentPainRecording = null;
+let painMediaRecorder = null;
+let painAudioChunks = [];
+let painRecordingTimer = null;
+let painRecordingSeconds = 0;
+
+function setupPainConfirmation() {
+  // Reset state
+  Object.keys(painConfirmationState).forEach(key => {
+    painConfirmationState[key] = { confirmed: false, hasAudio: false, audioBlob: null };
+  });
+
+  // Add click handlers for confirm/record buttons
+  document.querySelectorAll('.pain-btn').forEach(btn => {
+    btn.addEventListener('click', handlePainAction);
+  });
+
+  // Add click handlers for individual recorders
+  document.querySelectorAll('.pain-recorder-btn').forEach(btn => {
+    btn.addEventListener('click', handlePainRecordToggle);
+  });
+
+  updatePainsContinueButton();
 }
 
-function handleAdjustPains() {
-  FormState.painsConfirmed = false;
-  updateAudioScreenContent(false);
-  goToScreen('audio-record');
-}
+function handlePainAction(e) {
+  const btn = e.currentTarget;
+  const painNum = btn.dataset.pain;
+  const action = btn.dataset.action;
+  const card = btn.closest('.pain-card');
 
-function updateAudioScreenContent(confirmed) {
-  if (confirmed) {
-    DOM.audioTitle.textContent = 'Ahora cuéntanos más con tus palabras';
-    DOM.audioSubtitle.textContent = 'Graba un audio de 1-2 minutos explicando:';
-    DOM.audioPrompts.innerHTML = `
-      <li>¿Cuál de estos 4 dolores te quita más el sueño?</li>
-      <li>¿Qué has intentado hacer para resolverlo?</li>
-      <li>¿Hay algo específico de tu operación que debamos saber?</li>
-    `;
-  } else {
-    DOM.audioTitle.textContent = 'Cuéntanos qué ajustar';
-    DOM.audioSubtitle.textContent = 'Graba un audio explicándonos:';
-    DOM.audioPrompts.innerHTML = `
-      <li>¿Qué dolor detectamos que NO es tu prioridad?</li>
-      <li>¿Cuál es tu dolor REAL que no capturamos?</li>
-      <li>Cuéntanos con tus palabras qué te quita el sueño</li>
-    `;
+  if (action === 'confirm') {
+    // Mark as confirmed
+    painConfirmationState[painNum].confirmed = true;
+    painConfirmationState[painNum].hasAudio = false;
+
+    // Update UI
+    card.classList.add('confirmed');
+    card.classList.remove('has-audio');
+    btn.classList.add('confirmed');
+
+    // Hide recorder if visible
+    const recorder = card.querySelector('.pain-audio-recorder');
+    if (recorder) recorder.classList.add('hidden');
+
+    console.log(`Pain ${painNum} confirmed`);
+
+  } else if (action === 'record') {
+    // Show recorder for this pain
+    const recorder = card.querySelector('.pain-audio-recorder');
+    if (recorder) {
+      recorder.classList.toggle('hidden');
+
+      // Remove confirmed state if showing recorder
+      if (!recorder.classList.contains('hidden')) {
+        painConfirmationState[painNum].confirmed = false;
+        card.classList.remove('confirmed');
+        card.querySelector('.pain-btn--confirm')?.classList.remove('confirmed');
+      }
+    }
   }
+
+  updatePainsContinueButton();
+}
+
+async function handlePainRecordToggle(e) {
+  const btn = e.currentTarget;
+  const painNum = btn.dataset.pain;
+
+  if (painMediaRecorder && painMediaRecorder.state === 'recording') {
+    // Stop recording
+    stopPainRecording(painNum);
+  } else {
+    // Start recording
+    await startPainRecording(painNum);
+  }
+}
+
+async function startPainRecording(painNum) {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    currentPainRecording = painNum;
+
+    painMediaRecorder = new MediaRecorder(stream, {
+      mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4'
+    });
+
+    painAudioChunks = [];
+
+    painMediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) {
+        painAudioChunks.push(e.data);
+      }
+    };
+
+    painMediaRecorder.onstop = () => {
+      const blob = new Blob(painAudioChunks, { type: painMediaRecorder.mimeType });
+      painConfirmationState[painNum].hasAudio = true;
+      painConfirmationState[painNum].audioBlob = blob;
+      painConfirmationState[painNum].confirmed = false;
+
+      // Update UI
+      const card = document.querySelector(`.pain-card[data-pain="${painNum}"]`);
+      card.classList.add('has-audio');
+      card.classList.remove('confirmed');
+      card.querySelector('.pain-btn--record')?.classList.add('has-audio');
+      card.querySelector('.pain-btn--confirm')?.classList.remove('confirmed');
+
+      const recorder = card.querySelector('.pain-audio-recorder');
+      const status = recorder.querySelector('.pain-recorder-status');
+      status.textContent = `Audio grabado (${painRecordingSeconds}s)`;
+
+      stream.getTracks().forEach(track => track.stop());
+      updatePainsContinueButton();
+
+      console.log(`Pain ${painNum} audio recorded:`, blob.size, 'bytes');
+    };
+
+    painMediaRecorder.start(1000);
+
+    // Update UI
+    const card = document.querySelector(`.pain-card[data-pain="${painNum}"]`);
+    const btn = card.querySelector('.pain-recorder-btn');
+    const timer = card.querySelector('.pain-recorder-timer');
+    const status = card.querySelector('.pain-recorder-status');
+
+    btn.classList.add('recording');
+    btn.querySelector('.pain-recorder-icon--record').classList.add('hidden');
+    btn.querySelector('.pain-recorder-icon--stop').classList.remove('hidden');
+    status.textContent = 'Grabando...';
+
+    painRecordingSeconds = 0;
+    painRecordingTimer = setInterval(() => {
+      painRecordingSeconds++;
+      const mins = Math.floor(painRecordingSeconds / 60);
+      const secs = painRecordingSeconds % 60;
+      timer.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    }, 1000);
+
+  } catch (error) {
+    console.error('Error starting pain recording:', error);
+    alert('No pudimos acceder al micrófono. Por favor permite el acceso.');
+  }
+}
+
+function stopPainRecording(painNum) {
+  if (painMediaRecorder && painMediaRecorder.state === 'recording') {
+    painMediaRecorder.stop();
+
+    clearInterval(painRecordingTimer);
+
+    const card = document.querySelector(`.pain-card[data-pain="${painNum}"]`);
+    const btn = card.querySelector('.pain-recorder-btn');
+
+    btn.classList.remove('recording');
+    btn.querySelector('.pain-recorder-icon--record').classList.remove('hidden');
+    btn.querySelector('.pain-recorder-icon--stop').classList.add('hidden');
+
+    currentPainRecording = null;
+  }
+}
+
+function updatePainsContinueButton() {
+  // Check if all 4 pains have been addressed (confirmed OR has audio)
+  const allAddressed = Object.values(painConfirmationState).every(
+    state => state.confirmed || state.hasAudio
+  );
+
+  const btn = DOM.btnContinuePains;
+  const hint = DOM.painsContinueHint;
+
+  if (btn) {
+    btn.classList.toggle('hidden', !allAddressed);
+  }
+
+  if (hint) {
+    const pending = Object.values(painConfirmationState).filter(
+      state => !state.confirmed && !state.hasAudio
+    ).length;
+
+    if (pending === 0) {
+      hint.textContent = '¡Listo! Puedes continuar';
+    } else {
+      hint.textContent = `Faltan ${pending} dolor${pending > 1 ? 'es' : ''} por confirmar`;
+    }
+  }
+}
+
+function handleContinuePains() {
+  // Build final pains with confirmation status
+  FormState.finalPains = FormState.detectedPains.map((pain, index) => {
+    const painNum = index + 1;
+    const state = painConfirmationState[painNum];
+    return {
+      ...pain,
+      confirmed: state.confirmed,
+      hasAudio: state.hasAudio,
+      audioBlob: state.audioBlob
+    };
+  });
+
+  FormState.painsConfirmed = true;
+
+  // Go directly to contact form (skip general audio since we have individual audios)
+  goToScreen('final-pains');
 }
 
 // ============================================================
@@ -1622,12 +1871,9 @@ function init() {
     DOM.btnContinueResearch.addEventListener('click', handleContinueFromResearch);
   }
 
-  // Event Listeners - Pains
-  if (DOM.btnConfirmPains) {
-    DOM.btnConfirmPains.addEventListener('click', handleConfirmPains);
-  }
-  if (DOM.btnAdjustPains) {
-    DOM.btnAdjustPains.addEventListener('click', handleAdjustPains);
+  // Event Listeners - Pains (confirmación individual)
+  if (DOM.btnContinuePains) {
+    DOM.btnContinuePains.addEventListener('click', handleContinuePains);
   }
 
   // Event Listeners - Audio
