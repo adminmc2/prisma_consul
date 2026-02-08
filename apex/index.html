@@ -592,7 +592,7 @@
       </div>
     </section>
 
-    <!-- ==================== TRANSICIÓN A MAXDIFF ==================== -->
+    <!-- ==================== TRANSICIÓN A PRIORIZACIÓN ==================== -->
     <section class="form-screen" data-screen="transition-maxdiff">
       <div class="screen-content">
         <div class="transition-icon">
@@ -606,30 +606,32 @@
         <h2 class="transition-title">Ahora vamos a priorizar</h2>
         <p class="transition-subtitle">
           Seleccionaste <strong id="situacionesCount">6</strong> situaciones.<br>
-          Ayúdanos a entender cuáles te afectan más.
+          Toca cada tarjeta en orden de importancia.
         </p>
       </div>
     </section>
 
-    <!-- ==================== FASE 2B: MAXDIFF (priorización) ==================== -->
+    <!-- ==================== FASE 2B: PRIORIZACIÓN POR TOQUE ==================== -->
     <section class="form-screen" data-screen="maxdiff-priorizar" data-phase="2">
       <div class="screen-content screen-content--wide">
-        <div class="maxdiff-header">
-          <div class="maxdiff-progress">
-            Ronda <span id="maxdiffRound">1</span> / <span id="maxdiffTotal">3</span>
+        <div class="rank-header">
+          <h2 class="rank-title">Toca en orden de prioridad</h2>
+          <p class="rank-hint">1 = lo que más te afecta. Toca para deshacer.</p>
+          <div class="rank-progress">
+            <span id="rankCount">0</span> / <span id="rankTotal">0</span> ordenadas
           </div>
-          <h2 class="maxdiff-title" id="maxdiffTitle">¿Cuál te afecta <strong>MÁS</strong>?</h2>
-          <p class="maxdiff-hint">Toca la tarjeta para seleccionar</p>
         </div>
 
-        <div class="maxdiff-options" id="maxdiffOptions">
-          <!-- Se generan las opciones dinámicamente como tarjetas clickeables -->
+        <div class="rank-grid" id="rankGrid">
+          <!-- Se generan las tarjetas dinámicamente -->
         </div>
 
-        <div class="maxdiff-question maxdiff-question--least hidden" id="maxdiffLeastSection">
-          <h3>Ahora, ¿cuál te afecta <strong>MENOS</strong>?</h3>
-          <p class="maxdiff-hint-small">Toca otra tarjeta (no la verde)</p>
-        </div>
+        <button class="btn-primary rank-continue hidden" id="btnRankContinue">
+          <span>Continuar</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
       </div>
     </section>
 

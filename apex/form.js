@@ -381,13 +381,11 @@ const FormState = {
     descartadas: [],         // IDs descartadas (swipe left)
     currentSwipeIndex: 0,    // Índice actual en el swipe
 
-    // Fase MaxDiff: priorización de las seleccionadas
-    maxdiffRounds: [],       // Rondas de MaxDiff completadas
-    currentMaxdiffRound: 0,  // Ronda actual
-    maxdiffResults: {},      // Scores acumulados por situación
+    // Fase priorización por toque
+    rankOrder: [],           // TODAS las seleccionadas en orden de importancia
 
-    // Resultado final: top 4 situaciones priorizadas
-    top4: []                 // Las 4 situaciones con mayor score
+    // Resultado final
+    top4: []                 // Las 4 situaciones más importantes
   },
 
   // Pains detectados
@@ -611,12 +609,12 @@ async function onScreenEnter(screenName) {
       initSwipeScreen();
       break;
     case 'transition-maxdiff':
-      // Esperar y luego ir a MaxDiff
+      // Esperar y luego ir a priorización por toque
       await sleep(2000);
       await goToScreen('maxdiff-priorizar');
       break;
     case 'maxdiff-priorizar':
-      initMaxDiff();
+      initRankByTap();
       break;
     case 'top4-resultado':
       renderTop4Resultado();
@@ -1339,176 +1337,134 @@ async function handleSwipeComplete() {
   }
 
   if (seleccionadas.length <= 4) {
-    // Si 4 o menos, esas son el top4 directamente (sin MaxDiff)
+    // Si 4 o menos, esas son el top4 directamente (sin priorización)
     FormState.situaciones.top4 = seleccionadas.slice(0, 4);
+    FormState.situaciones.rankOrder = seleccionadas.slice();
     await goToScreen('top4-resultado');
     return;
   }
 
-  // Si más de 4, necesitamos MaxDiff para priorizar
+  // Si más de 4, priorización por toque
   document.getElementById('situacionesCount').textContent = seleccionadas.length;
   await goToScreen('transition-maxdiff');
   // La transición a maxdiff-priorizar se maneja en onScreenEnter('transition-maxdiff')
 }
 
 // ============================================================
-// FASE 2B: MAXDIFF - Priorización de situaciones
+// FASE 2B: PRIORIZACIÓN POR TOQUE
 // ============================================================
 
-function initMaxDiff() {
+function initRankByTap() {
   const seleccionadas = FormState.situaciones.seleccionadas;
 
-  // Calcular número de rondas (mínimo 3, máximo 5)
-  const numRounds = Math.min(Math.max(3, Math.ceil(seleccionadas.length / 2)), 5);
+  // Orden en que el usuario va tocando (array de IDs)
+  FormState.situaciones.rankOrder = [];
 
-  FormState.situaciones.maxdiffRounds = generateMaxDiffRounds(seleccionadas, numRounds);
-  FormState.situaciones.currentMaxdiffRound = 0;
-  FormState.situaciones.maxdiffResults = {};
+  const grid = document.getElementById('rankGrid');
+  const countEl = document.getElementById('rankCount');
+  const totalEl = document.getElementById('rankTotal');
+  const btnContinue = document.getElementById('btnRankContinue');
 
-  // Inicializar scores en 0
-  seleccionadas.forEach(id => {
-    FormState.situaciones.maxdiffResults[id] = 0;
-  });
+  totalEl.textContent = seleccionadas.length;
+  countEl.textContent = '0';
+  btnContinue.classList.add('hidden');
 
-  renderMaxDiffRound();
-}
-
-function generateMaxDiffRounds(situacionIds, numRounds) {
-  const rounds = [];
-  const shuffled = [...situacionIds];
-
-  for (let r = 0; r < numRounds; r++) {
-    // Shuffle para cada ronda
-    shuffled.sort(() => Math.random() - 0.5);
-
-    // Tomar 4 situaciones (o menos si no hay suficientes)
-    const roundOptions = shuffled.slice(0, Math.min(4, shuffled.length));
-
-    // Rotar el array para la siguiente ronda
-    if (shuffled.length > 4) {
-      const first = shuffled.shift();
-      shuffled.push(first);
-    }
-
-    rounds.push({
-      options: roundOptions,
-      most: null,
-      least: null
-    });
-  }
-
-  return rounds;
-}
-
-function renderMaxDiffRound() {
-  const roundIndex = FormState.situaciones.currentMaxdiffRound;
-  const rounds = FormState.situaciones.maxdiffRounds;
-
-  if (roundIndex >= rounds.length) {
-    handleMaxDiffComplete();
-    return;
-  }
-
-  const round = rounds[roundIndex];
-  const optionsContainer = document.getElementById('maxdiffOptions');
-  const leastSection = document.getElementById('maxdiffLeastSection');
-  const roundEl = document.getElementById('maxdiffRound');
-  const totalEl = document.getElementById('maxdiffTotal');
-
-  // Update progress
-  roundEl.textContent = roundIndex + 1;
-  totalEl.textContent = rounds.length;
-
-  // Reset selections
-  round.most = null;
-  round.least = null;
-  leastSection.classList.add('hidden');
-
-  // Render clickable option cards (con Phosphor Icons)
-  optionsContainer.innerHTML = round.options.map((id) => {
+  // Render todas las tarjetas seleccionadas
+  grid.innerHTML = seleccionadas.map(id => {
     const situacion = getSituaciones().find(s => s.id === id);
     return `
-      <div class="maxdiff-option maxdiff-option--clickable" data-id="${id}">
-        <div class="maxdiff-option__icon"><i class="ph ${situacion.icono}"></i></div>
-        <h4 class="maxdiff-option__title">${situacion.titulo}</h4>
-        <p class="maxdiff-option__desc">${situacion.descripcion.substring(0, 100)}...</p>
+      <div class="rank-card" data-id="${id}">
+        <div class="rank-card__badge"></div>
+        <div class="rank-card__icon"><i class="ph ${situacion.icono}"></i></div>
+        <h4 class="rank-card__title">${situacion.titulo}</h4>
       </div>
     `;
   }).join('');
 
-  // Add click event listeners to cards
-  optionsContainer.querySelectorAll('.maxdiff-option').forEach(card => {
-    card.addEventListener('click', handleMaxDiffCardClick);
+  // Click listeners
+  grid.querySelectorAll('.rank-card').forEach(card => {
+    card.addEventListener('click', handleRankCardClick);
   });
+
+  // Botón continuar
+  btnContinue.onclick = handleRankComplete;
 }
 
-function handleMaxDiffCardClick(e) {
+function handleRankCardClick(e) {
   const card = e.currentTarget;
   const id = card.dataset.id;
-  const roundIndex = FormState.situaciones.currentMaxdiffRound;
-  const round = FormState.situaciones.maxdiffRounds[roundIndex];
-  const optionsContainer = document.getElementById('maxdiffOptions');
-  const leastSection = document.getElementById('maxdiffLeastSection');
+  const rankOrder = FormState.situaciones.rankOrder;
+  const countEl = document.getElementById('rankCount');
+  const totalEl = document.getElementById('rankTotal');
+  const btnContinue = document.getElementById('btnRankContinue');
 
-  // Si aún no se ha elegido "más afecta"
-  if (!round.most) {
-    round.most = id;
+  const existingIndex = rankOrder.indexOf(id);
 
-    // Highlight selected as "most"
-    optionsContainer.querySelectorAll('.maxdiff-option').forEach(opt => {
-      opt.classList.remove('selected-most', 'selected-least', 'disabled');
-      if (opt.dataset.id === id) {
-        opt.classList.add('selected-most');
+  if (existingIndex !== -1) {
+    // Ya está rankeada → deshacer este y todos los posteriores
+    const removed = rankOrder.splice(existingIndex);
+
+    // Actualizar UI de todas las tarjetas removidas
+    removed.forEach(removedId => {
+      const removedCard = document.querySelector(`.rank-card[data-id="${removedId}"]`);
+      if (removedCard) {
+        removedCard.classList.remove('ranked', 'rank-top4');
+        removedCard.querySelector('.rank-card__badge').textContent = '';
       }
     });
+  } else {
+    // Nueva selección → agregar al ranking
+    rankOrder.push(id);
+    card.classList.add('ranked');
+    card.querySelector('.rank-card__badge').textContent = rankOrder.length;
+  }
 
-    // Show least question and update title
-    leastSection.classList.remove('hidden');
+  // Actualizar badges y highlights de top4
+  rankOrder.forEach((rankedId, idx) => {
+    const rankedCard = document.querySelector(`.rank-card[data-id="${rankedId}"]`);
+    if (rankedCard) {
+      rankedCard.classList.add('ranked');
+      rankedCard.querySelector('.rank-card__badge').textContent = idx + 1;
 
-    // Scroll suave a la sección de "menos"
-    leastSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Las primeras 4 tienen highlight especial
+      if (idx < 4) {
+        rankedCard.classList.add('rank-top4');
+      } else {
+        rankedCard.classList.remove('rank-top4');
+      }
+    }
+  });
 
-  } else if (!round.least && id !== round.most) {
-    // Elegir "menos afecta" (no puede ser el mismo que "más")
-    round.least = id;
+  countEl.textContent = rankOrder.length;
 
-    // Highlight selected as "least"
-    card.classList.add('selected-least');
+  const total = FormState.situaciones.seleccionadas.length;
 
-    // Record scores
-    FormState.situaciones.maxdiffResults[round.most] += 1;
-    FormState.situaciones.maxdiffResults[round.least] -= 1;
-
-    // Next round after short delay
-    setTimeout(() => {
-      FormState.situaciones.currentMaxdiffRound++;
-      renderMaxDiffRound();
-
-      // Scroll back to top
-      document.getElementById('maxdiffOptions').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 600);
+  // Mostrar botón continuar solo cuando TODAS están rankeadas
+  if (rankOrder.length >= total) {
+    btnContinue.classList.remove('hidden');
+  } else {
+    btnContinue.classList.add('hidden');
   }
 }
 
-async function handleMaxDiffComplete() {
-  console.log('MaxDiff completado:', FormState.situaciones.maxdiffResults);
+async function handleRankComplete() {
+  const rankOrder = FormState.situaciones.rankOrder;
+  console.log('Priorización completada:', rankOrder);
 
-  // Ordenar por score y tomar top 4
-  const sorted = Object.entries(FormState.situaciones.maxdiffResults)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 4)
-    .map(([id]) => id);
-
-  FormState.situaciones.top4 = sorted;
+  // Top 4 = las primeras 4 tocadas
+  FormState.situaciones.top4 = rankOrder.slice(0, 4);
 
   await goToScreen('top4-resultado');
 }
 
 function renderTop4Resultado() {
+  const rankOrder = FormState.situaciones.rankOrder;
   const top4 = FormState.situaciones.top4;
+  const rest = rankOrder.slice(4);
   const container = document.getElementById('top4List');
 
-  container.innerHTML = top4.map((id, index) => {
+  // Grupo 1: Los 4 focos principales
+  let html = top4.map((id, index) => {
     const situacion = getSituaciones().find(s => s.id === id);
     return `
       <div class="top4-card">
@@ -1523,6 +1479,32 @@ function renderTop4Resultado() {
       </div>
     `;
   }).join('');
+
+  // Grupo 2: También te afectan (si hay más de 4)
+  if (rest.length > 0) {
+    html += `
+      <div class="also-affects">
+        <h4 class="also-affects__title">También te afectan</h4>
+        <div class="also-affects__list">
+          ${rest.map((id) => {
+            const s = getSituaciones().find(sit => sit.id === id);
+            return `<span class="also-affects__item">
+              <i class="ph ${s.icono}"></i> ${s.titulo}
+            </span>`;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // Mensaje final
+  html += `
+    <p class="top4-message">
+      Vamos a profundizar en tus 4 focos principales${rest.length > 0 ? ', considerando también el resto de situaciones que te afectan' : ''}.
+    </p>
+  `;
+
+  container.innerHTML = html;
 }
 
 async function handleContinueFromTop4() {
