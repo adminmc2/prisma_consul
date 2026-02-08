@@ -15,6 +15,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
 
+  <!-- Phosphor Icons (local) -->
+  <link rel="stylesheet" href="fonts/phosphor.css">
+
   <!-- Styles -->
   <link rel="stylesheet" href="form.css">
 </head>
@@ -266,9 +269,9 @@
             <span class="option-key">C</span>
             <span class="option-text">Manufactura / Producción</span>
           </button>
-          <button class="option-btn" data-value="services">
+          <button class="option-btn" data-value="clinica">
             <span class="option-key">D</span>
-            <span class="option-text">Servicios profesionales</span>
+            <span class="option-text">Clínica médica, estética o dental</span>
           </button>
           <button class="option-btn" data-value="retail">
             <span class="option-key">E</span>
@@ -491,7 +494,7 @@
       </div>
     </section>
 
-    <!-- ==================== TRANSICIÓN A FASE 2 ==================== -->
+    <!-- ==================== TRANSICIÓN A FASE 2: SITUACIONES ==================== -->
     <section class="form-screen" data-screen="transition-phase2">
       <div class="screen-content">
         <div class="transition-icon">
@@ -499,12 +502,170 @@
             <span></span><span></span><span></span>
           </div>
         </div>
-        <h2 class="transition-title">Analizando tu situación...</h2>
-        <p class="transition-subtitle">Preparando preguntas personalizadas</p>
+        <h2 class="transition-title">Analizando tu contexto...</h2>
+        <p class="transition-subtitle">Preparando situaciones relevantes para ti</p>
       </div>
     </section>
 
-    <!-- ==================== FASE 2: PREGUNTAS ADAPTATIVAS ==================== -->
+    <!-- ==================== SELECCIÓN DE TIPO DE NEGOCIO ==================== -->
+    <section class="form-screen" data-screen="tipo-negocio">
+      <div class="screen-content">
+        <h2 class="question-title">¿Qué tipo de negocio tienes?</h2>
+        <p class="question-hint">Esto nos permite mostrarte las situaciones más relevantes para ti</p>
+
+        <div class="tipo-negocio-grid">
+          <button class="tipo-negocio-btn" data-tipo="distribuidor">
+            <div class="tipo-negocio-btn__icon"><i class="ph ph-truck"></i></div>
+            <h3 class="tipo-negocio-btn__title">Distribuidor</h3>
+            <p class="tipo-negocio-btn__desc">Distribuidora farmacéutica o de dispositivos médicos con equipo de campo</p>
+          </button>
+          <button class="tipo-negocio-btn" data-tipo="clinica">
+            <div class="tipo-negocio-btn__icon"><i class="ph ph-first-aid-kit"></i></div>
+            <h3 class="tipo-negocio-btn__title">Clínica</h3>
+            <p class="tipo-negocio-btn__desc">Clínica médica, estética, dental u otro centro de salud</p>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== FASE 2A: SWIPE CARDS (16 situaciones) ==================== -->
+    <section class="form-screen" data-screen="swipe-situaciones" data-phase="2">
+      <div class="screen-content screen-content--wide">
+        <div class="swipe-header">
+          <div class="swipe-progress">
+            <span id="swipeCounter">1</span> / <span id="swipeTotal">16</span>
+          </div>
+          <h2 class="swipe-title">¿Esta situación te afecta?</h2>
+          <p class="swipe-hint">Desliza a la derecha si te identificas, a la izquierda si no aplica</p>
+        </div>
+
+        <div class="swipe-container" id="swipeContainer">
+          <div class="swipe-stack" id="swipeStack">
+            <!-- Carta 3 (fondo) -->
+            <div class="swipe-card swipe-card--stack-2" id="swipeCard2">
+              <div class="swipe-card__icon"></div>
+              <h3 class="swipe-card__title"></h3>
+              <p class="swipe-card__description"></p>
+            </div>
+            <!-- Carta 2 (medio) -->
+            <div class="swipe-card swipe-card--stack-1" id="swipeCard1">
+              <div class="swipe-card__icon"></div>
+              <h3 class="swipe-card__title"></h3>
+              <p class="swipe-card__description"></p>
+            </div>
+            <!-- Carta 1 (activa/top) -->
+            <div class="swipe-card swipe-card--active" id="swipeCard">
+              <div class="swipe-card__icon" id="swipeCardIcon"></div>
+              <h3 class="swipe-card__title" id="swipeCardTitle">Cargando...</h3>
+              <p class="swipe-card__description" id="swipeCardDescription">...</p>
+              <div class="swipe-card__indicator swipe-card__indicator--left">
+                <span>No aplica</span>
+              </div>
+              <div class="swipe-card__indicator swipe-card__indicator--right">
+                <span>Me afecta</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="swipe-actions">
+          <button class="swipe-btn swipe-btn--no" id="btnSwipeNo" title="No me afecta">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+          <button class="swipe-btn swipe-btn--yes" id="btnSwipeYes" title="Sí me afecta">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="swipe-legend">
+          <div class="swipe-legend__item">
+            <kbd>←</kbd> No aplica
+          </div>
+          <div class="swipe-legend__item">
+            <kbd>→</kbd> Me afecta
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TRANSICIÓN A MAXDIFF ==================== -->
+    <section class="form-screen" data-screen="transition-maxdiff">
+      <div class="screen-content">
+        <div class="transition-icon">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--tech-cyan)" stroke-width="2">
+            <path d="M3 3v18h18"/>
+            <path d="M18 17V9"/>
+            <path d="M13 17V5"/>
+            <path d="M8 17v-3"/>
+          </svg>
+        </div>
+        <h2 class="transition-title">Ahora vamos a priorizar</h2>
+        <p class="transition-subtitle">
+          Seleccionaste <strong id="situacionesCount">6</strong> situaciones.<br>
+          Ayúdanos a entender cuáles te afectan más.
+        </p>
+      </div>
+    </section>
+
+    <!-- ==================== FASE 2B: MAXDIFF (priorización) ==================== -->
+    <section class="form-screen" data-screen="maxdiff-priorizar" data-phase="2">
+      <div class="screen-content screen-content--wide">
+        <div class="maxdiff-header">
+          <div class="maxdiff-progress">
+            Ronda <span id="maxdiffRound">1</span> / <span id="maxdiffTotal">3</span>
+          </div>
+          <h2 class="maxdiff-title" id="maxdiffTitle">¿Cuál te afecta <strong>MÁS</strong>?</h2>
+          <p class="maxdiff-hint">Toca la tarjeta para seleccionar</p>
+        </div>
+
+        <div class="maxdiff-options" id="maxdiffOptions">
+          <!-- Se generan las opciones dinámicamente como tarjetas clickeables -->
+        </div>
+
+        <div class="maxdiff-question maxdiff-question--least hidden" id="maxdiffLeastSection">
+          <h3>Ahora, ¿cuál te afecta <strong>MENOS</strong>?</h3>
+          <p class="maxdiff-hint-small">Toca otra tarjeta (no la verde)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== RESULTADO: TOP 4 SITUACIONES ==================== -->
+    <section class="form-screen" data-screen="top4-resultado" data-phase="2">
+      <div class="screen-content screen-content--wide">
+        <h2 class="top4-title">Tus 4 situaciones prioritarias</h2>
+        <p class="top4-subtitle">Estas son las áreas donde APEX te ayudará primero</p>
+
+        <div class="top4-list" id="top4List">
+          <!-- Se generan las 4 cards dinámicamente -->
+        </div>
+
+        <button class="btn-primary" id="btnContinueTop4">
+          <span>Continuar</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== TRANSICIÓN A PREGUNTAS ADAPTATIVAS ==================== -->
+    <section class="form-screen" data-screen="transition-phase2-questions">
+      <div class="screen-content">
+        <div class="transition-icon">
+          <div class="loading-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <h2 class="transition-title">Preparando preguntas...</h2>
+        <p class="transition-subtitle">Personalizando según tus situaciones prioritarias</p>
+      </div>
+    </section>
+
+    <!-- ==================== FASE 2C: PREGUNTAS ADAPTATIVAS (basadas en top 4) ==================== -->
     <section class="form-screen" data-screen="phase2-questions" data-phase="2">
       <div class="screen-content">
         <div class="question-number" id="adaptiveQuestionNumber">6 <span class="question-total">/ 8</span></div>

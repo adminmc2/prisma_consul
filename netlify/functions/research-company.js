@@ -64,58 +64,141 @@ exports.handler = async (event) => {
     let tavilyAnswer = null;
     let tavilySources = [];
 
+    // Extraer nombre legible del dominio (ej: "https://clinicaarmc.com" → "clinicaarmc")
+    function extractNameFromUrl(url) {
+      try {
+        const hostname = new URL(url).hostname.replace('www.', '');
+        const name = hostname.split('.')[0]; // "clinicaarmc"
+        // Separar camelCase o palabras pegadas comunes
+        return name.replace(/[-_]/g, ' ');
+      } catch {
+        return url;
+      }
+    }
+
+    const isUrl = website && (website.startsWith('http') || website.includes('.'));
+    const companyNameForSearch = companyName || (isUrl ? extractNameFromUrl(website) : searchQuery);
+
     // PASO 1: Búsqueda web con TAVILY
     console.log('TAVILY_API_KEY configured:', !!TAVILY_API_KEY);
     if (TAVILY_API_KEY) {
-      try {
-        console.log('Searching with Tavily for:', searchQuery);
 
-        const tavilyResponse = await fetchWithTimeout(
-          'https://api.tavily.com/search',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
+      // Ejecutar Extract (si es URL) y Search EN PARALELO para ahorrar tiempo
+      const searchTerm = companyNameForSearch;
+      console.log('Starting Tavily calls in parallel. Extract URL:', isUrl ? website : 'N/A', '| Search term:', searchTerm);
+
+      // Promesa de Extract (solo si hay URL)
+      const extractPromise = isUrl ? (async () => {
+        try {
+          const extractResponse = await fetchWithTimeout(
+            'https://api.tavily.com/extract',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${TAVILY_API_KEY}`
+              },
+              body: JSON.stringify({
+                urls: [website],
+                extract_depth: 'basic',
+                chunks_per_source: 3,
+                format: 'text'
+              })
             },
-            body: JSON.stringify({
-              api_key: TAVILY_API_KEY,
-              query: `${searchQuery} empresa qué hace cómo opera equipo ventas distribuidores`,
-              search_depth: 'advanced',
-              include_answer: true,
-              max_results: 5
-            })
-          },
-          20000
-        );
+            12000
+          );
 
-        if (tavilyResponse.ok) {
-          const tavilyData = await tavilyResponse.json();
-
-          // Obtener respuesta resumida
-          tavilyAnswer = tavilyData.answer || null;
-
-          // Combinar contenido de las fuentes
-          if (tavilyData.results && tavilyData.results.length > 0) {
-            tavilySources = tavilyData.results.map(r => ({
-              title: r.title,
-              url: r.url,
-              content: r.content
-            }));
-
-            // Construir texto de resultados
-            webSearchResults = tavilyData.results
-              .map(r => `${r.title}: ${r.content}`)
-              .join('\n\n');
-
-            searchExecuted = true;
-            console.log('Tavily search successful, found', tavilyData.results.length, 'results');
+          if (extractResponse.ok) {
+            const extractData = await extractResponse.json();
+            if (extractData.results && extractData.results.length > 0) {
+              let content = extractData.results[0].raw_content;
+              if (content && content.length > 3000) {
+                content = content.substring(0, 3000) + '...';
+              }
+              console.log('Extract successful, got', content?.length, 'chars');
+              return content;
+            }
+          } else {
+            console.error('Tavily extract error:', extractResponse.status);
           }
-        } else {
-          console.error('Tavily error:', tavilyResponse.status);
+          return null;
+        } catch (err) {
+          console.error('Tavily extract failed:', err.message);
+          return null;
         }
-      } catch (tavilyError) {
-        console.error('Tavily search failed:', tavilyError.message);
+      })() : Promise.resolve(null);
+
+      // Promesa de Search
+      const searchPromise = (async () => {
+        try {
+          const tavilyResponse = await fetchWithTimeout(
+            'https://api.tavily.com/search',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                api_key: TAVILY_API_KEY,
+                query: `"${searchTerm}" qué hace servicios sector`,
+                search_depth: 'advanced',
+                include_answer: true,
+                max_results: 5,
+                exclude_domains: ['linguee.com', 'wordreference.com', 'bab.la', 'translate.google.com', 'deepl.com', 'reverso.net', 'fastercapital.com', 'edirectorio.net']
+              })
+            },
+            12000
+          );
+
+          if (tavilyResponse.ok) {
+            const tavilyData = await tavilyResponse.json();
+            console.log('Tavily search successful, found', tavilyData.results?.length || 0, 'results');
+            return tavilyData;
+          } else {
+            console.error('Tavily search error:', tavilyResponse.status);
+          }
+          return null;
+        } catch (err) {
+          console.error('Tavily search failed:', err.message);
+          return null;
+        }
+      })();
+
+      // Esperar ambas en paralelo
+      const [extractedContent, searchData] = await Promise.all([extractPromise, searchPromise]);
+
+      // Procesar resultados de Search
+      if (searchData) {
+        tavilyAnswer = searchData.answer || null;
+
+        if (searchData.results && searchData.results.length > 0) {
+          tavilySources = searchData.results.map(r => ({
+            title: r.title,
+            url: r.url,
+            content: r.content
+          }));
+
+          webSearchResults = searchData.results
+            .map(r => `${r.title}: ${r.content}`)
+            .join('\n\n');
+
+          searchExecuted = true;
+        }
       }
+
+      // Procesar resultados de Extract
+      if (extractedContent) {
+        tavilySources.unshift({
+          title: 'Sitio web de la empresa',
+          url: website,
+          content: extractedContent.substring(0, 300)
+        });
+
+        webSearchResults = (webSearchResults || '') +
+          '\n\nCONTENIDO DIRECTO DEL SITIO WEB:\n' + extractedContent;
+        searchExecuted = true;
+      }
+
     } else {
       console.log('No TAVILY_API_KEY configured');
     }
@@ -138,19 +221,19 @@ NO asumas nada. Si no está claro, pon null y por_preguntar = true.
 
 Responde SOLO con JSON válido, sin markdown.`;
 
-    const userPrompt = `Analiza: "${searchQuery}"
+    const userPrompt = `Analiza: "${companyNameForSearch}"${website ? ` (web: ${website})` : ''}
 
 Genera este JSON:
 {
   "empresa": {
     "nombre": "Nombre encontrado o el que buscamos",
-    "sector": "pharma|distribution|manufacturing|services|retail|other|null",
+    "sector": "pharma|distribution|clinica|manufacturing|retail|other|null",
     "descripcion_procesos": "Describe CÓMO TRABAJAN basado en la búsqueda (2-3 oraciones). Si no hay info, dejar vacío."
   },
 
   "detectado": {
     "tiene_equipo_campo": true|false|null,
-    "sector": "pharma|distribution|manufacturing|services|retail|other|null",
+    "sector": "pharma|distribution|clinica|manufacturing|retail|other|null",
     "es_regulado": true|false|null,
     "maneja_muestras": true|false|null,
     "tamaño_estimado": "1-5|6-15|16-30|30+|null",
@@ -184,6 +267,7 @@ REGLAS ESTRICTAS:
 - confianza = 0.2 si no hay información
 
 PISTAS PARA DETECTAR:
+- sector=clinica: clínica médica, clínica estética, consultorio, centro de salud, dental, dermatología, medicina estética, spa médico, hospital, laboratorio clínico, fisioterapia, oftalmología, ginecología
 - tiene_equipo_campo: vendedores, representantes, visitadores, reps en calle
 - usa_crm_o_sistema: mencionan Salesforce, HubSpot, Zoho, SAP, sistema CRM
 - info_clientes_centralizada: base de datos de clientes, CRM, sistema centralizado

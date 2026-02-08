@@ -41,6 +41,294 @@ const CONFIG = {
 // La base de conocimientos se carga desde pain-knowledge-base.js
 // Las variables PAIN_CATALOG, PAIN_CLUSTERS y CLUSTER_QUESTIONS ya están disponibles globalmente
 
+// ============================================================
+// 16 SITUACIONES PROBLEMÁTICAS (Categorías A-P)
+// El cliente las califica directamente
+// ============================================================
+
+// Tipos de negocio soportados
+const TIPOS_NEGOCIO = {
+  distribuidor: {
+    label: 'Distribuidor',
+    descripcion: 'Distribuidora farmacéutica o de dispositivos médicos con equipo de campo'
+  },
+  clinica: {
+    label: 'Clínica',
+    descripcion: 'Clínica médica, estética, dental u otro centro de salud'
+  }
+};
+
+// ---- SITUACIONES PARA DISTRIBUIDORES ----
+const SITUACIONES_DISTRIBUIDOR = [
+  {
+    id: 'A',
+    categoria: 'A',
+    titulo: 'No sé qué hace mi equipo de campo',
+    descripcion: 'Tus representantes salen a la calle pero no tienes visibilidad de sus actividades, rutas ni resultados del día.',
+    icono: 'ph-gps-slash',
+    clusters: ['A-VISIBILIDAD', 'A-UBICACION', 'A-REGISTRO', 'A-COBERTURA']
+  },
+  {
+    id: 'B',
+    categoria: 'B',
+    titulo: 'Mi base de clientes está desordenada',
+    descripcion: 'Los datos de contactos y clientes están dispersos, desactualizados o cada vendedor tiene su propia lista.',
+    icono: 'ph-users-three',
+    clusters: ['B-CENTRALIZACION', 'B-DATOS', 'B-HISTORIAL']
+  },
+  {
+    id: 'C',
+    categoria: 'C',
+    titulo: 'Las muestras médicas no tienen control',
+    descripcion: 'No sabes cuántas muestras tiene cada rep, a quién las entregaron, ni puedes rastrear lotes para auditorías.',
+    icono: 'ph-pill',
+    clusters: ['C-TRAZABILIDAD', 'C-INVENTARIO', 'C-COMPLIANCE']
+  },
+  {
+    id: 'D',
+    categoria: 'D',
+    titulo: 'Las oportunidades de venta se pierden',
+    descripcion: 'No hay un pipeline visible, las cotizaciones no se registran y no sabes en qué etapa está cada negociación.',
+    icono: 'ph-trend-down',
+    clusters: ['D-PIPELINE', 'D-SEGUIMIENTO', 'D-VISIBILIDAD']
+  },
+  {
+    id: 'E',
+    categoria: 'E',
+    titulo: 'La cobranza es un dolor de cabeza',
+    descripcion: 'Hay facturas vencidas que nadie sigue, no tienes alertas automáticas y los morosos siguen comprando.',
+    icono: 'ph-money',
+    clusters: ['E-SEGUIMIENTO', 'E-ALERTAS', 'E-VISIBILIDAD']
+  },
+  {
+    id: 'F',
+    categoria: 'F',
+    titulo: 'Los reportes me quitan el día',
+    descripcion: 'Generar un reporte para dirección toma horas o días porque tienes que buscar y consolidar datos de varios lugares.',
+    icono: 'ph-file-x',
+    clusters: ['F-TIEMPO', 'F-AUTOMATIZACION', 'F-DASHBOARDS']
+  },
+  {
+    id: 'G',
+    categoria: 'G',
+    titulo: 'La tecnología actual no funciona',
+    descripcion: 'Usas Excel, WhatsApp o un CRM que nadie adopta. La información está fragmentada en múltiples herramientas.',
+    icono: 'ph-laptop',
+    clusters: ['G-EXCEL', 'G-ADOPCION', 'G-FRAGMENTACION']
+  },
+  {
+    id: 'H',
+    categoria: 'H',
+    titulo: 'La comunicación interna falla',
+    descripcion: 'Los mensajes importantes se pierden, no hay un canal oficial, y coordinar al equipo es complicado.',
+    icono: 'ph-chat-slash',
+    clusters: ['H-CANALES', 'H-VISIBILIDAD', 'H-ALINEACION']
+  },
+  {
+    id: 'I',
+    categoria: 'I',
+    titulo: 'Los clientes se quejan del servicio',
+    descripcion: 'No das seguimiento a lo que prometes, tardas en responder, y los clientes sienten que no les prestas atención.',
+    icono: 'ph-user-minus',
+    clusters: ['I-SEGUIMIENTO', 'I-RESPUESTA', 'I-SATISFACCION']
+  },
+  {
+    id: 'J',
+    categoria: 'J',
+    titulo: 'El marketing no se mide',
+    descripcion: 'Haces campañas o eventos pero no sabes qué funciona. No tienes ROI ni puedes atribuir resultados.',
+    icono: 'ph-megaphone-simple',
+    clusters: ['J-ROI', 'J-ATRIBUCION', 'J-MATERIALES']
+  },
+  {
+    id: 'K',
+    categoria: 'K',
+    titulo: 'Planeamos a ciegas',
+    descripcion: 'No tienes datos para tomar decisiones estratégicas. Los planes se hacen por intuición, no por evidencia.',
+    icono: 'ph-compass',
+    clusters: ['K-DATOS', 'K-OBJETIVOS', 'K-TERRITORIOS']
+  },
+  {
+    id: 'L',
+    categoria: 'L',
+    titulo: 'Las auditorías me asustan',
+    descripcion: 'No estás preparado para una auditoría de regulación. Documentos dispersos, firmas sin digitalizar, trazabilidad incompleta.',
+    icono: 'ph-shield-warning',
+    clusters: ['L-DOCUMENTACION', 'L-FIRMAS', 'L-TRAZABILIDAD']
+  },
+  {
+    id: 'M',
+    categoria: 'M',
+    titulo: 'Capacitar al equipo es difícil',
+    descripcion: 'Los nuevos tardan mucho en aprender, no hay material de capacitación, y la rotación te obliga a empezar de cero.',
+    icono: 'ph-graduation-cap',
+    clusters: ['M-ONBOARDING', 'M-ROTACION', 'M-CONOCIMIENTO']
+  },
+  {
+    id: 'N',
+    categoria: 'N',
+    titulo: 'Los eventos no dan resultados',
+    descripcion: 'Organizas congresos, webinars o reuniones pero no capturas leads ni mides el impacto real.',
+    icono: 'ph-calendar-x',
+    clusters: ['N-CAPTURA', 'N-SEGUIMIENTO', 'N-ROI']
+  },
+  {
+    id: 'O',
+    categoria: 'O',
+    titulo: 'No sé qué hace la competencia',
+    descripcion: 'Desconoces qué productos promueven, a qué médicos visitan, o qué estrategias usan tus competidores.',
+    icono: 'ph-eye-slash',
+    clusters: ['O-INTELIGENCIA', 'O-COMPARATIVO', 'O-ESTRATEGIA']
+  },
+  {
+    id: 'P',
+    categoria: 'P',
+    titulo: 'Trabajo manual que debería ser automático',
+    descripcion: 'Hay tareas repetitivas que podrían automatizarse: recordatorios, reportes, asignaciones, seguimientos.',
+    icono: 'ph-robot',
+    clusters: ['P-TAREAS', 'P-RECORDATORIOS', 'P-AUTOMATICO']
+  }
+];
+
+// ---- SITUACIONES PARA CLÍNICAS ----
+const SITUACIONES_CLINICA = [
+  {
+    id: 'CA',
+    categoria: 'CA',
+    titulo: 'No controlo las citas',
+    descripcion: 'Las citas llegan por WhatsApp, teléfono o redes. Hay cancelaciones sin aviso y huecos en la agenda que nadie llena.',
+    icono: 'ph-calendar-x',
+    clusters: ['CA-AGENDA', 'CA-CANCELACIONES', 'CA-CANALES']
+  },
+  {
+    id: 'CB',
+    categoria: 'CB',
+    titulo: 'Los pacientes no vuelven',
+    descripcion: 'No hay seguimiento post-tratamiento, no recuerdas cuándo toca revisión y pierdes pacientes por falta de contacto.',
+    icono: 'ph-user-minus',
+    clusters: ['CB-SEGUIMIENTO', 'CB-RETENCION', 'CB-REACTIVACION']
+  },
+  {
+    id: 'CC',
+    categoria: 'CC',
+    titulo: 'Los historiales son un caos',
+    descripcion: 'Expedientes en papel, fotos en el móvil del doctor, información clínica dispersa en varios lugares.',
+    icono: 'ph-folder-simple-dashed',
+    clusters: ['CC-EXPEDIENTES', 'CC-FOTOS', 'CC-CENTRALIZACION']
+  },
+  {
+    id: 'CD',
+    categoria: 'CD',
+    titulo: 'No sé qué tratamientos son rentables',
+    descripcion: 'No mides qué servicios dan margen, cuáles no se venden, ni cuánto cuesta realmente cada procedimiento.',
+    icono: 'ph-chart-pie-slice',
+    clusters: ['CD-RENTABILIDAD', 'CD-COSTOS', 'CD-SERVICIOS']
+  },
+  {
+    id: 'CE',
+    categoria: 'CE',
+    titulo: 'La facturación me quita tiempo',
+    descripcion: 'Facturas manuales, errores de cobro, pagos pendientes sin seguimiento y cierres de caja complicados.',
+    icono: 'ph-receipt-x',
+    clusters: ['CE-FACTURACION', 'CE-COBROS', 'CE-PENDIENTES']
+  },
+  {
+    id: 'CF',
+    categoria: 'CF',
+    titulo: 'El stock de insumos falla',
+    descripcion: 'Te enteras que falta material el día del procedimiento. No hay alertas de inventario bajo ni control de caducidades.',
+    icono: 'ph-package',
+    clusters: ['CF-INVENTARIO', 'CF-ALERTAS', 'CF-CADUCIDAD']
+  },
+  {
+    id: 'CG',
+    categoria: 'CG',
+    titulo: 'No tengo presencia digital',
+    descripcion: 'Sin web profesional, redes sociales descuidadas y no atraes pacientes nuevos por canales digitales.',
+    icono: 'ph-globe-simple-x',
+    clusters: ['CG-WEB', 'CG-REDES', 'CG-CAPTACION']
+  },
+  {
+    id: 'CH',
+    categoria: 'CH',
+    titulo: 'La comunicación con el paciente falla',
+    descripcion: 'No confirmas citas automáticamente, no envías preparación pre-consulta ni seguimiento post-tratamiento.',
+    icono: 'ph-chat-slash',
+    clusters: ['CH-CONFIRMACIONES', 'CH-PREPARACION', 'CH-POSTRATA']
+  },
+  {
+    id: 'CI',
+    categoria: 'CI',
+    titulo: 'Las quejas me sorprenden',
+    descripcion: 'No mides satisfacción del paciente, te enteras de las quejas por Google Reviews o redes sociales.',
+    icono: 'ph-star-half',
+    clusters: ['CI-SATISFACCION', 'CI-REVIEWS', 'CI-NPS']
+  },
+  {
+    id: 'CJ',
+    categoria: 'CJ',
+    titulo: 'El equipo no sigue protocolos',
+    descripcion: 'Cada profesional hace las cosas diferente. No hay checklists ni estándares documentados para procedimientos.',
+    icono: 'ph-clipboard-text',
+    clusters: ['CJ-PROTOCOLOS', 'CJ-CHECKLISTS', 'CJ-ESTANDARES']
+  },
+  {
+    id: 'CK',
+    categoria: 'CK',
+    titulo: 'No cumplo con normativa',
+    descripcion: 'Consentimientos informados sin firmar, datos de pacientes sin proteger, documentación incompleta para inspecciones.',
+    icono: 'ph-shield-warning',
+    clusters: ['CK-CONSENTIMIENTOS', 'CK-DATOS', 'CK-INSPECCION']
+  },
+  {
+    id: 'CL',
+    categoria: 'CL',
+    titulo: 'Capacitar al personal es difícil',
+    descripcion: 'Rotación alta, no hay manual de procedimientos, cada nuevo empleado empieza de cero.',
+    icono: 'ph-student',
+    clusters: ['CL-ONBOARDING', 'CL-ROTACION', 'CL-MANUALES']
+  },
+  {
+    id: 'CM',
+    categoria: 'CM',
+    titulo: 'Los reportes me cuestan horas',
+    descripcion: 'Consolidar datos de ocupación, facturación y pacientes es un trabajo manual interminable.',
+    icono: 'ph-chart-bar',
+    clusters: ['CM-REPORTES', 'CM-METRICAS', 'CM-DASHBOARDS']
+  },
+  {
+    id: 'CN',
+    categoria: 'CN',
+    titulo: 'No aprovecho los datos de pacientes',
+    descripcion: 'No segmentas por tipo de tratamiento, no haces campañas de reactivación, no personalizas la comunicación.',
+    icono: 'ph-user-list',
+    clusters: ['CN-SEGMENTACION', 'CN-CAMPANAS', 'CN-PERSONALIZACION']
+  },
+  {
+    id: 'CO',
+    categoria: 'CO',
+    titulo: 'La tecnología no me ayuda',
+    descripcion: 'Software viejo o genérico, hojas de Excel para todo, WhatsApp como único canal de comunicación.',
+    icono: 'ph-laptop',
+    clusters: ['CO-SOFTWARE', 'CO-ADOPCION', 'CO-FRAGMENTACION']
+  },
+  {
+    id: 'CP',
+    categoria: 'CP',
+    titulo: 'Hago todo manual pudiendo automatizar',
+    descripcion: 'Recordatorios de citas, confirmaciones, seguimientos post-tratamiento... todo a mano o no se hace.',
+    icono: 'ph-robot',
+    clusters: ['CP-RECORDATORIOS', 'CP-CONFIRMACIONES', 'CP-AUTOMATICO']
+  }
+];
+
+// Función para obtener las situaciones según el tipo de negocio seleccionado
+function getSituaciones() {
+  const tipo = FormState.tipoNegocio;
+  if (tipo === 'clinica') return SITUACIONES_CLINICA;
+  return SITUACIONES_DISTRIBUIDOR;
+}
+
 // Log de carga
 if (typeof PAIN_CATALOG !== 'undefined' && Object.keys(PAIN_CATALOG).length > 0) {
   console.log(`APEX: Base de conocimientos cargada (${Object.keys(PAIN_CATALOG).length} dolores, ${Object.keys(PAIN_CLUSTERS).length} clusters)`);
@@ -67,7 +355,10 @@ const FormState = {
   currentScreen: 'welcome',
   currentPhase: 0,
 
-  // Información de la empresa (NUEVO)
+  // Tipo de negocio (distribuidor / clinica)
+  tipoNegocio: null,
+
+  // Información de la empresa
   company: {
     name: '',
     website: '',
@@ -81,6 +372,22 @@ const FormState = {
     phase2: {},
     adaptiveQuestions: [],
     currentAdaptiveIndex: 0
+  },
+
+  // NUEVO: Sistema de Swipe + MaxDiff
+  situaciones: {
+    // Fase Swipe: situaciones que el usuario marcó como "me afecta"
+    seleccionadas: [],       // IDs de situaciones seleccionadas (swipe right)
+    descartadas: [],         // IDs descartadas (swipe left)
+    currentSwipeIndex: 0,    // Índice actual en el swipe
+
+    // Fase MaxDiff: priorización de las seleccionadas
+    maxdiffRounds: [],       // Rondas de MaxDiff completadas
+    currentMaxdiffRound: 0,  // Ronda actual
+    maxdiffResults: {},      // Scores acumulados por situación
+
+    // Resultado final: top 4 situaciones priorizadas
+    top4: []                 // Las 4 situaciones con mayor score
   },
 
   // Pains detectados
@@ -181,6 +488,17 @@ function initDOM() {
     btnContinueQ5: document.getElementById('btnContinueQ5'),
     btnContinueQ7: document.getElementById('btnContinueQ7'),
     btnContinueResearch: document.getElementById('btnContinueResearch'),
+    btnContinueTop4: document.getElementById('btnContinueTop4'),
+
+    // Swipe elements
+    swipeCard: document.getElementById('swipeCard'),
+    swipeCardIcon: document.getElementById('swipeCardIcon'),
+    swipeCardTitle: document.getElementById('swipeCardTitle'),
+    swipeCardDescription: document.getElementById('swipeCardDescription'),
+    swipeCounter: document.getElementById('swipeCounter'),
+    swipeTotal: document.getElementById('swipeTotal'),
+    btnSwipeNo: document.getElementById('btnSwipeNo'),
+    btnSwipeYes: document.getElementById('btnSwipeYes'),
   };
 }
 
@@ -255,7 +573,7 @@ function updateNavigationState() {
   const screen = FormState.currentScreen;
 
   // Mostrar/ocultar navegación según pantalla
-  const hideNavScreens = ['welcome', 'thank-you', 'transition-phase2', 'transition-phase3', 'processing-audio', 'researching-company'];
+  const hideNavScreens = ['welcome', 'thank-you', 'transition-phase2', 'transition-phase3', 'processing-audio', 'researching-company', 'swipe-situaciones', 'transition-maxdiff', 'maxdiff-priorizar', 'top4-resultado', 'transition-phase2-questions'];
   showNav(!hideNavScreens.includes(screen));
 
   // Actualizar contador
@@ -280,11 +598,32 @@ async function goBack() {
 
 async function onScreenEnter(screenName) {
   switch (screenName) {
+    case 'tipo-negocio':
+      setupTipoNegocioListeners();
+      break;
     case 'researching-company':
       await handleResearchCompany();
       break;
     case 'transition-phase2':
       await handleTransitionToPhase2();
+      break;
+    case 'swipe-situaciones':
+      initSwipeScreen();
+      break;
+    case 'transition-maxdiff':
+      // Esperar y luego ir a MaxDiff
+      await sleep(2000);
+      await goToScreen('maxdiff-priorizar');
+      break;
+    case 'maxdiff-priorizar':
+      initMaxDiff();
+      break;
+    case 'top4-resultado':
+      renderTop4Resultado();
+      break;
+    case 'transition-phase2-questions':
+      await sleep(CONFIG.loadingMinDuration);
+      await handleTransitionToPhase2Questions();
       break;
     case 'phase2-questions':
       await renderAdaptiveQuestion();
@@ -311,7 +650,29 @@ async function onScreenEnter(screenName) {
 }
 
 // ============================================================
-// NUEVA FASE 0: INVESTIGACIÓN DE EMPRESA
+// SELECCIÓN DE TIPO DE NEGOCIO
+// ============================================================
+
+function setupTipoNegocioListeners() {
+  const buttons = document.querySelectorAll('.tipo-negocio-btn');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Visual feedback
+      buttons.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+
+      // Guardar tipo
+      FormState.tipoNegocio = btn.dataset.tipo;
+      console.log('Tipo de negocio seleccionado:', FormState.tipoNegocio);
+
+      // Avanzar al swipe después de breve pausa
+      setTimeout(() => goToScreen('swipe-situaciones'), 400);
+    });
+  });
+}
+
+// ============================================================
+// INVESTIGACIÓN DE EMPRESA
 // ============================================================
 
 async function handleCompanySubmit() {
@@ -342,15 +703,21 @@ async function handleResearchCompany() {
   }
 
   try {
+    // Timeout de 30 segundos (Extract + Search en paralelo + Groq)
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000);
+
     const response = await fetch(CONFIG.researchApiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         companyName: FormState.company.name,
         website: FormState.company.website
-      })
+      }),
+      signal: controller.signal
     });
 
+    clearTimeout(timeout);
     const data = await response.json();
     console.log('Research results:', data);
 
@@ -390,11 +757,18 @@ function prefillFromDetected(profile) {
 
   console.log('Prefilling from detected:', { detectado, porPreguntar });
 
-  // Sector: pre-rellenar si NO vamos a preguntar
-  if (!porPreguntar.sector && detectado.sector) {
+  // Detectar tipo de negocio para las situaciones del swipe
+  if (detectado.sector) {
     FormState.responses.phase1.sector = detectado.sector;
-    console.log('Prefilled sector:', detectado.sector);
   }
+
+  // Determinar tipo de negocio desde el sector
+  if (detectado.sector === 'clinica') {
+    FormState.tipoNegocio = 'clinica';
+  } else if (detectado.sector) {
+    FormState.tipoNegocio = 'distribuidor';
+  }
+  console.log('Tipo de negocio detectado:', FormState.tipoNegocio, '(sector:', detectado.sector, ')');
 
   // Equipo de campo: pre-rellenar si NO vamos a preguntar
   if (!porPreguntar.tiene_equipo_campo && detectado.tiene_equipo_campo !== null) {
@@ -418,7 +792,7 @@ function showResearchResults(profile, hadWebSearch) {
     'pharma': 'Farmacéutico / Dispositivos médicos',
     'distribution': 'Distribución / Mayorista',
     'manufacturing': 'Manufactura / Producción',
-    'services': 'Servicios profesionales',
+    'clinica': 'Clínica médica, estética o dental',
     'retail': 'Retail / Comercio',
     'other': 'Otro sector'
   };
@@ -523,9 +897,15 @@ function showResearchResults(profile, hadWebSearch) {
 }
 
 async function handleContinueFromResearch() {
-  // Determinar primera pregunta a mostrar
-  const firstScreen = getFirstQuestionToShow();
-  await goToScreen(firstScreen);
+  // Si detectamos tipo de negocio, ir directo al swipe
+  if (FormState.tipoNegocio) {
+    console.log('Tipo detectado:', FormState.tipoNegocio, '→ ir al swipe');
+    await goToScreen('swipe-situaciones');
+  } else {
+    // No se detectó tipo → pedir que elija manualmente
+    console.log('Tipo no detectado → pedir selección manual');
+    await goToScreen('tipo-negocio');
+  }
 }
 
 // Obtener primera pregunta que debemos mostrar
@@ -681,10 +1061,776 @@ function advanceFromCurrentQuestion() {
 }
 
 // ============================================================
-// FASE 2: PREGUNTAS ADAPTATIVAS (GROQ AI) - MEJORADO
+// FASE 2A: SWIPE CARDS - Selección de situaciones
+// ============================================================
+
+function initSwipeScreen() {
+  // Resetear estado
+  FormState.situaciones.seleccionadas = [];
+  FormState.situaciones.descartadas = [];
+  FormState.situaciones.currentSwipeIndex = 0;
+
+  // Renderizar primera card (sin animación de entrada)
+  renderSwipeCard(true);
+
+  // Setup event listeners
+  setupSwipeListeners();
+}
+
+function renderSwipeCard(isInitial = false) {
+  const index = FormState.situaciones.currentSwipeIndex;
+
+  if (index >= getSituaciones().length) {
+    // Todas las situaciones procesadas
+    handleSwipeComplete();
+    return;
+  }
+
+  const situacion = getSituaciones()[index];
+  const card = document.getElementById('swipeCard');
+  const iconEl = document.getElementById('swipeCardIcon');
+  const titleEl = document.getElementById('swipeCardTitle');
+  const descEl = document.getElementById('swipeCardDescription');
+  const counterEl = document.getElementById('swipeCounter');
+  const totalEl = document.getElementById('swipeTotal');
+
+  // Reset card state
+  card.classList.remove('exit-left', 'exit-right', 'swiping-left', 'swiping-right', 'entering', 'returning');
+  card.style.transform = '';
+  card.style.opacity = '1';
+
+  // Añadir animación de entrada solo si no es inicial
+  if (!isInitial) {
+    card.classList.add('entering');
+    setTimeout(() => card.classList.remove('entering'), 400);
+  }
+
+  // Update content (usando Phosphor Icons)
+  iconEl.innerHTML = `<i class="ph ${situacion.icono}"></i>`;
+  titleEl.textContent = situacion.titulo;
+  descEl.textContent = situacion.descripcion;
+  counterEl.textContent = index + 1;
+  totalEl.textContent = getSituaciones().length;
+
+  // Actualizar cartas del stack (preview de siguientes)
+  renderStackCards(index);
+}
+
+function renderStackCards(currentIndex) {
+  const card1 = document.getElementById('swipeCard1');
+  const card2 = document.getElementById('swipeCard2');
+
+  // Carta siguiente (stack-1)
+  if (currentIndex + 1 < getSituaciones().length) {
+    const next1 = getSituaciones()[currentIndex + 1];
+    card1.querySelector('.swipe-card__icon').innerHTML = `<i class="ph ${next1.icono}"></i>`;
+    card1.querySelector('.swipe-card__title').textContent = next1.titulo;
+    card1.querySelector('.swipe-card__description').textContent = next1.descripcion;
+    card1.style.display = '';
+  } else {
+    card1.style.display = 'none';
+  }
+
+  // Carta después de la siguiente (stack-2)
+  if (currentIndex + 2 < getSituaciones().length) {
+    const next2 = getSituaciones()[currentIndex + 2];
+    card2.querySelector('.swipe-card__icon').innerHTML = `<i class="ph ${next2.icono}"></i>`;
+    card2.querySelector('.swipe-card__title').textContent = next2.titulo;
+    card2.querySelector('.swipe-card__description').textContent = next2.descripcion;
+    card2.style.display = '';
+  } else {
+    card2.style.display = 'none';
+  }
+}
+
+function setupSwipeListeners() {
+  const card = document.getElementById('swipeCard');
+  const stack = document.getElementById('swipeStack');
+  const btnNo = document.getElementById('btnSwipeNo');
+  const btnYes = document.getElementById('btnSwipeYes');
+
+  // Touch/mouse swipe con física mejorada
+  let startX = 0;
+  let currentX = 0;
+  let isDragging = false;
+  let velocity = 0;
+  let lastX = 0;
+  let lastTime = 0;
+
+  const handleStart = (e) => {
+    if (card.classList.contains('exit-left') || card.classList.contains('exit-right')) return;
+
+    isDragging = true;
+    startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+    currentX = startX;
+    lastX = startX;
+    lastTime = Date.now();
+    velocity = 0;
+
+    card.classList.remove('returning');
+    stack.classList.add('dragging');
+  };
+
+  const handleMove = (e) => {
+    if (!isDragging) return;
+
+    const clientX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+    const now = Date.now();
+    const dt = now - lastTime;
+
+    if (dt > 0) {
+      velocity = (clientX - lastX) / dt * 16; // Normalizado a ~60fps
+    }
+
+    lastX = clientX;
+    lastTime = now;
+    currentX = clientX;
+
+    const diff = currentX - startX;
+
+    // Rotación más sutil y natural
+    const rotation = diff * 0.04;
+    // Pequeño lift mientras arrastra
+    const lift = Math.min(Math.abs(diff) * 0.1, 10);
+
+    card.style.transform = `translateX(${diff}px) translateY(${-lift}px) rotate(${rotation}deg)`;
+
+    // Indicadores de dirección con threshold más pequeño
+    if (diff < -40) {
+      card.classList.add('swiping-left');
+      card.classList.remove('swiping-right');
+    } else if (diff > 40) {
+      card.classList.add('swiping-right');
+      card.classList.remove('swiping-left');
+    } else {
+      card.classList.remove('swiping-left', 'swiping-right');
+    }
+  };
+
+  const handleEnd = () => {
+    if (!isDragging) return;
+    isDragging = false;
+    stack.classList.remove('dragging');
+
+    const diff = currentX - startX;
+
+    // Considerar velocidad además de distancia para swipe más natural
+    const velocityThreshold = 0.5;
+    const distanceThreshold = 80;
+
+    const shouldSwipeLeft = diff < -distanceThreshold || (diff < -30 && velocity < -velocityThreshold);
+    const shouldSwipeRight = diff > distanceThreshold || (diff > 30 && velocity > velocityThreshold);
+
+    if (shouldSwipeLeft) {
+      swipeCard('left');
+    } else if (shouldSwipeRight) {
+      swipeCard('right');
+    } else {
+      // Volver a posición con efecto spring
+      card.classList.add('returning');
+      card.style.transform = '';
+      card.classList.remove('swiping-left', 'swiping-right');
+    }
+  };
+
+  card.addEventListener('mousedown', handleStart);
+  card.addEventListener('touchstart', handleStart, { passive: true });
+  document.addEventListener('mousemove', handleMove);
+  document.addEventListener('touchmove', handleMove, { passive: true });
+  document.addEventListener('mouseup', handleEnd);
+  document.addEventListener('touchend', handleEnd);
+
+  // Button clicks
+  btnNo.addEventListener('click', () => swipeCard('left'));
+  btnYes.addEventListener('click', () => swipeCard('right'));
+
+  // Keyboard
+  document.addEventListener('keydown', handleSwipeKeyboard);
+}
+
+function handleSwipeKeyboard(e) {
+  if (FormState.currentScreen !== 'swipe-situaciones') return;
+
+  if (e.key === 'ArrowLeft') {
+    swipeCard('left');
+  } else if (e.key === 'ArrowRight') {
+    swipeCard('right');
+  }
+}
+
+function swipeCard(direction) {
+  const card = document.getElementById('swipeCard');
+  const stack = document.getElementById('swipeStack');
+  const index = FormState.situaciones.currentSwipeIndex;
+  const situacion = getSituaciones()[index];
+
+  // Evitar doble swipe
+  if (card.classList.contains('exit-left') || card.classList.contains('exit-right')) return;
+
+  // Limpiar clases de drag
+  card.classList.remove('swiping-left', 'swiping-right', 'returning');
+  stack.classList.remove('dragging');
+
+  // Animate exit
+  card.classList.add(direction === 'left' ? 'exit-left' : 'exit-right');
+
+  // Record choice
+  if (direction === 'right') {
+    FormState.situaciones.seleccionadas.push(situacion.id);
+    console.log(`Seleccionada: ${situacion.titulo}`);
+  } else {
+    FormState.situaciones.descartadas.push(situacion.id);
+    console.log(`Descartada: ${situacion.titulo}`);
+  }
+
+  // Next card - timing sincronizado con animación
+  setTimeout(() => {
+    FormState.situaciones.currentSwipeIndex++;
+    renderSwipeCard();
+  }, 380);
+}
+
+async function handleSwipeComplete() {
+  const seleccionadas = FormState.situaciones.seleccionadas;
+
+  console.log('Swipe completado:', seleccionadas.length, 'situaciones seleccionadas');
+
+  if (seleccionadas.length === 0) {
+    // Si no seleccionó ninguna, mostrar mensaje y permitir continuar
+    alert('Por favor selecciona al menos una situación que te afecte.');
+    FormState.situaciones.currentSwipeIndex = 0;
+    renderSwipeCard();
+    return;
+  }
+
+  if (seleccionadas.length <= 4) {
+    // Si 4 o menos, esas son el top4 directamente (sin MaxDiff)
+    FormState.situaciones.top4 = seleccionadas.slice(0, 4);
+    await goToScreen('top4-resultado');
+    return;
+  }
+
+  // Si más de 4, necesitamos MaxDiff para priorizar
+  document.getElementById('situacionesCount').textContent = seleccionadas.length;
+  await goToScreen('transition-maxdiff');
+
+  // Después de mostrar transición, ir a MaxDiff
+  setTimeout(async () => {
+    await goToScreen('maxdiff-priorizar');
+  }, 2000);
+}
+
+// ============================================================
+// FASE 2B: MAXDIFF - Priorización de situaciones
+// ============================================================
+
+function initMaxDiff() {
+  const seleccionadas = FormState.situaciones.seleccionadas;
+
+  // Calcular número de rondas (mínimo 3, máximo 5)
+  const numRounds = Math.min(Math.max(3, Math.ceil(seleccionadas.length / 2)), 5);
+
+  FormState.situaciones.maxdiffRounds = generateMaxDiffRounds(seleccionadas, numRounds);
+  FormState.situaciones.currentMaxdiffRound = 0;
+  FormState.situaciones.maxdiffResults = {};
+
+  // Inicializar scores en 0
+  seleccionadas.forEach(id => {
+    FormState.situaciones.maxdiffResults[id] = 0;
+  });
+
+  renderMaxDiffRound();
+}
+
+function generateMaxDiffRounds(situacionIds, numRounds) {
+  const rounds = [];
+  const shuffled = [...situacionIds];
+
+  for (let r = 0; r < numRounds; r++) {
+    // Shuffle para cada ronda
+    shuffled.sort(() => Math.random() - 0.5);
+
+    // Tomar 4 situaciones (o menos si no hay suficientes)
+    const roundOptions = shuffled.slice(0, Math.min(4, shuffled.length));
+
+    // Rotar el array para la siguiente ronda
+    if (shuffled.length > 4) {
+      const first = shuffled.shift();
+      shuffled.push(first);
+    }
+
+    rounds.push({
+      options: roundOptions,
+      most: null,
+      least: null
+    });
+  }
+
+  return rounds;
+}
+
+function renderMaxDiffRound() {
+  const roundIndex = FormState.situaciones.currentMaxdiffRound;
+  const rounds = FormState.situaciones.maxdiffRounds;
+
+  if (roundIndex >= rounds.length) {
+    handleMaxDiffComplete();
+    return;
+  }
+
+  const round = rounds[roundIndex];
+  const optionsContainer = document.getElementById('maxdiffOptions');
+  const leastSection = document.getElementById('maxdiffLeastSection');
+  const roundEl = document.getElementById('maxdiffRound');
+  const totalEl = document.getElementById('maxdiffTotal');
+
+  // Update progress
+  roundEl.textContent = roundIndex + 1;
+  totalEl.textContent = rounds.length;
+
+  // Reset selections
+  round.most = null;
+  round.least = null;
+  leastSection.classList.add('hidden');
+
+  // Render clickable option cards (con Phosphor Icons)
+  optionsContainer.innerHTML = round.options.map((id) => {
+    const situacion = getSituaciones().find(s => s.id === id);
+    return `
+      <div class="maxdiff-option maxdiff-option--clickable" data-id="${id}">
+        <div class="maxdiff-option__icon"><i class="ph ${situacion.icono}"></i></div>
+        <h4 class="maxdiff-option__title">${situacion.titulo}</h4>
+        <p class="maxdiff-option__desc">${situacion.descripcion.substring(0, 100)}...</p>
+      </div>
+    `;
+  }).join('');
+
+  // Add click event listeners to cards
+  optionsContainer.querySelectorAll('.maxdiff-option').forEach(card => {
+    card.addEventListener('click', handleMaxDiffCardClick);
+  });
+}
+
+function handleMaxDiffCardClick(e) {
+  const card = e.currentTarget;
+  const id = card.dataset.id;
+  const roundIndex = FormState.situaciones.currentMaxdiffRound;
+  const round = FormState.situaciones.maxdiffRounds[roundIndex];
+  const optionsContainer = document.getElementById('maxdiffOptions');
+  const leastSection = document.getElementById('maxdiffLeastSection');
+
+  // Si aún no se ha elegido "más afecta"
+  if (!round.most) {
+    round.most = id;
+
+    // Highlight selected as "most"
+    optionsContainer.querySelectorAll('.maxdiff-option').forEach(opt => {
+      opt.classList.remove('selected-most', 'selected-least', 'disabled');
+      if (opt.dataset.id === id) {
+        opt.classList.add('selected-most');
+      }
+    });
+
+    // Show least question and update title
+    leastSection.classList.remove('hidden');
+
+    // Scroll suave a la sección de "menos"
+    leastSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  } else if (!round.least && id !== round.most) {
+    // Elegir "menos afecta" (no puede ser el mismo que "más")
+    round.least = id;
+
+    // Highlight selected as "least"
+    card.classList.add('selected-least');
+
+    // Record scores
+    FormState.situaciones.maxdiffResults[round.most] += 1;
+    FormState.situaciones.maxdiffResults[round.least] -= 1;
+
+    // Next round after short delay
+    setTimeout(() => {
+      FormState.situaciones.currentMaxdiffRound++;
+      renderMaxDiffRound();
+
+      // Scroll back to top
+      document.getElementById('maxdiffOptions').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 600);
+  }
+}
+
+async function handleMaxDiffComplete() {
+  console.log('MaxDiff completado:', FormState.situaciones.maxdiffResults);
+
+  // Ordenar por score y tomar top 4
+  const sorted = Object.entries(FormState.situaciones.maxdiffResults)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([id]) => id);
+
+  FormState.situaciones.top4 = sorted;
+
+  await goToScreen('top4-resultado');
+}
+
+function renderTop4Resultado() {
+  const top4 = FormState.situaciones.top4;
+  const container = document.getElementById('top4List');
+
+  container.innerHTML = top4.map((id, index) => {
+    const situacion = getSituaciones().find(s => s.id === id);
+    return `
+      <div class="top4-card">
+        <div class="top4-card__rank">${index + 1}</div>
+        <div class="top4-card__content">
+          <h3 class="top4-card__title">${situacion.titulo}</h3>
+          <p class="top4-card__desc">${situacion.descripcion}</p>
+        </div>
+        <div class="top4-card__icon">
+          <i class="ph ${situacion.icono}"></i>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function handleContinueFromTop4() {
+  // Ahora pasamos a las preguntas adaptativas basadas en el top 4
+  await goToScreen('transition-phase2-questions');
+}
+
+// ============================================================
+// FASE 2C: PREGUNTAS ADAPTATIVAS (GROQ AI) - MEJORADO
 // ============================================================
 
 async function handleTransitionToPhase2() {
+  // Ya hicimos el swipe al principio, ahora vamos directo a preguntas adaptativas
+  await goToScreen('transition-phase2-questions');
+}
+
+async function handleTransitionToPhase2Questions() {
+  try {
+    console.log('Generating adaptive questions based on Top 4:', FormState.situaciones.top4);
+
+    const questions = await generateAdaptiveQuestionsFromTop4();
+
+    if (!questions || questions.length === 0) {
+      throw new Error('No questions generated');
+    }
+
+    console.log('Generated', questions.length, 'adaptive questions');
+    FormState.responses.adaptiveQuestions = questions;
+    FormState.responses.currentAdaptiveIndex = 0;
+    FormState.totalQuestions = 9 + questions.length;
+  } catch (error) {
+    console.error('Error generating adaptive questions:', error);
+    FormState.responses.adaptiveQuestions = getFallbackQuestionsFromTop4();
+    FormState.responses.currentAdaptiveIndex = 0;
+    FormState.totalQuestions = 9 + FormState.responses.adaptiveQuestions.length;
+  }
+
+  await goToScreen('phase2-questions');
+}
+
+// Genera preguntas basadas en las 4 situaciones priorizadas
+function generateAdaptiveQuestionsFromTop4() {
+  const top4 = FormState.situaciones.top4;
+  const questions = [];
+
+  // Banco de preguntas por categoría de situación
+  const QUESTIONS_BY_SITUACION = {
+    'A': [  // Visibilidad equipo campo
+      {
+        texto: '¿Cómo te enteras de lo que hizo tu equipo hoy?',
+        hint: 'Visitas, llamadas, reuniones realizadas',
+        profundiza_en: 'Visibilidad',
+        opciones: [
+          { texto: 'Tengo un dashboard en tiempo real', detecta: [], gravedad: 0 },
+          { texto: 'Me mandan WhatsApp o correo', detecta: ['A-VISIBILIDAD'], gravedad: 1 },
+          { texto: 'Les pregunto uno por uno', detecta: ['A-VISIBILIDAD', 'A-REGISTRO'], gravedad: 2 },
+          { texto: 'No sé hasta que me dicen', detecta: ['A-VISIBILIDAD', 'A-REGISTRO', 'G-ADOPCION'], gravedad: 3 }
+        ]
+      },
+      {
+        texto: '¿Cuándo registran las visitas a clientes?',
+        hint: 'En el momento, al final del día, cuando pueden',
+        profundiza_en: 'Registro',
+        opciones: [
+          { texto: 'En el momento, desde el celular', detecta: [], gravedad: 0 },
+          { texto: 'Al final del día', detecta: ['A-REGISTRO'], gravedad: 1 },
+          { texto: 'Cuando se acuerdan o pueden', detecta: ['A-REGISTRO', 'G-ADOPCION'], gravedad: 2 },
+          { texto: 'La verdad casi no registran', detecta: ['A-REGISTRO', 'A-VISIBILIDAD', 'G-ADOPCION'], gravedad: 3 }
+        ]
+      }
+    ],
+    'B': [  // Base de clientes
+      {
+        texto: '¿Dónde vive la información de tus clientes?',
+        hint: 'Datos de contacto, historial, preferencias',
+        profundiza_en: 'Centralización',
+        opciones: [
+          { texto: 'En un sistema centralizado que todos usan', detecta: [], gravedad: 0 },
+          { texto: 'En Excel, pero hay una versión "oficial"', detecta: ['G-EXCEL'], gravedad: 1 },
+          { texto: 'Cada vendedor tiene su propia lista', detecta: ['B-CENTRALIZACION', 'G-FRAGMENTACION'], gravedad: 2 },
+          { texto: 'Dispersa en varios lugares', detecta: ['B-CENTRALIZACION', 'B-DATOS', 'G-FRAGMENTACION'], gravedad: 3 }
+        ]
+      }
+    ],
+    'C': [  // Muestras médicas
+      {
+        texto: '¿Cómo controlas las muestras médicas que entrega tu equipo?',
+        hint: 'Inventario, trazabilidad, firmas',
+        profundiza_en: 'Control de muestras',
+        opciones: [
+          { texto: 'Sistema completo con trazabilidad de lotes', detecta: [], gravedad: 0 },
+          { texto: 'Excel que actualizamos regularmente', detecta: ['C-INVENTARIO'], gravedad: 1 },
+          { texto: 'Cada rep lleva su propio control', detecta: ['C-INVENTARIO', 'C-TRAZABILIDAD'], gravedad: 2 },
+          { texto: 'No tenemos control real', detecta: ['C-TRAZABILIDAD', 'C-CONTROL', 'C-COMPLIANCE'], gravedad: 3 }
+        ]
+      }
+    ],
+    'D': [  // Oportunidades de venta
+      {
+        texto: '¿Cómo das seguimiento a oportunidades de venta?',
+        hint: 'Prospectos, cotizaciones, negociaciones',
+        profundiza_en: 'Pipeline',
+        opciones: [
+          { texto: 'Pipeline en sistema con etapas claras', detecta: [], gravedad: 0 },
+          { texto: 'Lista en Excel que actualizo', detecta: ['D-PIPELINE'], gravedad: 1 },
+          { texto: 'Cada vendedor tiene su método', detecta: ['D-PIPELINE', 'D-SEGUIMIENTO'], gravedad: 2 },
+          { texto: 'Se nos pierden oportunidades', detecta: ['D-PIPELINE', 'D-SEGUIMIENTO', 'D-VISIBILIDAD'], gravedad: 3 }
+        ]
+      }
+    ],
+    'E': [  // Cobranza
+      {
+        texto: '¿Tienes visibilidad de tu cartera vencida?',
+        hint: 'Facturas pendientes, días de mora',
+        profundiza_en: 'Cobranza',
+        opciones: [
+          { texto: 'Sí, con alertas automáticas', detecta: [], gravedad: 0 },
+          { texto: 'Reviso reportes semanalmente', detecta: ['E-SEGUIMIENTO'], gravedad: 1 },
+          { texto: 'Más o menos, a veces se me pasa', detecta: ['E-SEGUIMIENTO', 'E-ALERTAS'], gravedad: 2 },
+          { texto: 'Es un dolor de cabeza constante', detecta: ['E-SEGUIMIENTO', 'E-ALERTAS', 'E-VISIBILIDAD'], gravedad: 3 }
+        ]
+      }
+    ],
+    'F': [  // Reportes
+      {
+        texto: '¿Cuánto tardas en generar un reporte para dirección?',
+        hint: 'Ventas, visitas, resultados del mes',
+        profundiza_en: 'Reportes',
+        opciones: [
+          { texto: 'Minutos, está automatizado', detecta: [], gravedad: 0 },
+          { texto: 'Un par de horas', detecta: ['F-TIEMPO'], gravedad: 1 },
+          { texto: 'Me toma casi todo el día', detecta: ['F-TIEMPO', 'F-AUTOMATIZACION'], gravedad: 2 },
+          { texto: 'Días, junto info de todos lados', detecta: ['F-TIEMPO', 'F-AUTOMATIZACION', 'F-DASHBOARDS'], gravedad: 3 }
+        ]
+      }
+    ],
+    'G': [  // Tecnología
+      {
+        texto: '¿Tu equipo realmente usa las herramientas que tienen?',
+        hint: 'CRM, app, sistema',
+        profundiza_en: 'Adopción',
+        opciones: [
+          { texto: 'Sí, es parte del proceso diario', detecta: [], gravedad: 0 },
+          { texto: 'Algunos lo usan, otros no tanto', detecta: ['G-ADOPCION'], gravedad: 1 },
+          { texto: 'Lo usan solo cuando los obligo', detecta: ['G-ADOPCION', 'G-FRAGMENTACION'], gravedad: 2 },
+          { texto: 'Casi nadie lo usa realmente', detecta: ['G-ADOPCION', 'G-FRAGMENTACION', 'G-EXCEL'], gravedad: 3 }
+        ]
+      }
+    ],
+    'H': [  // Comunicación
+      {
+        texto: '¿Cómo comunicas información importante al equipo?',
+        hint: 'Cambios, alertas, actualizaciones',
+        profundiza_en: 'Comunicación',
+        opciones: [
+          { texto: 'Canal oficial que todos revisan', detecta: [], gravedad: 0 },
+          { texto: 'Grupo de WhatsApp', detecta: ['H-CANALES'], gravedad: 1 },
+          { texto: 'Email que pocos leen', detecta: ['H-CANALES', 'H-VISIBILIDAD'], gravedad: 2 },
+          { texto: 'Como puedo, y se pierde mucho', detecta: ['H-CANALES', 'H-VISIBILIDAD', 'H-ALINEACION'], gravedad: 3 }
+        ]
+      }
+    ],
+    'I': [  // Servicio al cliente
+      {
+        texto: '¿Cómo das seguimiento a lo que prometes a clientes?',
+        hint: 'Compromisos, solicitudes, quejas',
+        profundiza_en: 'Seguimiento',
+        opciones: [
+          { texto: 'Sistema de tickets/tareas', detecta: [], gravedad: 0 },
+          { texto: 'Lista personal que reviso', detecta: ['I-SEGUIMIENTO'], gravedad: 1 },
+          { texto: 'Memoria y buena voluntad', detecta: ['I-SEGUIMIENTO', 'I-RESPUESTA'], gravedad: 2 },
+          { texto: 'Se nos olvidan cosas', detecta: ['I-SEGUIMIENTO', 'I-RESPUESTA', 'I-SATISFACCION'], gravedad: 3 }
+        ]
+      }
+    ],
+    'J': [  // Marketing
+      {
+        texto: '¿Sabes qué campañas o acciones te generan resultados?',
+        hint: 'ROI, atribución, efectividad',
+        profundiza_en: 'ROI Marketing',
+        opciones: [
+          { texto: 'Sí, mido todo con métricas claras', detecta: [], gravedad: 0 },
+          { texto: 'Tengo una idea general', detecta: ['J-ROI'], gravedad: 1 },
+          { texto: 'Intuición más que datos', detecta: ['J-ROI', 'J-ATRIBUCION'], gravedad: 2 },
+          { texto: 'No tengo idea qué funciona', detecta: ['J-ROI', 'J-ATRIBUCION', 'J-MATERIALES'], gravedad: 3 }
+        ]
+      }
+    ],
+    'K': [  // Planificación
+      {
+        texto: '¿En qué basas tus decisiones estratégicas?',
+        hint: 'Territorios, cuotas, recursos',
+        profundiza_en: 'Datos para decisiones',
+        opciones: [
+          { texto: 'Datos e indicadores claros', detecta: [], gravedad: 0 },
+          { texto: 'Reportes que armo manualmente', detecta: ['K-DATOS'], gravedad: 1 },
+          { texto: 'Experiencia e intuición', detecta: ['K-DATOS', 'K-OBJETIVOS'], gravedad: 2 },
+          { texto: 'Voy sobre la marcha', detecta: ['K-DATOS', 'K-OBJETIVOS', 'K-TERRITORIOS'], gravedad: 3 }
+        ]
+      }
+    ],
+    'L': [  // Compliance
+      {
+        texto: '¿Qué tan preparado estás para una auditoría mañana?',
+        hint: 'Documentos, firmas, trazabilidad',
+        profundiza_en: 'Compliance',
+        opciones: [
+          { texto: 'Todo está en sistema, listo', detecta: [], gravedad: 0 },
+          { texto: 'Necesito unas horas para preparar', detecta: ['L-DOCUMENTACION'], gravedad: 1 },
+          { texto: 'Sería complicado juntarlo todo', detecta: ['L-DOCUMENTACION', 'L-FIRMAS'], gravedad: 2 },
+          { texto: 'Me daría un infarto', detecta: ['L-DOCUMENTACION', 'L-FIRMAS', 'L-TRAZABILIDAD'], gravedad: 3 }
+        ]
+      }
+    ],
+    'M': [  // Capacitación
+      {
+        texto: '¿Qué pasa cuando entra alguien nuevo al equipo?',
+        hint: 'Onboarding, capacitación, ramp-up',
+        profundiza_en: 'Onboarding',
+        opciones: [
+          { texto: 'Proceso estructurado con materiales', detecta: [], gravedad: 0 },
+          { texto: 'Lo acompaña alguien unas semanas', detecta: ['M-ONBOARDING'], gravedad: 1 },
+          { texto: 'Aprende sobre la marcha', detecta: ['M-ONBOARDING', 'M-CONOCIMIENTO'], gravedad: 2 },
+          { texto: 'Tarda meses en ser productivo', detecta: ['M-ONBOARDING', 'M-CONOCIMIENTO', 'M-ROTACION'], gravedad: 3 }
+        ]
+      }
+    ],
+    'N': [  // Eventos
+      {
+        texto: '¿Qué pasa después de un evento o congreso?',
+        hint: 'Leads, seguimiento, ROI',
+        profundiza_en: 'Eventos',
+        opciones: [
+          { texto: 'Seguimiento automático a todos los leads', detecta: [], gravedad: 0 },
+          { texto: 'Lista de contactos que repartimos', detecta: ['N-CAPTURA'], gravedad: 1 },
+          { texto: 'Tarjetas en una caja que nadie revisa', detecta: ['N-CAPTURA', 'N-SEGUIMIENTO'], gravedad: 2 },
+          { texto: 'No medimos nada del evento', detecta: ['N-CAPTURA', 'N-SEGUIMIENTO', 'N-ROI'], gravedad: 3 }
+        ]
+      }
+    ],
+    'O': [  // Competencia
+      {
+        texto: '¿Qué sabes de lo que hace tu competencia?',
+        hint: 'Productos, estrategias, clientes',
+        profundiza_en: 'Inteligencia competitiva',
+        opciones: [
+          { texto: 'Tengo un proceso de inteligencia', detecta: [], gravedad: 0 },
+          { texto: 'Lo que me cuenta el equipo', detecta: ['O-INTELIGENCIA'], gravedad: 1 },
+          { texto: 'Rumores y encuentros casuales', detecta: ['O-INTELIGENCIA', 'O-COMPARATIVO'], gravedad: 2 },
+          { texto: 'Casi nada, vamos a ciegas', detecta: ['O-INTELIGENCIA', 'O-COMPARATIVO', 'O-ESTRATEGIA'], gravedad: 3 }
+        ]
+      }
+    ],
+    'P': [  // Automatización
+      {
+        texto: '¿Cuántas tareas repetitivas hace tu equipo manualmente?',
+        hint: 'Recordatorios, reportes, asignaciones',
+        profundiza_en: 'Automatización',
+        opciones: [
+          { texto: 'Casi todo está automatizado', detecta: [], gravedad: 0 },
+          { texto: 'Algunas cosas, pero hay mucho manual', detecta: ['P-TAREAS'], gravedad: 1 },
+          { texto: 'La mayoría es trabajo manual', detecta: ['P-TAREAS', 'P-RECORDATORIOS'], gravedad: 2 },
+          { texto: 'Todo es manual, perdemos horas', detecta: ['P-TAREAS', 'P-RECORDATORIOS', 'P-AUTOMATICO'], gravedad: 3 }
+        ]
+      }
+    ]
+  };
+
+  // Seleccionar una pregunta por cada situación del top4
+  top4.forEach(id => {
+    const categoryQuestions = QUESTIONS_BY_SITUACION[id];
+    if (categoryQuestions && categoryQuestions.length > 0) {
+      // Tomar la primera pregunta de la categoría
+      questions.push(categoryQuestions[0]);
+    }
+  });
+
+  // Añadir pregunta general si hay espacio
+  if (questions.length < 5) {
+    questions.push({
+      texto: '¿Qué pasa cuando un vendedor se va de la empresa?',
+      hint: 'Clientes, historial, conocimiento',
+      profundiza_en: 'Continuidad',
+      opciones: [
+        { texto: 'Todo queda en el sistema', detecta: [], gravedad: 0 },
+        { texto: 'Hay que pedirle que entregue sus archivos', detecta: ['B-CENTRALIZACION'], gravedad: 1 },
+        { texto: 'Se pierde algo de información', detecta: ['B-CENTRALIZACION', 'B-DATOS'], gravedad: 2 },
+        { texto: 'Se lleva todo en la cabeza', detecta: ['B-CENTRALIZACION', 'B-DATOS', 'A-CONOCIMIENTO'], gravedad: 3 }
+      ]
+    });
+  }
+
+  return questions;
+}
+
+function getFallbackQuestionsFromTop4() {
+  // Preguntas genéricas si falla la generación
+  return [
+    {
+      texto: '¿Cómo te enteras de lo que hizo tu equipo hoy?',
+      hint: 'Visitas, llamadas, reuniones',
+      profundiza_en: 'Visibilidad',
+      opciones: [
+        { texto: 'Dashboard en tiempo real', detecta: [], gravedad: 0 },
+        { texto: 'Me mandan WhatsApp', detecta: ['A-VISIBILIDAD'], gravedad: 1 },
+        { texto: 'Les pregunto en la junta', detecta: ['A-VISIBILIDAD', 'H-VISIBILIDAD'], gravedad: 2 },
+        { texto: 'Confío en que están trabajando', detecta: ['A-VISIBILIDAD', 'A-REGISTRO'], gravedad: 3 }
+      ]
+    },
+    {
+      texto: '¿Dónde vive la información de tus clientes?',
+      hint: 'Datos de contacto, historial',
+      profundiza_en: 'Centralización',
+      opciones: [
+        { texto: 'Sistema centralizado', detecta: [], gravedad: 0 },
+        { texto: 'Excel "oficial"', detecta: ['G-EXCEL'], gravedad: 1 },
+        { texto: 'Cada vendedor tiene su lista', detecta: ['B-CENTRALIZACION'], gravedad: 2 },
+        { texto: 'Dispersa en varios lugares', detecta: ['B-CENTRALIZACION', 'B-DATOS'], gravedad: 3 }
+      ]
+    },
+    {
+      texto: '¿Cómo sabes cuánto vas a vender este mes?',
+      hint: 'Forecast, pipeline, predicción',
+      profundiza_en: 'Visibilidad de ventas',
+      opciones: [
+        { texto: 'Pipeline actualizado con probabilidades', detecta: [], gravedad: 0 },
+        { texto: 'Sumo cotizaciones manualmente', detecta: ['D-FORECAST'], gravedad: 1 },
+        { texto: 'Pregunto a los vendedores', detecta: ['D-VISIBILIDAD', 'D-PIPELINE'], gravedad: 2 },
+        { texto: 'Sorpresa hasta fin de mes', detecta: ['D-VISIBILIDAD', 'D-PIPELINE', 'D-FORECAST'], gravedad: 3 }
+      ]
+    }
+  ];
+}
+
+// ============================================================
+// FASE 2 (LEGACY): PREGUNTAS ADAPTATIVAS (GROQ AI)
+// ============================================================
+
+async function handleTransitionToPhase2Legacy() {
   await sleep(CONFIG.loadingMinDuration);
 
   try {
@@ -1152,62 +2298,85 @@ async function handleTransitionToPhase3() {
 
 async function detectPainsWithAI() {
   const { phase1 } = FormState.responses;
+  const top4 = FormState.situaciones.top4;
 
   // ========================================
-  // USAR FOCOS CALCULADOS POR ClusterAccumulator
+  // USAR SITUACIONES SELECCIONADAS POR EL USUARIO (TOP 4)
   // ========================================
 
-  // Recalcular FOCOS con todas las respuestas (Phase 1 + Phase 2)
+  console.log('=== DETECTANDO PAINS BASADOS EN SITUACIONES TOP 4 ===');
+  console.log('Top 4 situaciones:', top4);
+
+  // Si tenemos top4, usarlas directamente
+  if (top4 && top4.length > 0) {
+    // Convertir situaciones a dolores
+    const pains = top4.map((situacionId, index) => {
+      const situacion = getSituaciones().find(s => s.id === situacionId);
+      if (!situacion) return null;
+
+      return {
+        order: index + 1,
+        key: situacion.clusters[0] || `${situacionId}-GENERAL`,
+        title: situacion.titulo,
+        description: situacion.descripcion,
+        categoria: situacion.categoria,
+        clusters: situacion.clusters,
+        confidence: 1.0 - (index * 0.05)  // 100% porque el usuario lo seleccionó
+      };
+    }).filter(Boolean);
+
+    // Si tenemos los pains, usar IA para personalizar las descripciones
+    return await personalizePainsWithAI(pains);
+  }
+
+  // Fallback al sistema anterior si no hay top4
   const accumulator = FormState.clusterAccumulator;
   if (accumulator) {
     accumulator.calculateFocos();
     FormState.focosDetectados = accumulator.focos;
   }
 
-  console.log('=== DETECTANDO PAINS BASADOS EN FOCOS ===');
-  console.log('FOCOS detectados:', FormState.focosDetectados?.map(f => ({ nombre: f.nombre, score: f.score })));
-  console.log('Clusters acumulados:', accumulator?.clusterScores);
-
-  // Obtener los top clusters del acumulador
   const sortedClusters = accumulator
     ? Object.entries(accumulator.clusterScores)
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 6)
+        .slice(0, 4)
         .map(([cluster]) => cluster)
     : [];
 
-  // Usar IA para refinar y personalizar los dolores
-  const systemPrompt = `Eres un experto analista que genera res��menes personalizados de dolores empresariales.
+  return detectPainsFallback();
+}
 
-Dado un contexto de empresa y los dolores detectados, genera 4 dolores principales con descripciones PERSONALIZADAS para esta empresa específica.
+// Personaliza los dolores con IA basándose en el contexto de la empresa
+async function personalizePainsWithAI(pains) {
+  const { phase1 } = FormState.responses;
 
-La descripción debe:
-1. Ser específica para su industria/contexto
+  const systemPrompt = `Eres un experto analista que personaliza descripciones de dolores empresariales.
+
+El usuario YA SELECCIONÓ estas situaciones como sus principales dolores. Tu trabajo es personalizar las descripciones para su contexto específico.
+
+La descripción personalizada debe:
+1. Ser específica para su industria/sector
 2. Usar "tú" y lenguaje directo
-3. Reflejar el impacto real en SU negocio
+3. Mencionar el impacto concreto en SU negocio
 4. Ser concisa (1-2 oraciones)
 
 Responde SOLO con JSON válido.`;
 
   const userPrompt = `EMPRESA: ${FormState.company.profile?.empresa?.nombre || FormState.company.name || 'No especificado'}
-SECTOR: ${phase1.sector}
-TAMAÑO: ${phase1.team_size}
-TIENE CAMPO: ${phase1.has_field_team}
+SECTOR: ${phase1.sector || 'No especificado'}
+TAMAÑO: ${phase1.team_size || 'No especificado'}
+TIENE EQUIPO CAMPO: ${phase1.has_field_team || 'No especificado'}
 
-CLUSTERS DETECTADOS (ordenados por prioridad):
-${sortedClusters.map((cluster, i) => {
-  const clusterData = PAIN_CLUSTERS[cluster] || { title: cluster, description: '' };
-  return `${i + 1}. ${cluster}: "${clusterData.title}" - ${clusterData.description}`;
-}).join('\n')}
+SITUACIONES SELECCIONADAS POR EL USUARIO (en orden de prioridad):
+${pains.map((p, i) => `${i + 1}. ${p.title}: ${p.description}`).join('\n')}
 
-Genera los 4 dolores principales en este formato:
+Personaliza cada dolor para esta empresa. Formato:
 {
   "dolores": [
     {
-      "cluster": "A-VISIBILIDAD",
-      "titulo": "Título corto y directo",
+      "titulo": "Título personalizado",
       "descripcion": "Descripción personalizada para esta empresa",
-      "impacto": "Consecuencia concreta de este dolor"
+      "impacto": "Consecuencia concreta"
     }
   ]
 }`;
@@ -1237,31 +2406,49 @@ Genera los 4 dolores principales en este formato:
 
     const parsed = JSON.parse(jsonMatch[0]);
 
-    return parsed.dolores.slice(0, 4).map((dolor, index) => {
-      const clusterData = PAIN_CLUSTERS[dolor.cluster] || {};
+    // Combinar datos originales con personalizados
+    return pains.map((pain, index) => {
+      const personalized = parsed.dolores[index] || {};
       return {
-        order: index + 1,
-        key: dolor.cluster,
-        title: dolor.titulo,
-        description: dolor.descripcion,
-        impacto: dolor.impacto,
-        codes: clusterData.codes || [],
-        focus: clusterData.focus || 9,
-        confidence: 0.9 - (index * 0.05)
+        ...pain,
+        title: personalized.titulo || pain.title,
+        description: personalized.descripcion || pain.description,
+        impacto: personalized.impacto || ''
       };
     });
 
   } catch (error) {
-    console.error('Error in AI pain detection:', error);
-    return detectPainsFallback();
+    console.error('Error personalizing pains:', error);
+    // Retornar los pains sin personalizar
+    return pains;
   }
 }
 
 function detectPainsFallback() {
   const { phase1 } = FormState.responses;
+  const top4 = FormState.situaciones.top4;
+
+  // Si tenemos situaciones top4, usarlas
+  if (top4 && top4.length > 0) {
+    return top4.map((situacionId, index) => {
+      const situacion = getSituaciones().find(s => s.id === situacionId);
+      if (!situacion) return null;
+
+      return {
+        order: index + 1,
+        key: situacion.clusters[0] || `${situacionId}-GENERAL`,
+        title: situacion.titulo,
+        description: situacion.descripcion,
+        categoria: situacion.categoria,
+        clusters: situacion.clusters,
+        confidence: 1.0
+      };
+    }).filter(Boolean);
+  }
+
+  // Fallback basado en respuestas de Phase 1
   const pains = [];
 
-  // Construir basado en respuestas
   if (phase1.has_field_team !== 'no') {
     pains.push({
       order: 1,
@@ -1298,7 +2485,6 @@ function detectPainsFallback() {
     });
   }
 
-  // Siempre incluir pipeline/ventas
   pains.push({
     order: pains.length + 1,
     key: 'D-PIPELINE',
@@ -1309,7 +2495,6 @@ function detectPainsFallback() {
     confidence: 0.80
   });
 
-  // Completar hasta 4
   if (pains.length < 4) {
     pains.push({
       order: pains.length + 1,
@@ -1934,7 +3119,7 @@ function init() {
   try {
     initDOM();
 
-    // Event Listeners - Botón Start (ahora va a pregunta de empresa)
+    // Event Listeners - Botón Start (va a identificación de empresa)
     if (DOM.btnStart) {
       DOM.btnStart.addEventListener('click', () => goToScreen('q0-company'));
     }
@@ -1971,6 +3156,14 @@ function init() {
   // Event Listeners - Research continue
   if (DOM.btnContinueResearch) {
     DOM.btnContinueResearch.addEventListener('click', handleContinueFromResearch);
+  }
+
+  // Event Listeners - Top 4 continue (va a preguntas fijas de fase 1)
+  if (DOM.btnContinueTop4) {
+    DOM.btnContinueTop4.addEventListener('click', async () => {
+      const firstScreen = getFirstQuestionToShow();
+      await goToScreen(firstScreen);
+    });
   }
 
   // Event Listeners - Pains (confirmación individual)
