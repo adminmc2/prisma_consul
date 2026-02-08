@@ -19,6 +19,7 @@ const CONFIG = {
   whisperApiUrl: '/.netlify/functions/groq-whisper',
   submitApiUrl: '/.netlify/functions/submit-form',
   researchApiUrl: '/.netlify/functions/research-company',
+  generateQuestionsApiUrl: '/.netlify/functions/generate-questions',
 
   // Modelos
   groqModel: 'llama-3.3-70b-versatile',
@@ -34,12 +35,15 @@ const CONFIG = {
 };
 
 // ============================================================
-// BASE DE CONOCIMIENTO DE DOLORES (500+ dolores)
-// Cargada desde pain-knowledge-base.js
+// BASE DE CONOCIMIENTO DE DOLORES
+// Movida al servidor (netlify/functions/pain-knowledge-base.js)
+// Las preguntas se generan server-side via generate-questions API
 // ============================================================
 
-// La base de conocimientos se carga desde pain-knowledge-base.js
-// Las variables PAIN_CATALOG, PAIN_CLUSTERS y CLUSTER_QUESTIONS ya están disponibles globalmente
+// Stubs vacíos para compatibilidad con código legacy que referencia estas variables
+const PAIN_CATALOG = typeof window !== 'undefined' && window.PAIN_CATALOG || {};
+const PAIN_CLUSTERS = typeof window !== 'undefined' && window.PAIN_CLUSTERS || {};
+const CLUSTER_QUESTIONS = typeof window !== 'undefined' && window.CLUSTER_QUESTIONS || {};
 
 // ============================================================
 // 16 SITUACIONES PROBLEMÁTICAS (Categorías A-P)
@@ -329,12 +333,8 @@ function getSituaciones() {
   return SITUACIONES_DISTRIBUIDOR;
 }
 
-// Log de carga
-if (typeof PAIN_CATALOG !== 'undefined' && Object.keys(PAIN_CATALOG).length > 0) {
-  console.log(`APEX: Base de conocimientos cargada (${Object.keys(PAIN_CATALOG).length} dolores, ${Object.keys(PAIN_CLUSTERS).length} clusters)`);
-} else {
-  console.warn('APEX: Base de conocimientos no encontrada o vacía');
-}
+// Log: base de conocimiento ahora en servidor
+console.log('APEX: Base de conocimiento en servidor (generate-questions API)');
 
 // Prioridades de exploración por contexto
 const EXPLORATION_PRIORITY = {
@@ -412,7 +412,7 @@ const FormState = {
 
   // Navegación
   screenHistory: ['welcome'],
-  totalQuestions: 9,  // 9 preguntas fijas en Fase 1
+  totalQuestions: 0,  // Se actualiza cuando Claude genera las preguntas
   answeredQuestions: 0
 };
 
@@ -1440,8 +1440,12 @@ function handleRankCardClick(e) {
   const total = FormState.situaciones.seleccionadas.length;
 
   // Mostrar botón continuar solo cuando TODAS están rankeadas
+  console.log(`Rank progress: ${rankOrder.length}/${total}`);
   if (rankOrder.length >= total) {
     btnContinue.classList.remove('hidden');
+    btnContinue.disabled = false;
+    // Scroll suave al botón
+    setTimeout(() => btnContinue.scrollIntoView({ behavior: 'smooth', block: 'end' }), 150);
   } else {
     btnContinue.classList.add('hidden');
   }
@@ -1523,7 +1527,7 @@ async function handleTransitionToPhase2() {
 
 async function handleTransitionToPhase2Questions() {
   try {
-    console.log('Generating adaptive questions based on Top 4:', FormState.situaciones.top4);
+    console.log('Generating profundización questions based on Top 4:', FormState.situaciones.top4);
 
     const questions = await generateAdaptiveQuestionsFromTop4();
 
@@ -1531,273 +1535,64 @@ async function handleTransitionToPhase2Questions() {
       throw new Error('No questions generated');
     }
 
-    console.log('Generated', questions.length, 'adaptive questions');
+    console.log('Generated', questions.length, 'profundización questions');
     FormState.responses.adaptiveQuestions = questions;
     FormState.responses.currentAdaptiveIndex = 0;
-    FormState.totalQuestions = 9 + questions.length;
+    FormState.totalQuestions = questions.length;
   } catch (error) {
-    console.error('Error generating adaptive questions:', error);
+    console.error('Error generating questions:', error);
     FormState.responses.adaptiveQuestions = getFallbackQuestionsFromTop4();
     FormState.responses.currentAdaptiveIndex = 0;
-    FormState.totalQuestions = 9 + FormState.responses.adaptiveQuestions.length;
+    FormState.totalQuestions = FormState.responses.adaptiveQuestions.length;
   }
 
   await goToScreen('phase2-questions');
 }
 
-// Genera preguntas basadas en las 4 situaciones priorizadas
-function generateAdaptiveQuestionsFromTop4() {
+// Genera preguntas llamando al servidor (Claude API + base de conocimiento server-side)
+async function generateAdaptiveQuestionsFromTop4() {
   const top4 = FormState.situaciones.top4;
-  const questions = [];
+  const rankOrder = FormState.situaciones.rankOrder;
 
-  // Banco de preguntas por categoría de situación
-  const QUESTIONS_BY_SITUACION = {
-    'A': [  // Visibilidad equipo campo
-      {
-        texto: '¿Cómo te enteras de lo que hizo tu equipo hoy?',
-        hint: 'Visitas, llamadas, reuniones realizadas',
-        profundiza_en: 'Visibilidad',
-        opciones: [
-          { texto: 'Tengo un dashboard en tiempo real', detecta: [], gravedad: 0 },
-          { texto: 'Me mandan WhatsApp o correo', detecta: ['A-VISIBILIDAD'], gravedad: 1 },
-          { texto: 'Les pregunto uno por uno', detecta: ['A-VISIBILIDAD', 'A-REGISTRO'], gravedad: 2 },
-          { texto: 'No sé hasta que me dicen', detecta: ['A-VISIBILIDAD', 'A-REGISTRO', 'G-ADOPCION'], gravedad: 3 }
-        ]
-      },
-      {
-        texto: '¿Cuándo registran las visitas a clientes?',
-        hint: 'En el momento, al final del día, cuando pueden',
-        profundiza_en: 'Registro',
-        opciones: [
-          { texto: 'En el momento, desde el celular', detecta: [], gravedad: 0 },
-          { texto: 'Al final del día', detecta: ['A-REGISTRO'], gravedad: 1 },
-          { texto: 'Cuando se acuerdan o pueden', detecta: ['A-REGISTRO', 'G-ADOPCION'], gravedad: 2 },
-          { texto: 'La verdad casi no registran', detecta: ['A-REGISTRO', 'A-VISIBILIDAD', 'G-ADOPCION'], gravedad: 3 }
-        ]
-      }
-    ],
-    'B': [  // Base de clientes
-      {
-        texto: '¿Dónde vive la información de tus clientes?',
-        hint: 'Datos de contacto, historial, preferencias',
-        profundiza_en: 'Centralización',
-        opciones: [
-          { texto: 'En un sistema centralizado que todos usan', detecta: [], gravedad: 0 },
-          { texto: 'En Excel, pero hay una versión "oficial"', detecta: ['G-EXCEL'], gravedad: 1 },
-          { texto: 'Cada vendedor tiene su propia lista', detecta: ['B-CENTRALIZACION', 'G-FRAGMENTACION'], gravedad: 2 },
-          { texto: 'Dispersa en varios lugares', detecta: ['B-CENTRALIZACION', 'B-DATOS', 'G-FRAGMENTACION'], gravedad: 3 }
-        ]
-      }
-    ],
-    'C': [  // Muestras médicas
-      {
-        texto: '¿Cómo controlas las muestras médicas que entrega tu equipo?',
-        hint: 'Inventario, trazabilidad, firmas',
-        profundiza_en: 'Control de muestras',
-        opciones: [
-          { texto: 'Sistema completo con trazabilidad de lotes', detecta: [], gravedad: 0 },
-          { texto: 'Excel que actualizamos regularmente', detecta: ['C-INVENTARIO'], gravedad: 1 },
-          { texto: 'Cada rep lleva su propio control', detecta: ['C-INVENTARIO', 'C-TRAZABILIDAD'], gravedad: 2 },
-          { texto: 'No tenemos control real', detecta: ['C-TRAZABILIDAD', 'C-CONTROL', 'C-COMPLIANCE'], gravedad: 3 }
-        ]
-      }
-    ],
-    'D': [  // Oportunidades de venta
-      {
-        texto: '¿Cómo das seguimiento a oportunidades de venta?',
-        hint: 'Prospectos, cotizaciones, negociaciones',
-        profundiza_en: 'Pipeline',
-        opciones: [
-          { texto: 'Pipeline en sistema con etapas claras', detecta: [], gravedad: 0 },
-          { texto: 'Lista en Excel que actualizo', detecta: ['D-PIPELINE'], gravedad: 1 },
-          { texto: 'Cada vendedor tiene su método', detecta: ['D-PIPELINE', 'D-SEGUIMIENTO'], gravedad: 2 },
-          { texto: 'Se nos pierden oportunidades', detecta: ['D-PIPELINE', 'D-SEGUIMIENTO', 'D-VISIBILIDAD'], gravedad: 3 }
-        ]
-      }
-    ],
-    'E': [  // Cobranza
-      {
-        texto: '¿Tienes visibilidad de tu cartera vencida?',
-        hint: 'Facturas pendientes, días de mora',
-        profundiza_en: 'Cobranza',
-        opciones: [
-          { texto: 'Sí, con alertas automáticas', detecta: [], gravedad: 0 },
-          { texto: 'Reviso reportes semanalmente', detecta: ['E-SEGUIMIENTO'], gravedad: 1 },
-          { texto: 'Más o menos, a veces se me pasa', detecta: ['E-SEGUIMIENTO', 'E-ALERTAS'], gravedad: 2 },
-          { texto: 'Es un dolor de cabeza constante', detecta: ['E-SEGUIMIENTO', 'E-ALERTAS', 'E-VISIBILIDAD'], gravedad: 3 }
-        ]
-      }
-    ],
-    'F': [  // Reportes
-      {
-        texto: '¿Cuánto tardas en generar un reporte para dirección?',
-        hint: 'Ventas, visitas, resultados del mes',
-        profundiza_en: 'Reportes',
-        opciones: [
-          { texto: 'Minutos, está automatizado', detecta: [], gravedad: 0 },
-          { texto: 'Un par de horas', detecta: ['F-TIEMPO'], gravedad: 1 },
-          { texto: 'Me toma casi todo el día', detecta: ['F-TIEMPO', 'F-AUTOMATIZACION'], gravedad: 2 },
-          { texto: 'Días, junto info de todos lados', detecta: ['F-TIEMPO', 'F-AUTOMATIZACION', 'F-DASHBOARDS'], gravedad: 3 }
-        ]
-      }
-    ],
-    'G': [  // Tecnología
-      {
-        texto: '¿Tu equipo realmente usa las herramientas que tienen?',
-        hint: 'CRM, app, sistema',
-        profundiza_en: 'Adopción',
-        opciones: [
-          { texto: 'Sí, es parte del proceso diario', detecta: [], gravedad: 0 },
-          { texto: 'Algunos lo usan, otros no tanto', detecta: ['G-ADOPCION'], gravedad: 1 },
-          { texto: 'Lo usan solo cuando los obligo', detecta: ['G-ADOPCION', 'G-FRAGMENTACION'], gravedad: 2 },
-          { texto: 'Casi nadie lo usa realmente', detecta: ['G-ADOPCION', 'G-FRAGMENTACION', 'G-EXCEL'], gravedad: 3 }
-        ]
-      }
-    ],
-    'H': [  // Comunicación
-      {
-        texto: '¿Cómo comunicas información importante al equipo?',
-        hint: 'Cambios, alertas, actualizaciones',
-        profundiza_en: 'Comunicación',
-        opciones: [
-          { texto: 'Canal oficial que todos revisan', detecta: [], gravedad: 0 },
-          { texto: 'Grupo de WhatsApp', detecta: ['H-CANALES'], gravedad: 1 },
-          { texto: 'Email que pocos leen', detecta: ['H-CANALES', 'H-VISIBILIDAD'], gravedad: 2 },
-          { texto: 'Como puedo, y se pierde mucho', detecta: ['H-CANALES', 'H-VISIBILIDAD', 'H-ALINEACION'], gravedad: 3 }
-        ]
-      }
-    ],
-    'I': [  // Servicio al cliente
-      {
-        texto: '¿Cómo das seguimiento a lo que prometes a clientes?',
-        hint: 'Compromisos, solicitudes, quejas',
-        profundiza_en: 'Seguimiento',
-        opciones: [
-          { texto: 'Sistema de tickets/tareas', detecta: [], gravedad: 0 },
-          { texto: 'Lista personal que reviso', detecta: ['I-SEGUIMIENTO'], gravedad: 1 },
-          { texto: 'Memoria y buena voluntad', detecta: ['I-SEGUIMIENTO', 'I-RESPUESTA'], gravedad: 2 },
-          { texto: 'Se nos olvidan cosas', detecta: ['I-SEGUIMIENTO', 'I-RESPUESTA', 'I-SATISFACCION'], gravedad: 3 }
-        ]
-      }
-    ],
-    'J': [  // Marketing
-      {
-        texto: '¿Sabes qué campañas o acciones te generan resultados?',
-        hint: 'ROI, atribución, efectividad',
-        profundiza_en: 'ROI Marketing',
-        opciones: [
-          { texto: 'Sí, mido todo con métricas claras', detecta: [], gravedad: 0 },
-          { texto: 'Tengo una idea general', detecta: ['J-ROI'], gravedad: 1 },
-          { texto: 'Intuición más que datos', detecta: ['J-ROI', 'J-ATRIBUCION'], gravedad: 2 },
-          { texto: 'No tengo idea qué funciona', detecta: ['J-ROI', 'J-ATRIBUCION', 'J-MATERIALES'], gravedad: 3 }
-        ]
-      }
-    ],
-    'K': [  // Planificación
-      {
-        texto: '¿En qué basas tus decisiones estratégicas?',
-        hint: 'Territorios, cuotas, recursos',
-        profundiza_en: 'Datos para decisiones',
-        opciones: [
-          { texto: 'Datos e indicadores claros', detecta: [], gravedad: 0 },
-          { texto: 'Reportes que armo manualmente', detecta: ['K-DATOS'], gravedad: 1 },
-          { texto: 'Experiencia e intuición', detecta: ['K-DATOS', 'K-OBJETIVOS'], gravedad: 2 },
-          { texto: 'Voy sobre la marcha', detecta: ['K-DATOS', 'K-OBJETIVOS', 'K-TERRITORIOS'], gravedad: 3 }
-        ]
-      }
-    ],
-    'L': [  // Compliance
-      {
-        texto: '¿Qué tan preparado estás para una auditoría mañana?',
-        hint: 'Documentos, firmas, trazabilidad',
-        profundiza_en: 'Compliance',
-        opciones: [
-          { texto: 'Todo está en sistema, listo', detecta: [], gravedad: 0 },
-          { texto: 'Necesito unas horas para preparar', detecta: ['L-DOCUMENTACION'], gravedad: 1 },
-          { texto: 'Sería complicado juntarlo todo', detecta: ['L-DOCUMENTACION', 'L-FIRMAS'], gravedad: 2 },
-          { texto: 'Me daría un infarto', detecta: ['L-DOCUMENTACION', 'L-FIRMAS', 'L-TRAZABILIDAD'], gravedad: 3 }
-        ]
-      }
-    ],
-    'M': [  // Capacitación
-      {
-        texto: '¿Qué pasa cuando entra alguien nuevo al equipo?',
-        hint: 'Onboarding, capacitación, ramp-up',
-        profundiza_en: 'Onboarding',
-        opciones: [
-          { texto: 'Proceso estructurado con materiales', detecta: [], gravedad: 0 },
-          { texto: 'Lo acompaña alguien unas semanas', detecta: ['M-ONBOARDING'], gravedad: 1 },
-          { texto: 'Aprende sobre la marcha', detecta: ['M-ONBOARDING', 'M-CONOCIMIENTO'], gravedad: 2 },
-          { texto: 'Tarda meses en ser productivo', detecta: ['M-ONBOARDING', 'M-CONOCIMIENTO', 'M-ROTACION'], gravedad: 3 }
-        ]
-      }
-    ],
-    'N': [  // Eventos
-      {
-        texto: '¿Qué pasa después de un evento o congreso?',
-        hint: 'Leads, seguimiento, ROI',
-        profundiza_en: 'Eventos',
-        opciones: [
-          { texto: 'Seguimiento automático a todos los leads', detecta: [], gravedad: 0 },
-          { texto: 'Lista de contactos que repartimos', detecta: ['N-CAPTURA'], gravedad: 1 },
-          { texto: 'Tarjetas en una caja que nadie revisa', detecta: ['N-CAPTURA', 'N-SEGUIMIENTO'], gravedad: 2 },
-          { texto: 'No medimos nada del evento', detecta: ['N-CAPTURA', 'N-SEGUIMIENTO', 'N-ROI'], gravedad: 3 }
-        ]
-      }
-    ],
-    'O': [  // Competencia
-      {
-        texto: '¿Qué sabes de lo que hace tu competencia?',
-        hint: 'Productos, estrategias, clientes',
-        profundiza_en: 'Inteligencia competitiva',
-        opciones: [
-          { texto: 'Tengo un proceso de inteligencia', detecta: [], gravedad: 0 },
-          { texto: 'Lo que me cuenta el equipo', detecta: ['O-INTELIGENCIA'], gravedad: 1 },
-          { texto: 'Rumores y encuentros casuales', detecta: ['O-INTELIGENCIA', 'O-COMPARATIVO'], gravedad: 2 },
-          { texto: 'Casi nada, vamos a ciegas', detecta: ['O-INTELIGENCIA', 'O-COMPARATIVO', 'O-ESTRATEGIA'], gravedad: 3 }
-        ]
-      }
-    ],
-    'P': [  // Automatización
-      {
-        texto: '¿Cuántas tareas repetitivas hace tu equipo manualmente?',
-        hint: 'Recordatorios, reportes, asignaciones',
-        profundiza_en: 'Automatización',
-        opciones: [
-          { texto: 'Casi todo está automatizado', detecta: [], gravedad: 0 },
-          { texto: 'Algunas cosas, pero hay mucho manual', detecta: ['P-TAREAS'], gravedad: 1 },
-          { texto: 'La mayoría es trabajo manual', detecta: ['P-TAREAS', 'P-RECORDATORIOS'], gravedad: 2 },
-          { texto: 'Todo es manual, perdemos horas', detecta: ['P-TAREAS', 'P-RECORDATORIOS', 'P-AUTOMATICO'], gravedad: 3 }
-        ]
-      }
-    ]
-  };
+  console.log('Calling generate-questions API with:', { top4, rankOrder, tipoNegocio: FormState.tipoNegocio });
 
-  // Seleccionar una pregunta por cada situación del top4
-  top4.forEach(id => {
-    const categoryQuestions = QUESTIONS_BY_SITUACION[id];
-    if (categoryQuestions && categoryQuestions.length > 0) {
-      // Tomar la primera pregunta de la categoría
-      questions.push(categoryQuestions[0]);
-    }
-  });
-
-  // Añadir pregunta general si hay espacio
-  if (questions.length < 5) {
-    questions.push({
-      texto: '¿Qué pasa cuando un vendedor se va de la empresa?',
-      hint: 'Clientes, historial, conocimiento',
-      profundiza_en: 'Continuidad',
-      opciones: [
-        { texto: 'Todo queda en el sistema', detecta: [], gravedad: 0 },
-        { texto: 'Hay que pedirle que entregue sus archivos', detecta: ['B-CENTRALIZACION'], gravedad: 1 },
-        { texto: 'Se pierde algo de información', detecta: ['B-CENTRALIZACION', 'B-DATOS'], gravedad: 2 },
-        { texto: 'Se lleva todo en la cabeza', detecta: ['B-CENTRALIZACION', 'B-DATOS', 'A-CONOCIMIENTO'], gravedad: 3 }
-      ]
+  try {
+    const response = await fetch(CONFIG.generateQuestionsApiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        top4: top4,
+        rankOrder: rankOrder,
+        tipoNegocio: FormState.tipoNegocio || 'distribuidor',
+        researchProfile: FormState.company.profile || null,
+        phase1Responses: FormState.responses.phase1 || null
+      })
     });
-  }
 
-  return questions;
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.success && data.questions && data.questions.length > 0) {
+      console.log(`Server generated ${data.questions.length} questions (model: ${data.meta?.model || 'unknown'})`);
+      return data.questions;
+    }
+
+    // Si el servidor devolvió fallback
+    if (data.questions && data.questions.length > 0) {
+      console.log('Using server fallback questions');
+      return data.questions;
+    }
+
+    throw new Error(data.error || 'No questions returned');
+
+  } catch (error) {
+    console.error('Failed to generate questions from server:', error);
+    // Usar fallback local
+    return getFallbackQuestionsFromTop4();
+  }
 }
 
 function getFallbackQuestionsFromTop4() {
@@ -2234,8 +2029,8 @@ async function renderAdaptiveQuestion() {
   }
 
   const question = questions[index];
-  const questionNum = 10 + index;  // 9 preguntas fijas + 1 (índice empieza en 0)
-  const totalQuestions = 9 + questions.length;
+  const questionNum = index + 1;
+  const totalQuestions = questions.length;
 
   // Actualizar UI
   DOM.adaptiveQuestionNumber.innerHTML = `${questionNum} <span class="question-total">/ ${totalQuestions}</span>`;
@@ -3201,7 +2996,7 @@ function init() {
   }
 
 
-  console.log(`APEX Discovery Form initialized (${Object.keys(PAIN_CATALOG).length} pains, ${Object.keys(PAIN_CLUSTERS).length} clusters)`);
+  console.log('APEX Discovery Form initialized (knowledge base on server)');
 
   } catch (error) {
     console.error('Error initializing form:', error);

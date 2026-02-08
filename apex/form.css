@@ -1890,7 +1890,6 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-lg);
 }
 
 @media (min-width: 640px) {
@@ -1992,10 +1991,16 @@ body {
   color: var(--success);
 }
 
-/* Botón continuar */
+/* Botón continuar - dinámico, después del grid */
 .rank-continue {
-  margin-top: var(--spacing-md);
   width: 100%;
+  margin-top: var(--spacing-md);
+  animation: rank-btn-appear 0.3s ease-out;
+}
+
+@keyframes rank-btn-appear {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .rank-continue.hidden {
