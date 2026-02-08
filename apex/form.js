@@ -1149,10 +1149,16 @@ function setupSwipeListeners() {
   const btnNo = document.getElementById('btnSwipeNo');
   const btnYes = document.getElementById('btnSwipeYes');
 
+  // Limpiar listeners anteriores para evitar duplicados
+  if (window._swipeCleanup) {
+    window._swipeCleanup();
+  }
+
   // Touch/mouse swipe con física mejorada
   let startX = 0;
   let currentX = 0;
   let isDragging = false;
+  let hasMoved = false;
   let velocity = 0;
   let lastX = 0;
   let lastTime = 0;
@@ -1161,6 +1167,7 @@ function setupSwipeListeners() {
     if (card.classList.contains('exit-left') || card.classList.contains('exit-right')) return;
 
     isDragging = true;
+    hasMoved = false;
     startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
     currentX = startX;
     lastX = startX;
@@ -1180,6 +1187,11 @@ function setupSwipeListeners() {
 
     if (dt > 0) {
       velocity = (clientX - lastX) / dt * 16; // Normalizado a ~60fps
+    }
+
+    // Marcar que hubo movimiento real (mínimo 10px)
+    if (Math.abs(clientX - startX) > 10) {
+      hasMoved = true;
     }
 
     lastX = clientX;
@@ -1212,6 +1224,13 @@ function setupSwipeListeners() {
     isDragging = false;
     stack.classList.remove('dragging');
 
+    // Si no hubo movimiento real, no hacer swipe (evita swipes involuntarios en móvil)
+    if (!hasMoved) {
+      card.style.transform = '';
+      card.classList.remove('swiping-left', 'swiping-right');
+      return;
+    }
+
     const diff = currentX - startX;
 
     // Considerar velocidad además de distancia para swipe más natural
@@ -1233,6 +1252,9 @@ function setupSwipeListeners() {
     }
   };
 
+  const onBtnNo = () => swipeCard('left');
+  const onBtnYes = () => swipeCard('right');
+
   card.addEventListener('mousedown', handleStart);
   card.addEventListener('touchstart', handleStart, { passive: true });
   document.addEventListener('mousemove', handleMove);
@@ -1241,11 +1263,24 @@ function setupSwipeListeners() {
   document.addEventListener('touchend', handleEnd);
 
   // Button clicks
-  btnNo.addEventListener('click', () => swipeCard('left'));
-  btnYes.addEventListener('click', () => swipeCard('right'));
+  btnNo.addEventListener('click', onBtnNo);
+  btnYes.addEventListener('click', onBtnYes);
 
   // Keyboard
   document.addEventListener('keydown', handleSwipeKeyboard);
+
+  // Guardar función de limpieza para evitar listeners duplicados
+  window._swipeCleanup = () => {
+    card.removeEventListener('mousedown', handleStart);
+    card.removeEventListener('touchstart', handleStart);
+    document.removeEventListener('mousemove', handleMove);
+    document.removeEventListener('touchmove', handleMove);
+    document.removeEventListener('mouseup', handleEnd);
+    document.removeEventListener('touchend', handleEnd);
+    btnNo.removeEventListener('click', onBtnNo);
+    btnYes.removeEventListener('click', onBtnYes);
+    document.removeEventListener('keydown', handleSwipeKeyboard);
+  };
 }
 
 function handleSwipeKeyboard(e) {
@@ -1313,11 +1348,7 @@ async function handleSwipeComplete() {
   // Si más de 4, necesitamos MaxDiff para priorizar
   document.getElementById('situacionesCount').textContent = seleccionadas.length;
   await goToScreen('transition-maxdiff');
-
-  // Después de mostrar transición, ir a MaxDiff
-  setTimeout(async () => {
-    await goToScreen('maxdiff-priorizar');
-  }, 2000);
+  // La transición a maxdiff-priorizar se maneja en onScreenEnter('transition-maxdiff')
 }
 
 // ============================================================

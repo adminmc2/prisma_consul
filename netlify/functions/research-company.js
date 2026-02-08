@@ -321,9 +321,16 @@ D-PIPELINE, D-SEGUIMIENTO, E-COBRANZA, F-REPORTES, F-TIEMPO, G-EXCEL, G-ADOPCION
     // Asegurar estructura correcta
     profile.detectado = profile.detectado || {};
 
+    // Sanitizar: Groq a veces devuelve "null" como string en vez de null
+    const det = profile.detectado;
+    for (const key of Object.keys(det)) {
+      if (det[key] === 'null' || det[key] === 'undefined') {
+        det[key] = null;
+      }
+    }
+
     // LÓGICA DE SALTO: Si detectado.X tiene valor concreto → NO preguntar
     // Si detectado.X es null → SÍ preguntar
-    const det = profile.detectado;
 
     // Helper para verificar si un valor está detectado
     const isDetected = (val) => val !== null && val !== undefined;
