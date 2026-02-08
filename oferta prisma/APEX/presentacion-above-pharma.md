@@ -6,6 +6,42 @@
 
 ---
 
+## INSTRUCCIONES DE DISEÑO PARA KIMI
+
+**IMPORTANTE:** Respetar estos elementos en TODAS las diapositivas.
+
+### PALETA DE COLORES
+- **Fondo principal:** Azul oscuro (#0a1628 o similar)
+- **Texto principal:** Blanco (#FFFFFF)
+- **Acentos/destacados:** Azul claro/cyan (#00D4FF o similar)
+- **Tablas:** Fondo semi-transparente con bordes redondeados
+- **Precios/números importantes:** Color cyan para destacar
+
+### TIPOGRAFÍA
+- **Títulos:** Sans-serif bold, tamaño grande (mínimo 36pt)
+- **Subtítulos:** Sans-serif medium (24-28pt)
+- **Cuerpo:** Sans-serif regular (16-18pt)
+- **Números/precios:** Tamaño mayor, destacados en negrita
+
+### LOGOS
+- **Logo PRISMA:** Esquina inferior derecha en TODAS las diapositivas
+- **Logo Above Pharma:** Portada y diapositivas de cierre
+
+### ELEMENTOS VISUALES
+- Iconos minimalistas y modernos para cada sección
+- Líneas divisorias sutiles (blancas semi-transparentes)
+- Espaciado generoso entre elementos
+- Cajas/tarjetas con bordes redondeados y sombra sutil
+- QR con marco visible y URL debajo
+
+### ESTILO GENERAL
+- Diseño limpio y profesional
+- Aspecto tecnológico/moderno
+- Jerarquía visual clara
+- Consistencia en todas las diapositivas
+
+---
+
 ## DIAPOSITIVA 1: PORTADA
 
 ABOVE PHARMA
@@ -41,9 +77,12 @@ NUESTRA PROPUESTA
 | BRAND PLAN | APEX | OMIA |
 |------------|------|------|
 | Estrategia MyFiller | Automatización de Procesos y EXperiencias | Asistente IA Ventas |
-| 3.300 € | 2.500 € | 500 € |
+| 3.300€ / $66,000 MXN | ~~5.000€~~ **2.500€** / $50,000 MXN | ~~1.000€~~ **500€** / $10,000 MXN |
 
 ECOSISTEMA ABOVE
+
+PAQUETE INTEGRAL: 5.670€ / $113,400 MXN
+(Incluye 50% dto. APEX + 50% dto. OMIA + 10% dto. paquete = Ahorras 3.630€)
 
 ---
 
@@ -91,7 +130,7 @@ BRAND PLAN: 8 Rubros Estratégicos
 8. ROADMAP DE IMPLEMENTACIÓN
    Cronograma maestro, fases, milestones
 
-INVERSIÓN: 3.300€
+INVERSIÓN: 3.300€ / $66,000 MXN
 
 ---
 
@@ -181,7 +220,7 @@ Financiero + Implementación
 - Milestones y checkpoints de revisión
 - Quick wins y acciones inmediatas
 
-INVERSIÓN BRAND PLAN: 3.300€
+INVERSIÓN BRAND PLAN: 3.300€ / $66,000 MXN
 
 ---
 
@@ -300,19 +339,26 @@ ADMINISTRADOR
 
 APEX: Tu Inversión Inicial
 
-CONSTRUCCIÓN: 2.500€
+┌───────────────────────────────────────────────────────────────┐
+│  Precio normal:           5.000€ / $100,000 MXN               │
+│  OFERTA ESPECIAL:         2.500€ / $50,000 MXN                │
+│  (50% descuento por lanzamiento)                              │
+└───────────────────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────────────────────┐
-│  ESTRUCTURA BASE                         900€      │
-│  Usuarios ilimitados, roles, interfaces,           │
-│  web + móvil, tu identidad, motor IA listo         │
-├─────────────────────────────────────────────────────┤
-│  TUS 4 DOLORES                         1.600€      │
-│  Crédito para resolver tus 4 problemas             │
-│  prioritarios con SOLUCIÓN COMPLETA                │
-├─────────────────────────────────────────────────────┤
-│  TOTAL                                 2.500€      │
-└─────────────────────────────────────────────────────┘
+DESGLOSE:
+
+┌───────────────────────────────────────────────────────────────┐
+│  ESTRUCTURA BASE                    900€ / $18,000 MXN        │
+│  Usuarios ilimitados, roles, interfaces,                      │
+│  web + móvil, tu identidad, motor IA listo                    │
+├───────────────────────────────────────────────────────────────┤
+│  TUS 4 DOLORES                    1.600€ / $32,000 MXN        │
+│  Crédito para resolver tus 4 problemas                        │
+│  prioritarios con SOLUCIÓN COMPLETA                           │
+├───────────────────────────────────────────────────────────────┤
+│  TOTAL CON DESCUENTO              2.500€ / $50,000 MXN        │
+│  (Ahorras 2.500€ / $50,000 MXN)                               │
+└───────────────────────────────────────────────────────────────┘
 
 NO son "módulos sueltos".
 A cada dolor le damos CUERPO COMPLETO.
@@ -323,7 +369,7 @@ A cada dolor le damos CUERPO COMPLETO.
 
 APEX: Tus 4 Dolores
 
-"Cuéntanos tus 4 mayores dolores. Tienes 1.600€ de crédito para resolverlos."
+"Cuéntanos tus 4 mayores dolores. Tienes 1.600€ ($32,000 MXN) de crédito para resolverlos."
 
 Por cada dolor configuramos:
 
@@ -385,7 +431,7 @@ Escanea el QR y completa el formulario:
 └─────────────────────────────────────────────────────┘
 
 El formulario:
-- Te toma 3 minutos
+- Te toma 5 minutos
 - Detecta automáticamente tus dolores principales
 - Te pedimos un audio con tus palabras
 - En 48 horas recibes propuesta personalizada
@@ -412,6 +458,7 @@ TODOS los planes incluyen:
 - Usuarios ilimitados en tu cuenta
 - Web + móvil + offline
 - Soporte técnico
+- **Mantenimiento incluido:** 10 tickets mensuales + atención WhatsApp
 
 Lo que VARÍA entre planes es el acceso a IA.
 
@@ -421,8 +468,8 @@ Lo que VARÍA entre planes es el acceso a IA.
 
 APEX: Tú Eliges Cuánta IA
 
-| Capacidad | BASE 9€/mes | ESENCIAL 19€/mes | PRO 29€/mes |
-|-----------|-------------|------------------|-------------|
+| Capacidad | BASE 9€/mes ($180 MXN) | ESENCIAL 19€/mes ($380 MXN) | PRO 29€/mes ($580 MXN) |
+|-----------|------------------------|----------------------------|------------------------|
 | Interfaz estructurada | ✓ Completa | ✓ Completa | ✓ Completa |
 | Fichas, listas, reportes | ✓ | ✓ | ✓ |
 | Consultas IA / día | ❌ | 30 | 100 |
@@ -434,7 +481,7 @@ APEX: Tú Eliges Cuánta IA
 | Reportes IA / mes | ❌ | 5 | 20 |
 
 La interfaz estructurada NO consume IA.
-Solo el Lienzo IA consume según tu uso.
+Solo el Lienzo IA y los flujos y visualizaciones personalizadas consume según tu uso.
 
 ---
 
@@ -442,19 +489,19 @@ Solo el Lienzo IA consume según tu uso.
 
 APEX: ¿Qué Plan para Cada Rol?
 
-| Si tu equipo... | Plan | Precio |
-|-----------------|------|--------|
-| Solo necesita registrar y consultar datos | BASE | 9€/mes |
-| Quiere dictar visitas por voz y recibir sugerencias | ESENCIAL | 19€/mes |
-| Necesita briefings automáticos y IA proactiva | PRO | 29€/mes |
+| Si tu equipo... | Plan | Precio EUR | Precio MXN |
+|-----------------|------|------------|------------|
+| Solo necesita registrar y consultar datos | BASE | 9€/mes | $180/mes |
+| Quiere dictar visitas por voz y recibir sugerencias | ESENCIAL | 19€/mes | $380/mes |
+| Necesita briefings automáticos y IA proactiva | PRO | 29€/mes | $580/mes |
 
 EJEMPLO ABOVE PHARMA (10 usuarios):
 
-- 6 reps en ESENCIAL (19€) → dictan visitas por voz
-- 2 supervisores en PRO (29€) → reciben briefings y alertas
-- 2 admin en BASE (9€) → solo consultan datos
+- 6 reps en ESENCIAL (19€/$380) → dictan visitas por voz
+- 2 supervisores en PRO (29€/$580) → reciben briefings y alertas
+- 2 admin en BASE (9€/$180) → solo consultan datos
 
-TOTAL: 6×19 + 2×29 + 2×9 = 190€/mes
+TOTAL: 6×19 + 2×29 + 2×9 = 190€/mes ($3,800 MXN/mes)
 
 ---
 
@@ -464,17 +511,17 @@ APEX vs La Competencia
 
 | Sistema | Plan con IA básica | Plan con IA completa |
 |---------|-------------------|---------------------|
-| APEX | 19€/usuario | 29€/usuario |
-| Freshsales | 39€/usuario | 59€/usuario |
-| Zoho | 40€/usuario | 52€/usuario |
-| Pipedrive | 50€/usuario | 75€/usuario |
-| HubSpot | 100€/usuario | 150€/usuario |
+| APEX | 19€ ($380 MXN)/usuario | 29€ ($580 MXN)/usuario |
+| Freshsales | 39€ ($780 MXN)/usuario | 59€ ($1,180 MXN)/usuario |
+| Zoho | 40€ ($800 MXN)/usuario | 52€ ($1,040 MXN)/usuario |
+| Pipedrive | 50€ ($1,000 MXN)/usuario | 75€ ($1,500 MXN)/usuario |
+| HubSpot | 100€ ($2,000 MXN)/usuario | 150€ ($3,000 MXN)/usuario |
 
 APEX es ~50% más económico.
 
 ¿Por qué?
 - APEX ya existe, solo lo configuramos para ti
-- Otros te construyen desde cero (15.000-50.000€)
+- Otros te construyen desde cero (15.000-50.000€ / $300,000-$1,000,000 MXN)
 - La IA está integrada, no es un módulo adicional
 
 ---
@@ -494,6 +541,8 @@ Imagina que cada vendedor tiene un experto en productos sentado a su lado, 24/7.
 Funciona por voz: "Hola, Omia..."
 Funciona por texto en el celular.
 Con TU información de productos.
+
+La plataforma YA EXISTE — solo la personalizamos para ti.
 
 ---
 
@@ -563,16 +612,23 @@ Por perfil: dermatólogos, cirujanos plásticos, medicina estética
 
 ## DIAPOSITIVA 27: OMIA — PLATAFORMA DE GESTIÓN
 
-OMIA: Control para el Manager
+OMIA: Plataforma de Gestión para el Manager
 
 No solo es un asistente para vendedores.
 También tienes una PLATAFORMA DE GESTIÓN:
 
-- Ver qué preguntan tus vendedores
-- Detectar gaps de conocimiento
-- Identificar objeciones más frecuentes
-- Medir uso por vendedor
-- Actualizar contenido fácilmente
+| Funcionalidad | PROFESIONAL | ENTERPRISE |
+|---------------|-------------|------------|
+| Panel de control | ✓ | ✓ |
+| Ver actividad de usuarios | ✓ | ✓ |
+| Ver consultas realizadas | ✓ | ✓ |
+| Gestión de usuarios (alta/baja) | ✓ | ✓ |
+| Estadísticas de uso básicas | ✓ | ✓ |
+| Analytics avanzados | — | ✓ |
+| Reportes exportables | — | ✓ |
+| Métricas por usuario/equipo | — | ✓ |
+| Alertas de uso | — | ✓ |
+| Auditoría completa | — | ✓ |
 
 Si tus vendedores preguntan mucho sobre "precio vs Juvederm", sabes que necesitan más entrenamiento en esa área.
 
@@ -580,31 +636,83 @@ OMIA te da INTELIGENCIA sobre tu equipo.
 
 ---
 
-## DIAPOSITIVA 28: OMIA — TU INVERSIÓN
+## DIAPOSITIVA 28: OMIA — DESARROLLO INICIAL
 
-OMIA: Tu Inversión
+OMIA: Desarrollo Inicial
 
-DESARROLLO INICIAL
-┌─────────────────────────────────────────────────────┐
-│  Precio normal:           1.000€                    │
-│  OFERTA ESPECIAL:           500€                    │
-│  (50% descuento por lanzamiento)                    │
-└─────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────┐
+│  Precio normal:           1.000€ / $20,000 MXN                │
+│  OFERTA ESPECIAL:           500€ / $10,000 MXN                │
+│  (50% descuento por lanzamiento)                              │
+└───────────────────────────────────────────────────────────────┘
 
-El desarrollo incluye:
-- Carga de todos tus productos
-- Configuración de objeciones
-- Comparativas vs competencia
-- Capacitación al equipo
-- 2 meses de suscripción GRATIS
+QUÉ INCLUYE EL DESARROLLO:
 
-SUSCRIPCIÓN MENSUAL
-- Plan Profesional: 99€/mes (10 usuarios, 3.000 consultas)
-- Plan Enterprise: 349€/mes (50 usuarios, 10.000 consultas)
+- Configuración de tu cuenta y usuarios
+- Personalización de interfaz (logo, colores corporativos)
+- Carga de información de productos (fichas técnicas, precios)
+- Carga de objeciones comunes y respuestas
+- Carga de comparativas vs competencia
+- Entrenamiento inicial del modelo con tu contenido
+- Pruebas de calidad de respuestas
+- Capacitación al equipo (1-2 horas)
+- Acompañamiento primera semana
+
+Tiempo de desarrollo: 3-5 días hábiles
 
 ---
 
-## DIAPOSITIVA 29: CATÁLOGO DE SOLUCIONES IA
+## DIAPOSITIVA 29: OMIA — PLANES DE SUSCRIPCIÓN
+
+OMIA: Los 2 Planes de Suscripción
+
+| Característica | PROFESIONAL 99€/mes ($1,980 MXN) | ENTERPRISE 349€/mes ($6,980 MXN) |
+|----------------|----------------------------------|----------------------------------|
+| Usuarios incluidos | 10 | 50 |
+| Usuario adicional | +20€/mes ($400 MXN) | +5€/mes ($100 MXN) |
+| Productos cargados | 50 | Ilimitados |
+| Consultas/mes | 3.000 | 10.000 |
+| Chat por texto | ✓ | ✓ |
+| Interfaz de voz | ✓ | ✓ |
+| PWA (app móvil) | ✓ | ✓ |
+| Plataforma de gestión | Básica | Completa |
+| Sistema de agentes IA | — | ✓ |
+| Integración con sistemas | — | 1 incluida |
+| Analytics/métricas | Básico | Avanzado |
+| Soporte | WhatsApp | Prioritario + llamadas |
+
+Los 2 primeros meses de suscripción son GRATIS
+
+---
+
+## DIAPOSITIVA 30: OMIA — EJEMPLO ABOVE PHARMA
+
+OMIA para Above Pharma: Tu Inversión
+
+PLAN RECOMENDADO: PROFESIONAL
+
+| Concepto | EUR | MXN |
+|----------|-----|-----|
+| Desarrollo inicial (con oferta 50%) | 500€ | $10,000 |
+| 2 primeros meses de suscripción | GRATIS | GRATIS |
+| Suscripción mensual (10 usuarios) | 99€/mes | $1,980/mes |
+| **INVERSIÓN AÑO 1** | **1.490€** | **$29,800** |
+
+Incluye:
+- 10 usuarios
+- 3.000 consultas/mes
+- Voz + texto
+- PWA instalable
+- Plataforma de gestión básica
+- Soporte WhatsApp
+
+Si necesitan más usuarios:
+- 15 usuarios: 99€ + (5×20€) = 199€/mes ($3,980 MXN/mes)
+- 20 usuarios: 99€ + (10×20€) = 299€/mes ($5,980 MXN/mes)
+
+---
+
+## DIAPOSITIVA 31: CATÁLOGO DE SOLUCIONES IA
 
 Y ESTO ES SOLO EL INICIO...
 
@@ -624,7 +732,7 @@ Solo la reutilizamos para nuevas soluciones.
 
 ---
 
-## DIAPOSITIVA 30: ¿POR QUÉ LOS 3 JUNTOS?
+## DIAPOSITIVA 32: ¿POR QUÉ LOS 3 JUNTOS?
 
 ¿POR QUÉ LOS 3 PROYECTOS JUNTOS?
 
@@ -647,27 +755,32 @@ Todo conectado. Todo medible.
 
 ---
 
-## DIAPOSITIVA 31: RESUMEN DE INVERSIÓN
+## DIAPOSITIVA 33: RESUMEN DE INVERSIÓN
 
 TU INVERSIÓN TOTAL
 
-| PROYECTO | INVERSIÓN |
-|----------|-----------|
-| BRAND PLAN MyFiller (8 rubros) | 3.300€ |
-| APEX (Automatización de Procesos y EXperiencias) | 2.500€ |
-| OMIA (Asistente IA Ventas) con 50% descuento | 500€ |
-| Subtotal | 6.300€ |
-| Descuento paquete 3 proyectos (10%) | -630€ |
-| **TOTAL PAQUETE INTEGRAL** | **5.670€** |
-| | ($113,400 MXN) |
+| PROYECTO | Precio Normal | Con Descuento | Ahorras |
+|----------|---------------|---------------|---------|
+| BRAND PLAN MyFiller (8 rubros) | 3.300€ / $66,000 | 3.300€ / $66,000 | — |
+| APEX (Automatización de Procesos y EXperiencias) | 5.000€ / $100,000 | 2.500€ / $50,000 | **50% = 2.500€** |
+| OMIA (Asistente IA Ventas) | 1.000€ / $20,000 | 500€ / $10,000 | **50% = 500€** |
+| Subtotal | 9.300€ / $186,000 | 6.300€ / $126,000 | 3.000€ |
+| Descuento paquete 3 proyectos | — | -630€ / -$12,600 | **10%** |
+| **TOTAL PAQUETE INTEGRAL** | **9.300€** | **5.670€ / $113,400** | **3.630€ / $72,600** |
+
+RESUMEN DE DESCUENTOS:
+- APEX desarrollo: 50% descuento por lanzamiento (ahorras 2.500€ / $50,000 MXN)
+- OMIA desarrollo: 50% descuento por lanzamiento (ahorras 500€ / $10,000 MXN)
+- Paquete 3 proyectos: 10% descuento adicional (ahorras 630€ / $12,600 MXN)
+- **AHORRO TOTAL: 3.630€ ($72,600 MXN)**
 
 + Suscripciones mensuales:
-- APEX: desde 9€/usuario/mes (según plan de IA)
-- OMIA: 99€/mes (10 usuarios incluidos)
+- APEX: desde 9€/usuario/mes ($180 MXN) según plan de IA
+- OMIA: 99€/mes ($1,980 MXN) - 10 usuarios incluidos + 2 meses GRATIS
 
 ---
 
-## DIAPOSITIVA 32: CONDICIONES COMERCIALES
+## DIAPOSITIVA 34: CONDICIONES COMERCIALES
 
 CONDICIONES COMERCIALES
 
@@ -692,7 +805,7 @@ Validez de esta propuesta: 30 días
 
 ---
 
-## DIAPOSITIVA 33: PRÓXIMOS PASOS
+## DIAPOSITIVA 35: PRÓXIMOS PASOS
 
 PRÓXIMOS PASOS
 
@@ -711,11 +824,11 @@ PRÓXIMOS PASOS
    Más soluciones IA con 35% descuento
 
 Contacto: José Pablo Villaseñor
-hola@prismaconsul.com
+jp.villasenor@prismaconsul.com
 
 ---
 
-## DIAPOSITIVA 34: RESUMEN FINAL
+## DIAPOSITIVA 36: RESUMEN FINAL
 
 RESUMEN
 
@@ -725,41 +838,12 @@ BRAND PLAN → Estrategia clara
 APEX → Automatiza procesos y experiencias
 OMIA → Tu equipo vende mejor
 
-INVERSIÓN TOTAL: 5.670€
+INVERSIÓN TOTAL: 5.670€ / $113,400 MXN
 (Incluye 10% descuento por paquete)
 
 Folio: PC26-0205 | Validez: 30 días
 
 El detalle completo de cada proyecto se encuentra en los documentos anexos.
-
----
-
-## NOTAS DE ESTILO PARA LA PRESENTACIÓN
-
-DISEÑO VISUAL (mantener consistente en todas las diapositivas):
-
-COLORES
-- Fondo: Azul oscuro (#0a1628 o similar)
-- Texto principal: Blanco
-- Acentos: Azul claro/cyan para destacar
-- Tablas: Fondo semi-transparente
-
-TIPOGRAFÍA
-- Títulos: Sans-serif bold, grande
-- Subtítulos: Sans-serif medium
-- Cuerpo: Sans-serif regular
-- Números/precios: Destacados en tamaño mayor
-
-ELEMENTOS VISUALES
-- Iconos minimalistas para cada sección
-- Líneas divisorias sutiles
-- Espaciado generoso
-- Tablas con bordes redondeados
-- QR con marco visible y URL debajo
-
-LOGO
-- Logo de PRISMA en esquina inferior
-- Logo de Above Pharma donde corresponda
 
 ---
 
