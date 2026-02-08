@@ -296,16 +296,35 @@ body {
 }
 
 /* ==================== QUESTIONS ==================== */
-.question-number {
-  font-family: var(--font-heading);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--accent);
-  margin-bottom: var(--spacing-sm);
+/* Progress pills - indicador visual sin números */
+.progress-pills {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
 }
 
-.question-total {
-  color: var(--text-muted);
+.progress-pill {
+  flex: 1;
+  max-width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-hover);
+  transition: background 0.3s ease;
+}
+
+.progress-pill.done {
+  background: var(--accent);
+}
+
+.progress-pill.active {
+  background: var(--accent);
+  animation: pill-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pill-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 .question-title {
@@ -1349,9 +1368,7 @@ body {
 }
 
 .nav-progress {
-  font-family: var(--font-heading);
-  font-size: 0.875rem;
-  color: var(--text-muted);
+  display: none;
 }
 
 /* ==================== KEYBOARD HINTS ==================== */

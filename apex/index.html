@@ -63,7 +63,6 @@
     <!-- Pregunta 0: Empresa -->
     <section class="form-screen" data-screen="q0-company" data-phase="0">
       <div class="screen-content">
-        <div class="question-number">0 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿De qué empresa vienes?</h2>
         <p class="question-hint">Escribe el nombre de tu empresa o su sitio web para personalizar las preguntas</p>
 
@@ -201,7 +200,6 @@
     <!-- Pregunta 1.1: Tamaño del equipo -->
     <section class="form-screen" data-screen="q1-1" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">1 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿Cuántas personas usarían el sistema?</h2>
         <p class="question-hint">Incluye representantes, supervisores y personal administrativo</p>
 
@@ -229,7 +227,6 @@
     <!-- Pregunta 1.2: Equipo de campo -->
     <section class="form-screen" data-screen="q1-2" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">2 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿Tienes equipo que visita clientes en campo?</h2>
         <p class="question-hint">Representantes, vendedores, visitadores médicos, técnicos de servicio</p>
 
@@ -253,7 +250,6 @@
     <!-- Pregunta 1.3: Sector -->
     <section class="form-screen" data-screen="q1-3" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">3 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿En qué sector está tu empresa?</h2>
 
         <div class="options-list" data-question="sector">
@@ -292,7 +288,6 @@
     <!-- Pregunta 1.4: Tecnología actual -->
     <section class="form-screen" data-screen="q1-4" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">4 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿Cómo gestionas hoy la información de tu operación comercial?</h2>
         <p class="question-hint">Puedes seleccionar varias opciones</p>
 
@@ -331,7 +326,6 @@
     <!-- Pregunta 1.5: Motivación -->
     <section class="form-screen" data-screen="q1-5" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">5 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿Qué te motivó a buscar una solución?</h2>
         <p class="question-hint">Puedes seleccionar varias opciones</p>
 
@@ -374,7 +368,6 @@
     <!-- Pregunta 1.6: Calidad de datos de clientes (Categoría B-CALIDAD) -->
     <section class="form-screen" data-screen="q1-6" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">6 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿Qué tan actualizada está tu base de clientes?</h2>
         <p class="question-hint">Datos de contacto, historial de compras, etc.</p>
 
@@ -402,7 +395,6 @@
     <!-- Pregunta 1.7: Pipeline de ventas (Categoría D) - MULTI-SELECT -->
     <section class="form-screen" data-screen="q1-7" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">7 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿Cómo llevas el seguimiento de oportunidades de venta?</h2>
         <p class="question-hint">Puedes seleccionar varias opciones</p>
 
@@ -441,7 +433,6 @@
     <!-- Pregunta 1.8: Cobranza (Categoría E) -->
     <section class="form-screen" data-screen="q1-8" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">8 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿Vendes a crédito?</h2>
         <p class="question-hint">Facturas con plazo de pago</p>
 
@@ -469,7 +460,6 @@
     <!-- Pregunta 1.9: Reportes (Categoría F) -->
     <section class="form-screen" data-screen="q1-9" data-phase="1">
       <div class="screen-content">
-        <div class="question-number">9 <span class="question-total">/ 9</span></div>
         <h2 class="question-title">¿Cuánto tardas en generar un reporte para dirección?</h2>
         <p class="question-hint">Reporte de ventas, visitas, resultados del mes</p>
 
@@ -670,7 +660,9 @@
     <!-- ==================== FASE 2C: PREGUNTAS ADAPTATIVAS (basadas en top 4) ==================== -->
     <section class="form-screen" data-screen="phase2-questions" data-phase="2">
       <div class="screen-content">
-        <div class="question-number" id="adaptiveQuestionNumber">6 <span class="question-total">/ 8</span></div>
+        <div class="progress-pills" id="adaptiveProgressPills">
+          <!-- Se generan dinámicamente -->
+        </div>
         <h2 class="question-title" id="adaptiveQuestionTitle">Cargando pregunta...</h2>
         <p class="question-hint" id="adaptiveQuestionHint"></p>
 
@@ -1057,7 +1049,7 @@
         <path d="M19 12H5M12 19l-7-7 7-7"/>
       </svg>
     </button>
-    <div class="nav-progress">
+    <div class="nav-progress" style="display:none">
       <span id="navCurrent">1</span> / <span id="navTotal">5</span>
     </div>
     <button class="nav-btn nav-btn--next hidden" id="btnNext">

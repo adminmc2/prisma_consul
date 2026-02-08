@@ -445,7 +445,7 @@ function initDOM() {
     companyResearchStatus: document.getElementById('companyResearchStatus'),
 
     // Fase 2 - Adaptativo
-    adaptiveQuestionNumber: document.getElementById('adaptiveQuestionNumber'),
+    adaptiveProgressPills: document.getElementById('adaptiveProgressPills'),
     adaptiveQuestionTitle: document.getElementById('adaptiveQuestionTitle'),
     adaptiveQuestionHint: document.getElementById('adaptiveQuestionHint'),
     adaptiveOptions: document.getElementById('adaptiveOptions'),
@@ -573,10 +573,6 @@ function updateNavigationState() {
   // Mostrar/ocultar navegación según pantalla
   const hideNavScreens = ['welcome', 'thank-you', 'transition-phase2', 'transition-phase3', 'processing-audio', 'researching-company', 'swipe-situaciones', 'transition-maxdiff', 'maxdiff-priorizar', 'top4-resultado', 'transition-phase2-questions'];
   showNav(!hideNavScreens.includes(screen));
-
-  // Actualizar contador
-  DOM.navCurrent.textContent = FormState.answeredQuestions;
-  DOM.navTotal.textContent = FormState.totalQuestions;
 
   // Botón anterior
   DOM.btnPrev.disabled = FormState.screenHistory.length <= 2;
@@ -2029,11 +2025,15 @@ async function renderAdaptiveQuestion() {
   }
 
   const question = questions[index];
-  const questionNum = index + 1;
-  const totalQuestions = questions.length;
 
-  // Actualizar UI
-  DOM.adaptiveQuestionNumber.innerHTML = `${questionNum} <span class="question-total">/ ${totalQuestions}</span>`;
+  // Actualizar progress pills
+  const pillsContainer = document.getElementById('adaptiveProgressPills');
+  if (pillsContainer) {
+    pillsContainer.innerHTML = questions.map((_, i) =>
+      `<span class="progress-pill ${i < index ? 'done' : ''} ${i === index ? 'active' : ''}"></span>`
+    ).join('');
+  }
+
   DOM.adaptiveQuestionTitle.textContent = question.texto;
   DOM.adaptiveQuestionHint.textContent = question.hint || '';
 
