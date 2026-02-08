@@ -10,10 +10,11 @@
  * 5. Devuelve preguntas estructuradas al frontend
  */
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+// Se lee dentro del handler para que netlify dev la inyecte a tiempo
+let ANTHROPIC_API_KEY;
 
 // Cargar base de conocimiento (server-side, nunca expuesta al frontend)
-const { PAIN_CATALOG, PAIN_CLUSTERS, CLUSTER_QUESTIONS } = require('./pain-knowledge-base.js');
+const { PAIN_CATALOG, PAIN_CLUSTERS, CLUSTER_QUESTIONS } = require('./lib/pain-knowledge-base.js');
 
 // Mapeo de situaciones para dar contexto a Claude
 const SITUACIONES = {
@@ -132,6 +133,10 @@ exports.handler = async (event) => {
   }
 
   try {
+    // CLAUDE_API_KEY porque la extensión Neon de Netlify sobrescribe ANTHROPIC_API_KEY con un JWT
+    ANTHROPIC_API_KEY = (process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY || '').trim();
+    console.log('API key available:', !!ANTHROPIC_API_KEY, '| length:', ANTHROPIC_API_KEY?.length, '| valid:', ANTHROPIC_API_KEY?.startsWith('sk-ant-'));
+
     const {
       top4,           // ['A', 'D', 'F', 'G'] - los 4 IDs más importantes
       rankOrder,      // ['A', 'D', 'F', 'G', 'B', 'E'] - TODOS en orden
@@ -293,7 +298,7 @@ Responde SOLO con el JSON, sin markdown ni explicaciones.`;
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-5-20250929',
+          model: 'claude-haiku-4-5-20251001',
           max_tokens: 4000,
           messages: [
             { role: 'user', content: userPrompt }
@@ -302,7 +307,7 @@ Responde SOLO con el JSON, sin markdown ni explicaciones.`;
           temperature: 0.7
         })
       },
-      25000
+      55000
     );
 
     if (!claudeResponse.ok) {
@@ -355,7 +360,7 @@ Responde SOLO con el JSON, sin markdown ni explicaciones.`;
           painCount,
           clusterCount,
           categoriesUsed: allCategories,
-          model: 'claude-sonnet-4-5-20250929'
+          model: 'claude-haiku-4-5-20251001'
         }
       })
     };

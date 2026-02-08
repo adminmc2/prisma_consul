@@ -1582,7 +1582,7 @@ async function generateAdaptiveQuestionsFromTop4() {
 
     // Si el servidor devolvió fallback
     if (data.questions && data.questions.length > 0) {
-      console.log('Using server fallback questions');
+      console.log('Using server fallback questions. Error:', data.error, '| Meta:', JSON.stringify(data.meta));
       return data.questions;
     }
 
