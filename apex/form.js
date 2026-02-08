@@ -2966,12 +2966,9 @@ function init() {
     DOM.btnContinueResearch.addEventListener('click', handleContinueFromResearch);
   }
 
-  // Event Listeners - Top 4 continue (va a preguntas fijas de fase 1)
+  // Event Listeners - Top 4 continue → profundización con Claude
   if (DOM.btnContinueTop4) {
-    DOM.btnContinueTop4.addEventListener('click', async () => {
-      const firstScreen = getFirstQuestionToShow();
-      await goToScreen(firstScreen);
-    });
+    DOM.btnContinueTop4.addEventListener('click', handleContinueFromTop4);
   }
 
   // Event Listeners - Pains (confirmación individual)
