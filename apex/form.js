@@ -2320,32 +2320,52 @@ function detectPainsFallback() {
 
 function renderDetectedPains() {
   const pains = FormState.detectedPains;
+  const container = DOM.painsList;
 
-  const cards = DOM.painsList.querySelectorAll('.pain-card');
-  cards.forEach((card, index) => {
-    const pain = pains[index];
-    if (pain) {
-      card.querySelector('.pain-title').textContent = pain.title;
-      card.querySelector('.pain-description').textContent = pain.description;
-      card.style.animationDelay = `${index * 0.1}s`;
+  container.innerHTML = pains.map((pain, index) => {
+    const num = index + 1;
+    return `
+      <div class="pain-card" data-pain="${num}" style="animation-delay:${index * 0.1}s">
+        <div class="pain-number">${num}</div>
+        <div class="pain-content">
+          <h3 class="pain-title">${pain.title}</h3>
+          <p class="pain-description">${pain.description}</p>
+        </div>
+        <div class="pain-actions-3btn">
+          <button class="pain-btn pain-btn--accept" data-pain="${num}" data-action="accept" title="Aceptar">
+            <i class="ph ph-check"></i>
+          </button>
+          <button class="pain-btn pain-btn--nuance" data-pain="${num}" data-action="nuance" title="Matizar">
+            <i class="ph ph-pencil-simple"></i>
+          </button>
+          <button class="pain-btn pain-btn--reject" data-pain="${num}" data-action="reject" title="Rechazar">
+            <i class="ph ph-x"></i>
+          </button>
+        </div>
+        <div class="pain-audio-area hidden" data-pain="${num}">
+          <p class="pain-audio-prompt" data-pain="${num}">Cuéntanos con tu voz:</p>
+          <div class="pain-recorder-controls">
+            <button class="pain-recorder-btn" data-pain="${num}">
+              <span class="pain-recorder-icon--record">●</span>
+              <span class="pain-recorder-icon--stop hidden">■</span>
+            </button>
+            <span class="pain-recorder-timer" data-pain="${num}">0:00</span>
+            <span class="pain-recorder-status" data-pain="${num}">Toca para grabar</span>
+          </div>
+          <div class="pain-transcription hidden" data-pain="${num}">
+            <p class="pain-transcription-label">Lo que dijiste:</p>
+            <p class="pain-transcription-text" data-pain="${num}"></p>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 
-      // Reset card state
-      card.classList.remove('confirmed', 'has-audio');
-    }
-  });
-
-  // Setup individual pain confirmation handlers
   setupPainConfirmation();
 }
 
 // Estado de confirmación de pains individuales
-const painConfirmationState = {
-  1: { confirmed: false, hasAudio: false, audioBlob: null },
-  2: { confirmed: false, hasAudio: false, audioBlob: null },
-  3: { confirmed: false, hasAudio: false, audioBlob: null },
-  4: { confirmed: false, hasAudio: false, audioBlob: null }
-};
-
+const painConfirmationState = {};
 let currentPainRecording = null;
 let painMediaRecorder = null;
 let painAudioChunks = [];
@@ -2353,17 +2373,18 @@ let painRecordingTimer = null;
 let painRecordingSeconds = 0;
 
 function setupPainConfirmation() {
-  // Reset state
-  Object.keys(painConfirmationState).forEach(key => {
-    painConfirmationState[key] = { confirmed: false, hasAudio: false, audioBlob: null };
+  const pains = FormState.detectedPains;
+  // Reset state for each pain
+  pains.forEach((_, i) => {
+    painConfirmationState[i + 1] = { action: null, hasAudio: false, audioBlob: null, transcription: '' };
   });
 
-  // Add click handlers for confirm/record buttons
-  document.querySelectorAll('.pain-btn').forEach(btn => {
+  // Click handlers for 3 action buttons
+  document.querySelectorAll('.pain-actions-3btn .pain-btn').forEach(btn => {
     btn.addEventListener('click', handlePainAction);
   });
 
-  // Add click handlers for individual recorders
+  // Click handlers for recorders
   document.querySelectorAll('.pain-recorder-btn').forEach(btn => {
     btn.addEventListener('click', handlePainRecordToggle);
   });
@@ -2377,34 +2398,37 @@ function handlePainAction(e) {
   const action = btn.dataset.action;
   const card = btn.closest('.pain-card');
 
-  if (action === 'confirm') {
-    // Mark as confirmed
-    painConfirmationState[painNum].confirmed = true;
+  // Reset all button states in this card
+  card.querySelectorAll('.pain-btn').forEach(b => b.classList.remove('active'));
+  card.classList.remove('accepted', 'nuanced', 'rejected');
+
+  const audioArea = card.querySelector('.pain-audio-area');
+
+  if (action === 'accept') {
+    painConfirmationState[painNum].action = 'accept';
     painConfirmationState[painNum].hasAudio = false;
+    btn.classList.add('active');
+    card.classList.add('accepted');
+    if (audioArea) audioArea.classList.add('hidden');
 
-    // Update UI
-    card.classList.add('confirmed');
-    card.classList.remove('has-audio');
-    btn.classList.add('confirmed');
+  } else if (action === 'nuance') {
+    painConfirmationState[painNum].action = 'nuance';
+    btn.classList.add('active');
+    card.classList.add('nuanced');
+    if (audioArea) {
+      audioArea.classList.remove('hidden');
+      const prompt = audioArea.querySelector('.pain-audio-prompt');
+      if (prompt) prompt.textContent = 'Explica cómo matizarías esta realidad:';
+    }
 
-    // Hide recorder if visible
-    const recorder = card.querySelector('.pain-audio-recorder');
-    if (recorder) recorder.classList.add('hidden');
-
-    console.log(`Pain ${painNum} confirmed`);
-
-  } else if (action === 'record') {
-    // Show recorder for this pain
-    const recorder = card.querySelector('.pain-audio-recorder');
-    if (recorder) {
-      recorder.classList.toggle('hidden');
-
-      // Remove confirmed state if showing recorder
-      if (!recorder.classList.contains('hidden')) {
-        painConfirmationState[painNum].confirmed = false;
-        card.classList.remove('confirmed');
-        card.querySelector('.pain-btn--confirm')?.classList.remove('confirmed');
-      }
+  } else if (action === 'reject') {
+    painConfirmationState[painNum].action = 'reject';
+    btn.classList.add('active');
+    card.classList.add('rejected');
+    if (audioArea) {
+      audioArea.classList.remove('hidden');
+      const prompt = audioArea.querySelector('.pain-audio-prompt');
+      if (prompt) prompt.textContent = 'Explica por qué no aplica:';
     }
   }
 
@@ -2416,10 +2440,8 @@ async function handlePainRecordToggle(e) {
   const painNum = btn.dataset.pain;
 
   if (painMediaRecorder && painMediaRecorder.state === 'recording') {
-    // Stop recording
     stopPainRecording(painNum);
   } else {
-    // Start recording
     await startPainRecording(painNum);
   }
 }
@@ -2436,45 +2458,58 @@ async function startPainRecording(painNum) {
     painAudioChunks = [];
 
     painMediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) {
-        painAudioChunks.push(e.data);
-      }
+      if (e.data.size > 0) painAudioChunks.push(e.data);
     };
 
-    painMediaRecorder.onstop = () => {
+    painMediaRecorder.onstop = async () => {
       const blob = new Blob(painAudioChunks, { type: painMediaRecorder.mimeType });
+      const recordedSecs = painRecordingSeconds;
       painConfirmationState[painNum].hasAudio = true;
       painConfirmationState[painNum].audioBlob = blob;
-      painConfirmationState[painNum].confirmed = false;
 
-      // Update UI
       const card = document.querySelector(`.pain-card[data-pain="${painNum}"]`);
-      card.classList.add('has-audio');
-      card.classList.remove('confirmed');
-      card.querySelector('.pain-btn--record')?.classList.add('has-audio');
-      card.querySelector('.pain-btn--confirm')?.classList.remove('confirmed');
-
-      const recorder = card.querySelector('.pain-audio-recorder');
-      const status = recorder.querySelector('.pain-recorder-status');
-      status.textContent = `Audio grabado (${painRecordingSeconds}s)`;
+      const status = card.querySelector(`.pain-recorder-status[data-pain="${painNum}"]`);
 
       stream.getTracks().forEach(track => track.stop());
-      updatePainsContinueButton();
 
-      console.log(`Pain ${painNum} audio recorded:`, blob.size, 'bytes');
+      // Solo transcribir si audio >= 2 segundos (Groq rechaza audios muy cortos)
+      if (recordedSecs >= 2) {
+        status.textContent = 'Transcribiendo...';
+        try {
+          const text = await transcribeAudio(blob);
+          painConfirmationState[painNum].transcription = text;
+
+          const transcArea = card.querySelector(`.pain-transcription[data-pain="${painNum}"]`);
+          const transcText = card.querySelector(`.pain-transcription-text[data-pain="${painNum}"]`);
+          if (transcArea && transcText) {
+            transcText.textContent = `"${text}"`;
+            transcArea.classList.remove('hidden');
+          }
+          status.textContent = 'Audio transcrito';
+        } catch (err) {
+          console.error('Transcription error:', err);
+          status.textContent = `Audio grabado (${recordedSecs}s)`;
+        }
+      } else {
+        status.textContent = `Audio muy corto (${recordedSecs}s) - graba al menos 2s`;
+        painConfirmationState[painNum].hasAudio = false;
+      }
+
+      updatePainsContinueButton();
+      console.log(`Pain ${painNum} audio recorded:`, blob.size, 'bytes,', recordedSecs, 's');
     };
 
     painMediaRecorder.start(1000);
 
     // Update UI
     const card = document.querySelector(`.pain-card[data-pain="${painNum}"]`);
-    const btn = card.querySelector('.pain-recorder-btn');
-    const timer = card.querySelector('.pain-recorder-timer');
-    const status = card.querySelector('.pain-recorder-status');
+    const recBtn = card.querySelector('.pain-recorder-btn');
+    const timer = card.querySelector(`.pain-recorder-timer[data-pain="${painNum}"]`);
+    const status = card.querySelector(`.pain-recorder-status[data-pain="${painNum}"]`);
 
-    btn.classList.add('recording');
-    btn.querySelector('.pain-recorder-icon--record').classList.add('hidden');
-    btn.querySelector('.pain-recorder-icon--stop').classList.remove('hidden');
+    recBtn.classList.add('recording');
+    recBtn.querySelector('.pain-recorder-icon--record').classList.add('hidden');
+    recBtn.querySelector('.pain-recorder-icon--stop').classList.remove('hidden');
     status.textContent = 'Grabando...';
 
     painRecordingSeconds = 0;
@@ -2494,12 +2529,10 @@ async function startPainRecording(painNum) {
 function stopPainRecording(painNum) {
   if (painMediaRecorder && painMediaRecorder.state === 'recording') {
     painMediaRecorder.stop();
-
     clearInterval(painRecordingTimer);
 
     const card = document.querySelector(`.pain-card[data-pain="${painNum}"]`);
     const btn = card.querySelector('.pain-recorder-btn');
-
     btn.classList.remove('recording');
     btn.querySelector('.pain-recorder-icon--record').classList.remove('hidden');
     btn.querySelector('.pain-recorder-icon--stop').classList.add('hidden');
@@ -2509,47 +2542,49 @@ function stopPainRecording(painNum) {
 }
 
 function updatePainsContinueButton() {
-  // Check if all 4 pains have been addressed (confirmed OR has audio)
-  const allAddressed = Object.values(painConfirmationState).every(
-    state => state.confirmed || state.hasAudio
-  );
+  const painCount = FormState.detectedPains.length;
+  const allAddressed = Object.keys(painConfirmationState).length === painCount &&
+    Object.values(painConfirmationState).every(state => {
+      if (!state.action) return false;
+      if (state.action === 'accept') return true;
+      // nuance/reject need audio
+      return state.hasAudio;
+    });
 
   const btn = DOM.btnContinuePains;
   const hint = DOM.painsContinueHint;
 
-  if (btn) {
-    btn.classList.toggle('hidden', !allAddressed);
-  }
+  if (btn) btn.classList.toggle('hidden', !allAddressed);
 
   if (hint) {
-    const pending = Object.values(painConfirmationState).filter(
-      state => !state.confirmed && !state.hasAudio
-    ).length;
+    const pending = Object.values(painConfirmationState).filter(state => {
+      if (!state.action) return true;
+      if (state.action === 'accept') return false;
+      return !state.hasAudio;
+    }).length;
 
     if (pending === 0) {
       hint.textContent = '¡Listo! Puedes continuar';
     } else {
-      hint.textContent = `Faltan ${pending} dolor${pending > 1 ? 'es' : ''} por confirmar`;
+      hint.textContent = `Faltan ${pending} realidad${pending > 1 ? 'es' : ''} por responder`;
     }
   }
 }
 
 function handleContinuePains() {
-  // Build final pains with confirmation status
   FormState.finalPains = FormState.detectedPains.map((pain, index) => {
     const painNum = index + 1;
     const state = painConfirmationState[painNum];
     return {
       ...pain,
-      confirmed: state.confirmed,
+      action: state.action,       // 'accept', 'nuance', 'reject'
       hasAudio: state.hasAudio,
-      audioBlob: state.audioBlob
+      audioBlob: state.audioBlob,
+      transcription: state.transcription || ''
     };
   });
 
   FormState.painsConfirmed = true;
-
-  // Go directly to contact form (skip general audio since we have individual audios)
   goToScreen('final-pains');
 }
 
@@ -2687,18 +2722,27 @@ async function handleProcessingAudio() {
 }
 
 async function transcribeAudio(audioBlob) {
-  const formData = new FormData();
-  formData.append('file', audioBlob, 'audio.webm');
-  formData.append('model', CONFIG.whisperModel);
-  formData.append('language', 'es');
+  // Convertir blob a base64 (chunked para evitar stack overflow en audios grandes)
+  const base64 = await new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+    reader.readAsDataURL(audioBlob);
+  });
 
   const response = await fetch(CONFIG.whisperApiUrl, {
     method: 'POST',
-    body: formData
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      audioBase64: base64,
+      mimeType: audioBlob.type || 'audio/webm',
+      model: CONFIG.whisperModel,
+      language: 'es'
+    })
   });
 
   if (!response.ok) {
-    throw new Error(`Whisper API error: ${response.status}`);
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.error || `Whisper API error: ${response.status}`);
   }
 
   const data = await response.json();
@@ -2794,18 +2838,32 @@ async function enrichPainsFromAudio(pains, transcription) {
 function renderFinalPains() {
   const pains = FormState.finalPains;
 
-  DOM.finalPainsList.innerHTML = pains.map((pain, index) => `
-    <div class="final-pain-card">
-      <div class="final-pain-number">DOLOR ${index + 1}</div>
-      <h3 class="final-pain-title">${pain.title.toUpperCase()}</h3>
-      <p class="final-pain-description">"${pain.description}"</p>
-      ${pain.audioContext && pain.audioContext !== 'Contexto adicional del audio disponible' ? `<p class="final-pain-context">${pain.audioContext}</p>` : ''}
-    </div>
-  `).join('');
+  const actionLabels = {
+    accept: { label: 'Aceptada', css: 'accepted' },
+    nuance: { label: 'Matizada', css: 'nuanced' },
+    reject: { label: 'Rechazada', css: 'rejected' }
+  };
 
-  setTimeout(() => {
-    goToScreen('contact-info');
-  }, 3000);
+  DOM.finalPainsList.innerHTML = pains.map((pain, index) => {
+    const info = actionLabels[pain.action] || actionLabels.accept;
+    return `
+      <div class="final-pain-card final-pain-card--${info.css}">
+        <div class="final-pain-header">
+          <span class="final-pain-number">REALIDAD ${index + 1}</span>
+          <span class="final-pain-badge final-pain-badge--${info.css}">${info.label}</span>
+        </div>
+        <h3 class="final-pain-title">${pain.title}</h3>
+        <p class="final-pain-description">${pain.description}</p>
+        ${pain.transcription ? `<p class="final-pain-context">"${pain.transcription}"</p>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  // Continue button - NO auto-advance
+  const btnContinue = document.getElementById('btnContinueFinalPains');
+  if (btnContinue) {
+    btnContinue.addEventListener('click', () => goToScreen('contact-info'));
+  }
 }
 
 function focusContactForm() {

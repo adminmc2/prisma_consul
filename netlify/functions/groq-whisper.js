@@ -1,143 +1,98 @@
 /**
  * Netlify Function: Groq Whisper Transcription
  * Proxy seguro para transcripción de audio con Whisper
+ *
+ * Acepta JSON con audio en base64 (más confiable que multipart en netlify dev)
  */
 
-const busboy = require('busboy');
-
-// Helper para parsear multipart form data
-function parseMultipartForm(event) {
-  return new Promise((resolve, reject) => {
-    const bb = busboy({
-      headers: {
-        'content-type': event.headers['content-type'] || event.headers['Content-Type']
-      }
-    });
-
-    const result = {
-      files: [],
-      fields: {}
-    };
-
-    bb.on('file', (name, file, info) => {
-      const chunks = [];
-      file.on('data', (data) => chunks.push(data));
-      file.on('end', () => {
-        result.files.push({
-          name,
-          filename: info.filename,
-          mimeType: info.mimeType,
-          data: Buffer.concat(chunks)
-        });
-      });
-    });
-
-    bb.on('field', (name, val) => {
-      result.fields[name] = val;
-    });
-
-    bb.on('finish', () => resolve(result));
-    bb.on('error', reject);
-
-    const body = event.isBase64Encoded
-      ? Buffer.from(event.body, 'base64')
-      : Buffer.from(event.body);
-
-    bb.end(body);
-  });
-}
-
 exports.handler = async (event) => {
-  // CORS preflight
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
   if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
-      },
-      body: ''
-    };
+    return { statusCode: 200, headers, body: '' };
   }
 
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
+    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'GROQ_API_KEY not configured' })
-    };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'GROQ_API_KEY not configured' }) };
   }
 
   try {
-    const formData = await parseMultipartForm(event);
+    const { audioBase64, mimeType, model, language } = JSON.parse(event.body);
 
-    if (!formData.files.length) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'No audio file provided' })
-      };
+    if (!audioBase64) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'audioBase64 is required' }) };
     }
 
-    const audioFile = formData.files[0];
+    // Decodificar base64 a Buffer
+    const audioBuffer = Buffer.from(audioBase64, 'base64');
+    console.log('Audio received:', audioBuffer.length, 'bytes, type:', mimeType);
 
-    // Crear FormData para enviar a Groq
-    const FormData = (await import('form-data')).default;
-    const form = new FormData();
-    form.append('file', audioFile.data, {
-      filename: audioFile.filename || 'audio.webm',
-      contentType: audioFile.mimeType || 'audio/webm'
-    });
-    form.append('model', formData.fields.model || 'whisper-large-v3-turbo');
-    form.append('language', formData.fields.language || 'es');
+    // Construir multipart form-data manualmente para Groq
+    const boundary = '----FormBoundary' + Date.now();
+    const ext = (mimeType || 'audio/webm').includes('mp4') ? 'mp4' : 'webm';
+
+    const parts = [];
+    // File part
+    parts.push(
+      `--${boundary}\r\n` +
+      `Content-Disposition: form-data; name="file"; filename="audio.${ext}"\r\n` +
+      `Content-Type: ${mimeType || 'audio/webm'}\r\n\r\n`
+    );
+    parts.push(audioBuffer);
+    parts.push('\r\n');
+
+    // Model part
+    parts.push(
+      `--${boundary}\r\n` +
+      `Content-Disposition: form-data; name="model"\r\n\r\n` +
+      `${model || 'whisper-large-v3-turbo'}\r\n`
+    );
+
+    // Language part
+    parts.push(
+      `--${boundary}\r\n` +
+      `Content-Disposition: form-data; name="language"\r\n\r\n` +
+      `${language || 'es'}\r\n`
+    );
+
+    parts.push(`--${boundary}--\r\n`);
+
+    // Combinar todas las partes en un solo Buffer
+    const bodyParts = parts.map(p => typeof p === 'string' ? Buffer.from(p) : p);
+    const body = Buffer.concat(bodyParts);
 
     const response = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
-        ...form.getHeaders()
+        'Content-Type': `multipart/form-data; boundary=${boundary}`
       },
-      body: form
+      body: body
     });
 
     if (!response.ok) {
       const error = await response.text();
-      return {
-        statusCode: response.status,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify({ error: `Whisper API error: ${error}` })
-      };
+      console.error('Groq Whisper error:', response.status, error);
+      return { statusCode: response.status, headers, body: JSON.stringify({ error: `Whisper API error: ${error}` }) };
     }
 
     const data = await response.json();
+    console.log('Transcription result:', data.text?.substring(0, 100));
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify(data)
-    };
+    return { statusCode: 200, headers, body: JSON.stringify(data) };
 
   } catch (error) {
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
-      body: JSON.stringify({ error: error.message })
-    };
+    console.error('Whisper function error:', error);
+    return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   }
 };

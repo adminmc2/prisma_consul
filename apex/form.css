@@ -599,6 +599,7 @@ body {
 
 .pain-card {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--spacing-md);
   padding: var(--spacing-md);
   background: var(--bg-card);
@@ -645,10 +646,10 @@ body {
   line-height: 1.5;
 }
 
-/* Pain card actions (confirm/record buttons) */
-.pain-actions {
+/* Pain card 3-button actions */
+.pain-actions-3btn {
   display: flex;
-  gap: var(--spacing-xs);
+  gap: 6px;
   flex-shrink: 0;
 }
 
@@ -656,14 +657,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-full);
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
   transition: all var(--transition-fast);
+  font-size: 1rem;
 }
 
 .pain-btn:hover {
@@ -671,42 +673,69 @@ body {
   color: var(--text-primary);
 }
 
-.pain-btn--confirm:hover {
+/* Aceptar */
+.pain-btn--accept:hover {
   background: rgba(0, 212, 255, 0.2);
   border-color: var(--tech-cyan);
   color: var(--tech-cyan);
 }
-
-.pain-btn--confirm.confirmed {
+.pain-btn--accept.active {
   background: var(--tech-cyan);
   border-color: var(--tech-cyan);
   color: var(--prisma-navy);
 }
 
-.pain-btn--record:hover {
+/* Matizar */
+.pain-btn--nuance:hover {
+  background: rgba(255, 193, 7, 0.2);
+  border-color: #ffc107;
+  color: #ffc107;
+}
+.pain-btn--nuance.active {
+  background: #ffc107;
+  border-color: #ffc107;
+  color: #1a1a2e;
+}
+
+/* Rechazar */
+.pain-btn--reject:hover {
   background: rgba(255, 107, 107, 0.2);
   border-color: #ff6b6b;
   color: #ff6b6b;
 }
-
-.pain-btn--record.has-audio {
+.pain-btn--reject.active {
   background: #ff6b6b;
   border-color: #ff6b6b;
   color: white;
 }
 
-/* Pain individual audio recorder */
-.pain-audio-recorder {
+/* Pain card states */
+.pain-card.accepted {
+  border-color: var(--tech-cyan);
+  background: rgba(0, 212, 255, 0.05);
+}
+.pain-card.nuanced {
+  border-color: #ffc107;
+  background: rgba(255, 193, 7, 0.05);
+}
+.pain-card.rejected {
+  border-color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.05);
+}
+
+/* Pain audio area (for nuance/reject) */
+.pain-audio-area {
+  grid-column: 1 / -1;
   margin-top: var(--spacing-sm);
   padding: var(--spacing-sm);
-  background: rgba(255, 107, 107, 0.1);
-  border: 1px solid rgba(255, 107, 107, 0.3);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
 }
 
 .pain-audio-prompt {
   font-size: 0.875rem;
-  color: #ff6b6b;
+  color: var(--text-secondary);
   margin-bottom: var(--spacing-xs);
 }
 
@@ -720,20 +749,21 @@ body {
   width: 36px;
   height: 36px;
   border-radius: var(--radius-full);
-  border: 2px solid #ff6b6b;
+  border: 2px solid var(--accent);
   background: transparent;
-  color: #ff6b6b;
+  color: var(--accent);
   font-size: 1.25rem;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .pain-recorder-btn:hover {
-  background: rgba(255, 107, 107, 0.2);
+  background: rgba(0, 212, 255, 0.2);
 }
 
 .pain-recorder-btn.recording {
   background: #ff6b6b;
+  border-color: #ff6b6b;
   color: white;
   animation: pulse 1s infinite;
 }
@@ -754,15 +784,25 @@ body {
   50% { transform: scale(1.1); }
 }
 
-/* Pain card states */
-.pain-card.confirmed {
-  border-color: var(--tech-cyan);
-  background: rgba(0, 212, 255, 0.05);
+/* Transcription area */
+.pain-transcription {
+  margin-top: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
 }
 
-.pain-card.has-audio {
-  border-color: #ff6b6b;
-  background: rgba(255, 107, 107, 0.05);
+.pain-transcription-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.pain-transcription-text {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  font-style: italic;
+  line-height: 1.4;
 }
 
 /* Pains instruction and continue */
@@ -1111,13 +1151,47 @@ body {
 .final-pain-card:nth-child(3) { animation-delay: 0.3s; }
 .final-pain-card:nth-child(4) { animation-delay: 0.4s; }
 
+.final-pain-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xs);
+}
+
 .final-pain-number {
   font-family: var(--font-heading);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   color: var(--accent);
-  margin-bottom: var(--spacing-xs);
+}
+
+.final-pain-badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.final-pain-badge--accepted {
+  background: rgba(0, 212, 255, 0.15);
+  color: var(--tech-cyan);
+}
+.final-pain-badge--nuanced {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+.final-pain-badge--rejected {
+  background: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+}
+
+.final-pain-card--nuanced {
+  border-color: rgba(255, 193, 7, 0.3);
+}
+.final-pain-card--rejected {
+  border-color: rgba(255, 107, 107, 0.3);
 }
 
 .final-pain-title {
@@ -1131,22 +1205,15 @@ body {
 .final-pain-description {
   font-size: 0.9375rem;
   color: var(--text-secondary);
-  font-style: italic;
 }
 
 .final-pain-context {
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  margin-top: var(--spacing-xs);
-  padding-top: var(--spacing-xs);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.final-pain-card .pain-quote {
   font-size: 0.875rem;
   color: var(--accent);
   font-style: italic;
-  margin-top: 4px;
+  margin-top: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* ==================== CONTACT FORM ==================== */
