@@ -148,7 +148,7 @@ exports.handler = async (event) => {
       const sector = toUpper(formData.empresa?.sector);
       const painsHtml = (formData.pains_finales || []).map((p, i) => {
         const audioNote = p.transcription ? `<br><span style="color:#00d4aa;font-style:italic;">Audio: "${p.transcription}"</span>` : '';
-        const actionLabel = p.action === 'accept' ? '<span style="color:#00d4aa;font-weight:bold;">SI</span>' : p.action === 'nuance' ? '<span style="color:#e6a817;font-weight:bold;">MATIZ</span>' : p.action === 'reject' ? '<span style="color:#e74c3c;font-weight:bold;">NO</span>' : '';
+        const actionLabel = p.action === 'accept' ? '<span style="color:#00d4aa;font-weight:bold;">SI</span>' : p.action === 'nuance' ? '<span style="color:#e6a817;font-weight:bold;">MATIZ</span>' : p.action === 'reject' ? '<span style="color:#e74c3c;font-weight:bold;">NO</span>' : p.action === 'custom' ? '<span style="color:#c471ed;font-weight:bold;">PROPIA</span>' : '';
         return `<tr><td style="padding:8px 12px;border-bottom:1px solid #eee;color:#666;">${i+1}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;">${p.title || ''}${audioNote}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;color:#666;">${p.description || ''}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:center;">${actionLabel}</td></tr>`;
       }).join('');
       const datosUso = formData.datos_uso || {};
@@ -198,7 +198,7 @@ exports.handler = async (event) => {
 
       // 2) Email de confirmación al cliente
       const clientPainsHtml = (formData.pains_finales || []).map(p => {
-        const actionText = p.action === 'accept' ? ' <span style="color:#00d4aa;">(confirmada)</span>' : p.action === 'nuance' ? ' <span style="color:#e6a817;">(con matices)</span>' : p.action === 'reject' ? ' <span style="color:#e74c3c;">(descartada)</span>' : '';
+        const actionText = p.action === 'accept' ? ' <span style="color:#00d4aa;">(confirmada)</span>' : p.action === 'nuance' ? ' <span style="color:#e6a817;">(con matices)</span>' : p.action === 'reject' ? ' <span style="color:#e74c3c;">(descartada)</span>' : p.action === 'custom' ? ' <span style="color:#c471ed;">(agregada por ti)</span>' : '';
         const audioLine = p.transcription ? `<br><span style="color:#888;font-size:13px;font-style:italic;">Tu comentario: "${p.transcription}"</span>` : '';
         return `<li style="margin:8px 0;"><strong>${p.title || ''}</strong>${actionText}${audioLine}</li>`;
       }).join('');

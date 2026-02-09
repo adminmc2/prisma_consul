@@ -692,11 +692,57 @@
     <section class="form-screen" data-screen="pains-detected" data-phase="3">
       <div class="screen-content screen-content--wide">
         <h2 class="pains-title">Este es el principio del cambio</h2>
-        <h1 class="pains-highlight">4 REALIDADES ACTUALES A CAMBIAR</h1>
+        <h1 class="pains-highlight" id="painsHighlight">TUS REALIDADES ACTUALES A CAMBIAR</h1>
         <p class="pains-instruction">Revisa cada realidad: acepta, matiza o rechaza</p>
 
         <div class="pains-list" id="painsList">
           <!-- Se generan dinámicamente en renderDetectedPains -->
+        </div>
+
+        <!-- Custom pains: agregar problemas propios -->
+        <div class="custom-pains-section" id="customPainsSection">
+          <div class="custom-pains-divider">
+            <span class="custom-pains-divider-line"></span>
+            <span class="custom-pains-divider-text">Agrega tus propias realidades a cambiar</span>
+            <span class="custom-pains-divider-line"></span>
+          </div>
+
+          <div class="custom-pains-list" id="customPainsList">
+            <!-- Se generan dinámicamente -->
+          </div>
+
+          <div class="custom-pain-input-area" id="customPainInputArea">
+            <textarea
+              class="custom-pain-textarea"
+              id="customPainText"
+              placeholder="Describe una realidad que no hayamos mencionado..."
+              rows="2"
+              maxlength="500"
+            ></textarea>
+            <div class="custom-pain-input-actions">
+              <button class="custom-pain-record-btn" id="customPainRecordBtn" title="Grabar audio">
+                <i class="ph ph-microphone"></i>
+              </button>
+              <button class="custom-pain-add-btn" id="customPainAddBtn" disabled title="Agregar realidad">
+                <i class="ph ph-plus"></i>
+                <span>Agregar</span>
+              </button>
+            </div>
+            <div class="custom-pain-recorder hidden" id="customPainRecorder">
+              <div class="pain-recorder-controls">
+                <button class="pain-recorder-btn" id="customPainRecBtn">
+                  <span class="pain-recorder-icon--record">&#9679;</span>
+                  <span class="pain-recorder-icon--stop hidden">&#9632;</span>
+                </button>
+                <span class="pain-recorder-timer" id="customPainTimer">0:00</span>
+                <span class="pain-recorder-status" id="customPainRecStatus">Toca para grabar</span>
+              </div>
+              <div class="custom-pain-transcription hidden" id="customPainTranscription">
+                <p class="pain-transcription-label">Lo que dijiste:</p>
+                <p class="pain-transcription-text" id="customPainTranscText"></p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="pains-continue">

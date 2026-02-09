@@ -805,6 +805,213 @@ body {
   line-height: 1.4;
 }
 
+/* ==================== CUSTOM PAINS SECTION ==================== */
+.custom-pains-section {
+  margin-top: var(--spacing-lg);
+}
+
+.custom-pains-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.custom-pains-divider-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.custom-pains-divider-text {
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.custom-pain-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(153, 78, 149, 0.08);
+  border: 1px solid rgba(153, 78, 149, 0.3);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-sm);
+  animation: fadeInUp 0.3s ease;
+}
+
+.custom-pain-card .pain-number {
+  width: 28px;
+  height: 28px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  color: white;
+  flex-shrink: 0;
+}
+
+.custom-pain-audio-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #c471ed;
+  margin-top: 4px;
+}
+
+.custom-pain-remove-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.custom-pain-remove-btn:hover {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.custom-pain-input-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.custom-pain-textarea {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: all var(--transition-normal);
+  resize: vertical;
+  min-height: 60px;
+  max-height: 150px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.custom-pain-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.custom-pain-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.custom-pain-input-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.custom-pain-record-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.custom-pain-record-btn:hover {
+  background: rgba(0, 212, 255, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.custom-pain-add-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: 10px 20px;
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: white;
+  background: linear-gradient(135deg, #994e95, #c471ed);
+  border: none;
+  border-radius: 4px 20px 20px 4px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.custom-pain-add-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c471ed, #994e95);
+  transform: translateY(-1px);
+}
+
+.custom-pain-add-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.custom-pain-recorder {
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.custom-pain-transcription {
+  margin-top: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+}
+
+/* Final pains: custom card style */
+.final-pain-card--custom {
+  border-color: #994e95;
+  background: rgba(153, 78, 149, 0.08);
+}
+
+.final-pain-badge--custom {
+  background: rgba(153, 78, 149, 0.2);
+  color: #c471ed;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Pains instruction and continue */
 .pains-instruction {
   font-size: 0.9375rem;

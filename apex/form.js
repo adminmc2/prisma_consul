@@ -462,8 +462,22 @@ function initDOM() {
 
     // Fase 3 - Pains (con confirmación individual)
     painsList: document.getElementById('painsList'),
+    painsHighlight: document.getElementById('painsHighlight'),
     btnContinuePains: document.getElementById('btnContinuePains'),
     painsContinueHint: document.getElementById('painsContinueHint'),
+
+    // Custom pains
+    customPainsSection: document.getElementById('customPainsSection'),
+    customPainsList: document.getElementById('customPainsList'),
+    customPainText: document.getElementById('customPainText'),
+    customPainAddBtn: document.getElementById('customPainAddBtn'),
+    customPainRecordBtn: document.getElementById('customPainRecordBtn'),
+    customPainRecorder: document.getElementById('customPainRecorder'),
+    customPainRecBtn: document.getElementById('customPainRecBtn'),
+    customPainTimer: document.getElementById('customPainTimer'),
+    customPainRecStatus: document.getElementById('customPainRecStatus'),
+    customPainTranscription: document.getElementById('customPainTranscription'),
+    customPainTranscText: document.getElementById('customPainTranscText'),
 
     // Fase 4 - Audio
     audioTitle: document.getElementById('audioTitle'),
@@ -2404,6 +2418,14 @@ let painAudioChunks = [];
 let painRecordingTimer = null;
 let painRecordingSeconds = 0;
 
+// Estado de problemas personalizados del cliente
+const customPains = [];
+let customPainCounter = 0;
+let customPainMediaRecorder = null;
+let customPainAudioChunks = [];
+let customPainRecordingTimer = null;
+let customPainRecordingSeconds = 0;
+
 function setupPainConfirmation() {
   const pains = FormState.detectedPains;
   // Reset state for each pain
@@ -2416,10 +2438,24 @@ function setupPainConfirmation() {
     btn.addEventListener('click', handlePainAction);
   });
 
-  // Click handlers for recorders
-  document.querySelectorAll('.pain-recorder-btn').forEach(btn => {
+  // Click handlers for recorders (solo los de pains detectados, no el custom)
+  document.querySelectorAll('.pain-card .pain-recorder-btn').forEach(btn => {
     btn.addEventListener('click', handlePainRecordToggle);
   });
+
+  // Reset custom pains
+  customPains.length = 0;
+  customPainCounter = 0;
+  if (DOM.customPainsList) DOM.customPainsList.innerHTML = '';
+  if (DOM.customPainText) DOM.customPainText.value = '';
+  if (DOM.customPainRecorder) DOM.customPainRecorder.classList.add('hidden');
+  if (DOM.customPainTranscription) DOM.customPainTranscription.classList.add('hidden');
+
+  // Custom pains event listeners
+  if (DOM.customPainAddBtn) DOM.customPainAddBtn.addEventListener('click', handleAddCustomPain);
+  if (DOM.customPainRecordBtn) DOM.customPainRecordBtn.addEventListener('click', toggleCustomPainRecorder);
+  if (DOM.customPainRecBtn) DOM.customPainRecBtn.addEventListener('click', handleCustomPainRecordToggle);
+  if (DOM.customPainText) DOM.customPainText.addEventListener('input', updateCustomPainAddButton);
 
   updatePainsContinueButton();
 }
@@ -2455,13 +2491,12 @@ function handlePainAction(e) {
 
   } else if (action === 'reject') {
     painConfirmationState[painNum].action = 'reject';
+    painConfirmationState[painNum].hasAudio = false;
+    painConfirmationState[painNum].audioBlob = null;
+    painConfirmationState[painNum].transcription = '';
     btn.classList.add('active');
     card.classList.add('rejected');
-    if (audioArea) {
-      audioArea.classList.remove('hidden');
-      const prompt = audioArea.querySelector('.pain-audio-prompt');
-      if (prompt) prompt.textContent = 'Explica por qué no aplica:';
-    }
+    if (audioArea) audioArea.classList.add('hidden');
   }
 
   updatePainsContinueButton();
@@ -2573,6 +2608,177 @@ function stopPainRecording(painNum) {
   }
 }
 
+// ==================== CUSTOM PAINS FUNCTIONS ====================
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function handleAddCustomPain() {
+  const text = DOM.customPainText.value.trim();
+  const transcription = DOM.customPainTranscText ? DOM.customPainTranscText.textContent.trim().replace(/^"|"$/g, '') : '';
+
+  if (!text && !transcription) return;
+
+  customPainCounter++;
+  const newPain = {
+    id: `custom-${customPainCounter}`,
+    text: text || transcription,
+    hasAudio: !!transcription && !text,
+    transcription: transcription || ''
+  };
+
+  customPains.push(newPain);
+
+  // Reset input
+  DOM.customPainText.value = '';
+  if (DOM.customPainRecorder) DOM.customPainRecorder.classList.add('hidden');
+  if (DOM.customPainTranscription) DOM.customPainTranscription.classList.add('hidden');
+  if (DOM.customPainTranscText) DOM.customPainTranscText.textContent = '';
+  customPainAudioChunks = [];
+
+  renderCustomPainsList();
+  updateCustomPainAddButton();
+  updatePainsContinueButton();
+}
+
+function renderCustomPainsList() {
+  if (!DOM.customPainsList) return;
+
+  DOM.customPainsList.innerHTML = customPains.map(pain => {
+    return `
+      <div class="custom-pain-card" data-custom-pain-id="${pain.id}">
+        <div class="pain-number" style="background: linear-gradient(135deg, #994e95, #c471ed);">
+          <i class="ph ph-user"></i>
+        </div>
+        <div class="pain-content" style="flex:1;">
+          <p class="pain-description" style="margin:0;">${escapeHtml(pain.text)}</p>
+          ${pain.hasAudio ? '<span class="custom-pain-audio-badge"><i class="ph ph-microphone"></i> Audio</span>' : ''}
+        </div>
+        <button class="custom-pain-remove-btn" data-custom-pain-id="${pain.id}" title="Eliminar">
+          <i class="ph ph-trash"></i>
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  DOM.customPainsList.querySelectorAll('.custom-pain-remove-btn').forEach(btn => {
+    btn.addEventListener('click', handleRemoveCustomPain);
+  });
+}
+
+function handleRemoveCustomPain(e) {
+  const id = e.currentTarget.dataset.customPainId;
+  const index = customPains.findIndex(p => p.id === id);
+  if (index !== -1) {
+    customPains.splice(index, 1);
+    renderCustomPainsList();
+    updatePainsContinueButton();
+  }
+}
+
+function toggleCustomPainRecorder() {
+  if (!DOM.customPainRecorder) return;
+  DOM.customPainRecorder.classList.toggle('hidden');
+}
+
+async function handleCustomPainRecordToggle() {
+  if (customPainMediaRecorder && customPainMediaRecorder.state === 'recording') {
+    stopCustomPainRecording();
+  } else {
+    await startCustomPainRecording();
+  }
+}
+
+async function startCustomPainRecording() {
+  // Parar cualquier grabacion de pain detectado en curso
+  if (painMediaRecorder && painMediaRecorder.state === 'recording') {
+    stopPainRecording(currentPainRecording);
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    customPainMediaRecorder = new MediaRecorder(stream, {
+      mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4'
+    });
+    customPainAudioChunks = [];
+
+    customPainMediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) customPainAudioChunks.push(e.data);
+    };
+
+    customPainMediaRecorder.onstop = async () => {
+      const blob = new Blob(customPainAudioChunks, { type: customPainMediaRecorder.mimeType });
+      const recordedSecs = customPainRecordingSeconds;
+      stream.getTracks().forEach(track => track.stop());
+
+      if (recordedSecs >= 2) {
+        DOM.customPainRecStatus.textContent = 'Transcribiendo...';
+        try {
+          const text = await transcribeAudio(blob);
+          if (DOM.customPainTranscText) DOM.customPainTranscText.textContent = `"${text}"`;
+          if (DOM.customPainTranscription) DOM.customPainTranscription.classList.remove('hidden');
+          DOM.customPainRecStatus.textContent = 'Audio transcrito';
+          // Auto-rellenar textarea si esta vacio
+          if (DOM.customPainText && !DOM.customPainText.value.trim()) {
+            DOM.customPainText.value = text;
+          }
+        } catch (err) {
+          console.error('Custom pain transcription error:', err);
+          DOM.customPainRecStatus.textContent = `Audio grabado (${recordedSecs}s)`;
+        }
+      } else {
+        DOM.customPainRecStatus.textContent = `Audio muy corto (${recordedSecs}s) - graba al menos 2s`;
+      }
+      updateCustomPainAddButton();
+    };
+
+    customPainMediaRecorder.start(1000);
+
+    // Update UI
+    const recBtn = DOM.customPainRecBtn;
+    recBtn.classList.add('recording');
+    recBtn.querySelector('.pain-recorder-icon--record').classList.add('hidden');
+    recBtn.querySelector('.pain-recorder-icon--stop').classList.remove('hidden');
+    DOM.customPainRecStatus.textContent = 'Grabando...';
+
+    customPainRecordingSeconds = 0;
+    customPainRecordingTimer = setInterval(() => {
+      customPainRecordingSeconds++;
+      const mins = Math.floor(customPainRecordingSeconds / 60);
+      const secs = customPainRecordingSeconds % 60;
+      DOM.customPainTimer.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    }, 1000);
+
+  } catch (error) {
+    console.error('Error starting custom pain recording:', error);
+    alert('No pudimos acceder al micrófono. Por favor permite el acceso.');
+  }
+}
+
+function stopCustomPainRecording() {
+  if (customPainMediaRecorder && customPainMediaRecorder.state === 'recording') {
+    customPainMediaRecorder.stop();
+    clearInterval(customPainRecordingTimer);
+
+    const btn = DOM.customPainRecBtn;
+    btn.classList.remove('recording');
+    btn.querySelector('.pain-recorder-icon--record').classList.remove('hidden');
+    btn.querySelector('.pain-recorder-icon--stop').classList.add('hidden');
+  }
+}
+
+function updateCustomPainAddButton() {
+  if (!DOM.customPainAddBtn) return;
+  const hasText = DOM.customPainText && DOM.customPainText.value.trim().length > 0;
+  const hasTranscription = DOM.customPainTranscText && DOM.customPainTranscText.textContent.trim().length > 0;
+  DOM.customPainAddBtn.disabled = !(hasText || hasTranscription);
+}
+
+// ==================== END CUSTOM PAINS ====================
+
 function updatePainsContinueButton() {
   const painCount = FormState.detectedPains.length;
   const allAddressed = Object.keys(painConfirmationState).length === painCount &&
@@ -2592,7 +2798,12 @@ function updatePainsContinueButton() {
     }).length;
 
     if (pending === 0) {
-      hint.textContent = '¡Listo! Puedes continuar';
+      const customCount = customPains.length;
+      if (customCount > 0) {
+        hint.textContent = `${customCount} problema${customCount > 1 ? 's' : ''} agregado${customCount > 1 ? 's' : ''}`;
+      } else {
+        hint.textContent = '¡Listo! Puedes continuar';
+      }
     } else {
       hint.textContent = `Faltan ${pending} realidad${pending > 1 ? 'es' : ''} por responder`;
     }
@@ -2600,7 +2811,8 @@ function updatePainsContinueButton() {
 }
 
 function handleContinuePains() {
-  FormState.finalPains = FormState.detectedPains.map((pain, index) => {
+  // Pains detectados con su estado de confirmación
+  const confirmedPains = FormState.detectedPains.map((pain, index) => {
     const painNum = index + 1;
     const state = painConfirmationState[painNum];
     return {
@@ -2612,6 +2824,23 @@ function handleContinuePains() {
     };
   });
 
+  // Añadir problemas personalizados del cliente
+  const customPainEntries = customPains.map((cp, i) => ({
+    id: cp.id,
+    order: confirmedPains.length + i + 1,
+    key: 'CUSTOM',
+    title: 'Problema del cliente',
+    description: cp.text,
+    codes: [],
+    focus: null,
+    confidence: null,
+    action: 'custom',
+    hasAudio: cp.hasAudio,
+    audioBlob: null,
+    transcription: cp.transcription || ''
+  }));
+
+  FormState.finalPains = [...confirmedPains, ...customPainEntries];
   FormState.painsConfirmed = true;
   goToScreen('final-pains');
 }
@@ -2870,7 +3099,8 @@ function renderFinalPains() {
   const actionLabels = {
     accept: { label: 'Aceptada', css: 'accepted' },
     nuance: { label: 'Matizada', css: 'nuanced' },
-    reject: { label: 'Rechazada', css: 'rejected' }
+    reject: { label: 'Rechazada', css: 'rejected' },
+    custom: { label: 'Agregada por ti', css: 'custom' }
   };
 
   DOM.finalPainsList.innerHTML = pains.map((pain, index) => {
@@ -3142,7 +3372,8 @@ function prepareFormData() {
       hasAudio: p.hasAudio || false,
       transcription: p.transcription || '',
       gravedad: p.gravedad,
-      categoria: p.categoria
+      categoria: p.categoria,
+      isCustom: p.action === 'custom'
     })),
 
     // Datos de uso
@@ -3157,6 +3388,7 @@ function getExperienciasSugeridas() {
   const experiencias = new Set();
 
   FormState.finalPains.forEach(pain => {
+    if (pain.focus === null || pain.focus === undefined) return; // Skip custom pains
     switch (pain.focus) {
       case 1: experiencias.add('Representante'); experiencias.add('Supervisor'); break;
       case 2: experiencias.add('Representante'); break;
