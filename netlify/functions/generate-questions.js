@@ -132,6 +132,7 @@ exports.handler = async (event) => {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
+  let parsedTipoNegocio = 'distribuidor';
   try {
     // CLAUDE_API_KEY porque la extensión Neon de Netlify sobrescribe ANTHROPIC_API_KEY con un JWT
     ANTHROPIC_API_KEY = (process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY || '').trim();
@@ -144,6 +145,7 @@ exports.handler = async (event) => {
       researchProfile, // perfil de research-company (puede ser null)
       phase1Responses  // respuestas de fase 1 (puede ser null)
     } = JSON.parse(event.body);
+    parsedTipoNegocio = tipoNegocio || 'distribuidor';
 
     if (!top4 || top4.length === 0) {
       return {
@@ -327,7 +329,12 @@ Responde SOLO con el JSON, sin markdown ni explicaciones.`;
       throw new Error('No valid JSON in Claude response');
     }
 
-    const result = JSON.parse(jsonMatch[0]);
+    // Limpiar trailing commas que Claude a veces genera (,] o ,})
+    let jsonStr = jsonMatch[0]
+      .replace(/,\s*]/g, ']')
+      .replace(/,\s*}/g, '}');
+
+    const result = JSON.parse(jsonStr);
 
     if (!result.preguntas || !Array.isArray(result.preguntas)) {
       throw new Error('Invalid response structure: missing preguntas array');
@@ -375,7 +382,7 @@ Responde SOLO con el JSON, sin markdown ni explicaciones.`;
       body: JSON.stringify({
         success: false,
         error: error.message,
-        questions: getFallbackQuestions(),
+        questions: getFallbackQuestions(parsedTipoNegocio),
         meta: { fallback: true }
       })
     };
@@ -385,12 +392,78 @@ Responde SOLO con el JSON, sin markdown ni explicaciones.`;
 /**
  * Preguntas fallback si Claude falla
  */
-function getFallbackQuestions() {
+function getFallbackQuestions(tipoNegocio) {
+  if (tipoNegocio === 'clinica') {
+    return [
+      {
+        texto: '¿Cómo gestionas las citas de tu clínica?',
+        hint: 'Agenda, reservas, canales de entrada',
+        profundiza_en: 'Control de agenda',
+        cruza_categorias: ['CA'],
+        opciones: [
+          { texto: 'Sistema digital centralizado con reservas online', detecta: [], gravedad: 0 },
+          { texto: 'Excel o Google Calendar, funciona más o menos', detecta: ['CA01'], gravedad: 1 },
+          { texto: 'Libreta o WhatsApp, a veces se cruzan citas', detecta: ['CA01', 'CA04', 'CA05'], gravedad: 2 },
+          { texto: 'Cada doctor lleva su propia agenda y es un caos', detecta: ['CA01', 'CA04', 'CA05', 'CA10'], gravedad: 3 }
+        ]
+      },
+      {
+        texto: '¿Qué pasa cuando un paciente no vuelve después de su tratamiento?',
+        hint: 'Seguimiento, retención, reactivación',
+        profundiza_en: 'Retención de pacientes',
+        cruza_categorias: ['CB'],
+        opciones: [
+          { texto: 'Le contactamos automáticamente para seguimiento', detecta: [], gravedad: 0 },
+          { texto: 'A veces llamamos, pero no siempre', detecta: ['CB01'], gravedad: 1 },
+          { texto: 'No hacemos seguimiento, esperamos que vuelva', detecta: ['CB01', 'CB02'], gravedad: 2 },
+          { texto: 'Ni sabemos quiénes dejaron de venir', detecta: ['CB01', 'CB02', 'CB06'], gravedad: 3 }
+        ]
+      },
+      {
+        texto: '¿Dónde están los expedientes e historiales de tus pacientes?',
+        hint: 'Expedientes, fotos clínicas, notas',
+        profundiza_en: 'Historiales clínicos',
+        cruza_categorias: ['CC'],
+        opciones: [
+          { texto: 'Todo digital en un solo sistema', detecta: [], gravedad: 0 },
+          { texto: 'Digital pero repartido en varios sitios', detecta: ['CC03'], gravedad: 1 },
+          { texto: 'Mezcla de papel y digital, las fotos en el móvil del doctor', detecta: ['CC01', 'CC02', 'CC03'], gravedad: 2 },
+          { texto: 'Papel, carpetas, y cada doctor guarda lo suyo', detecta: ['CC01', 'CC02', 'CC03', 'CC08'], gravedad: 3 }
+        ]
+      },
+      {
+        texto: '¿Sabes cuáles de tus tratamientos son realmente rentables?',
+        hint: 'Márgenes, costos, pricing',
+        profundiza_en: 'Rentabilidad',
+        cruza_categorias: ['CD'],
+        opciones: [
+          { texto: 'Sí, tengo análisis de margen por servicio', detecta: [], gravedad: 0 },
+          { texto: 'Más o menos, pero no con datos exactos', detecta: ['CD01'], gravedad: 1 },
+          { texto: 'No realmente, cobro lo que cobran los demás', detecta: ['CD01', 'CD05'], gravedad: 2 },
+          { texto: 'Ni idea, sospecho que algunos me cuestan más de lo que cobro', detecta: ['CD01', 'CD03', 'CD05'], gravedad: 3 }
+        ]
+      },
+      {
+        texto: '¿Cómo confirmas las citas con tus pacientes?',
+        hint: 'Recordatorios, confirmaciones, no-shows',
+        profundiza_en: 'Comunicación con pacientes',
+        cruza_categorias: ['CH', 'CA'],
+        opciones: [
+          { texto: 'Recordatorios automáticos por SMS/WhatsApp', detecta: [], gravedad: 0 },
+          { texto: 'La recepcionista llama uno por uno', detecta: ['CH01', 'CH04'], gravedad: 1 },
+          { texto: 'A veces confirmamos, a veces no da tiempo', detecta: ['CH01', 'CH04', 'CA02'], gravedad: 2 },
+          { texto: 'No confirmamos, muchos no se presentan', detecta: ['CH01', 'CH04', 'CA02', 'CA10'], gravedad: 3 }
+        ]
+      }
+    ];
+  }
+
   return [
     {
       texto: '¿Cómo te enteras de lo que hizo tu equipo hoy?',
       hint: 'Visitas, llamadas, reuniones realizadas',
       profundiza_en: 'Visibilidad',
+      cruza_categorias: ['A'],
       opciones: [
         { texto: 'Tengo un dashboard en tiempo real', detecta: [], gravedad: 0 },
         { texto: 'Me mandan WhatsApp o correo', detecta: ['A-VISIBILIDAD'], gravedad: 1 },
@@ -402,6 +475,7 @@ function getFallbackQuestions() {
       texto: '¿Dónde vive la información de tus clientes?',
       hint: 'Datos de contacto, historial, preferencias',
       profundiza_en: 'Centralización',
+      cruza_categorias: ['B'],
       opciones: [
         { texto: 'En un sistema centralizado que todos usan', detecta: [], gravedad: 0 },
         { texto: 'En Excel, pero hay una versión "oficial"', detecta: ['G-EXCEL'], gravedad: 1 },
@@ -413,6 +487,7 @@ function getFallbackQuestions() {
       texto: '¿Cómo das seguimiento a oportunidades de venta?',
       hint: 'Prospectos, cotizaciones, negociaciones',
       profundiza_en: 'Pipeline',
+      cruza_categorias: ['D'],
       opciones: [
         { texto: 'Pipeline en sistema con etapas claras', detecta: [], gravedad: 0 },
         { texto: 'Lista en Excel que actualizo', detecta: ['D-PIPELINE'], gravedad: 1 },
@@ -424,6 +499,7 @@ function getFallbackQuestions() {
       texto: '¿Cuánto tardas en generar un reporte para dirección?',
       hint: 'Ventas, visitas, resultados del mes',
       profundiza_en: 'Reportes',
+      cruza_categorias: ['F'],
       opciones: [
         { texto: 'Minutos, está automatizado', detecta: [], gravedad: 0 },
         { texto: 'Un par de horas', detecta: ['F-TIEMPO'], gravedad: 1 },
@@ -435,6 +511,7 @@ function getFallbackQuestions() {
       texto: '¿Qué pasa cuando un vendedor se va de la empresa?',
       hint: 'Clientes, historial, conocimiento',
       profundiza_en: 'Continuidad',
+      cruza_categorias: ['B'],
       opciones: [
         { texto: 'Todo queda en el sistema', detecta: [], gravedad: 0 },
         { texto: 'Hay que pedirle que entregue sus archivos', detecta: ['B-CENTRALIZACION'], gravedad: 1 },

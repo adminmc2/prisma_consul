@@ -401,6 +401,16 @@ const FormState = {
   audioBlob: null,
   audioUrl: null,
   audioTranscription: '',
+  audioDurationSeconds: 0,
+
+  // Datos de uso
+  datosUso: {
+    team_size: null,
+    roles: [],
+    timeline: null,
+    sistema_actual: '',
+    herramientas: []
+  },
 
   // Contacto
   contact: {
@@ -636,6 +646,12 @@ async function onScreenEnter(screenName) {
       break;
     case 'final-pains':
       renderFinalPains();
+      break;
+    case 'du-2':
+      initDuRoles();
+      break;
+    case 'du-3':
+      initDuSistema();
       break;
     case 'contact-info':
       focusContactForm();
@@ -999,6 +1015,22 @@ function handleOptionClick(e) {
   const questionKey = optionsList.dataset.question;
   const isMulti = optionsList.dataset.multi === 'true';
   const value = optionBtn.dataset.value;
+
+  // Datos de uso screens (du_*) - save to datosUso, not phase1
+  if (questionKey && questionKey.startsWith('du_')) {
+    const duKey = questionKey.replace('du_', '');
+
+    if (!isMulti) {
+      optionsList.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+      optionBtn.classList.add('selected');
+      FormState.datosUso[duKey] = value;
+      // Determine which du- screen we're on from current screen
+      const currentScreen = FormState.currentScreen;
+      setTimeout(() => goToScreen(getNextDuScreen(currentScreen)), 300);
+    }
+    // Multi-select for du_ handled by initDuRoles directly
+    return;
+  }
 
   if (isMulti) {
     // Multi-select: toggle
@@ -2546,9 +2578,7 @@ function updatePainsContinueButton() {
   const allAddressed = Object.keys(painConfirmationState).length === painCount &&
     Object.values(painConfirmationState).every(state => {
       if (!state.action) return false;
-      if (state.action === 'accept') return true;
-      // nuance/reject need audio
-      return state.hasAudio;
+      return true;
     });
 
   const btn = DOM.btnContinuePains;
@@ -2558,9 +2588,7 @@ function updatePainsContinueButton() {
 
   if (hint) {
     const pending = Object.values(painConfirmationState).filter(state => {
-      if (!state.action) return true;
-      if (state.action === 'accept') return false;
-      return !state.hasAudio;
+      return !state.action;
     }).length;
 
     if (pending === 0) {
@@ -2672,6 +2700,7 @@ function stopRecording() {
     mediaRecorder.stop();
     clearInterval(recordingTimer);
     DOM.recorderVisualizer.classList.remove('active');
+    FormState.audioDurationSeconds = recordingSeconds;
   }
 }
 
@@ -2862,8 +2891,118 @@ function renderFinalPains() {
   // Continue button - NO auto-advance
   const btnContinue = document.getElementById('btnContinueFinalPains');
   if (btnContinue) {
-    btnContinue.addEventListener('click', () => goToScreen('contact-info'));
+    btnContinue.addEventListener('click', () => goToScreen('du-1'));
   }
+}
+
+// ============================================================
+// DATOS DE USO (pantallas individuales du-1 a du-4)
+// ============================================================
+
+// Roles por tipo de negocio
+const ROLES_POR_TIPO = {
+  distribuidor: [
+    { value: 'direccion', text: 'Dirección / Gerencia' },
+    { value: 'gerente_ventas', text: 'Gerente de ventas' },
+    { value: 'supervisores', text: 'Supervisores / Gerentes de zona' },
+    { value: 'representantes', text: 'Representantes / Visitadores médicos' },
+    { value: 'comercial', text: 'Equipo comercial / Ventas internas' },
+    { value: 'admin', text: 'Administración / Facturación' },
+    { value: 'logistica', text: 'Logística / Almacén' },
+    { value: 'marketing', text: 'Marketing' },
+    { value: 'todos', text: 'Todo el equipo' }
+  ],
+  clinica: [
+    { value: 'direccion', text: 'Dirección / Dueño de la clínica' },
+    { value: 'medicos', text: 'Médicos / Especialistas' },
+    { value: 'enfermeras', text: 'Enfermeras / Asistentes clínicos' },
+    { value: 'recepcion', text: 'Recepción / Front desk' },
+    { value: 'admin', text: 'Administración / Facturación' },
+    { value: 'marketing', text: 'Marketing / Community manager' },
+    { value: 'coordinadores', text: 'Coordinadores / Jefes de área' },
+    { value: 'todos', text: 'Todo el equipo' }
+  ]
+};
+
+function getNextDuScreen(currentDuScreen) {
+  const currentTech = FormState.responses.phase1.current_tech || [];
+  const hasSistema = currentTech.includes('crm') || currentTech.includes('erp');
+
+  switch (currentDuScreen) {
+    case 'du-1': return 'du-2';
+    case 'du-2': return hasSistema ? 'du-3' : 'du-4';
+    case 'du-3': return 'du-4';
+    case 'du-4': return 'contact-info';
+    default: return 'contact-info';
+  }
+}
+
+function initDuRoles() {
+  const tipo = FormState.tipoNegocio || 'distribuidor';
+  const roles = ROLES_POR_TIPO[tipo] || ROLES_POR_TIPO.distribuidor;
+  const container = document.getElementById('duRolesOptions');
+  if (!container) return;
+
+  container.innerHTML = roles.map(role => `
+    <button class="option-btn" data-value="${role.value}">
+      <span class="option-checkbox"></span>
+      <span class="option-text">${role.text}</span>
+    </button>
+  `).join('');
+
+  // Multi-select click handlers
+  container.querySelectorAll('.option-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // "Todos" logic
+      if (btn.dataset.value === 'todos') {
+        if (!btn.classList.contains('selected')) {
+          container.querySelectorAll('.option-btn').forEach(b => b.classList.add('selected'));
+        } else {
+          container.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        }
+      } else {
+        btn.classList.toggle('selected');
+        // Uncheck "todos" if individual unchecked
+        const todosBtn = container.querySelector('[data-value="todos"]');
+        if (todosBtn) todosBtn.classList.remove('selected');
+      }
+
+      FormState.datosUso.roles = Array.from(container.querySelectorAll('.option-btn.selected'))
+        .map(b => b.dataset.value);
+
+      const btnContinue = document.getElementById('btnContinueDuRoles');
+      if (btnContinue) {
+        btnContinue.classList.toggle('hidden', FormState.datosUso.roles.length === 0);
+      }
+    });
+  });
+
+  // Continue button
+  const btnContinue = document.getElementById('btnContinueDuRoles');
+  if (btnContinue) {
+    btnContinue.classList.add('hidden');
+    btnContinue.addEventListener('click', () => {
+      goToScreen(getNextDuScreen('du-2'));
+    });
+  }
+}
+
+function initDuSistema() {
+  const input = document.getElementById('duSistemaActual');
+  const btnContinue = document.getElementById('btnContinueDuSistema');
+  if (!input || !btnContinue) return;
+
+  input.value = FormState.datosUso.sistema_actual || '';
+  input.focus();
+
+  input.addEventListener('input', () => {
+    FormState.datosUso.sistema_actual = input.value.trim();
+    btnContinue.disabled = !input.value.trim();
+  });
+
+  btnContinue.addEventListener('click', () => {
+    goToScreen(getNextDuScreen('du-3'));
+  });
 }
 
 function focusContactForm() {
@@ -2880,9 +3019,12 @@ async function handleContactSubmit(e) {
     whatsapp: DOM.contactWhatsapp.value.trim()
   };
 
-  const formData = prepareFormData();
-
+  let submitSuccess = false;
   try {
+    const formData = prepareFormData();
+    console.log('Submitting form data:', formData.id, '| contacto:', formData.empresa?.contacto, '| email:', formData.empresa?.email);
+    console.log('Audio data:', { transcripcion: formData.audio?.transcripcion?.substring(0, 100), duracion: formData.audio?.duracion_segundos });
+
     const response = await fetch(CONFIG.submitApiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -2890,10 +3032,26 @@ async function handleContactSubmit(e) {
     });
 
     if (!response.ok) {
-      console.error('Error submitting form:', await response.text());
+      const errorText = await response.text();
+      console.error('Error submitting form:', response.status, errorText);
+    } else {
+      console.log('Form submitted successfully:', formData.id);
+      submitSuccess = true;
     }
   } catch (error) {
     console.error('Error submitting form:', error);
+  }
+
+  if (!submitSuccess) {
+    // Show error but still allow retry
+    const submitBtn = document.querySelector('.btn-submit');
+    if (submitBtn) {
+      submitBtn.querySelector('span').textContent = 'Reintentar envío';
+      submitBtn.style.opacity = '1';
+      submitBtn.disabled = false;
+    }
+    alert('Hubo un error al enviar el formulario. Por favor intenta de nuevo.');
+    return;
   }
 
   DOM.thanksName.textContent = FormState.contact.name.split(' ')[0] || 'amigo';
@@ -2901,6 +3059,37 @@ async function handleContactSubmit(e) {
 }
 
 function prepareFormData() {
+  // Build full adaptive questions with text for each response
+  const adaptiveQuestionsWithText = (FormState.responses.adaptiveQuestions || []).map((q, i) => {
+    const response = FormState.responses.phase2[`q2-${i}`];
+    const selectedOption = response && q.opciones ? q.opciones[parseInt(response.value)] : null;
+    return {
+      pregunta: q.texto || '',
+      hint: q.hint || '',
+      categoria: q.categoria || '',
+      respuesta_index: response?.value ?? null,
+      respuesta_texto: selectedOption?.texto || null,
+      detecta: response?.detects || [],
+      gravedad: response?.gravedad || 0,
+      opciones: (q.opciones || []).map(o => o.texto)
+    };
+  });
+
+  // Build swipe choices with full card text
+  let swipeChoices = [];
+  try {
+    const situaciones = FormState.tipoNegocio === 'clinica' ? SITUACIONES_CLINICA : SITUACIONES_DISTRIBUIDOR;
+    swipeChoices = situaciones.map(sit => ({
+      id: sit.id,
+      titulo: sit.titulo,
+      descripcion: sit.descripcion,
+      seleccionada: (FormState.situaciones.seleccionadas || []).includes(sit.id),
+      descartada: (FormState.situaciones.descartadas || []).includes(sit.id)
+    }));
+  } catch (e) {
+    console.warn('Could not build swipe choices:', e.message);
+  }
+
   return {
     id: `form_${Date.now()}`,
     timestamp: new Date().toISOString(),
@@ -2915,7 +3104,6 @@ function prepareFormData() {
       tiene_campo: FormState.responses.phase1.has_field_team,
       tecnologia_actual: FormState.responses.phase1.current_tech,
       motivacion: FormState.responses.phase1.motivation,
-      // Nuevas preguntas fase 1
       calidad_datos: FormState.responses.phase1.data_quality,
       pipeline_ventas: FormState.responses.phase1.sales_pipeline,
       vende_credito: FormState.responses.phase1.sells_credit,
@@ -2923,19 +3111,42 @@ function prepareFormData() {
     },
 
     investigacion_empresa: FormState.company.profile,
+    tipo_negocio: FormState.tipoNegocio,
 
     respuestas_fase1: FormState.responses.phase1,
+
+    // Swipe choices (all 16 cards with selected/discarded)
+    swipe_situaciones: swipeChoices,
+
+    // Rank order (all selected situations in priority order)
+    rank_order: FormState.situaciones.rankOrder,
+    top4: FormState.situaciones.top4,
+
+    // Adaptive questions with full text and selected options
     respuestas_fase2: FormState.responses.phase2,
+    preguntas_adaptativas: adaptiveQuestionsWithText,
 
     pains_detectados_inicial: FormState.detectedPains,
     confirmacion_pains: FormState.painsConfirmed ? 'si' : 'no',
 
     audio: {
-      transcripcion: FormState.audioTranscription,
-      duracion_segundos: recordingSeconds
+      transcripcion: FormState.audioTranscription || '',
+      duracion_segundos: FormState.audioDurationSeconds || 0
     },
 
-    pains_finales: FormState.finalPains,
+    pains_finales: (FormState.finalPains || []).map(p => ({
+      id: p.id,
+      title: p.title,
+      description: p.description,
+      action: p.action || null,
+      hasAudio: p.hasAudio || false,
+      transcription: p.transcription || '',
+      gravedad: p.gravedad,
+      categoria: p.categoria
+    })),
+
+    // Datos de uso
+    datos_uso: FormState.datosUso,
 
     experiencias_sugeridas: getExperienciasSugeridas(),
     plan_recomendado: getPlanRecomendado()

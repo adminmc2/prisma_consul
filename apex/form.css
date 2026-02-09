@@ -1217,6 +1217,45 @@ body {
 }
 
 /* ==================== CONTACT FORM ==================== */
+/* Datos de Uso Screens */
+.datos-uso-input {
+  width: 100%;
+  padding: var(--spacing-md);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: all var(--transition-normal);
+}
+
+.datos-uso-input:focus {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-glow);
+}
+
+.datos-uso-input::placeholder {
+  color: var(--text-muted);
+}
+
+.du-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+.du-input-continue {
+  align-self: flex-end;
+}
+
+.du-input-continue:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
 .contact-title {
   font-family: var(--font-heading);
   font-size: 1.5rem;
