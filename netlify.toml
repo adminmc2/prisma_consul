@@ -6,6 +6,12 @@
   node_bundler = "esbuild"
 
 [functions."generate-questions"]
+  timeout = 120
+
+[functions."research-company"]
+  timeout = 120
+
+[functions."groq-whisper"]
   timeout = 60
 
 # Redirige /apex a la carpeta apex

@@ -473,7 +473,7 @@ function initDOM() {
     finalPainsList: document.getElementById('finalPainsList'),
     contactForm: document.getElementById('contactForm'),
     contactName: document.getElementById('contactName'),
-    contactCompany: document.getElementById('contactCompany'),
+    // contactCompany removed - company comes from research
     contactEmail: document.getElementById('contactEmail'),
     contactWhatsapp: document.getElementById('contactWhatsapp'),
 
@@ -2867,12 +2867,6 @@ function renderFinalPains() {
 }
 
 function focusContactForm() {
-  // Pre-rellenar empresa si tenemos el dato
-  if (FormState.company.name && DOM.contactCompany) {
-    DOM.contactCompany.value = FormState.company.name;
-  } else if (FormState.company.profile?.empresa?.nombre && DOM.contactCompany) {
-    DOM.contactCompany.value = FormState.company.profile.empresa.nombre;
-  }
   DOM.contactName.focus();
 }
 
@@ -2881,7 +2875,7 @@ async function handleContactSubmit(e) {
 
   FormState.contact = {
     name: DOM.contactName.value.trim(),
-    company: DOM.contactCompany.value.trim(),
+    company: FormState.company.name || FormState.company.profile?.empresa?.nombre || '',
     email: DOM.contactEmail.value.trim(),
     whatsapp: DOM.contactWhatsapp.value.trim()
   };
