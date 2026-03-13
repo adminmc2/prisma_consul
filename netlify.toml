@@ -24,3 +24,14 @@
   from = "/apex/*"
   to = "/apex/:splat"
   status = 200
+
+# Redirige /documentacion a la carpeta portal
+[[redirects]]
+  from = "/documentacion"
+  to = "/portal/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/documentacion/*"
+  to = "/portal/:splat"
+  status = 200

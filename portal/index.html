@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portal de documentos seguro - PRISMA Consul">
+  <title>Portal | PRISMA Consul</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
+  <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+  <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --prisma-navy: #101B2C;
+      --bg-primary: #1a2535;
+      --clinical-white: #FAF9F6;
+      --tech-cyan: #31BEEF;
+      --pure-cyan: #00FFFF;
+      --soft-blue: #A1B8F2;
+      --visionary-violet: #994E95;
+      --text-secondary: rgba(250, 249, 246, 0.7);
+      --text-muted: rgba(250, 249, 246, 0.5);
+      --bg-card: rgba(255, 255, 255, 0.04);
+      --bg-card-hover: rgba(255, 255, 255, 0.07);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --accent-glow: rgba(49, 190, 239, 0.3);
+      --font-heading: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html, body {
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--clinical-white);
+      background: var(--prisma-navy);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ── Screens (APEX pattern) ── */
+    .portal-screen {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      height: 100vh;
+      height: 100dvh;
+      overflow-y: auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 1.5rem 100px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: opacity 400ms ease, transform 400ms ease, visibility 0s 400ms ease;
+    }
+
+    .portal-screen.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      transition: opacity 400ms ease, transform 400ms ease, visibility 0s;
+    }
+
+    /* ── LOGIN SCREEN ── */
+    .screen-content {
+      width: 100%;
+      max-width: 480px;
+      margin: auto;
+      flex-shrink: 0;
+    }
+
+    .welcome-logo {
+      width: 280px;
+      margin: 0 auto 3rem;
+    }
+
+    .welcome-logo img {
+      width: 100%;
+      height: auto;
+    }
+
+    .welcome-title {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--clinical-white), var(--soft-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .welcome-subtitle {
+      font-size: 1.125rem;
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+
+    .portal-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .portal-input {
+      width: 100%;
+      max-width: 320px;
+      padding: 14px 20px;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--clinical-white);
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 250ms ease, box-shadow 250ms ease;
+    }
+
+    .portal-input::placeholder { color: var(--text-muted); }
+
+    .portal-input:focus {
+      border-color: var(--tech-cyan);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .login-error {
+      color: #ff6b6b;
+      font-size: 0.875rem;
+      text-align: center;
+      min-height: 1.25rem;
+      margin-top: 0.25rem;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      max-width: 320px;
+      padding: 14px 28px;
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--prisma-navy);
+      background: var(--tech-cyan);
+      border: 1px solid var(--tech-cyan);
+      border-radius: 4px 25px 25px 4px;
+      cursor: pointer;
+      transition: all 250ms ease;
+      margin-top: 0.5rem;
+    }
+
+    .btn-primary:hover {
+      background: var(--clinical-white);
+      border-color: var(--clinical-white);
+      color: var(--prisma-navy);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--accent-glow);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* ════════════════════════════════════════
+       PANEL SCREEN - Two Column Layout
+       ════════════════════════════════════════ */
+    #screen-panel {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    #screen-panel.active {
+      display: flex;
+    }
+
+    /* ── Header ── */
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 90px;
+      width: 100%;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--prisma-navy);
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .panel-header-left {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .panel-header-logo img {
+      height: 90px;
+      width: auto;
+      display: block;
+    }
+
+    .panel-header-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border-color);
+    }
+
+    .panel-header-title {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--clinical-white);
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--clinical-white), var(--soft-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .panel-header-right {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .header-user-email {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .btn-logout {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--tech-cyan);
+      border: 1px solid var(--tech-cyan);
+      color: var(--prisma-navy);
+      padding: 10px 20px;
+      border-radius: 25px 4px 4px 25px;
+      font-family: var(--font-heading);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 250ms ease;
+    }
+
+    .btn-logout:hover {
+      background: var(--clinical-white);
+      border-color: var(--clinical-white);
+      color: var(--prisma-navy);
+      box-shadow: 0 8px 25px var(--accent-glow);
+      background: rgba(255, 107, 107, 0.05);
+    }
+
+    .btn-logout svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ── Main Layout ── */
+    .panel-body {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* ── LEFT SIDEBAR ── */
+    .panel-sidebar {
+      border-right: 1px solid var(--border-color);
+      padding: 2rem 1.5rem;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .sidebar-section {
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .sidebar-label {
+      font-family: var(--font-heading);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    /* User card */
+    .user-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .user-card-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--tech-cyan), var(--visionary-violet));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: white;
+      margin-bottom: 0.75rem;
+    }
+
+    .user-card-name {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .user-card-email {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--tech-cyan);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Document types */
+    .doc-type-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .doc-type-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0.75rem;
+      background: var(--bg-card);
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+
+    .doc-type-name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-secondary);
+    }
+
+    .doc-type-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .doc-type-count {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      color: var(--clinical-white);
+      font-size: 0.85rem;
+    }
+
+    /* ── RIGHT CONTENT ── */
+    .panel-main {
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .panel-title {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, var(--clinical-white), var(--soft-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Dropzone ── */
+    .dropzone {
+      border: 2px dashed var(--border-color);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 300ms ease;
+      margin-bottom: 0.75rem;
+      background: var(--bg-card);
+    }
+
+    .dropzone:hover,
+    .dropzone.dragover {
+      border-color: var(--tech-cyan);
+      background: rgba(49, 190, 239, 0.05);
+    }
+
+    .dropzone-icon { margin-bottom: 0.75rem; }
+
+    .dropzone-icon svg {
+      width: 40px;
+      height: 40px;
+      color: var(--text-muted);
+      transition: color 300ms ease;
+    }
+
+    .dropzone:hover .dropzone-icon svg,
+    .dropzone.dragover .dropzone-icon svg {
+      color: var(--tech-cyan);
+    }
+
+    .dropzone-text {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.35rem;
+    }
+
+    .dropzone-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .dropzone input[type="file"] { display: none; }
+
+    /* ── Document type selector ── */
+    .upload-options {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .upload-options label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* Custom dropdown */
+    .custom-dropdown {
+      position: relative;
+      flex: 1;
+      max-width: 260px;
+    }
+
+    .custom-dropdown-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 9px 14px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--clinical-white);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 250ms ease, background 250ms ease;
+    }
+
+    .custom-dropdown-toggle:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    .custom-dropdown-toggle.open {
+      border-color: var(--tech-cyan);
+      border-radius: 8px 8px 0 0;
+    }
+
+    .custom-dropdown-arrow {
+      width: 16px;
+      height: 16px;
+      color: var(--text-muted);
+      transition: transform 200ms ease;
+      flex-shrink: 0;
+    }
+
+    .custom-dropdown-toggle.open .custom-dropdown-arrow {
+      transform: rotate(180deg);
+    }
+
+    .custom-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--bg-primary);
+      border: 1px solid var(--tech-cyan);
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      max-height: 240px;
+      overflow-y: auto;
+      z-index: 50;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.15) transparent;
+    }
+
+    .custom-dropdown-menu::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-dropdown-menu::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .custom-dropdown-menu::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.15);
+      border-radius: 3px;
+    }
+
+    .custom-dropdown-menu::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .custom-dropdown-menu.open {
+      display: block;
+    }
+
+    .custom-dropdown-option {
+      padding: 9px 14px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 150ms ease, color 150ms ease;
+    }
+
+    .custom-dropdown-option:hover {
+      background: rgba(49, 190, 239, 0.08);
+      color: var(--clinical-white);
+    }
+
+    .custom-dropdown-option.selected {
+      color: var(--tech-cyan);
+    }
+
+    /* ── Upload status ── */
+    .upload-status {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      min-height: 1.25rem;
+      font-size: 0.85rem;
+    }
+
+    .upload-status.success { color: #51cf66; }
+    .upload-status.error { color: #ff6b6b; }
+    .upload-status.uploading { color: var(--tech-cyan); }
+
+    /* ── Section divider ── */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-divider-title {
+      font-family: var(--font-heading);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .section-divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border-color);
+    }
+
+    /* ── Files List ── */
+    .files-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+    .file-card {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 0.85rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      transition: all 250ms ease;
+      position: relative;
+    }
+
+    .file-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    .file-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.6rem;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .file-icon.pdf { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+    .file-icon.doc { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .file-icon.xls { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+    .file-icon.img { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+    .file-icon.other { background: rgba(250, 249, 246, 0.08); color: var(--text-muted); }
+
+    .file-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .file-name {
+      font-weight: 600;
+      font-size: 0.82rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-name-editable {
+      cursor: pointer;
+      border-bottom: 1px dashed transparent;
+      transition: border-color 200ms;
+    }
+
+    .file-name-editable:hover {
+      border-bottom-color: var(--text-muted);
+    }
+
+    .file-name-input {
+      background: transparent;
+      border: 1px solid var(--tech-cyan);
+      border-radius: 4px;
+      color: var(--clinical-white);
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 1px 4px;
+      width: 100%;
+      outline: none;
+    }
+
+    .file-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+      flex-wrap: wrap;
+    }
+
+    .file-meta-sep {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+
+    .file-type-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: rgba(49, 190, 239, 0.1);
+      color: var(--tech-cyan);
+    }
+
+    .file-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .file-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 250ms ease;
+      border: 1px solid transparent;
+    }
+
+    .file-link:hover {
+      color: var(--tech-cyan);
+      background: rgba(49, 190, 239, 0.08);
+      border-color: rgba(49, 190, 239, 0.2);
+    }
+
+    .file-link svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .file-btn-delete {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 250ms ease;
+      padding: 0;
+    }
+
+    .file-btn-delete:hover {
+      color: #ff6b6b;
+      background: rgba(255, 107, 107, 0.08);
+      border-color: rgba(255, 107, 107, 0.2);
+    }
+
+    .file-btn-delete svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .files-empty {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 3rem 2rem;
+      font-size: 0.9rem;
+      grid-column: 1 / -1;
+    }
+
+    .files-empty svg {
+      width: 48px;
+      height: 48px;
+      color: var(--border-color);
+      margin-bottom: 1rem;
+    }
+
+    .files-loading {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 3rem;
+    }
+
+    /* ── Spinner ── */
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--prisma-navy);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    .spinner.light {
+      border-color: var(--text-muted);
+      border-top-color: transparent;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .panel-body {
+        grid-template-columns: 1fr;
+      }
+      .panel-sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1.5rem;
+      }
+      .sidebar-section { margin-bottom: 1.5rem; }
+      .stats-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .panel-header { padding: 0 1rem; }
+      .panel-header-title { display: none; }
+      .panel-header-divider { display: none; }
+      .header-user-email { display: none; }
+      .panel-main { padding: 1.25rem; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .files-list { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .welcome-logo { width: 200px; }
+      .welcome-title { font-size: 1.5rem; }
+      .portal-input, .btn-primary { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ LOGIN SCREEN ═══ -->
+  <div class="portal-screen active" id="screen-login">
+    <div class="screen-content">
+      <div class="welcome-logo">
+        <img src="../images/logo-completo-transparente.svg" alt="PRISMA Consulting">
+      </div>
+
+      <h1 class="welcome-title">Portal de Documentos</h1>
+      <p class="welcome-subtitle">Accede a tu espacio seguro</p>
+
+      <form class="portal-form" id="loginForm">
+        <input type="email" class="portal-input" id="loginEmail" placeholder="Email" autocomplete="email" required>
+        <input type="password" class="portal-input" id="loginPassword" placeholder="Contraseña" autocomplete="current-password" required>
+        <p class="login-error" id="loginError"></p>
+        <button type="submit" class="btn-primary" id="btnLogin">
+          <span>Acceder</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══ PANEL SCREEN ═══ -->
+  <div class="portal-screen" id="screen-panel">
+
+    <!-- Header -->
+    <div class="panel-header">
+      <div class="panel-header-left">
+        <div class="panel-header-logo">
+          <img src="../images/logo_simbolo_V2.svg" alt="PRISMA">
+        </div>
+        <div class="panel-header-divider"></div>
+        <span class="panel-header-title">Portal de Documentos</span>
+      </div>
+      <div class="panel-header-right">
+        <button class="btn-logout" id="btnLogout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          <span>Salir</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Body: sidebar + main -->
+    <div class="panel-body">
+
+      <!-- LEFT SIDEBAR -->
+      <div class="panel-sidebar">
+
+        <!-- Empresa info -->
+        <div class="sidebar-section">
+          <div class="sidebar-label">Empresa</div>
+          <div class="user-card">
+            <div class="user-card-avatar" id="userAvatar">AC</div>
+            <div class="user-card-name" id="empresaNombre">—</div>
+            <div class="user-card-email" id="empresaSector">—</div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="sidebar-section">
+          <div class="sidebar-label">Resumen</div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-number" id="statTotal">0</div>
+              <div class="stat-label">Archivos</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="statSize">0</div>
+              <div class="stat-label">MB Total</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="statTypes">0</div>
+              <div class="stat-label">Tipos</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="statRecent">0</div>
+              <div class="stat-label">Esta semana</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Doc types breakdown -->
+        <div class="sidebar-section">
+          <div class="sidebar-label">Tipos de documento</div>
+          <div class="doc-type-list" id="docTypeList">
+            <div style="color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem 0;">Sin archivos</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT MAIN CONTENT -->
+      <div class="panel-main">
+        <h2 class="panel-title">Subir documentos</h2>
+
+        <!-- Dropzone -->
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p class="dropzone-text">Arrastra archivos aquí o haz clic para seleccionar</p>
+          <p class="dropzone-hint">Máximo 25 MB por archivo</p>
+          <input type="file" id="fileInput" multiple>
+        </div>
+
+        <!-- Type selector -->
+        <div class="upload-options">
+          <label>Tipo de documento:</label>
+          <div class="custom-dropdown" id="docTypeDropdown">
+            <button type="button" class="custom-dropdown-toggle" id="docTypeToggle">
+              <span id="docTypeLabel">General</span>
+              <svg class="custom-dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="custom-dropdown-menu" id="docTypeMenu">
+              <div class="custom-dropdown-option selected" data-value="general">General</div>
+              <div class="custom-dropdown-option" data-value="historia">Historia clínica</div>
+              <div class="custom-dropdown-option" data-value="consentimiento">Consentimiento informado</div>
+              <div class="custom-dropdown-option" data-value="informe">Informe médico</div>
+              <div class="custom-dropdown-option" data-value="analitica">Analítica / Resultados</div>
+              <div class="custom-dropdown-option" data-value="fotografia">Fotografía clínica</div>
+              <div class="custom-dropdown-option" data-value="factura">Factura</div>
+              <div class="custom-dropdown-option" data-value="contrato">Contrato</div>
+              <div class="custom-dropdown-option" data-value="legal">Legal / Compliance</div>
+              <div class="custom-dropdown-option" data-value="otro">Otro</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="upload-status" id="uploadStatus"></div>
+
+        <!-- Files list -->
+        <div class="section-divider">
+          <span class="section-divider-title">Archivos subidos</span>
+          <div class="section-divider-line"></div>
+        </div>
+
+        <div class="files-list" id="filesList">
+          <div class="files-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <div>No hay archivos todavía</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ═══════════════════════════════════════
+       PORTAL - Client Logic
+       ═══════════════════════════════════════ */
+
+    const API_BASE = '/.netlify/functions';
+
+    // ── Document type config ──
+    const DOC_TYPE_COLORS = {
+      historia: '#3b82f6',
+      consentimiento: '#8b5cf6',
+      informe: '#f59e0b',
+      analitica: '#06b6d4',
+      fotografia: '#a855f7',
+      factura: '#22c55e',
+      contrato: '#6366f1',
+      legal: '#ef4444',
+      general: '#64748b',
+      otro: '#94a3b8'
+    };
+
+    const DOC_TYPE_LABELS = {
+      historia: 'Historias clínicas',
+      consentimiento: 'Consentimientos',
+      informe: 'Informes médicos',
+      analitica: 'Analíticas',
+      fotografia: 'Fotografías clínicas',
+      factura: 'Facturas',
+      contrato: 'Contratos',
+      legal: 'Legal',
+      general: 'General',
+      otro: 'Otros'
+    };
+
+    // ── State ──
+    let currentFiles = [];
+
+    function getToken() { return sessionStorage.getItem('portal_token'); }
+    function getEmail() { return sessionStorage.getItem('portal_email'); }
+    function getNombre() { return sessionStorage.getItem('portal_nombre'); }
+    function getEmpresa() {
+      try { return JSON.parse(sessionStorage.getItem('portal_empresa')); } catch { return null; }
+    }
+    function setSession(token, email, nombre, empresa) {
+      sessionStorage.setItem('portal_token', token);
+      sessionStorage.setItem('portal_email', email);
+      if (nombre) sessionStorage.setItem('portal_nombre', nombre);
+      if (empresa) sessionStorage.setItem('portal_empresa', JSON.stringify(empresa));
+    }
+    function clearSession() {
+      sessionStorage.removeItem('portal_token');
+      sessionStorage.removeItem('portal_email');
+      sessionStorage.removeItem('portal_nombre');
+      sessionStorage.removeItem('portal_empresa');
+    }
+
+    // ── Screen transitions ──
+    function showScreen(id) {
+      document.querySelectorAll('.portal-screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    // ── Init ──
+    function init() {
+      if (getToken()) showPanel();
+    }
+
+    // ── LOGIN ──
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const btnLogin = document.getElementById('btnLogin');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.textContent = '';
+
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      if (!email || !password) {
+        loginError.textContent = 'Introduce email y contraseña';
+        return;
+      }
+
+      btnLogin.disabled = true;
+      btnLogin.innerHTML = '<span class="spinner"></span>';
+
+      try {
+        const res = await fetch(`${API_BASE}/portal-auth`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          loginError.textContent = data.error || 'Error de autenticación';
+          resetLoginButton();
+          return;
+        }
+
+        setSession(data.token, data.email, data.nombre, data.empresa);
+        showPanel();
+
+      } catch (err) {
+        loginError.textContent = 'Error de conexión';
+        resetLoginButton();
+      }
+    });
+
+    function resetLoginButton() {
+      btnLogin.disabled = false;
+      btnLogin.innerHTML = '<span>Acceder</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+    }
+
+    // ── PANEL ──
+    function showPanel() {
+      const email = getEmail() || '';
+      const nombre = getNombre() || email.split('@')[0];
+      const empresa = getEmpresa();
+
+      if (empresa && empresa.nombre) {
+        document.getElementById('empresaNombre').textContent = empresa.nombre;
+        document.getElementById('empresaSector').textContent = empresa.sector || '';
+        // Avatar: nombre corto de la empresa (ej: "ARMC")
+        document.getElementById('userAvatar').textContent = nombre || '??';
+      } else {
+        document.getElementById('empresaNombre').textContent = nombre;
+        document.getElementById('empresaSector').textContent = email;
+        document.getElementById('userAvatar').textContent = nombre.slice(0, 4).toUpperCase() || '??';
+      }
+
+      showScreen('screen-panel');
+      loadFiles();
+    }
+
+    // ── LOGOUT ──
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      clearSession();
+      showScreen('screen-login');
+      loginError.textContent = '';
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPassword').value = '';
+    });
+
+    // ── CUSTOM DROPDOWN ──
+    let selectedDocType = 'general';
+    const docTypeToggle = document.getElementById('docTypeToggle');
+    const docTypeMenu = document.getElementById('docTypeMenu');
+    const docTypeLabel = document.getElementById('docTypeLabel');
+
+    docTypeToggle.addEventListener('click', () => {
+      const isOpen = docTypeMenu.classList.toggle('open');
+      docTypeToggle.classList.toggle('open', isOpen);
+    });
+
+    docTypeMenu.addEventListener('click', (e) => {
+      const opt = e.target.closest('.custom-dropdown-option');
+      if (!opt) return;
+      selectedDocType = opt.dataset.value;
+      docTypeLabel.textContent = opt.textContent;
+      docTypeMenu.querySelectorAll('.custom-dropdown-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      docTypeMenu.classList.remove('open');
+      docTypeToggle.classList.remove('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#docTypeDropdown')) {
+        docTypeMenu.classList.remove('open');
+        docTypeToggle.classList.remove('open');
+      }
+    });
+
+    // ── DROPZONE ──
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const uploadStatus = document.getElementById('uploadStatus');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) uploadFiles(e.dataTransfer.files);
+    });
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) uploadFiles(fileInput.files);
+    });
+
+    async function uploadFiles(files) {
+      const token = getToken();
+      if (!token) { showScreen('screen-login'); return; }
+
+      const docType = selectedDocType;
+
+      for (const file of files) {
+        if (file.size > 25 * 1024 * 1024) {
+          uploadStatus.className = 'upload-status error';
+          uploadStatus.textContent = `"${file.name}" supera los 25 MB`;
+          continue;
+        }
+
+        uploadStatus.className = 'upload-status uploading';
+        uploadStatus.textContent = `Subiendo "${file.name}"...`;
+
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('docType', docType);
+
+          const res = await fetch(`${API_BASE}/portal-upload`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+          });
+
+          if (res.status === 401) {
+            clearSession();
+            showScreen('screen-login');
+            loginError.textContent = 'Sesión expirada, inicia sesión de nuevo';
+            return;
+          }
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            uploadStatus.className = 'upload-status error';
+            uploadStatus.textContent = data.error || 'Error al subir archivo';
+            continue;
+          }
+
+          uploadStatus.className = 'upload-status success';
+          uploadStatus.textContent = `"${file.name}" subido correctamente`;
+          loadFiles();
+
+        } catch (err) {
+          uploadStatus.className = 'upload-status error';
+          uploadStatus.textContent = 'Error de conexión al subir archivo';
+        }
+      }
+
+      fileInput.value = '';
+    }
+
+    // ── FILES LIST ──
+    async function loadFiles() {
+      const token = getToken();
+      if (!token) return;
+
+      const filesList = document.getElementById('filesList');
+      filesList.innerHTML = '<div class="files-loading"><span class="spinner light"></span></div>';
+
+      try {
+        const res = await fetch(`${API_BASE}/portal-files`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.status === 401) {
+          clearSession();
+          showScreen('screen-login');
+          return;
+        }
+
+        const data = await res.json();
+        currentFiles = data.files || [];
+
+        updateStats(currentFiles);
+        updateDocTypes(currentFiles);
+        renderFiles(currentFiles);
+
+      } catch (err) {
+        filesList.innerHTML = '<div class="files-empty"><div>Error al cargar archivos</div></div>';
+      }
+    }
+
+    function renderFiles(files) {
+      const filesList = document.getElementById('filesList');
+
+      if (!files.length) {
+        filesList.innerHTML = `
+          <div class="files-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <div>No hay archivos todavía</div>
+          </div>`;
+        return;
+      }
+
+      filesList.innerHTML = files.map(f => {
+        const ext = getFileExt(f.name);
+        const iconClass = getIconClass(ext);
+        const docType = f.docType || guessDocType(f.mimeType, ext);
+
+        return `
+          <div class="file-card" data-file-id="${f.id}">
+            <div class="file-icon ${iconClass}">${ext || '?'}</div>
+            <div class="file-info">
+              <div class="file-name file-name-editable" title="Clic para renombrar" onclick="startRename('${f.id}', this)">${escapeHtml(f.name)}</div>
+              <div class="file-meta">
+                <span>${formatDate(f.createdTime)}</span>
+                <span class="file-meta-sep"></span>
+                <span>${formatSize(f.size)}</span>
+                ${docType ? `<span class="file-meta-sep"></span><span class="file-type-badge">${DOC_TYPE_LABELS[docType] || docType}</span>` : ''}
+              </div>
+            </div>
+            <div class="file-actions">
+              ${f.link ? `<a href="${f.link}" target="_blank" rel="noopener" class="file-link" title="Abrir">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+              </a>` : ''}
+              <button class="file-btn-delete" title="Eliminar" onclick="deleteFile('${f.id}', '${escapeHtml(f.name)}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                </svg>
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // ── Stats ──
+    function updateStats(files) {
+      const totalSize = files.reduce((sum, f) => sum + (parseInt(f.size) || 0), 0);
+      const mimeTypes = new Set(files.map(f => getIconClass(getFileExt(f.name))));
+      const oneWeekAgo = new Date(); oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      const recent = files.filter(f => f.createdTime && new Date(f.createdTime) > oneWeekAgo).length;
+
+      document.getElementById('statTotal').textContent = files.length;
+      document.getElementById('statSize').textContent = (totalSize / (1024 * 1024)).toFixed(1);
+      document.getElementById('statTypes').textContent = mimeTypes.size;
+      document.getElementById('statRecent').textContent = recent;
+    }
+
+    function updateDocTypes(files) {
+      const counts = {};
+      files.forEach(f => {
+        const ext = getFileExt(f.name);
+        const docType = f.docType || guessDocType(f.mimeType, ext);
+        counts[docType] = (counts[docType] || 0) + 1;
+      });
+
+      const list = document.getElementById('docTypeList');
+      const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+
+      if (!entries.length) {
+        list.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem 0;">Sin archivos</div>';
+        return;
+      }
+
+      list.innerHTML = entries.map(([type, count]) => `
+        <div class="doc-type-row">
+          <span class="doc-type-name">
+            <span class="doc-type-dot" style="background: ${DOC_TYPE_COLORS[type] || '#64748b'}"></span>
+            ${DOC_TYPE_LABELS[type] || type}
+          </span>
+          <span class="doc-type-count">${count}</span>
+        </div>
+      `).join('');
+    }
+
+    // ── DELETE FILE ──
+    async function deleteFile(fileId, fileName) {
+      if (!confirm(`¿Eliminar "${fileName}"?`)) return;
+      const token = getToken();
+      if (!token) { showScreen('screen-login'); return; }
+
+      try {
+        const res = await fetch(`${API_BASE}/portal-files?action=delete&fileId=${fileId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.status === 401) {
+          clearSession();
+          showScreen('screen-login');
+          return;
+        }
+
+        if (res.ok) {
+          uploadStatus.className = 'upload-status success';
+          uploadStatus.textContent = `"${fileName}" eliminado`;
+          loadFiles();
+        } else {
+          const data = await res.json();
+          uploadStatus.className = 'upload-status error';
+          uploadStatus.textContent = data.error || 'Error al eliminar';
+        }
+      } catch {
+        uploadStatus.className = 'upload-status error';
+        uploadStatus.textContent = 'Error de conexión';
+      }
+    }
+
+    // ── RENAME FILE ──
+    function startRename(fileId, el) {
+      const currentName = el.textContent;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'file-name-input';
+      input.value = currentName;
+      el.replaceWith(input);
+      input.focus();
+      input.select();
+
+      async function finishRename() {
+        const newName = input.value.trim();
+        if (!newName || newName === currentName) {
+          input.replaceWith(el);
+          return;
+        }
+
+        const token = getToken();
+        if (!token) { showScreen('screen-login'); return; }
+
+        try {
+          const res = await fetch(`${API_BASE}/portal-files?action=rename&fileId=${fileId}`, {
+            method: 'PATCH',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name: newName })
+          });
+
+          if (res.ok) {
+            el.textContent = newName;
+            input.replaceWith(el);
+            loadFiles();
+          } else {
+            input.replaceWith(el);
+            uploadStatus.className = 'upload-status error';
+            uploadStatus.textContent = 'Error al renombrar';
+          }
+        } catch {
+          input.replaceWith(el);
+        }
+      }
+
+      input.addEventListener('blur', finishRename);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+        if (e.key === 'Escape') { input.value = currentName; input.blur(); }
+      });
+    }
+
+    // ── Helpers ──
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '';
+      return new Date(iso).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function formatSize(bytes) {
+      if (!bytes || bytes === 0) return '';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      let i = 0, size = parseInt(bytes);
+      while (size >= 1024 && i < units.length - 1) { size /= 1024; i++; }
+      return `${size.toFixed(i > 0 ? 1 : 0)} ${units[i]}`;
+    }
+
+    function getFileExt(name) {
+      if (!name) return '';
+      const parts = name.split('.');
+      return parts.length > 1 ? parts.pop().toLowerCase() : '';
+    }
+
+    function getIconClass(ext) {
+      if (['pdf'].includes(ext)) return 'pdf';
+      if (['doc', 'docx', 'odt', 'rtf'].includes(ext)) return 'doc';
+      if (['xls', 'xlsx', 'csv', 'ods'].includes(ext)) return 'xls';
+      if (['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'].includes(ext)) return 'img';
+      return 'other';
+    }
+
+    function guessDocType(mimeType, ext) {
+      if (['pdf'].includes(ext)) return 'informe';
+      if (['doc', 'docx'].includes(ext)) return 'general';
+      if (['xls', 'xlsx', 'csv'].includes(ext)) return 'factura';
+      if (['ppt', 'pptx'].includes(ext)) return 'presentacion';
+      if (['jpg', 'jpeg', 'png', 'gif', 'svg'].includes(ext)) return 'otro';
+      return 'general';
+    }
+
+    // ── Init ──
+    init();
+  </script>
+</body>
+</html>
