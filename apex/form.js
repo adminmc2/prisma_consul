@@ -15,11 +15,11 @@
 
 const CONFIG = {
   // Netlify Functions (proxy seguro para Groq API)
-  chatApiUrl: '/.netlify/functions/groq-chat',
-  whisperApiUrl: '/.netlify/functions/groq-whisper',
-  submitApiUrl: '/.netlify/functions/submit-form',
-  researchApiUrl: '/.netlify/functions/research-company',
-  generateQuestionsApiUrl: '/.netlify/functions/generate-questions',
+  chatApiUrl: '/api/groq-chat',
+  whisperApiUrl: '/api/groq-whisper',
+  submitApiUrl: '/api/submit-form',
+  researchApiUrl: '/api/research-company',
+  generateQuestionsApiUrl: '/api/generate-questions',
 
   // Modelos
   groqModel: 'llama-3.3-70b-versatile',

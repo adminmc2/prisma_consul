@@ -17,6 +17,12 @@
 [functions."groq-whisper"]
   timeout = 60
 
+# Redirige /api/* a las Netlify Functions (compatibilidad con rutas del VPS)
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
 # Redirige /apex a la carpeta apex
 [[redirects]]
   from = "/apex"

@@ -134,6 +134,25 @@ Portal login users with: `id, email, password_hash, nombre, empresa, rfc, direcc
 - **Admin:** info@prismaconsul.com (can see all documents - admin dashboard pending)
 - **Client:** armc@prismaconsul.com (ARMC Aesthetic Rejuvenation Medical Center)
 
+## Git Workflow
+
+- **`main`** → Producción. Netlify (y futuro VPS) despliegan desde aquí. **NO trabajar directamente en main.**
+- **`dev`** → Desarrollo. Todos los cambios se hacen aquí primero.
+
+### Flujo de trabajo
+
+1. Trabajar siempre en `dev`
+2. Probar los cambios (local o en servidor de prueba)
+3. Cuando esté verificado, fusionar a `main`: `git checkout main && git merge dev && git push`
+4. Volver a `dev` para seguir: `git checkout dev`
+
+### Reglas
+
+- Nunca hacer push directo a `main` sin haber probado en `dev`
+- Antes de fusionar a `main`, verificar que todo funciona
+- Los commits en `dev` pueden ser frecuentes y granulares
+- Los merges a `main` deben representar cambios completos y funcionales
+
 ## Development
 
 ```bash
@@ -145,6 +164,37 @@ http://localhost:8888          # Landing page
 http://localhost:8888/apex     # APEX form
 http://localhost:8888/documentacion  # Portal
 ```
+
+## Migración a IONOS VPS (Pendiente)
+
+**Estado:** Servidor securizado. Pendiente: migración del stack.
+**VPS:** IONOS, Ubuntu 24.04, IP `212.227.251.125`
+**Acceso:** `ssh prisma@212.227.251.125` (clave SSH, sin contraseña)
+**Credenciales locales:** `.server-credentials` (en .gitignore)
+
+### Securización del servidor (COMPLETADO)
+
+1. Usuario `prisma` con sudo (root SSH desactivado)
+2. Clave SSH ed25519 (contraseñas SSH desactivadas)
+3. Firewall UFW (puertos 22, 80, 443)
+4. Fail2ban activo
+5. Actualizaciones automáticas (`unattended-upgrades`)
+
+### Migración del stack
+
+1. Instalar Node.js + nginx en el VPS
+2. Convertir Netlify Functions a Express.js (o Fastify)
+3. Configurar nginx como reverse proxy
+4. Certificado SSL con Let's Encrypt (certbot)
+5. Migrar variables de entorno al servidor
+6. Configurar deploy automático (git hook o CI/CD)
+
+## Comunicación
+
+- Antes de ejecutar cada paso, explicar **qué se va a hacer, por qué y qué efecto tiene**
+- Las explicaciones deben ser para un **perfil no especialista técnico**: lenguaje claro, analogías cuando sea útil, sin asumir conocimientos previos de infraestructura o devops
+- Además de la explicación sencilla, incluir siempre una **explicación profesional**: qué es el programa/herramienta técnicamente, qué hace, por qué se ha elegido frente a otras alternativas y qué beneficios aporta
+- Cada acción (en el servidor, en el código, en la configuración) debe ir acompañada de una **comprobación verificable** que confirme que el paso se completó correctamente
 
 ## Common Gotchas
 

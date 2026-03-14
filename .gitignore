@@ -5,6 +5,7 @@
 
 # Environment variables
 .env
+.server-credentials
 .env.local
 .env.*.local
 
