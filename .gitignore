@@ -10,3 +10,11 @@
 
 # Node modules
 node_modules/
+
+# Design artifacts & temp files
+*.psd
+*.zip
+deno.lock
+
+# After Effects project
+logo-intro-prisma-*/
