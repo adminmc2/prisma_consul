@@ -136,8 +136,9 @@ Portal login users with: `id, email, password_hash, nombre, empresa, rfc, direcc
 
 ## Git Workflow
 
-- **`main`** → Producción. Netlify (y futuro VPS) despliegan desde aquí. **NO trabajar directamente en main.**
+- **`main`** → Producción. El VPS despliega desde aquí. **NO trabajar directamente en main.**
 - **`dev`** → Desarrollo. Todos los cambios se hacen aquí primero.
+- **GitHub se mantiene** como repositorio central, backup del código e historial de cambios.
 
 ### Flujo de trabajo
 
@@ -145,6 +146,7 @@ Portal login users with: `id, email, password_hash, nombre, empresa, rfc, direcc
 2. Probar los cambios (local o en servidor de prueba)
 3. Cuando esté verificado, fusionar a `main`: `git checkout main && git merge dev && git push`
 4. Volver a `dev` para seguir: `git checkout dev`
+5. Actualizar el servidor: `ssh prisma@212.227.251.125 "cd ~/web-de-prisma && git pull origin main"`
 
 ### Reglas
 
@@ -152,6 +154,7 @@ Portal login users with: `id, email, password_hash, nombre, empresa, rfc, direcc
 - Antes de fusionar a `main`, verificar que todo funciona
 - Los commits en `dev` pueden ser frecuentes y granulares
 - Los merges a `main` deben representar cambios completos y funcionales
+- Nunca editar código directamente en el servidor — siempre desde local
 
 ## Development
 
@@ -165,29 +168,36 @@ http://localhost:8888/apex     # APEX form
 http://localhost:8888/documentacion  # Portal
 ```
 
-## Migración a IONOS VPS (Pendiente)
+## IONOS VPS (Producción)
 
-**Estado:** Servidor securizado. Pendiente: migración del stack.
 **VPS:** IONOS, Ubuntu 24.04, IP `212.227.251.125`
 **Acceso:** `ssh prisma@212.227.251.125` (clave SSH, sin contraseña)
 **Credenciales locales:** `.server-credentials` (en .gitignore)
+**Stack:** nginx + Express.js + PM2 + Let's Encrypt SSL
+**Código en servidor:** `/home/prisma/web-de-prisma/` (rama `dev`)
 
-### Securización del servidor (COMPLETADO)
+### Securización (COMPLETADO)
 
 1. Usuario `prisma` con sudo (root SSH desactivado)
 2. Clave SSH ed25519 (contraseñas SSH desactivadas)
 3. Firewall UFW (puertos 22, 80, 443)
 4. Fail2ban activo
 5. Actualizaciones automáticas (`unattended-upgrades`)
+6. DNSSEC activado
 
-### Migración del stack
+### Stack del servidor (COMPLETADO)
 
-1. Instalar Node.js + nginx en el VPS
-2. Convertir Netlify Functions a Express.js (o Fastify)
-3. Configurar nginx como reverse proxy
-4. Certificado SSL con Let's Encrypt (certbot)
-5. Migrar variables de entorno al servidor
-6. Configurar deploy automático (git hook o CI/CD)
+1. Node.js 22 LTS + npm
+2. nginx como reverse proxy (estáticos + `/api/*` → Express)
+3. Express.js con adaptador Netlify Functions (`server/server.js`)
+4. PM2 gestionando Express (auto-restart, boot startup)
+5. SSL con Let's Encrypt (certbot, renovación automática cada 90 días)
+6. Variables de entorno en `~/web-de-prisma/.env`
+
+### Pendiente
+
+- **Backup automático IONOS** — Activar snapshots/backups periódicos del VPS desde el Cloud Panel
+- **Deploy automático** — Configurar git hook o script para que al hacer push a `main` el servidor se actualice solo
 
 ## Comunicación
 
