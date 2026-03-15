@@ -31,8 +31,36 @@
   <!-- Container principal del formulario -->
   <main class="form-container" id="formContainer">
 
+    <!-- ==================== PANTALLA DE LOGIN ==================== -->
+    <section class="form-screen active" data-screen="login">
+      <div class="screen-content">
+        <div class="welcome-logo">
+          <img src="../images/logos/logo-completo-transparente.svg" alt="PRISMA Consulting">
+        </div>
+        <h1 class="welcome-title">APEX</h1>
+        <p class="welcome-subtitle">Accede con tus credenciales para continuar</p>
+        <form class="apex-login-form" id="apexLoginForm">
+          <div class="apex-login-field">
+            <label for="apexLoginEmail">Email</label>
+            <input type="email" id="apexLoginEmail" placeholder="tu@email.com" required autocomplete="email">
+          </div>
+          <div class="apex-login-field">
+            <label for="apexLoginPassword">Contraseña</label>
+            <input type="password" id="apexLoginPassword" placeholder="Tu contraseña" required autocomplete="current-password">
+          </div>
+          <p class="apex-login-error" id="apexLoginError"></p>
+          <button type="submit" class="btn-primary btn-start" id="btnApexLogin">
+            <span id="apexLoginText">Acceder</span>
+            <span class="apex-login-spinner" id="apexLoginSpinner" style="display:none;">
+              <i class="ph ph-circle-notch"></i>
+            </span>
+          </button>
+        </form>
+      </div>
+    </section>
+
     <!-- ==================== PANTALLA DE BIENVENIDA ==================== -->
-    <section class="form-screen active" data-screen="welcome">
+    <section class="form-screen" data-screen="welcome">
       <div class="screen-content">
         <div class="welcome-logo">
           <img src="../images/logos/logo-completo-transparente.svg" alt="PRISMA Consulting">

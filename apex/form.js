@@ -14,7 +14,8 @@
 // ============================================================
 
 const CONFIG = {
-  // Netlify Functions (proxy seguro para Groq API)
+  // API endpoints
+  authApiUrl: '/api/portal-auth',
   chatApiUrl: '/api/groq-chat',
   whisperApiUrl: '/api/groq-whisper',
   submitApiUrl: '/api/submit-form',
@@ -352,7 +353,7 @@ const EXPLORATION_PRIORITY = {
 // ============================================================
 
 const FormState = {
-  currentScreen: 'welcome',
+  currentScreen: 'login',
   currentPhase: 0,
 
   // Tipo de negocio (distribuidor / clinica)
@@ -541,6 +542,12 @@ function updateProgress() {
   const currentIndex = FormState.screenHistory.length;
   const progress = Math.min((currentIndex / totalScreens) * 100, 100);
   DOM.progressFill.style.width = `${progress}%`;
+
+  // Ocultar barra de progreso en login
+  const progressBar = document.querySelector('.progress-bar');
+  if (progressBar) {
+    progressBar.style.display = FormState.currentScreen === 'login' ? 'none' : '';
+  }
 }
 
 function showNav(show = true) {
@@ -595,7 +602,7 @@ function updateNavigationState() {
   const screen = FormState.currentScreen;
 
   // Mostrar/ocultar navegación según pantalla
-  const hideNavScreens = ['welcome', 'thank-you', 'transition-phase2', 'transition-phase3', 'processing-audio', 'researching-company', 'swipe-situaciones', 'transition-maxdiff', 'maxdiff-priorizar', 'top4-resultado', 'transition-phase2-questions'];
+  const hideNavScreens = ['login', 'welcome', 'thank-you', 'transition-phase2', 'transition-phase3', 'processing-audio', 'researching-company', 'swipe-situaciones', 'transition-maxdiff', 'maxdiff-priorizar', 'top4-resultado', 'transition-phase2-questions'];
   showNav(!hideNavScreens.includes(screen));
 
   // Botón anterior
@@ -606,6 +613,8 @@ async function goBack() {
   if (FormState.screenHistory.length > 1) {
     FormState.screenHistory.pop();
     const previousScreen = FormState.screenHistory[FormState.screenHistory.length - 1];
+    // No volver al login desde el formulario
+    if (previousScreen === 'login') return;
     await goToScreen(previousScreen, false);
   }
 }
@@ -3415,12 +3424,92 @@ function getPlanRecomendado() {
 
 
 // ============================================================
+// AUTENTICACIÓN
+// ============================================================
+
+function getApexToken() {
+  return sessionStorage.getItem('apex_token');
+}
+
+function isAuthenticated() {
+  return !!getApexToken();
+}
+
+function setApexSession(data) {
+  sessionStorage.setItem('apex_token', data.token);
+  sessionStorage.setItem('apex_email', data.email);
+  sessionStorage.setItem('apex_nombre', data.nombre);
+}
+
+function clearApexSession() {
+  sessionStorage.removeItem('apex_token');
+  sessionStorage.removeItem('apex_email');
+  sessionStorage.removeItem('apex_nombre');
+}
+
+async function handleApexLogin(e) {
+  e.preventDefault();
+
+  const email = document.getElementById('apexLoginEmail').value.trim();
+  const password = document.getElementById('apexLoginPassword').value;
+  const errorEl = document.getElementById('apexLoginError');
+  const btnLogin = document.getElementById('btnApexLogin');
+  const loginText = document.getElementById('apexLoginText');
+  const spinner = document.getElementById('apexLoginSpinner');
+
+  if (!email || !password) {
+    errorEl.textContent = 'Introduce email y contraseña';
+    return;
+  }
+
+  errorEl.textContent = '';
+  btnLogin.disabled = true;
+  loginText.style.display = 'none';
+  spinner.style.display = 'inline-block';
+
+  try {
+    const res = await fetch(CONFIG.authApiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      errorEl.textContent = data.error || 'Credenciales incorrectas';
+      return;
+    }
+
+    setApexSession(data);
+    goToScreen('welcome');
+  } catch (err) {
+    errorEl.textContent = 'Error de conexión';
+  } finally {
+    btnLogin.disabled = false;
+    loginText.style.display = 'inline';
+    spinner.style.display = 'none';
+  }
+}
+
+// ============================================================
 // INICIALIZACIÓN
 // ============================================================
 
 function init() {
   try {
     initDOM();
+
+    // Event Listeners - Login
+    const apexLoginForm = document.getElementById('apexLoginForm');
+    if (apexLoginForm) {
+      apexLoginForm.addEventListener('submit', handleApexLogin);
+    }
+
+    // Si ya tiene sesión, saltar al welcome
+    if (isAuthenticated()) {
+      goToScreen('welcome');
+    }
 
     // Event Listeners - Botón Start (va a identificación de empresa)
     if (DOM.btnStart) {
