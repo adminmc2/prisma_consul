@@ -196,7 +196,6 @@ http://localhost:8888/documentacion  # Portal
 
 ### Pendiente
 
-- **Backup automático IONOS** — Activar snapshots/backups periódicos del VPS desde el Cloud Panel
 - **Deploy automático** — Configurar git hook o script para que al hacer push a `main` el servidor se actualice solo
 
 ## Comunicación
@@ -205,6 +204,7 @@ http://localhost:8888/documentacion  # Portal
 - Las explicaciones deben ser para un **perfil no especialista técnico**: lenguaje claro, analogías cuando sea útil, sin asumir conocimientos previos de infraestructura o devops
 - Además de la explicación sencilla, incluir siempre una **explicación profesional**: qué es el programa/herramienta técnicamente, qué hace, por qué se ha elegido frente a otras alternativas y qué beneficios aporta
 - Cada acción (en el servidor, en el código, en la configuración) debe ir acompañada de una **comprobación verificable** que confirme que el paso se completó correctamente
+- Tras cada acción relevante o de impacto, **analizar si es necesario actualizar**: CLAUDE.md, la memoria del proyecto, el changelog, `.gitignore`, variables de entorno u otra documentación del proyecto. No esperar a que se acumulen cambios — documentar al momento
 
 ## Common Gotchas
 
