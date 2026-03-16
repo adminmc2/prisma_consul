@@ -350,6 +350,9 @@
       letter-spacing: 0.5px;
       color: white;
       margin-bottom: 0.75rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .user-card-name {
@@ -1291,12 +1294,15 @@
       if (empresa && empresa.nombre) {
         document.getElementById('empresaNombre').textContent = empresa.nombre;
         document.getElementById('empresaSector').textContent = empresa.sector || '';
-        // Avatar: nombre corto de la empresa (ej: "ARMC")
-        document.getElementById('userAvatar').textContent = nombre || '??';
+        // Avatar: iniciales de la empresa (ej: "PRISMA Consul" → "PC")
+        const initials = empresa.nombre.split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 3);
+        document.getElementById('userAvatar').textContent = initials || '??';
       } else {
         document.getElementById('empresaNombre').textContent = nombre;
         document.getElementById('empresaSector').textContent = email;
-        document.getElementById('userAvatar').textContent = nombre.slice(0, 4).toUpperCase() || '??';
+        // Avatar: iniciales del nombre (ej: "Armando Cruz" → "AC")
+        const initials = nombre.split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 3);
+        document.getElementById('userAvatar').textContent = initials || '??';
       }
 
       showScreen('screen-panel');
