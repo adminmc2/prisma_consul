@@ -1295,13 +1295,13 @@
         document.getElementById('empresaNombre').textContent = empresa.nombre;
         document.getElementById('empresaSector').textContent = empresa.sector || '';
         // Avatar: iniciales de la empresa (ej: "PRISMA Consul" → "PC")
-        const initials = empresa.nombre.split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 3);
+        const initials = empresa.nombre.split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 4);
         document.getElementById('userAvatar').textContent = initials || '??';
       } else {
         document.getElementById('empresaNombre').textContent = nombre;
         document.getElementById('empresaSector').textContent = email;
         // Avatar: iniciales del nombre (ej: "Armando Cruz" → "AC")
-        const initials = nombre.split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 3);
+        const initials = nombre.split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 4);
         document.getElementById('userAvatar').textContent = initials || '??';
       }
 
