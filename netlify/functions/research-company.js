@@ -1,5 +1,5 @@
 /**
- * Netlify Function: Research Company
+ * API: Research Company
  * Busca PROCESOS de la empresa usando Tavily API para personalizar el formulario APEX
  *
  * OBJETIVO: Detectar qué preguntas ya están respondidas para no repetirlas

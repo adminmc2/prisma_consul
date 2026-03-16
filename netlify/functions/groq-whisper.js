@@ -1,8 +1,8 @@
 /**
- * Netlify Function: Groq Whisper Transcription
+ * Groq Whisper Transcription
  * Proxy seguro para transcripción de audio con Whisper
  *
- * Acepta JSON con audio en base64 (más confiable que multipart en netlify dev)
+ * Acepta JSON con audio en base64
  */
 
 exports.handler = async (event) => {

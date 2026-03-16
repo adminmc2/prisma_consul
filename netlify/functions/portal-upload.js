@@ -1,5 +1,5 @@
 /**
- * Netlify Function: Portal File Upload to Google Drive
+ * API: Portal File Upload to Google Drive
  * Recibe archivo multipart, valida JWT y sube a Google Drive
  */
 

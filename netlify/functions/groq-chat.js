@@ -1,5 +1,5 @@
 /**
- * Netlify Function: Groq Chat Completions
+ * API: Groq Chat Completions
  * Proxy seguro para llamadas a la API de Groq
  */
 

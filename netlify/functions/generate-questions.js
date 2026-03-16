@@ -1,5 +1,5 @@
 /**
- * Netlify Function: Generate Questions
+ * Generate Questions
  * Genera preguntas de profundización usando Claude API + base de conocimiento de dolores
  *
  * ARQUITECTURA SERVER-SIDE RAG:
@@ -10,7 +10,7 @@
  * 5. Devuelve preguntas estructuradas al frontend
  */
 
-// Se lee dentro del handler para que netlify dev la inyecte a tiempo
+// Se lee dentro del handler para que el entorno la inyecte a tiempo
 let ANTHROPIC_API_KEY;
 
 // Cargar base de conocimiento (server-side, nunca expuesta al frontend)
@@ -134,7 +134,7 @@ exports.handler = async (event) => {
 
   let parsedTipoNegocio = 'distribuidor';
   try {
-    // CLAUDE_API_KEY porque la extensión Neon de Netlify sobrescribe ANTHROPIC_API_KEY con un JWT
+    // CLAUDE_API_KEY como nombre de variable para evitar conflictos
     ANTHROPIC_API_KEY = (process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY || '').trim();
     console.log('API key available:', !!ANTHROPIC_API_KEY, '| length:', ANTHROPIC_API_KEY?.length, '| valid:', ANTHROPIC_API_KEY?.startsWith('sk-ant-'));
 

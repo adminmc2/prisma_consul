@@ -2,22 +2,22 @@
 
 ## Project Overview
 
-Marketing website + B2B discovery tool + document portal for PRISMA Consul, a pharma/healthcare consulting company. Deployed on Netlify with serverless backend.
+Marketing website + B2B discovery tool + document portal for PRISMA Consul, a pharma/healthcare consulting company. Self-hosted on IONOS VPS.
 
 **Live URL:** https://prismaconsul.com
-**Hosting:** Netlify (auto-deploy from `main` branch)
+**Hosting:** IONOS VPS (Ubuntu 24.04, nginx + Express.js + PM2)
 **Database:** Neon PostgreSQL (serverless)
 **File Storage:** Google Drive (via Workspace domain-wide delegation)
 
 ## Architecture
 
-This is a monorepo with 3 frontend apps sharing one serverless backend:
+This is a monorepo with 3 frontend apps sharing one Express.js backend:
 
 ```
 /                        → Marketing landing page (prismaconsul.com)
-/apex                    → APEX Discovery Form (prismaconsul.com/apex)
-/documentacion           → Portal de Documentos (prismaconsul.com/documentacion)
-/.netlify/functions/*    → Serverless API backend
+/apex                    → APEX Discovery Form (prismaconsul.com/apex) — requiere login
+/documentacion           → Portal de Documentos (prismaconsul.com/documentacion) — requiere login
+/api/*                   → Express.js API backend
 ```
 
 ## Directory Structure
@@ -41,8 +41,11 @@ This is a monorepo with 3 frontend apps sharing one serverless backend:
 │   └── fonts/                  # Phosphor Icons (local)
 ├── portal/                     # Portal de Documentos (single-file SPA)
 │   └── index.html              # Login + document management panel
+├── server/
+│   ├── server.js               # Express.js server with function adapter
+│   └── package.json            # Server dependencies
 ├── netlify/
-│   └── functions/              # Serverless backend
+│   └── functions/              # Backend API functions
 │       ├── portal-auth.js      # JWT login (bcrypt + Neon DB)
 │       ├── portal-upload.js    # Upload files to Google Drive
 │       ├── portal-files.js     # List/delete/rename files on Drive
@@ -54,7 +57,6 @@ This is a monorepo with 3 frontend apps sharing one serverless backend:
 │       ├── lib/pain-knowledge-base.js # Pain/situation database
 │       ├── schema.sql          # PostgreSQL schema reference
 │       └── package.json        # Function dependencies
-├── netlify.toml                # Build config, redirects, timeouts
 ├── .env                        # Secrets (NOT committed)
 └── .gitignore
 ```
@@ -64,9 +66,9 @@ This is a monorepo with 3 frontend apps sharing one serverless backend:
 - **Frontend:** Vanilla HTML/CSS/JS (no frameworks)
 - **Fonts:** Quicksand (headings) + Source Sans 3 (body) via Google Fonts
 - **Icons:** Phosphor Icons (local font files in `apex/fonts/`)
-- **Backend:** Netlify Functions (Node.js, esbuild bundler)
+- **Backend:** Express.js + Node.js backend functions (adapter pattern)
 - **Database:** Neon PostgreSQL (`apex_submissions`, `portal_users`)
-- **Auth:** JWT (jsonwebtoken) + bcryptjs, 24h token expiry
+- **Auth:** JWT (jsonwebtoken) + bcryptjs, 24h token expiry. Shared auth for APEX y Portal.
 - **APIs:** Groq (LLM + Whisper), Tavily (web search), Claude API (questions)
 - **File Storage:** Google Drive API via Service Account with domain-wide delegation
 - **Email:** Gmail SMTP via Nodemailer
@@ -82,7 +84,7 @@ This is a monorepo with 3 frontend apps sharing one serverless backend:
 
 ## Environment Variables
 
-Required in `.env` (local) and Netlify dashboard (production):
+Required in `.env` on the VPS (`~/web-de-prisma/.env`):
 
 ```
 # APIs
@@ -106,7 +108,7 @@ GOOGLE_DRIVE_FOLDER_ID=    # Target Drive folder ID
 ## Key Patterns
 
 ### APEX Form Flow
-Welcome → Company Input → Research (Tavily+Groq) → Swipe Cards → MaxDiff → Top4 → Phase 1 Questions → Phase 2 Adaptive → Pains → Audio → Contact → Thank You
+Login → Welcome → Company Input → Research (Tavily+Groq) → Swipe Cards → MaxDiff → Top4 → Phase 1 Questions → Phase 2 Adaptive → Pains → Audio → Contact → Thank You
 
 ### Business Type System
 - `SITUACIONES_DISTRIBUIDOR` (16 cards, IDs: A-P) for distributors/pharma
@@ -159,13 +161,13 @@ Portal login users with: `id, email, password_hash, nombre, empresa, rfc, direcc
 ## Development
 
 ```bash
-# Start local dev server
-npx netlify dev --port 8888
+# Start local dev server (Express)
+cd server && node server.js
 
 # Access apps locally
-http://localhost:8888          # Landing page
-http://localhost:8888/apex     # APEX form
-http://localhost:8888/documentacion  # Portal
+http://localhost:3000          # Landing page
+http://localhost:3000/apex     # APEX form
+http://localhost:3000/documentacion  # Portal
 ```
 
 ## IONOS VPS (Producción)
@@ -174,13 +176,14 @@ http://localhost:8888/documentacion  # Portal
 **Acceso:** `ssh prisma@212.227.251.125` (clave SSH, sin contraseña)
 **Credenciales locales:** `.server-credentials` (en .gitignore)
 **Stack:** nginx + Express.js + PM2 + Let's Encrypt SSL
-**Código en servidor:** `/home/prisma/web-de-prisma/` (rama `dev`)
+**Código en servidor:** `/home/prisma/web-de-prisma/` (rama `main`)
+**Backup:** Acronis Cyber Protect (agente instalado, backup semanal completo + diario incremental)
 
 ### Securización (COMPLETADO)
 
 1. Usuario `prisma` con sudo (root SSH desactivado)
 2. Clave SSH ed25519 (contraseñas SSH desactivadas)
-3. Firewall UFW (puertos 22, 80, 443)
+3. Firewall UFW (puertos 22, 80, 443, 44445)
 4. Fail2ban activo
 5. Actualizaciones automáticas (`unattended-upgrades`)
 6. DNSSEC activado
@@ -189,7 +192,7 @@ http://localhost:8888/documentacion  # Portal
 
 1. Node.js 22 LTS + npm
 2. nginx como reverse proxy (estáticos + `/api/*` → Express)
-3. Express.js con adaptador Netlify Functions (`server/server.js`)
+3. Express.js con adaptador de funciones (`server/server.js`)
 4. PM2 gestionando Express (auto-restart, boot startup)
 5. SSL con Let's Encrypt (certbot, renovación automática cada 90 días)
 6. Variables de entorno en `~/web-de-prisma/.env`
@@ -209,7 +212,8 @@ http://localhost:8888/documentacion  # Portal
 ## Common Gotchas
 
 - Phosphor Icons need BOTH classes: `ph ph-icon-name`
-- `netlify/functions/package.json` deps installed by `@netlify/plugin-functions-install-core`
+- `netlify/functions/package.json` has backend deps — install with `cd netlify/functions && npm install`
 - Google Drive SA needs domain-wide delegation in Google Admin console
 - Spanish characters: use real UTF-8 chars, not `\u00xx` escapes in HTML
 - SVG logo (`logo_simbolo_V2.svg`) has large viewBox whitespace — handle sizing in CSS, don't modify the SVG
+- APEX y Portal comparten autenticación (`portal-auth.js` + tabla `portal_users`)

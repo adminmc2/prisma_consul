@@ -1,5 +1,5 @@
 /**
- * Netlify Function: Submit APEX Discovery Form
+ * API: Submit APEX Discovery Form
  * Guarda los datos del formulario en Neon PostgreSQL y envía emails via Gmail SMTP
  */
 

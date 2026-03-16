@@ -1,7 +1,7 @@
 {
   "name": "apex-functions",
   "version": "1.0.0",
-  "description": "Netlify Functions for APEX Discovery Form & Portal",
+  "description": "Backend functions for APEX Discovery Form & Portal",
   "dependencies": {
     "@neondatabase/serverless": "^0.9.0",
     "bcryptjs": "^2.4.3",

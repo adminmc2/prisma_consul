@@ -1,5 +1,5 @@
 /**
- * Netlify Function: Portal Files (list, delete, rename) on Google Drive
+ * API: Portal Files (list, delete, rename) on Google Drive
  */
 
 const jwt = require('jsonwebtoken');

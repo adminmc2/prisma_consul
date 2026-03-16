@@ -1,5 +1,5 @@
 /**
- * Netlify Function: Portal Authentication
+ * API: Portal Authentication
  * Valida email + contraseña contra tabla portal_users en Neon PostgreSQL
  * Devuelve JWT con expiración de 24h
  */

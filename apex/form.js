@@ -37,7 +37,7 @@ const CONFIG = {
 
 // ============================================================
 // BASE DE CONOCIMIENTO DE DOLORES
-// Movida al servidor (netlify/functions/pain-knowledge-base.js)
+// Ejecutada en el servidor (pain-knowledge-base.js)
 // Las preguntas se generan server-side via generate-questions API
 // ============================================================
 
