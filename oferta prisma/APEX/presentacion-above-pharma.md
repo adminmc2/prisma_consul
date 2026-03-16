@@ -426,7 +426,7 @@ Escanea el QR y completa el formulario:
 │                                                     │
 │                    [CÓDIGO QR]                      │
 │                                                     │
-│           prismaconsul.netlify.app/apex             │
+│           prismaconsul.com/apex             │
 │                                                     │
 └─────────────────────────────────────────────────────┘
 
