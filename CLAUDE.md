@@ -41,22 +41,21 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 │   └── fonts/                  # Phosphor Icons (local)
 ├── portal/                     # Portal de Documentos (single-file SPA)
 │   └── index.html              # Login + document management panel
-├── server/
-│   ├── server.js               # Express.js server with function adapter
-│   └── package.json            # Server dependencies
-├── netlify/
-│   └── functions/              # Backend API functions
-│       ├── portal-auth.js      # JWT login (bcrypt + Neon DB)
-│       ├── portal-upload.js    # Upload files to Google Drive
-│       ├── portal-files.js     # List/delete/rename files on Drive
-│       ├── research-company.js # Tavily + Groq company research
-│       ├── generate-questions.js # Claude API adaptive questions
-│       ├── submit-form.js      # Save form submission to Neon DB
-│       ├── groq-chat.js        # Groq LLM wrapper
-│       ├── groq-whisper.js     # Audio transcription (Whisper)
-│       ├── lib/pain-knowledge-base.js # Pain/situation database
-│       ├── schema.sql          # PostgreSQL schema reference
-│       └── package.json        # Function dependencies
+├── server/                     # Express.js backend
+│   ├── server.js               # App setup, middleware, route mounting
+│   ├── package.json            # All backend dependencies
+│   ├── schema.sql              # PostgreSQL schema reference
+│   ├── middleware/
+│   │   ├── cors.js             # CORS headers (all routes)
+│   │   └── auth.js             # JWT verification middleware
+│   ├── routes/
+│   │   ├── portal.js           # Auth, upload, file management (Google Drive)
+│   │   ├── apex.js             # Research, questions, form submission
+│   │   └── ai.js               # Groq LLM chat + Whisper transcription
+│   └── lib/
+│       ├── pain-knowledge-base.js  # Pain/situation database (469 pains)
+│       ├── google-drive.js     # Google Drive client (Service Account)
+│       └── fetch-timeout.js    # Fetch wrapper with AbortController
 ├── .env                        # Secrets (NOT committed)
 └── .gitignore
 ```
@@ -66,7 +65,7 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 - **Frontend:** Vanilla HTML/CSS/JS (no frameworks)
 - **Fonts:** Quicksand (headings) + Source Sans 3 (body) via Google Fonts
 - **Icons:** Phosphor Icons (local font files in `apex/fonts/`)
-- **Backend:** Express.js + Node.js backend functions (adapter pattern)
+- **Backend:** Express.js with modular routes (server/routes/)
 - **Database:** Neon PostgreSQL (`apex_submissions`, `portal_users`)
 - **Auth:** JWT (jsonwebtoken) + bcryptjs, 24h token expiry. Shared auth for APEX y Portal.
 - **APIs:** Groq (LLM + Whisper), Tavily (web search), Claude API (questions)
@@ -192,7 +191,7 @@ http://localhost:3000/documentacion  # Portal
 
 1. Node.js 22 LTS + npm
 2. nginx como reverse proxy (estáticos + `/api/*` → Express)
-3. Express.js con adaptador de funciones (`server/server.js`)
+3. Express.js con rutas modulares (`server/server.js` + `server/routes/`)
 4. PM2 gestionando Express (auto-restart, boot startup)
 5. SSL con Let's Encrypt (certbot, renovación automática cada 90 días)
 6. Variables de entorno en `~/web-de-prisma/.env`
@@ -212,8 +211,10 @@ http://localhost:3000/documentacion  # Portal
 ## Common Gotchas
 
 - Phosphor Icons need BOTH classes: `ph ph-icon-name`
-- `netlify/functions/package.json` has backend deps — install with `cd netlify/functions && npm install`
+- Backend deps: install with `cd server && npm install`
 - Google Drive SA needs domain-wide delegation in Google Admin console
 - Spanish characters: use real UTF-8 chars, not `\u00xx` escapes in HTML
 - SVG logo (`logo_simbolo_V2.svg`) has large viewBox whitespace — handle sizing in CSS, don't modify the SVG
-- APEX y Portal comparten autenticación (`portal-auth.js` + tabla `portal_users`)
+- APEX y Portal comparten autenticación (`server/middleware/auth.js` + tabla `portal_users`)
+- Auth middleware (`server/middleware/auth.js`) is shared — used by portal upload and file routes
+- Google Drive client (`server/lib/google-drive.js`) is shared — used by portal upload and file routes
