@@ -208,6 +208,27 @@ http://localhost:3000/documentacion  # Portal
 - Cada acción (en el servidor, en el código, en la configuración) debe ir acompañada de una **comprobación verificable** que confirme que el paso se completó correctamente
 - Tras cada acción relevante o de impacto, **analizar si es necesario actualizar**: CLAUDE.md, la memoria del proyecto, el changelog, `.gitignore`, variables de entorno u otra documentación del proyecto. No esperar a que se acumulen cambios — documentar al momento
 
+## Versionado
+
+La versión actual se muestra en el footer de `index.html`. Se usa **Versionado Semántico** (`MAJOR.MINOR.PATCH`):
+- **MAJOR** — Cambio grande: rediseño, nueva arquitectura (v1 → v2 → v3)
+- **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
+- **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
+
+**Versión actual:** `v3.0.1`
+
+Al hacer cualquier cambio, actualizar la versión en:
+1. El footer de `index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)
+2. La cabecera del `CHANGELOG.md` (nueva entrada con la versión)
+3. Este campo "Versión actual" en CLAUDE.md
+
+## Changelog
+
+El archivo `CHANGELOG.md` en la raíz del proyecto registra todos los cambios relevantes. **Es obligatorio actualizarlo en cada cambio** que se haga al proyecto — ya sea código, configuración, infraestructura o dependencias. Cada entrada debe incluir:
+- Fecha (`[YYYY-MM-DD]`)
+- Categoría (Seguridad, Infraestructura, Frontend, Backend, Repositorio, etc.)
+- Descripción clara del cambio y por qué se hizo
+
 ## Common Gotchas
 
 - Phosphor Icons need BOTH classes: `ph ph-icon-name`
