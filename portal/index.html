@@ -922,7 +922,7 @@
       }
 
       if (isAdmin()) {
-        document.querySelectorAll('.panel-tab.admin-only').forEach(t => t.style.display = '');
+        document.querySelectorAll('.panel-tab.admin-only').forEach(t => t.style.display = 'block');
         switchTab('dashboard');
       } else {
         switchTab('documentos');
