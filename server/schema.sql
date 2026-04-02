@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS portal_files (
   drive_file_id TEXT UNIQUE NOT NULL,
   user_id INTEGER REFERENCES portal_users(id) ON DELETE SET NULL,
   file_name TEXT NOT NULL,
+  display_name TEXT,
   file_size BIGINT DEFAULT 0,
   mime_type TEXT,
   doc_type TEXT DEFAULT 'general',

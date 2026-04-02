@@ -173,11 +173,25 @@ router.post('/portal-upload', auth, async (req, res) => {
 
     const uploaded = [];
     const docType = fields.docType || 'general';
+    const displayName = fields.displayName || '';
+
+    // Generate systematic prefix from user name/empresa
+    const prefix = (targetUser.nombre || targetUser.email.split('@')[0])
+      .toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12) || 'file';
+
+    // Get current file count for sequencing
+    const countRows = await sql`SELECT COUNT(*)::int AS cnt FROM portal_files WHERE user_id = ${targetUserId}`;
+    let nextNum = (countRows[0]?.cnt || 0) + 1;
 
     for (const file of files) {
+      // Systematic Drive name: prefix_001.ext
+      const ext = file.filename.includes('.') ? '.' + file.filename.split('.').pop().toLowerCase() : '';
+      const driveName = `${prefix}_${String(nextNum).padStart(3, '0')}${ext}`;
+      const title = displayName || file.filename;
+
       const response = await drive.files.create({
         requestBody: {
-          name: file.filename,
+          name: driveName,
           parents: [userFolderId]
         },
         media: {
@@ -187,16 +201,18 @@ router.post('/portal-upload', auth, async (req, res) => {
         fields: 'id, name, size, createdTime, webViewLink'
       });
 
-      // Registrar en portal_files
-      await sql`INSERT INTO portal_files (drive_file_id, user_id, file_name, file_size, mime_type, doc_type) VALUES (${response.data.id}, ${targetUserId}, ${response.data.name}, ${parseInt(response.data.size || '0')}, ${file.mimeType}, ${docType})`;
+      await sql`INSERT INTO portal_files (drive_file_id, user_id, file_name, display_name, file_size, mime_type, doc_type) VALUES (${response.data.id}, ${targetUserId}, ${driveName}, ${title}, ${parseInt(response.data.size || '0')}, ${file.mimeType}, ${docType})`;
 
       uploaded.push({
         id: response.data.id,
-        name: response.data.name,
+        name: title,
+        driveName,
         size: response.data.size,
         createdTime: response.data.createdTime,
         link: response.data.webViewLink
       });
+
+      nextNum++;
     }
 
     await logActivity(sql, req.user.id, 'upload', {
@@ -236,13 +252,20 @@ router.get('/portal-files', auth, async (req, res) => {
 
     const driveFiles = await listFilesInFolder(drive, userFolderId);
 
+    // Enrich with display_name and doc_type from DB
+    const dbFiles = await sql`SELECT drive_file_id, display_name, doc_type FROM portal_files WHERE user_id = ${targetUserId}`;
+    const dbMap = {};
+    dbFiles.forEach(f => { dbMap[f.drive_file_id] = f; });
+
     const files = driveFiles.map(f => ({
       id: f.id,
-      name: f.name,
+      name: dbMap[f.id]?.display_name || f.name,
+      driveName: f.name,
       size: f.size ? parseInt(f.size) : 0,
       mimeType: f.mimeType,
       createdTime: f.createdTime,
-      link: f.webViewLink
+      link: f.webViewLink,
+      docType: dbMap[f.id]?.doc_type || 'general'
     }));
 
     res.json({ files });
@@ -306,21 +329,15 @@ router.patch('/portal-files', auth, async (req, res) => {
       }
     }
 
-    const oldInfo = await sql`SELECT file_name FROM portal_files WHERE drive_file_id = ${fileId}`;
-    const oldName = oldInfo[0]?.file_name || '';
+    const oldInfo = await sql`SELECT display_name FROM portal_files WHERE drive_file_id = ${fileId}`;
+    const oldName = oldInfo[0]?.display_name || '';
 
-    const drive = getDriveClient();
-    const response = await drive.files.update({
-      fileId,
-      requestBody: { name: req.body.name },
-      fields: 'id, name'
-    });
-
-    await sql`UPDATE portal_files SET file_name = ${req.body.name} WHERE drive_file_id = ${fileId}`;
+    // Only update display_name in DB — Drive keeps the systematic name
+    await sql`UPDATE portal_files SET display_name = ${req.body.name} WHERE drive_file_id = ${fileId}`;
 
     await logActivity(sql, req.user.id, 'rename', { fileId, oldName, newName: req.body.name }, getClientIP(req));
 
-    res.json({ id: response.data.id, name: response.data.name });
+    res.json({ id: fileId, name: req.body.name });
 
   } catch (error) {
     console.error('Portal files rename error:', error);
