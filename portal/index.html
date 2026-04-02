@@ -1374,7 +1374,8 @@
           uploadStatus.textContent = `"${file.name}" supera los 25 MB`;
           continue;
         }
-        stagedFiles.push({ file, docType: 'general' });
+        const nameWithoutExt = file.name.replace(/\.[^.]+$/, '');
+        stagedFiles.push({ file, docType: 'general', displayName: nameWithoutExt });
       }
       renderStaging();
     }
@@ -1395,7 +1396,7 @@
             <div class="staging-item-info">
               <div class="staging-item-name">${escapeHtml(item.file.name)}</div>
               <div class="staging-item-size">${formatSize(item.file.size)}</div>
-              <input type="text" class="staging-item-title" placeholder="Título descriptivo (opcional)" value="${escapeHtml(item.displayName || '')}" onchange="updateStagingTitle(${idx}, this.value)">
+              <input type="text" class="staging-item-title" placeholder="Título descriptivo" value="${escapeHtml(item.displayName || '')}" onchange="updateStagingTitle(${idx}, this.value)" required>
             </div>
             <div class="staging-item-type">
               <div class="custom-dropdown" data-staging-idx="${idx}">
@@ -1448,6 +1449,8 @@
 
     document.getElementById('btnUpload').addEventListener('click', async () => {
       if (!stagedFiles.length) return;
+      const missing = stagedFiles.some(item => !item.displayName?.trim());
+      if (missing) { uploadStatus.className = 'upload-status error'; uploadStatus.textContent = 'Todos los archivos necesitan un título descriptivo'; return; }
       const token = getToken();
       if (!token) { showScreen('screen-login'); return; }
       const btnUpload = document.getElementById('btnUpload');
