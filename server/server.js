@@ -4,7 +4,7 @@
  * Serves 3 frontend apps + API backend:
  *   /              → Marketing landing page
  *   /apex          → APEX Discovery Form
- *   /documentacion → Portal de Documentos
+ *   /hub           → PRISMA Hub
  *   /api/*         → REST API
  */
 
@@ -61,7 +61,7 @@ app.use(express.static(projectRoot, {
 }));
 
 // SPA routes
-app.get('/documentacion', (req, res) => {
+app.get('/hub', (req, res) => {
   res.sendFile(path.join(projectRoot, 'portal', 'index.html'));
 });
 
@@ -76,6 +76,6 @@ app.listen(PORT, () => {
   console.log(`PRISMA Consul server running on port ${PORT}`);
   console.log(`  Landing:       http://localhost:${PORT}`);
   console.log(`  APEX:          http://localhost:${PORT}/apex`);
-  console.log(`  Documentacion: http://localhost:${PORT}/documentacion`);
+  console.log(`  PRISMA Hub:    http://localhost:${PORT}/hub`);
   console.log(`  API:           http://localhost:${PORT}/api/*`);
 });
