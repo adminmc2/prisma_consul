@@ -58,7 +58,7 @@ router.post('/portal-auth', async (req, res) => {
     const sql = getSQL();
 
     const users = await sql`
-      SELECT id, email, password_hash, nombre, empresa, rfc, direccion, ciudad, cp, telefono, contacto_principal, cargo, sector, role, drive_folder_id
+      SELECT id, email, password_hash, nombre, empresa, rfc, direccion, ciudad, cp, telefono, contacto_principal, cargo, sector, role, current_phase, profile_type, drive_folder_id
       FROM portal_users
       WHERE LOWER(email) = LOWER(${email})
     `;
@@ -101,7 +101,7 @@ router.post('/portal-auth', async (req, res) => {
 
     await logActivity(sql, user.id, 'login', { email: user.email }, getClientIP(req));
 
-    res.json({ token, email: user.email, nombre: user.nombre, role, empresa });
+    res.json({ token, email: user.email, nombre: user.nombre, role, current_phase: user.current_phase, profile_type: user.profile_type, empresa });
 
   } catch (error) {
     console.error('Portal auth error:', error);
@@ -336,7 +336,9 @@ router.get('/portal-users', auth, requireAdmin, async (req, res) => {
 
     const users = await sql`
       SELECT
-        u.id, u.email, u.nombre, u.empresa, u.sector, u.role, u.created_at, u.last_login,
+        u.id, u.email, u.nombre, u.empresa, u.rfc, u.direccion, u.ciudad, u.cp,
+        u.telefono, u.contacto_principal, u.cargo, u.sector,
+        u.role, u.current_phase, u.profile_type, u.created_at, u.last_login,
         COUNT(f.id)::int AS file_count,
         COALESCE(SUM(f.file_size), 0)::bigint AS total_size
       FROM portal_users u
@@ -390,6 +392,47 @@ router.post('/portal-users', auth, requireAdmin, async (req, res) => {
   } catch (error) {
     console.error('Portal create user error:', error);
     res.status(500).json({ error: 'Error al crear usuario' });
+  }
+});
+
+// ── ADMIN: UPDATE USER ────────────────────────────────
+
+router.patch('/portal-users/:id', auth, requireAdmin, async (req, res) => {
+  try {
+    const userId = parseInt(req.params.id);
+    const sql = getSQL();
+
+    const existing = await sql`SELECT id FROM portal_users WHERE id = ${userId}`;
+    if (!existing.length) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const b = req.body;
+    const result = await sql`
+      UPDATE portal_users SET
+        nombre = COALESCE(${b.nombre !== undefined ? b.nombre : null}, nombre),
+        empresa = COALESCE(${b.empresa !== undefined ? b.empresa : null}, empresa),
+        rfc = COALESCE(${b.rfc !== undefined ? b.rfc : null}, rfc),
+        direccion = COALESCE(${b.direccion !== undefined ? b.direccion : null}, direccion),
+        ciudad = COALESCE(${b.ciudad !== undefined ? b.ciudad : null}, ciudad),
+        cp = COALESCE(${b.cp !== undefined ? b.cp : null}, cp),
+        telefono = COALESCE(${b.telefono !== undefined ? b.telefono : null}, telefono),
+        contacto_principal = COALESCE(${b.contacto_principal !== undefined ? b.contacto_principal : null}, contacto_principal),
+        cargo = COALESCE(${b.cargo !== undefined ? b.cargo : null}, cargo),
+        sector = COALESCE(${b.sector !== undefined ? b.sector : null}, sector),
+        current_phase = COALESCE(${b.current_phase !== undefined ? b.current_phase : null}, current_phase),
+        profile_type = COALESCE(${b.profile_type !== undefined ? b.profile_type : null}, profile_type)
+      WHERE id = ${userId}
+      RETURNING id, email, nombre, empresa, sector, current_phase, profile_type, role
+    `;
+
+    await logActivity(sql, req.user.id, 'user_updated', { targetUserId: userId, changes: Object.keys(b) }, getClientIP(req));
+
+    res.json({ user: result[0] });
+
+  } catch (error) {
+    console.error('Portal update user error:', error);
+    res.status(500).json({ error: 'Error al actualizar usuario' });
   }
 });
 

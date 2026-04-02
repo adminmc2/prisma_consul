@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS portal_users (
   cargo TEXT,
   sector TEXT,
   role TEXT NOT NULL DEFAULT 'user',
+  current_phase INTEGER NOT NULL DEFAULT 1,
+  profile_type TEXT NOT NULL DEFAULT 'clinica',
   drive_folder_id TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   last_login TIMESTAMPTZ
