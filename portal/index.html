@@ -528,10 +528,11 @@
       background: rgba(0,0,0,0.6); display: flex; align-items: center;
       justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
     }
-    .modal-content { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 16px; padding: 2rem; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+    .modal-content { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 16px; padding: 2rem; width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; }
     .modal-title { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--clinical-white); }
-    .modal-form { display: flex; flex-direction: column; gap: 0.75rem; }
+    .modal-form { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .modal-form .portal-input { max-width: 100%; }
+    .modal-form .modal-full-width { grid-column: 1 / -1; }
     .modal-actions { display: flex; gap: 0.75rem; margin-top: 1rem; }
     .btn-secondary {
       padding: 10px 24px; font-family: var(--font-heading); font-size: 0.85rem; font-weight: 600;
@@ -550,6 +551,10 @@
       .users-grid { grid-template-columns: 1fr; }
       .user-detail-grid { grid-template-columns: 1fr; }
       .dashboard-metrics { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .modal-form { grid-template-columns: 1fr; }
+      .modal-content { max-width: 95%; }
     }
     @media (max-width: 600px) {
       .panel-header { padding: 0 1rem; }
@@ -777,20 +782,20 @@
     <div class="modal-content">
       <h3 class="modal-title">Crear nuevo usuario</h3>
       <form class="modal-form" id="createUserForm" onsubmit="createUser(event)">
-        <input type="email" class="portal-input" name="newEmail" placeholder="Email *" required>
-        <input type="password" class="portal-input" name="newPassword" placeholder="Contraseña *" required>
+        <input type="email" class="portal-input modal-full-width" name="newEmail" placeholder="Email *" required>
+        <input type="password" class="portal-input modal-full-width" name="newPassword" placeholder="Contraseña *" required>
         <input type="text" class="portal-input" name="newNombre" placeholder="Nombre completo">
         <input type="text" class="portal-input" name="newEmpresa" placeholder="Empresa">
         <input type="text" class="portal-input" name="newRfc" placeholder="RFC">
-        <input type="text" class="portal-input" name="newDireccion" placeholder="Dirección">
+        <input type="text" class="portal-input" name="newSector" placeholder="Sector">
+        <input type="text" class="portal-input modal-full-width" name="newDireccion" placeholder="Dirección">
         <input type="text" class="portal-input" name="newCiudad" placeholder="Ciudad">
         <input type="text" class="portal-input" name="newCp" placeholder="C.P.">
         <input type="tel" class="portal-input" name="newTelefono" placeholder="Teléfono">
         <input type="text" class="portal-input" name="newContacto" placeholder="Contacto principal">
         <input type="text" class="portal-input" name="newCargo" placeholder="Cargo">
-        <input type="text" class="portal-input" name="newSector" placeholder="Sector">
-        <p class="login-error" id="createUserError"></p>
-        <div class="modal-actions">
+        <p class="login-error modal-full-width" id="createUserError"></p>
+        <div class="modal-actions modal-full-width">
           <button type="submit" class="btn-upload">Crear usuario</button>
           <button type="button" class="btn-secondary" onclick="hideCreateUserModal()">Cancelar</button>
         </div>
