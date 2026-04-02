@@ -293,6 +293,61 @@
       height: 14px;
     }
 
+    /* ── Panel Tabs ── */
+    .panel-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 2rem;
+      background: var(--prisma-navy);
+      flex-shrink: 0;
+    }
+    .panel-tab {
+      padding: 12px 24px;
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 250ms ease;
+    }
+    .panel-tab:hover { color: var(--text-secondary); }
+    .panel-tab.active {
+      color: var(--tech-cyan);
+      border-bottom-color: var(--tech-cyan);
+    }
+    .panel-tab.admin-only { display: none; }
+
+    /* ── Admin Viewing Banner ── */
+    .admin-viewing-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 2rem;
+      background: rgba(49, 190, 239, 0.08);
+      border-bottom: 1px solid rgba(49, 190, 239, 0.2);
+      font-size: 0.85rem;
+      color: var(--tech-cyan);
+      flex-shrink: 0;
+    }
+    .admin-viewing-banner button {
+      background: transparent;
+      border: 1px solid var(--tech-cyan);
+      color: var(--tech-cyan);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 200ms;
+    }
+    .admin-viewing-banner button:hover {
+      background: rgba(49, 190, 239, 0.1);
+    }
+
     /* ── Main Layout ── */
     .panel-body {
       display: grid;
@@ -982,6 +1037,204 @@
       to { transform: rotate(360deg); }
     }
 
+    /* ════════════════════════════════════════
+       ADMIN — Users Tab
+       ════════════════════════════════════════ */
+    .users-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding: 2rem 2rem 0;
+    }
+    .users-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      padding: 0 2rem 2rem;
+    }
+    .user-card-admin {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 250ms ease;
+    }
+    .user-card-admin:hover {
+      border-color: var(--tech-cyan);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+    }
+    .user-card-admin-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .user-card-admin-info { flex: 1; min-width: 0; }
+    .user-card-admin-name {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.15rem;
+    }
+    .user-card-admin-email {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .user-card-admin-stats {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .user-card-admin-stat span { color: var(--tech-cyan); font-weight: 600; }
+    .role-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .role-badge.admin { background: rgba(153, 78, 149, 0.2); color: var(--visionary-violet); }
+    .role-badge.user { background: rgba(49, 190, 239, 0.1); color: var(--tech-cyan); }
+
+    /* ════════════════════════════════════════
+       ADMIN — Activity Tab
+       ════════════════════════════════════════ */
+    .activity-container {
+      padding: 2rem;
+    }
+    .activity-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 0.4rem;
+    }
+    .activity-table th {
+      font-family: var(--font-heading);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: left;
+      padding: 0.5rem 1rem;
+    }
+    .activity-table td {
+      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .activity-table tr td:first-child {
+      border-left: 1px solid var(--border-color);
+      border-radius: 8px 0 0 8px;
+    }
+    .activity-table tr td:last-child {
+      border-right: 1px solid var(--border-color);
+      border-radius: 0 8px 8px 0;
+    }
+    .action-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-family: var(--font-heading);
+      font-weight: 600;
+    }
+    .action-badge.login { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .action-badge.upload { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+    .action-badge.delete { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+    .action-badge.rename { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    .action-badge.user_created { background: rgba(153, 78, 149, 0.15); color: var(--visionary-violet); }
+    .btn-load-more {
+      display: block;
+      margin: 1rem auto;
+      padding: 8px 24px;
+      font-family: var(--font-heading);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 200ms;
+    }
+    .btn-load-more:hover {
+      border-color: var(--border-hover);
+      color: var(--clinical-white);
+    }
+
+    /* ════════════════════════════════════════
+       ADMIN — Create User Modal
+       ════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+    .modal-content {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-title {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--clinical-white);
+    }
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .modal-form .portal-input {
+      max-width: 100%;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .btn-secondary {
+      padding: 10px 24px;
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 250ms ease;
+    }
+    .btn-secondary:hover {
+      border-color: var(--border-hover);
+      color: var(--clinical-white);
+    }
+
     /* ── Responsive ── */
     @media (max-width: 900px) {
       .panel-body {
@@ -994,6 +1247,8 @@
       }
       .sidebar-section { margin-bottom: 1.5rem; }
       .stats-grid { grid-template-columns: repeat(4, 1fr); }
+      .users-grid { grid-template-columns: 1fr; }
+      .user-card-admin-stats { flex-wrap: wrap; gap: 0.75rem; }
     }
 
     @media (max-width: 600px) {
@@ -1004,6 +1259,12 @@
       .panel-main { padding: 1.25rem; }
       .stats-grid { grid-template-columns: 1fr 1fr; }
       .files-list { grid-template-columns: 1fr; }
+      .panel-tabs { padding: 0 1rem; }
+      .panel-tab { padding: 10px 16px; font-size: 0.8rem; }
+      .users-header { padding: 1.25rem 1.25rem 0; }
+      .users-grid { padding: 0 1.25rem 1.25rem; }
+      .activity-container { padding: 1.25rem; }
+      .activity-table { font-size: 0.8rem; }
     }
 
     @media (max-width: 480px) {
@@ -1061,107 +1322,180 @@
       </div>
     </div>
 
-    <!-- Body: sidebar + main -->
-    <div class="panel-body">
+    <!-- Tab Bar -->
+    <div class="panel-tabs">
+      <button class="panel-tab active" data-tab="documentos" onclick="switchTab('documentos')">Documentos</button>
+      <button class="panel-tab admin-only" data-tab="usuarios" onclick="switchTab('usuarios')">Usuarios</button>
+      <button class="panel-tab admin-only" data-tab="actividad" onclick="switchTab('actividad')">Actividad</button>
+    </div>
 
-      <!-- LEFT SIDEBAR -->
-      <div class="panel-sidebar">
+    <!-- Admin Viewing Banner -->
+    <div class="admin-viewing-banner" id="adminViewingBanner" style="display:none;">
+      <span>Viendo archivos de <strong id="viewingUserName"></strong></span>
+      <button onclick="stopViewingAs()">&larr; Volver a mis archivos</button>
+    </div>
 
-        <!-- Empresa info -->
-        <div class="sidebar-section">
-          <div class="sidebar-label">Empresa</div>
-          <div class="user-card">
-            <div class="user-card-avatar" id="userAvatar">AC</div>
-            <div class="user-card-name" id="empresaNombre">—</div>
-            <div class="user-card-email" id="empresaSector">—</div>
+    <!-- ═══ TAB: Documentos ═══ -->
+    <div id="tab-documentos" style="display:flex;flex:1;min-height:0;overflow:hidden;">
+      <!-- Body: sidebar + main -->
+      <div class="panel-body" style="width:100%;">
+
+        <!-- LEFT SIDEBAR -->
+        <div class="panel-sidebar">
+
+          <!-- Empresa info -->
+          <div class="sidebar-section">
+            <div class="sidebar-label">Empresa</div>
+            <div class="user-card">
+              <div class="user-card-avatar" id="userAvatar">AC</div>
+              <div class="user-card-name" id="empresaNombre">&mdash;</div>
+              <div class="user-card-email" id="empresaSector">&mdash;</div>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="sidebar-section">
+            <div class="sidebar-label">Resumen</div>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-number" id="statTotal">0</div>
+                <div class="stat-label">Archivos</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number" id="statSize">0</div>
+                <div class="stat-label">MB Total</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number" id="statTypes">0</div>
+                <div class="stat-label">Tipos</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number" id="statRecent">0</div>
+                <div class="stat-label">Esta semana</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Doc types breakdown -->
+          <div class="sidebar-section">
+            <div class="sidebar-label">Tipos de documento</div>
+            <div class="doc-type-list" id="docTypeList">
+              <div style="color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem 0;">Sin archivos</div>
+            </div>
           </div>
         </div>
 
-        <!-- Stats -->
-        <div class="sidebar-section">
-          <div class="sidebar-label">Resumen</div>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-number" id="statTotal">0</div>
-              <div class="stat-label">Archivos</div>
+        <!-- RIGHT MAIN CONTENT -->
+        <div class="panel-main">
+          <h2 class="panel-title">Subir documentos</h2>
+
+          <!-- Dropzone -->
+          <div class="dropzone" id="dropzone">
+            <div class="dropzone-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
             </div>
-            <div class="stat-card">
-              <div class="stat-number" id="statSize">0</div>
-              <div class="stat-label">MB Total</div>
+            <p class="dropzone-text">Arrastra archivos aquí o haz clic para seleccionar</p>
+            <p class="dropzone-hint">Máximo 25 MB por archivo</p>
+            <input type="file" id="fileInput" multiple>
+          </div>
+
+          <!-- Staging area: files pending classification + upload -->
+          <div id="stagingArea" style="display:none;">
+            <div class="section-divider" style="margin-bottom:0.75rem;">
+              <span class="section-divider-title">Archivos pendientes</span>
+              <div class="section-divider-line"></div>
             </div>
-            <div class="stat-card">
-              <div class="stat-number" id="statTypes">0</div>
-              <div class="stat-label">Tipos</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number" id="statRecent">0</div>
-              <div class="stat-label">Esta semana</div>
+            <div class="staging-list" id="stagingList"></div>
+            <div class="staging-actions">
+              <button type="button" class="btn-upload" id="btnUpload">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span>Subir archivos</span>
+              </button>
+              <button type="button" class="btn-clear-staging" id="btnClearStaging">Cancelar</button>
             </div>
           </div>
-        </div>
 
-        <!-- Doc types breakdown -->
-        <div class="sidebar-section">
-          <div class="sidebar-label">Tipos de documento</div>
-          <div class="doc-type-list" id="docTypeList">
-            <div style="color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem 0;">Sin archivos</div>
-          </div>
-        </div>
-      </div>
+          <div class="upload-status" id="uploadStatus"></div>
 
-      <!-- RIGHT MAIN CONTENT -->
-      <div class="panel-main">
-        <h2 class="panel-title">Subir documentos</h2>
-
-        <!-- Dropzone -->
-        <div class="dropzone" id="dropzone">
-          <div class="dropzone-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/>
-              <line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-          </div>
-          <p class="dropzone-text">Arrastra archivos aquí o haz clic para seleccionar</p>
-          <p class="dropzone-hint">Máximo 25 MB por archivo</p>
-          <input type="file" id="fileInput" multiple>
-        </div>
-
-        <!-- Staging area: files pending classification + upload -->
-        <div id="stagingArea" style="display:none;">
-          <div class="section-divider" style="margin-bottom:0.75rem;">
-            <span class="section-divider-title">Archivos pendientes</span>
+          <!-- Files list -->
+          <div class="section-divider">
+            <span class="section-divider-title">Archivos subidos</span>
             <div class="section-divider-line"></div>
           </div>
-          <div class="staging-list" id="stagingList"></div>
-          <div class="staging-actions">
-            <button type="button" class="btn-upload" id="btnUpload">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+
+          <div class="files-list" id="filesList">
+            <div class="files-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
               </svg>
-              <span>Subir archivos</span>
-            </button>
-            <button type="button" class="btn-clear-staging" id="btnClearStaging">Cancelar</button>
-          </div>
-        </div>
-
-        <div class="upload-status" id="uploadStatus"></div>
-
-        <!-- Files list -->
-        <div class="section-divider">
-          <span class="section-divider-title">Archivos subidos</span>
-          <div class="section-divider-line"></div>
-        </div>
-
-        <div class="files-list" id="filesList">
-          <div class="files-empty">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
-            </svg>
-            <div>No hay archivos todavía</div>
+              <div>No hay archivos todavía</div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- ═══ TAB: Usuarios (admin only) ═══ -->
+    <div id="tab-usuarios" style="display:none;flex:1;min-height:0;overflow-y:auto;">
+      <div class="users-header">
+        <h2 class="panel-title" style="margin-bottom:0;">Usuarios del sistema</h2>
+        <button class="btn-upload" onclick="showCreateUserModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span>Crear usuario</span>
+        </button>
+      </div>
+      <div class="users-grid" id="usersGrid">
+        <div class="files-loading"><span class="spinner light"></span></div>
+      </div>
+    </div>
+
+    <!-- ═══ TAB: Actividad (admin only) ═══ -->
+    <div id="tab-actividad" style="display:none;flex:1;min-height:0;overflow-y:auto;">
+      <div class="activity-container">
+        <h2 class="panel-title">Registro de actividad</h2>
+        <table class="activity-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Acción</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+          <tbody id="activityBody">
+            <tr><td colspan="4" class="files-loading"><span class="spinner light"></span></td></tr>
+          </tbody>
+        </table>
+        <button class="btn-load-more" id="btnLoadMore" style="display:none;" onclick="loadActivity(true)">Cargar más</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ CREATE USER MODAL ═══ -->
+  <div class="modal-overlay" id="createUserModal" style="display:none;">
+    <div class="modal-content">
+      <h3 class="modal-title">Crear nuevo usuario</h3>
+      <form class="modal-form" id="createUserForm" onsubmit="createUser(event)">
+        <input type="email" class="portal-input" name="newEmail" placeholder="Email *" required>
+        <input type="password" class="portal-input" name="newPassword" placeholder="Contraseña *" required>
+        <input type="text" class="portal-input" name="newNombre" placeholder="Nombre completo">
+        <input type="text" class="portal-input" name="newEmpresa" placeholder="Empresa">
+        <input type="text" class="portal-input" name="newSector" placeholder="Sector">
+        <p class="login-error" id="createUserError"></p>
+        <div class="modal-actions">
+          <button type="submit" class="btn-upload">Crear usuario</button>
+          <button type="button" class="btn-secondary" onclick="hideCreateUserModal()">Cancelar</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1205,24 +1539,32 @@
 
     // ── State ──
     let currentFiles = [];
+    let viewingUserId = null;
+    let allUsers = [];
+    let activityOffset = 0;
 
+    // ── Session helpers ──
     function getToken() { return sessionStorage.getItem('portal_token'); }
     function getEmail() { return sessionStorage.getItem('portal_email'); }
     function getNombre() { return sessionStorage.getItem('portal_nombre'); }
+    function getRole() { return sessionStorage.getItem('portal_role'); }
+    function isAdmin() { return getRole() === 'admin'; }
     function getEmpresa() {
       try { return JSON.parse(sessionStorage.getItem('portal_empresa')); } catch { return null; }
     }
-    function setSession(token, email, nombre, empresa) {
+    function setSession(token, email, nombre, empresa, role) {
       sessionStorage.setItem('portal_token', token);
       sessionStorage.setItem('portal_email', email);
       if (nombre) sessionStorage.setItem('portal_nombre', nombre);
       if (empresa) sessionStorage.setItem('portal_empresa', JSON.stringify(empresa));
+      if (role) sessionStorage.setItem('portal_role', role);
     }
     function clearSession() {
       sessionStorage.removeItem('portal_token');
       sessionStorage.removeItem('portal_email');
       sessionStorage.removeItem('portal_nombre');
       sessionStorage.removeItem('portal_empresa');
+      sessionStorage.removeItem('portal_role');
     }
 
     // ── Screen transitions ──
@@ -1271,7 +1613,7 @@
           return;
         }
 
-        setSession(data.token, data.email, data.nombre, data.empresa);
+        setSession(data.token, data.email, data.nombre, data.empresa, data.role);
         showPanel();
 
       } catch (err) {
@@ -1305,18 +1647,58 @@
         document.getElementById('userAvatar').textContent = initials || '??';
       }
 
+      // Show admin tabs if admin
+      if (isAdmin()) {
+        document.querySelectorAll('.panel-tab.admin-only').forEach(t => t.style.display = '');
+      }
+
       showScreen('screen-panel');
-      loadFiles();
+      switchTab('documentos');
+    }
+
+    // ── TAB SWITCHING ──
+    function switchTab(tabName) {
+      // Update tab buttons
+      document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.panel-tab[data-tab="${tabName}"]`).classList.add('active');
+
+      // Show/hide tab content
+      document.getElementById('tab-documentos').style.display = tabName === 'documentos' ? 'flex' : 'none';
+      document.getElementById('tab-usuarios').style.display = tabName === 'usuarios' ? '' : 'none';
+      document.getElementById('tab-actividad').style.display = tabName === 'actividad' ? '' : 'none';
+
+      // Load data
+      if (tabName === 'documentos') loadFiles();
+      if (tabName === 'usuarios') loadUsers();
+      if (tabName === 'actividad') { activityOffset = 0; loadActivity(); }
     }
 
     // ── LOGOUT ──
     document.getElementById('btnLogout').addEventListener('click', () => {
       clearSession();
+      viewingUserId = null;
+      document.getElementById('adminViewingBanner').style.display = 'none';
+      // Hide admin tabs
+      document.querySelectorAll('.panel-tab.admin-only').forEach(t => t.style.display = 'none');
       showScreen('screen-login');
       loginError.textContent = '';
       document.getElementById('loginEmail').value = '';
       document.getElementById('loginPassword').value = '';
     });
+
+    // ── VIEW AS USER (Admin) ──
+    function viewAsUser(userId, userName) {
+      viewingUserId = userId;
+      document.getElementById('viewingUserName').textContent = userName;
+      document.getElementById('adminViewingBanner').style.display = '';
+      switchTab('documentos');
+    }
+
+    function stopViewingAs() {
+      viewingUserId = null;
+      document.getElementById('adminViewingBanner').style.display = 'none';
+      loadFiles();
+    }
 
     // ── STAGING SYSTEM ──
     let stagedFiles = []; // {file, docType}
@@ -1473,6 +1855,10 @@
           formData.append('file', item.file);
           formData.append('docType', item.docType);
 
+          if (viewingUserId) {
+            formData.append('userId', viewingUserId);
+          }
+
           const res = await fetch(`${API_BASE}/portal-upload`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` },
@@ -1517,8 +1903,11 @@
       const filesList = document.getElementById('filesList');
       filesList.innerHTML = '<div class="files-loading"><span class="spinner light"></span></div>';
 
+      let url = `${API_BASE}/portal-files`;
+      if (viewingUserId) url += `?userId=${viewingUserId}`;
+
       try {
-        const res = await fetch(`${API_BASE}/portal-files`, {
+        const res = await fetch(url, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -1710,6 +2099,154 @@
         if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
         if (e.key === 'Escape') { input.value = currentName; input.blur(); }
       });
+    }
+
+    // ── ADMIN: USERS ──
+    async function loadUsers() {
+      const token = getToken();
+      if (!token) return;
+
+      const grid = document.getElementById('usersGrid');
+      grid.innerHTML = '<div class="files-loading"><span class="spinner light"></span></div>';
+
+      try {
+        const res = await fetch(`${API_BASE}/portal-users`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        allUsers = data.users || [];
+        renderUsers(allUsers);
+      } catch {
+        grid.innerHTML = '<div class="files-empty"><div>Error al cargar usuarios</div></div>';
+      }
+    }
+
+    function renderUsers(users) {
+      const grid = document.getElementById('usersGrid');
+      grid.innerHTML = users.map(u => {
+        const initials = (u.nombre || u.email.split('@')[0]).split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 4);
+        const lastLogin = u.last_login ? formatDate(u.last_login) : 'Nunca';
+        return `
+          <div class="user-card-admin" onclick="viewAsUser(${u.id}, '${escapeHtml(u.nombre || u.email)}')">
+            <div class="user-card-admin-header">
+              <div class="user-card-avatar">${initials}</div>
+              <div class="user-card-admin-info">
+                <div class="user-card-admin-name">${escapeHtml(u.nombre || u.email.split('@')[0])}</div>
+                <div class="user-card-admin-email">${escapeHtml(u.email)}</div>
+              </div>
+              <span class="role-badge ${u.role}">${u.role}</span>
+            </div>
+            <div class="user-card-admin-stats">
+              <div class="user-card-admin-stat"><span>${u.file_count || 0}</span> archivos</div>
+              <div class="user-card-admin-stat"><span>${formatSize(u.total_size || 0)}</span></div>
+              <div class="user-card-admin-stat">Último acceso: ${lastLogin}</div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // ── ADMIN: ACTIVITY ──
+    async function loadActivity(append = false) {
+      const token = getToken();
+      if (!token) return;
+
+      const tbody = document.getElementById('activityBody');
+      if (!append) {
+        tbody.innerHTML = '<tr><td colspan="4" class="files-loading"><span class="spinner light"></span></td></tr>';
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/portal-activity?limit=50&offset=${activityOffset}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        const rows = data.activity || [];
+
+        if (!append) tbody.innerHTML = '';
+
+        if (!rows.length && !append) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:2rem;">Sin actividad registrada</td></tr>';
+          document.getElementById('btnLoadMore').style.display = 'none';
+          return;
+        }
+
+        tbody.innerHTML += rows.map(a => {
+          const actionLabels = { login: 'Login', upload: 'Subida', delete: 'Eliminación', rename: 'Renombrar', user_created: 'Nuevo usuario' };
+          let details = '';
+          if (a.details) {
+            if (a.action === 'upload') details = (a.details.files || []).join(', ');
+            else if (a.action === 'delete') details = a.details.fileName || '';
+            else if (a.action === 'rename') details = `${a.details.oldName} → ${a.details.newName}`;
+            else if (a.action === 'user_created') details = a.details.email || '';
+            else if (a.action === 'login') details = a.details.email || '';
+          }
+          return `
+            <tr>
+              <td>${formatDate(a.created_at)}</td>
+              <td>${escapeHtml(a.user_nombre || a.user_email || '—')}</td>
+              <td><span class="action-badge ${a.action}">${actionLabels[a.action] || a.action}</span></td>
+              <td>${escapeHtml(details)}</td>
+            </tr>`;
+        }).join('');
+
+        document.getElementById('btnLoadMore').style.display = rows.length < 50 ? 'none' : '';
+        activityOffset += rows.length;
+      } catch {
+        if (!append) tbody.innerHTML = '<tr><td colspan="4" class="files-empty">Error al cargar actividad</td></tr>';
+      }
+    }
+
+    // ── ADMIN: CREATE USER ──
+    function showCreateUserModal() {
+      document.getElementById('createUserModal').style.display = '';
+    }
+
+    function hideCreateUserModal() {
+      document.getElementById('createUserModal').style.display = 'none';
+      document.getElementById('createUserForm').reset();
+      document.getElementById('createUserError').textContent = '';
+    }
+
+    async function createUser(e) {
+      e.preventDefault();
+      const token = getToken();
+      if (!token) return;
+
+      const form = document.getElementById('createUserForm');
+      const errorEl = document.getElementById('createUserError');
+      errorEl.textContent = '';
+
+      const body = {
+        email: form.newEmail.value.trim(),
+        password: form.newPassword.value,
+        nombre: form.newNombre.value.trim(),
+        empresa: form.newEmpresa.value.trim(),
+        sector: form.newSector.value.trim()
+      };
+
+      if (!body.email || !body.password) {
+        errorEl.textContent = 'Email y contraseña son requeridos';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/portal-users`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          errorEl.textContent = data.error || 'Error al crear usuario';
+          return;
+        }
+        hideCreateUserModal();
+        loadUsers();
+      } catch {
+        errorEl.textContent = 'Error de conexión';
+      }
     }
 
     // ── Helpers ──

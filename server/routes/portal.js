@@ -1,6 +1,6 @@
 /**
  * Portal Routes
- * Auth (login), file upload (Google Drive), file management (list/delete/rename)
+ * Auth (login), file upload (Google Drive), file management, user management, activity log
  */
 
 const express = require('express');
@@ -9,10 +9,35 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Busboy = require('busboy');
 const { Readable } = require('stream');
-const auth = require('../middleware/auth');
-const { getDriveClient } = require('../lib/google-drive');
+const { auth, requireAdmin } = require('../middleware/auth');
+const { getDriveClient, getOrCreateUserFolder, listFilesInFolder } = require('../lib/google-drive');
 
 const router = express.Router();
+
+// ── Helpers ──────────────────────────────────────────────
+
+function getSQL() {
+  return neon(process.env.DATABASE_URL);
+}
+
+function getClientIP(req) {
+  return req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip;
+}
+
+async function logActivity(sql, userId, action, details, ip) {
+  try {
+    await sql`INSERT INTO portal_activity_log (user_id, action, details, ip_address) VALUES (${userId}, ${action}, ${JSON.stringify(details)}, ${ip})`;
+  } catch (e) {
+    console.error('Activity log error:', e.message);
+  }
+}
+
+async function ensureUserFolder(sql, drive, user) {
+  if (user.drive_folder_id) return user.drive_folder_id;
+  const folderId = await getOrCreateUserFolder(drive, process.env.GOOGLE_DRIVE_FOLDER_ID, user.id, user.nombre || user.email);
+  await sql`UPDATE portal_users SET drive_folder_id = ${folderId} WHERE id = ${user.id}`;
+  return folderId;
+}
 
 // ── LOGIN ──────────────────────────────────────────────
 
@@ -25,17 +50,15 @@ router.post('/portal-auth', async (req, res) => {
     }
 
     const secret = process.env.PORTAL_SECRET;
-    const databaseUrl = process.env.DATABASE_URL;
-
-    if (!secret || !databaseUrl) {
+    if (!secret || !process.env.DATABASE_URL) {
       console.error('PORTAL_SECRET or DATABASE_URL not configured');
       return res.status(500).json({ error: 'Error de configuración del servidor' });
     }
 
-    const sql = neon(databaseUrl);
+    const sql = getSQL();
 
     const users = await sql`
-      SELECT id, email, password_hash, nombre, empresa, rfc, direccion, ciudad, cp, telefono, contacto_principal, cargo, sector
+      SELECT id, email, password_hash, nombre, empresa, rfc, direccion, ciudad, cp, telefono, contacto_principal, cargo, sector, role, drive_folder_id
       FROM portal_users
       WHERE LOWER(email) = LOWER(${email})
     `;
@@ -45,6 +68,7 @@ router.post('/portal-auth', async (req, res) => {
     }
 
     const user = users[0];
+    const role = user.role || 'user';
 
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) {
@@ -53,8 +77,12 @@ router.post('/portal-auth', async (req, res) => {
 
     await sql`UPDATE portal_users SET last_login = NOW() WHERE id = ${user.id}`;
 
+    // Asegurar carpeta Drive del usuario
+    const drive = getDriveClient();
+    const driveFolderId = await ensureUserFolder(sql, drive, user);
+
     const token = jwt.sign(
-      { id: user.id, email: user.email, nombre: user.nombre },
+      { id: user.id, email: user.email, nombre: user.nombre, role },
       secret,
       { expiresIn: '24h' }
     );
@@ -71,7 +99,9 @@ router.post('/portal-auth', async (req, res) => {
       sector: user.sector
     };
 
-    res.json({ token, email: user.email, nombre: user.nombre, empresa });
+    await logActivity(sql, user.id, 'login', { email: user.email }, getClientIP(req));
+
+    res.json({ token, email: user.email, nombre: user.nombre, role, empresa });
 
   } catch (error) {
     console.error('Portal auth error:', error);
@@ -88,6 +118,11 @@ function parseMultipart(req) {
     });
 
     const files = [];
+    const fields = {};
+
+    busboy.on('field', (name, value) => {
+      fields[name] = value;
+    });
 
     busboy.on('file', (fieldname, stream, info) => {
       const { filename, mimeType } = info;
@@ -98,10 +133,9 @@ function parseMultipart(req) {
       });
     });
 
-    busboy.on('finish', () => resolve(files));
+    busboy.on('finish', () => resolve({ files, fields }));
     busboy.on('error', reject);
 
-    // req.rawBody is set by the raw body middleware in server.js
     if (req.rawBody) {
       const readable = new Readable();
       readable.push(req.rawBody);
@@ -115,21 +149,36 @@ function parseMultipart(req) {
 
 router.post('/portal-upload', auth, async (req, res) => {
   try {
-    const files = await parseMultipart(req);
+    const { files, fields } = await parseMultipart(req);
 
     if (!files.length) {
       return res.status(400).json({ error: 'No se recibió ningún archivo' });
     }
 
+    const sql = getSQL();
     const drive = getDriveClient();
-    const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
+
+    // Obtener carpeta del usuario (o del usuario objetivo si admin sube para otro)
+    let targetUserId = req.user.id;
+    if (req.user.role === 'admin' && fields.userId) {
+      targetUserId = parseInt(fields.userId);
+    }
+
+    const userRows = await sql`SELECT id, nombre, email, drive_folder_id FROM portal_users WHERE id = ${targetUserId}`;
+    if (!userRows.length) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    const targetUser = userRows[0];
+    const userFolderId = await ensureUserFolder(sql, drive, targetUser);
+
     const uploaded = [];
+    const docType = fields.docType || 'general';
 
     for (const file of files) {
       const response = await drive.files.create({
         requestBody: {
           name: file.filename,
-          parents: [folderId]
+          parents: [userFolderId]
         },
         media: {
           mimeType: file.mimeType,
@@ -137,6 +186,9 @@ router.post('/portal-upload', auth, async (req, res) => {
         },
         fields: 'id, name, size, createdTime, webViewLink'
       });
+
+      // Registrar en portal_files
+      await sql`INSERT INTO portal_files (drive_file_id, user_id, file_name, file_size, mime_type, doc_type) VALUES (${response.data.id}, ${targetUserId}, ${response.data.name}, ${parseInt(response.data.size || '0')}, ${file.mimeType}, ${docType})`;
 
       uploaded.push({
         id: response.data.id,
@@ -146,6 +198,12 @@ router.post('/portal-upload', auth, async (req, res) => {
         link: response.data.webViewLink
       });
     }
+
+    await logActivity(sql, req.user.id, 'upload', {
+      files: uploaded.map(f => f.name),
+      targetUserId,
+      docType
+    }, getClientIP(req));
 
     res.json({ files: uploaded });
 
@@ -159,17 +217,26 @@ router.post('/portal-upload', auth, async (req, res) => {
 
 router.get('/portal-files', auth, async (req, res) => {
   try {
+    const sql = getSQL();
     const drive = getDriveClient();
-    const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
 
-    const response = await drive.files.list({
-      q: `'${folderId}' in parents and trashed = false`,
-      fields: 'files(id, name, size, mimeType, createdTime, webViewLink)',
-      orderBy: 'createdTime desc',
-      pageSize: 100
-    });
+    // Admin puede ver archivos de cualquier usuario con ?userId=X
+    let targetUserId = req.user.id;
+    if (req.user.role === 'admin' && req.query.userId) {
+      targetUserId = parseInt(req.query.userId);
+    }
 
-    const files = (response.data.files || []).map(f => ({
+    const userRows = await sql`SELECT id, drive_folder_id, nombre, email FROM portal_users WHERE id = ${targetUserId}`;
+    if (!userRows.length) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const targetUser = userRows[0];
+    const userFolderId = await ensureUserFolder(sql, drive, targetUser);
+
+    const driveFiles = await listFilesInFolder(drive, userFolderId);
+
+    const files = driveFiles.map(f => ({
       id: f.id,
       name: f.name,
       size: f.size ? parseInt(f.size) : 0,
@@ -193,8 +260,27 @@ router.delete('/portal-files', auth, async (req, res) => {
       return res.status(400).json({ error: 'fileId requerido' });
     }
 
+    const sql = getSQL();
+
+    // Verificar propiedad (admin puede borrar cualquiera)
+    if (req.user.role !== 'admin') {
+      const ownership = await sql`SELECT id FROM portal_files WHERE drive_file_id = ${fileId} AND user_id = ${req.user.id}`;
+      if (!ownership.length) {
+        return res.status(403).json({ error: 'No tienes permiso para eliminar este archivo' });
+      }
+    }
+
     const drive = getDriveClient();
+
+    // Obtener nombre antes de borrar para el log
+    const fileInfo = await sql`SELECT file_name FROM portal_files WHERE drive_file_id = ${fileId}`;
+    const fileName = fileInfo[0]?.file_name || 'desconocido';
+
     await drive.files.delete({ fileId });
+    await sql`DELETE FROM portal_files WHERE drive_file_id = ${fileId}`;
+
+    await logActivity(sql, req.user.id, 'delete', { fileId, fileName }, getClientIP(req));
+
     res.json({ ok: true });
 
   } catch (error) {
@@ -210,6 +296,19 @@ router.patch('/portal-files', auth, async (req, res) => {
       return res.status(400).json({ error: 'fileId y nombre requeridos' });
     }
 
+    const sql = getSQL();
+
+    // Verificar propiedad (admin puede renombrar cualquiera)
+    if (req.user.role !== 'admin') {
+      const ownership = await sql`SELECT id FROM portal_files WHERE drive_file_id = ${fileId} AND user_id = ${req.user.id}`;
+      if (!ownership.length) {
+        return res.status(403).json({ error: 'No tienes permiso para renombrar este archivo' });
+      }
+    }
+
+    const oldInfo = await sql`SELECT file_name FROM portal_files WHERE drive_file_id = ${fileId}`;
+    const oldName = oldInfo[0]?.file_name || '';
+
     const drive = getDriveClient();
     const response = await drive.files.update({
       fileId,
@@ -217,11 +316,119 @@ router.patch('/portal-files', auth, async (req, res) => {
       fields: 'id, name'
     });
 
+    await sql`UPDATE portal_files SET file_name = ${req.body.name} WHERE drive_file_id = ${fileId}`;
+
+    await logActivity(sql, req.user.id, 'rename', { fileId, oldName, newName: req.body.name }, getClientIP(req));
+
     res.json({ id: response.data.id, name: response.data.name });
 
   } catch (error) {
     console.error('Portal files rename error:', error);
     res.status(500).json({ error: 'Error en operación de archivo' });
+  }
+});
+
+// ── ADMIN: USER MANAGEMENT ─────────────────────────────
+
+router.get('/portal-users', auth, requireAdmin, async (req, res) => {
+  try {
+    const sql = getSQL();
+
+    const users = await sql`
+      SELECT
+        u.id, u.email, u.nombre, u.empresa, u.sector, u.role, u.created_at, u.last_login,
+        COUNT(f.id)::int AS file_count,
+        COALESCE(SUM(f.file_size), 0)::bigint AS total_size
+      FROM portal_users u
+      LEFT JOIN portal_files f ON f.user_id = u.id
+      GROUP BY u.id
+      ORDER BY u.created_at DESC
+    `;
+
+    res.json({ users });
+
+  } catch (error) {
+    console.error('Portal users list error:', error);
+    res.status(500).json({ error: 'Error al listar usuarios' });
+  }
+});
+
+router.post('/portal-users', auth, requireAdmin, async (req, res) => {
+  try {
+    const { email, password, nombre, empresa, rfc, direccion, ciudad, cp, telefono, contacto_principal, cargo, sector } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email y contraseña son requeridos' });
+    }
+
+    const sql = getSQL();
+
+    // Verificar que no exista
+    const existing = await sql`SELECT id FROM portal_users WHERE LOWER(email) = LOWER(${email})`;
+    if (existing.length) {
+      return res.status(409).json({ error: 'Ya existe un usuario con ese email' });
+    }
+
+    const password_hash = await bcrypt.hash(password, 10);
+
+    const result = await sql`
+      INSERT INTO portal_users (email, password_hash, nombre, empresa, rfc, direccion, ciudad, cp, telefono, contacto_principal, cargo, sector, role)
+      VALUES (${email}, ${password_hash}, ${nombre || ''}, ${empresa || ''}, ${rfc || ''}, ${direccion || ''}, ${ciudad || ''}, ${cp || ''}, ${telefono || ''}, ${contacto_principal || ''}, ${cargo || ''}, ${sector || ''}, 'user')
+      RETURNING id, email, nombre, empresa, sector, role, created_at
+    `;
+
+    // Crear carpeta en Drive para el nuevo usuario
+    const drive = getDriveClient();
+    const newUser = result[0];
+    const driveFolderId = await getOrCreateUserFolder(drive, process.env.GOOGLE_DRIVE_FOLDER_ID, newUser.id, nombre || email);
+    await sql`UPDATE portal_users SET drive_folder_id = ${driveFolderId} WHERE id = ${newUser.id}`;
+
+    await logActivity(sql, req.user.id, 'user_created', { targetUserId: newUser.id, email }, getClientIP(req));
+
+    res.json({ user: { ...newUser, file_count: 0, total_size: 0 } });
+
+  } catch (error) {
+    console.error('Portal create user error:', error);
+    res.status(500).json({ error: 'Error al crear usuario' });
+  }
+});
+
+// ── ADMIN: ACTIVITY LOG ────────────────────────────────
+
+router.get('/portal-activity', auth, requireAdmin, async (req, res) => {
+  try {
+    const sql = getSQL();
+    const limit = Math.min(parseInt(req.query.limit) || 50, 200);
+    const offset = parseInt(req.query.offset) || 0;
+    const userId = req.query.userId ? parseInt(req.query.userId) : null;
+
+    let rows;
+    if (userId) {
+      rows = await sql`
+        SELECT a.id, a.action, a.details, a.ip_address, a.created_at,
+               u.email AS user_email, u.nombre AS user_nombre
+        FROM portal_activity_log a
+        LEFT JOIN portal_users u ON u.id = a.user_id
+        WHERE a.user_id = ${userId}
+        ORDER BY a.created_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `;
+    } else {
+      rows = await sql`
+        SELECT a.id, a.action, a.details, a.ip_address, a.created_at,
+               u.email AS user_email, u.nombre AS user_nombre
+        FROM portal_activity_log a
+        LEFT JOIN portal_users u ON u.id = a.user_id
+        ORDER BY a.created_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `;
+    }
+
+    res.json({ activity: rows });
+
+  } catch (error) {
+    console.error('Portal activity error:', error);
+    res.status(500).json({ error: 'Error al obtener actividad' });
   }
 });
 

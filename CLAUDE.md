@@ -16,7 +16,7 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 ```
 /                        → Marketing landing page (prismaconsul.com)
 /apex                    → APEX Discovery Form (prismaconsul.com/apex) — requiere login
-/documentacion           → Portal de Documentos (prismaconsul.com/documentacion) — requiere login
+/hub                     → PRISMA Hub (prismaconsul.com/hub) — requiere login
 /api/*                   → Express.js API backend
 ```
 
@@ -39,25 +39,27 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 │   ├── form.css
 │   ├── signal-detector.js
 │   └── fonts/                  # Phosphor Icons (local)
-├── portal/                     # Portal de Documentos (single-file SPA)
-│   └── index.html              # Login + document management panel
+├── portal/                     # PRISMA Hub (single-file SPA)
+│   └── index.html              # Login + document management + admin panel
 ├── server/                     # Express.js backend
 │   ├── server.js               # App setup, middleware, route mounting
 │   ├── package.json            # All backend dependencies
 │   ├── schema.sql              # PostgreSQL schema reference
 │   ├── middleware/
 │   │   ├── cors.js             # CORS headers (all routes)
-│   │   └── auth.js             # JWT verification middleware
+│   │   └── auth.js             # JWT verification + requireAdmin middleware
 │   ├── routes/
-│   │   ├── portal.js           # Auth, upload, file management (Google Drive)
+│   │   ├── portal.js           # Auth, upload, file management, user management, activity log
 │   │   ├── apex.js             # Research, questions, form submission
 │   │   └── ai.js               # Groq LLM chat + Whisper transcription
 │   └── lib/
 │       ├── pain-knowledge-base.js  # Pain/situation database (469 pains)
-│       ├── google-drive.js     # Google Drive client (Service Account)
+│       ├── google-drive.js     # Google Drive client + per-user folder helpers
 │       └── fetch-timeout.js    # Fetch wrapper with AbortController
 ├── .env                        # Secrets (NOT committed)
-└── .gitignore
+├── .gitignore
+└── .github/
+    └── dependabot.yml          # Weekly dependency monitoring
 ```
 
 ## Tech Stack
@@ -66,8 +68,8 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 - **Fonts:** Quicksand (headings) + Source Sans 3 (body) via Google Fonts
 - **Icons:** Phosphor Icons (local font files in `apex/fonts/`)
 - **Backend:** Express.js with modular routes (server/routes/)
-- **Database:** Neon PostgreSQL (`apex_submissions`, `portal_users`)
-- **Auth:** JWT (jsonwebtoken) + bcryptjs, 24h token expiry. Shared auth for APEX y Portal.
+- **Database:** Neon PostgreSQL (`apex_submissions`, `portal_users`, `portal_files`, `portal_activity_log`)
+- **Auth:** JWT (jsonwebtoken) + bcryptjs, 24h token expiry. Role-based: admin/user. Shared auth for APEX y Hub.
 - **APIs:** Groq (LLM + Whisper), Tavily (web search), Claude API (questions)
 - **File Storage:** Google Drive API via Service Account with domain-wide delegation
 - **Email:** Gmail SMTP via Nodemailer
@@ -114,13 +116,17 @@ Login → Welcome → Company Input → Research (Tavily+Groq) → Swipe Cards �
 - `SITUACIONES_CLINICA` (16 cards, IDs: CA-CP) for clinics
 - Type detected from `research-company.js` field `detectado.es_clinica`
 
-### Portal Upload Flow
-Drag files → Stage with type classification → Click "Subir" → Upload to Google Drive
+### PRISMA Hub (Portal)
+- Login → Role detection → Admin gets 3 tabs (Documentos, Usuarios, Actividad), User gets 1 tab (Documentos)
+- Upload: Drag files → Stage with type classification → Click "Subir" → Upload to user's Google Drive subfolder
+- Admin can "view as user" to see any client's files
+- Admin can create new users from the Usuarios tab
 
 ### Google Drive Integration
 - Service Account with domain-wide delegation impersonates `info@prismaconsul.com`
 - Scope: `https://www.googleapis.com/auth/drive`
 - Client ID for delegation: `105667745242936760421`
+- Per-user subfolders: `GOOGLE_DRIVE_FOLDER_ID/user_{id}/` — each user's files are isolated
 
 ## Database Tables
 
@@ -128,12 +134,19 @@ Drag files → Stage with type classification → Click "Subir" → Upload to Go
 Stores APEX form completions with company data, research results, responses, pains, and audio.
 
 ### `portal_users`
-Portal login users with: `id, email, password_hash, nombre, empresa, rfc, direccion, ciudad, cp, telefono, contacto_principal, cargo, sector, created_at, last_login`
+Portal login users with: `id, email, password_hash, nombre, empresa, rfc, direccion, ciudad, cp, telefono, contacto_principal, cargo, sector, role, drive_folder_id, created_at, last_login`
+
+### `portal_files`
+File ownership tracking: `id, drive_file_id, user_id, file_name, file_size, mime_type, doc_type, created_at`
+
+### `portal_activity_log`
+Activity audit log: `id, user_id, action, details (JSONB), ip_address, created_at`
+Actions: `login`, `upload`, `delete`, `rename`, `user_created`
 
 ## Portal Users
 
-- **Admin:** info@prismaconsul.com (can see all documents - admin dashboard pending)
-- **Client:** armc@prismaconsul.com (ARMC Aesthetic Rejuvenation Medical Center)
+- **Admin:** info@prismaconsul.com (role: admin — dashboard completo con gestión de usuarios y actividad)
+- **Client:** armc@prismaconsul.com (role: user — ARMC Aesthetic Rejuvenation Medical Center)
 
 ## Git Workflow
 
@@ -215,7 +228,7 @@ La versión actual se muestra en el footer de `index.html`. Se usa **Versionado 
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.0.1`
+**Versión actual:** `v3.1.0`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)
@@ -236,6 +249,7 @@ El archivo `CHANGELOG.md` en la raíz del proyecto registra todos los cambios re
 - Google Drive SA needs domain-wide delegation in Google Admin console
 - Spanish characters: use real UTF-8 chars, not `\u00xx` escapes in HTML
 - SVG logo (`logo_simbolo_V2.svg`) has large viewBox whitespace — handle sizing in CSS, don't modify the SVG
-- APEX y Portal comparten autenticación (`server/middleware/auth.js` + tabla `portal_users`)
-- Auth middleware (`server/middleware/auth.js`) is shared — used by portal upload and file routes
-- Google Drive client (`server/lib/google-drive.js`) is shared — used by portal upload and file routes
+- APEX y PRISMA Hub comparten autenticación (`server/middleware/auth.js` + tabla `portal_users`)
+- Auth middleware exports `{ auth, requireAdmin }` — auth verifica JWT, requireAdmin exige role='admin'
+- Google Drive: cada usuario tiene su subcarpeta (`user_{id}/`). Los archivos se rastrean en `portal_files`
+- JWT incluye `{id, email, nombre, role}` — tokens antiguos sin role se tratan como 'user'
