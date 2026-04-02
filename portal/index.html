@@ -159,6 +159,7 @@
     .panel-tab:hover { color: var(--text-secondary); }
     .panel-tab.active { color: var(--tech-cyan); border-bottom-color: var(--tech-cyan); }
     .panel-tab.admin-only { display: none; }
+    .panel-tab.user-only { display: none; }
 
     /* ── Admin Viewing Banner ── */
     .admin-viewing-banner {
@@ -619,7 +620,7 @@
     <div class="panel-tabs">
       <button class="panel-tab admin-only" data-tab="dashboard" onclick="switchTab('dashboard')">Dashboard</button>
       <button class="panel-tab admin-only" data-tab="usuarios" onclick="switchTab('usuarios')">Usuarios</button>
-      <button class="panel-tab" data-tab="documentos" onclick="switchTab('documentos')">Documentos</button>
+      <button class="panel-tab user-only" data-tab="documentos" onclick="switchTab('documentos')">Documentos</button>
     </div>
 
     <!-- Admin Viewing Banner -->
@@ -932,6 +933,7 @@
         document.querySelectorAll('.panel-tab.admin-only').forEach(t => t.style.display = 'block');
         switchTab('dashboard');
       } else {
+        document.querySelectorAll('.panel-tab.user-only').forEach(t => t.style.display = 'block');
         switchTab('documentos');
       }
 
@@ -959,7 +961,7 @@
       clearSession();
       viewingUserId = null;
       document.getElementById('adminViewingBanner').style.display = 'none';
-      document.querySelectorAll('.panel-tab.admin-only').forEach(t => t.style.display = 'none');
+      document.querySelectorAll('.panel-tab.admin-only, .panel-tab.user-only').forEach(t => t.style.display = 'none');
       showScreen('screen-login');
       loginError.textContent = '';
       document.getElementById('loginEmail').value = '';
@@ -1214,12 +1216,6 @@
               <div class="user-detail-section-title">Fase del proceso</div>
               <div class="phase-selector">${phaseSteps}</div>
               <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.75rem;">Haz clic en una fase para establecer el estado actual</div>
-            </div>
-            <div class="user-detail-section">
-              <div class="user-detail-section-title">Acciones</div>
-              <button class="btn-upload" onclick="viewAsUser(${userId}, '${escapeHtml(user.nombre || user.email)}')" style="font-size:0.75rem;padding:8px 18px;margin-bottom:0.5rem;">
-                Ver documentos del usuario
-              </button>
             </div>
           </div>
         </div>
