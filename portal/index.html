@@ -780,6 +780,13 @@
         <input type="password" class="portal-input" name="newPassword" placeholder="Contraseña *" required>
         <input type="text" class="portal-input" name="newNombre" placeholder="Nombre completo">
         <input type="text" class="portal-input" name="newEmpresa" placeholder="Empresa">
+        <input type="text" class="portal-input" name="newRfc" placeholder="RFC">
+        <input type="text" class="portal-input" name="newDireccion" placeholder="Dirección">
+        <input type="text" class="portal-input" name="newCiudad" placeholder="Ciudad">
+        <input type="text" class="portal-input" name="newCp" placeholder="C.P.">
+        <input type="tel" class="portal-input" name="newTelefono" placeholder="Teléfono">
+        <input type="text" class="portal-input" name="newContacto" placeholder="Contacto principal">
+        <input type="text" class="portal-input" name="newCargo" placeholder="Cargo">
         <input type="text" class="portal-input" name="newSector" placeholder="Sector">
         <p class="login-error" id="createUserError"></p>
         <div class="modal-actions">
@@ -1317,7 +1324,10 @@
       const body = {
         email: form.newEmail.value.trim(), password: form.newPassword.value,
         nombre: form.newNombre.value.trim(), empresa: form.newEmpresa.value.trim(),
-        sector: form.newSector.value.trim()
+        rfc: form.newRfc.value.trim(), direccion: form.newDireccion.value.trim(),
+        ciudad: form.newCiudad.value.trim(), cp: form.newCp.value.trim(),
+        telefono: form.newTelefono.value.trim(), contacto_principal: form.newContacto.value.trim(),
+        cargo: form.newCargo.value.trim(), sector: form.newSector.value.trim()
       };
       if (!body.email || !body.password) { errorEl.textContent = 'Email y contraseña son requeridos'; return; }
       try {
