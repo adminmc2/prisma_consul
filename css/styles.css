@@ -439,6 +439,46 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 
+/* PRISMA Hub link */
+.header__hub {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: 1px solid var(--tech-cyan);
+  border-radius: 4px 25px 25px 4px;
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--tech-cyan);
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+  line-height: 1;
+  height: 42px;
+  box-sizing: border-box;
+  letter-spacing: 0.3px;
+}
+.header__hub:hover {
+  background: var(--tech-cyan);
+  color: var(--bg-primary);
+}
+.header__hub-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* Hub nav item: visible only in mobile menu, hidden on tablet+ where button shows */
+.header__nav-hub-item {
+  display: none;
+}
+.header__nav.active .header__nav-hub-item {
+  display: list-item;
+}
+.header__nav-hub {
+  color: var(--tech-cyan) !important;
+}
+
 .header__cta-dot {
   width: 8px;
   height: 8px;
@@ -2441,6 +2481,20 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     display: flex;
   }
 
+  .header__hub {
+    display: flex;
+    padding: 7px 12px;
+    font-size: 0.72rem;
+    height: 34px;
+  }
+  .header__hub-icon {
+    width: 13px;
+    height: 13px;
+  }
+  .header__nav-hub-item {
+    display: none !important;
+  }
+
   .header__logo-img {
     width: 130px;
   }
@@ -2746,6 +2800,10 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
   }
 
   .header__cta {
+    display: flex;
+  }
+
+  .header__hub {
     display: flex;
   }
 
@@ -3458,8 +3516,9 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
     font-size: 1.5rem;
   }
 
-  /* Ocultar CTA y Lang Switcher cuando el menú está activo */
+  /* Ocultar CTA, Hub y Lang Switcher cuando el menú está activo */
   .header.menu-open .header__cta,
+  .header.menu-open .header__hub,
   .header.menu-open .lang-switcher {
     opacity: 0 !important;
     visibility: hidden !important;

@@ -104,6 +104,17 @@ function switchLanguage(lang) {
         }
       }
 
+      // Special handling for Hub button with SVG icon inside
+      if (el.classList.contains('header__hub')) {
+        const icon = el.querySelector('.header__hub-icon');
+        if (icon) {
+          el.innerHTML = '';
+          el.appendChild(icon);
+          el.appendChild(document.createTextNode(text));
+          return;
+        }
+      }
+
       // Special handling for nav links with link-slide structure
       if (el.classList.contains('header__nav-link')) {
         const linkSlide = el.querySelector('.link-slide');
