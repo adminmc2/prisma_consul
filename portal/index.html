@@ -389,6 +389,7 @@
     .file-icon.img { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
     .file-icon.other { background: rgba(250, 249, 246, 0.08); color: var(--text-muted); }
     .file-info { flex: 1; min-width: 0; }
+    .file-code { font-family: var(--font-heading); font-size: 0.68rem; font-weight: 700; color: var(--tech-cyan); letter-spacing: 0.5px; opacity: 0.7; margin-bottom: 0.1rem; }
     .file-name { font-weight: 600; font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .file-name-editable { cursor: pointer; border-bottom: 1px dashed transparent; transition: border-color 200ms; }
     .file-name-editable:hover { border-bottom-color: var(--text-muted); }
@@ -1582,13 +1583,15 @@
           return;
         }
         filesList.innerHTML = files.map(f => {
-          const displayName = f.name || f.driveName || '';
-          const ext = getFileExt(f.driveName || displayName);
+          const displayName = f.name || '';
+          const code = f.driveName || '';
+          const ext = getFileExt(code || displayName);
           const iconClass = getIconClass(ext);
           const docType = f.docType || 'general';
           return `<div class="file-card" data-file-id="${f.id}">
             <div class="file-icon ${iconClass}">${ext || '?'}</div>
             <div class="file-info">
+              ${code ? `<div class="file-code">${escapeHtml(code)}</div>` : ''}
               <div class="file-name file-name-editable" title="Clic para renombrar" onclick="startRename('${f.id}', this)">${escapeHtml(displayName)}</div>
               <div class="file-meta">
                 <span>${formatDate(f.createdTime)}</span><span class="file-meta-sep"></span><span>${formatSize(f.size)}</span>
@@ -1600,7 +1603,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
                 </svg></a>` : ''}
-              <button class="file-btn-delete" title="Eliminar" onclick="udDeleteFile('${f.id}', '${escapeHtml(displayName)}')">
+              <button class="file-btn-delete" title="Eliminar" onclick="udDeleteFile('${f.id}', '${escapeHtml(displayName || code)}')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
                 </svg>
@@ -1887,14 +1890,16 @@
         return;
       }
       filesList.innerHTML = files.map(f => {
-        const displayName = f.name || f.driveName || '';
-        const ext = getFileExt(f.driveName || displayName);
+        const displayName = f.name || '';
+        const code = f.driveName || '';
+        const ext = getFileExt(code || displayName);
         const iconClass = getIconClass(ext);
         const docType = f.docType || guessDocType(f.mimeType, ext);
         return `
           <div class="file-card" data-file-id="${f.id}">
             <div class="file-icon ${iconClass}">${ext || '?'}</div>
             <div class="file-info">
+              ${code ? `<div class="file-code">${escapeHtml(code)}</div>` : ''}
               <div class="file-name file-name-editable" title="Clic para renombrar" onclick="startRename('${f.id}', this)">${escapeHtml(displayName)}</div>
               <div class="file-meta">
                 <span>${formatDate(f.createdTime)}</span><span class="file-meta-sep"></span><span>${formatSize(f.size)}</span>
@@ -1906,7 +1911,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
                 </svg></a>` : ''}
-              <button class="file-btn-delete" title="Eliminar" onclick="deleteFile('${f.id}', '${escapeHtml(displayName)}')">
+              <button class="file-btn-delete" title="Eliminar" onclick="deleteFile('${f.id}', '${escapeHtml(displayName || code)}')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
                 </svg>
@@ -2191,12 +2196,15 @@
           return;
         }
         list.innerHTML = entrevistas.map(f => {
-          const ext = getFileExt(f.driveName || f.name);
+          const code = f.driveName || '';
+          const displayName = f.name || '';
+          const ext = getFileExt(code || displayName);
           const iconClass = getIconClass(ext);
           return `<div class="file-card">
             <div class="file-icon ${iconClass}">${ext || '?'}</div>
             <div class="file-info">
-              <div class="file-name">${escapeHtml(f.name)}</div>
+              ${code ? `<div class="file-code">${escapeHtml(code)}</div>` : ''}
+              <div class="file-name">${escapeHtml(displayName)}</div>
               <div class="file-meta">
                 <span>${formatDate(f.createdTime)}</span><span class="file-meta-sep"></span><span>${formatSize(f.size)}</span>
               </div>
