@@ -516,6 +516,19 @@
     .phase-step-name { font-size: 0.85rem; color: var(--text-secondary); transition: color 200ms; }
     .phase-step.completed .phase-step-name, .phase-step.current .phase-step-name { color: var(--clinical-white); }
 
+    /* ── User Detail Tabs ── */
+    .ud-tabs { display: flex; border-bottom: 1px solid var(--border-color); margin: 0 -1.5rem; padding: 0 1.5rem; margin-bottom: 1.5rem; }
+    .ud-tab { padding: 10px 20px; font-family: var(--font-heading); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px; color: var(--text-muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 200ms; }
+    .ud-tab:hover { color: var(--text-secondary); }
+    .ud-tab.active { color: var(--tech-cyan); border-bottom-color: var(--tech-cyan); }
+    .ud-content { display: none; }
+    .ud-content.active { display: block; }
+    .ud-dropzone { border: 2px dashed var(--border-color); border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 250ms; margin-bottom: 1rem; }
+    .ud-dropzone:hover, .ud-dropzone.drag-over { border-color: var(--tech-cyan); background: rgba(49, 190, 239, 0.03); }
+    .ud-dropzone-text { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; }
+    .ud-dropzone-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+    .ud-dropzone svg { width: 32px; height: 32px; color: var(--text-muted); }
+
     /* ── Action badges ── */
     .action-badge { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 0.75rem; font-family: var(--font-heading); font-weight: 600; }
     .action-badge.login { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
@@ -625,6 +638,8 @@
       .apex-container, .profile-container, .entrevistas-container, .analisis-container { padding: 1.25rem; }
       .apex-company-card { grid-template-columns: 1fr; }
       .profile-grid { grid-template-columns: 1fr; }
+      .ud-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -1.25rem; padding: 0 1.25rem; }
+      .ud-tab { padding: 8px 14px; font-size: 0.75rem; white-space: nowrap; }
     }
     @media (max-width: 480px) {
       .welcome-logo { width: 200px; }
@@ -1280,9 +1295,13 @@
       }).join('');
     }
 
-    // ── User Detail ──
+    // ── User Detail (Tabbed) ──
+    let udStagedFiles = [];
+    let udCurrentUserId = null;
+
     async function showUserDetail(userId) {
       selectedUserId = userId;
+      udCurrentUserId = userId;
       document.getElementById('usuarios-list-view').style.display = 'none';
       document.getElementById('usuarios-detail-view').style.display = '';
 
@@ -1319,6 +1338,10 @@
         </div>`
       ).join('');
 
+      const docTypeOptionsHtml = DOC_TYPE_OPTIONS.map(o =>
+        `<option value="${o.value}">${o.label}</option>`
+      ).join('');
+
       container.innerHTML = `
         <div class="user-detail-header">
           <div class="user-detail-avatar">${initials}</div>
@@ -1329,66 +1352,297 @@
           ${user.role !== 'admin' ? `<button class="btn-upload" onclick="viewAsClient(${user.id}, '${escapeHtml(user.nombre || user.empresa || user.email)}')" style="font-size:0.75rem;padding:8px 18px;white-space:nowrap;">Ver como cliente</button>` : ''}
         </div>
 
-        <div class="user-detail-grid">
-          <div>
-            <div class="user-detail-section">
-              <div class="user-detail-section-title">Información</div>
-              ${fieldsHtml}
-              <div style="margin-top:1rem;">
-                <button class="btn-upload" onclick="saveUserDetail(${userId})" style="font-size:0.75rem;padding:8px 18px;">Guardar cambios</button>
+        <div class="ud-tabs">
+          <button class="ud-tab active" onclick="switchUdTab('ud-perfil')">Perfil y proceso</button>
+          <button class="ud-tab" onclick="switchUdTab('ud-docs')">Documentos</button>
+          <button class="ud-tab" onclick="switchUdTab('ud-apex')">Formulario APEX</button>
+          <button class="ud-tab" onclick="switchUdTab('ud-analisis')">Análisis</button>
+        </div>
+
+        <!-- Perfil y proceso -->
+        <div id="ud-perfil" class="ud-content active">
+          <div class="user-detail-grid">
+            <div>
+              <div class="user-detail-section">
+                <div class="user-detail-section-title">Información</div>
+                ${fieldsHtml}
+                <div style="margin-top:1rem;">
+                  <button class="btn-upload" onclick="saveUserDetail(${userId})" style="font-size:0.75rem;padding:8px 18px;">Guardar cambios</button>
+                </div>
               </div>
             </div>
-          </div>
-          <div>
-            <div class="user-detail-section">
-              <div class="user-detail-section-title">Fase del proceso</div>
-              <div class="phase-selector">${phaseSteps}</div>
-              <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.75rem;">Haz clic en una fase para establecer el estado actual</div>
+            <div>
+              <div class="user-detail-section">
+                <div class="user-detail-section-title">Fase del proceso</div>
+                <div class="phase-selector">${phaseSteps}</div>
+                <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.75rem;">Haz clic en una fase para establecer el estado actual</div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="user-detail-section">
-          <div class="user-detail-section-title">Documentos (${user.file_count || 0})</div>
-          <div class="files-list" id="userDetailFiles">
+        <!-- Documentos -->
+        <div id="ud-docs" class="ud-content">
+          <div class="ud-dropzone" id="udDropzone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <p class="ud-dropzone-text">Arrastra archivos aquí o haz clic para seleccionar</p>
+            <p class="ud-dropzone-hint">Máximo 25 MB por archivo</p>
+            <input type="file" id="udFileInput" multiple style="display:none;">
+          </div>
+          <div id="udStagingArea" style="display:none;">
+            <div class="section-divider" style="margin-bottom:0.75rem;">
+              <span class="section-divider-title">Archivos pendientes</span>
+              <div class="section-divider-line"></div>
+            </div>
+            <div class="staging-list" id="udStagingList"></div>
+            <div class="staging-actions">
+              <button type="button" class="btn-upload" id="udBtnUpload">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span>Subir archivos</span>
+              </button>
+              <button type="button" class="btn-clear-staging" onclick="udClearStaging()">Cancelar</button>
+            </div>
+          </div>
+          <div class="upload-status" id="udUploadStatus"></div>
+          <div class="section-divider">
+            <span class="section-divider-title">Archivos subidos</span>
+            <div class="section-divider-line"></div>
+          </div>
+          <div class="files-list" id="udFilesList">
             <div class="files-loading"><span class="spinner light"></span></div>
+          </div>
+        </div>
+
+        <!-- Formulario APEX -->
+        <div id="ud-apex" class="ud-content">
+          <div id="udApexContainer">
+            <div class="files-loading"><span class="spinner light"></span></div>
+          </div>
+        </div>
+
+        <!-- Análisis -->
+        <div id="ud-analisis" class="ud-content">
+          <div class="analisis-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+            <h3>Análisis de flujos y procesos</h3>
+            <p>Esta sección estará disponible próximamente.</p>
           </div>
         </div>
       `;
 
-      // Load user's files
+      // Wire up dropzone
+      initUdDropzone();
+      // Load files and APEX
+      loadUdFiles(userId);
+      loadUdApex(userId);
+    }
+
+    function switchUdTab(tabId) {
+      document.querySelectorAll('.ud-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.ud-content').forEach(c => c.classList.remove('active'));
+      const tab = [...document.querySelectorAll('.ud-tab')].find(t => t.textContent.includes(
+        tabId === 'ud-perfil' ? 'Perfil' : tabId === 'ud-docs' ? 'Documentos' : tabId === 'ud-apex' ? 'APEX' : 'Análisis'
+      ));
+      if (tab) tab.classList.add('active');
+      const content = document.getElementById(tabId);
+      if (content) content.classList.add('active');
+    }
+
+    // ── Admin User Detail: Dropzone ──
+    function initUdDropzone() {
+      const dropzone = document.getElementById('udDropzone');
+      const fileInput = document.getElementById('udFileInput');
+      if (!dropzone || !fileInput) return;
+
+      dropzone.addEventListener('click', () => fileInput.click());
+      dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+      dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('drag-over'); udAddFiles(e.dataTransfer.files); });
+      fileInput.addEventListener('change', (e) => { udAddFiles(e.target.files); e.target.value = ''; });
+
+      document.getElementById('udBtnUpload').addEventListener('click', udUploadFiles);
+    }
+
+    function udAddFiles(fileList) {
+      const status = document.getElementById('udUploadStatus');
+      for (const file of fileList) {
+        if (file.size > 25 * 1024 * 1024) { status.className = 'upload-status error'; status.textContent = `"${file.name}" supera los 25 MB`; continue; }
+        const nameWithoutExt = file.name.replace(/\.[^.]+$/, '');
+        udStagedFiles.push({ file, docType: 'general', displayName: nameWithoutExt });
+      }
+      udRenderStaging();
+    }
+
+    function udRenderStaging() {
+      const area = document.getElementById('udStagingArea');
+      const list = document.getElementById('udStagingList');
+      if (!udStagedFiles.length) { area.style.display = 'none'; return; }
+      area.style.display = 'block';
+      list.innerHTML = udStagedFiles.map((item, idx) => {
+        const ext = getFileExt(item.file.name);
+        const iconClass = getIconClass(ext);
+        const optionsHtml = DOC_TYPE_OPTIONS.map(o =>
+          `<div class="custom-dropdown-option${o.value === item.docType ? ' selected' : ''}" data-value="${o.value}">${o.label}</div>`
+        ).join('');
+        const currentLabel = DOC_TYPE_OPTIONS.find(o => o.value === item.docType)?.label || 'General';
+        return `
+          <div class="staging-item">
+            <div class="file-icon ${iconClass}">${ext || '?'}</div>
+            <div class="staging-item-info">
+              <div class="staging-item-name">${escapeHtml(item.file.name)}</div>
+              <div class="staging-item-size">${formatSize(item.file.size)}</div>
+              <input type="text" class="staging-item-title" placeholder="Título descriptivo" value="${escapeHtml(item.displayName || '')}" onchange="udStagedFiles[${idx}].displayName=this.value" required>
+            </div>
+            <div class="staging-item-type">
+              <div class="custom-dropdown" data-ud-staging-idx="${idx}">
+                <button type="button" class="custom-dropdown-toggle" onclick="toggleStagingDropdown(this)">
+                  <span>${currentLabel}</span>
+                  <svg class="custom-dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="custom-dropdown-menu">${optionsHtml}</div>
+              </div>
+            </div>
+            <button class="staging-item-remove" onclick="udStagedFiles.splice(${idx},1);udRenderStaging();" title="Quitar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>`;
+      }).join('');
+
+      // Wire dropdown clicks for ud staging
+      list.querySelectorAll('.custom-dropdown-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          const dropdown = opt.closest('.custom-dropdown');
+          const idx = parseInt(dropdown.dataset.udStagingIdx);
+          udStagedFiles[idx].docType = opt.dataset.value;
+          dropdown.querySelector('.custom-dropdown-toggle span').textContent = opt.textContent;
+          dropdown.querySelectorAll('.custom-dropdown-option').forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          dropdown.querySelector('.custom-dropdown-menu').classList.remove('open');
+          dropdown.querySelector('.custom-dropdown-toggle').classList.remove('open');
+        });
+      });
+    }
+
+    function udClearStaging() { udStagedFiles = []; udRenderStaging(); document.getElementById('udUploadStatus').textContent = ''; }
+
+    async function udUploadFiles() {
+      if (!udStagedFiles.length) return;
+      const missing = udStagedFiles.some(item => !item.displayName?.trim());
+      if (missing) { document.getElementById('udUploadStatus').className = 'upload-status error'; document.getElementById('udUploadStatus').textContent = 'Todos los archivos necesitan un título descriptivo'; return; }
+      const token = getToken();
+      if (!token) return;
+      const btn = document.getElementById('udBtnUpload');
+      btn.disabled = true;
+      const status = document.getElementById('udUploadStatus');
+      const total = udStagedFiles.length;
+      let uploaded = 0;
+      for (let i = udStagedFiles.length - 1; i >= 0; i--) {
+        const item = udStagedFiles[i];
+        status.className = 'upload-status uploading';
+        status.textContent = `Subiendo ${total - i} de ${total}: "${item.file.name}"...`;
+        try {
+          const formData = new FormData();
+          formData.append('file', item.file);
+          formData.append('docType', item.docType);
+          if (item.displayName) formData.append('displayName', item.displayName);
+          formData.append('userId', udCurrentUserId);
+          const res = await fetch(`${API_BASE}/portal-upload`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData });
+          if (res.ok) { uploaded++; udStagedFiles.splice(i, 1); }
+          else { const data = await res.json(); status.className = 'upload-status error'; status.textContent = `Error: "${item.file.name}" - ${data.error || 'Error'}`; }
+        } catch { status.className = 'upload-status error'; status.textContent = `Error de conexión al subir "${item.file.name}"`; }
+      }
+      btn.disabled = false;
+      udRenderStaging();
+      if (uploaded > 0) {
+        status.className = 'upload-status success';
+        status.textContent = `${uploaded} archivo${uploaded > 1 ? 's' : ''} subido${uploaded > 1 ? 's' : ''} correctamente`;
+        loadUdFiles(udCurrentUserId);
+      }
+    }
+
+    // ── Admin User Detail: Files List ──
+    async function loadUdFiles(userId) {
+      const filesList = document.getElementById('udFilesList');
+      if (!filesList) return;
+      filesList.innerHTML = '<div class="files-loading"><span class="spinner light"></span></div>';
       const token = getToken();
       try {
         const res = await fetch(`${API_BASE}/portal-files?userId=${userId}`, { headers: { 'Authorization': `Bearer ${token}` } });
-        if (res.ok) {
-          const data = await res.json();
-          const filesEl = document.getElementById('userDetailFiles');
-          if (!data.files || !data.files.length) {
-            filesEl.innerHTML = '<div class="files-empty" style="padding:1.5rem;"><div>Sin archivos</div></div>';
-          } else {
-            filesEl.innerHTML = data.files.map(f => {
-              const ext = getFileExt(f.driveName || f.name);
-              const iconClass = getIconClass(ext);
-              return `<div class="file-card">
-                <div class="file-icon ${iconClass}">${ext || '?'}</div>
-                <div class="file-info">
-                  <div class="file-name">${escapeHtml(f.name)}</div>
-                  <div class="file-meta">
-                    <span>${formatDate(f.createdTime)}</span>
-                    <span class="file-meta-sep"></span>
-                    <span>${formatSize(f.size)}</span>
-                  </div>
-                </div>
-                ${f.link ? `<a href="${f.link}" target="_blank" rel="noopener" class="file-link" title="Abrir">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-                  </svg>
-                </a>` : ''}
-              </div>`;
-            }).join('');
-          }
+        if (!res.ok) return;
+        const data = await res.json();
+        const files = data.files || [];
+        if (!files.length) {
+          filesList.innerHTML = '<div class="files-empty" style="padding:1.5rem;"><div>Sin archivos</div></div>';
+          return;
         }
-      } catch {}
+        filesList.innerHTML = files.map(f => {
+          const displayName = f.name || f.driveName || '';
+          const ext = getFileExt(f.driveName || displayName);
+          const iconClass = getIconClass(ext);
+          const docType = f.docType || 'general';
+          return `<div class="file-card" data-file-id="${f.id}">
+            <div class="file-icon ${iconClass}">${ext || '?'}</div>
+            <div class="file-info">
+              <div class="file-name file-name-editable" title="Clic para renombrar" onclick="startRename('${f.id}', this)">${escapeHtml(displayName)}</div>
+              <div class="file-meta">
+                <span>${formatDate(f.createdTime)}</span><span class="file-meta-sep"></span><span>${formatSize(f.size)}</span>
+                ${docType ? `<span class="file-meta-sep"></span><span class="file-type-badge">${DOC_TYPE_LABELS[docType] || docType}</span>` : ''}
+              </div>
+            </div>
+            <div class="file-actions">
+              ${f.link ? `<a href="${f.link}" target="_blank" rel="noopener" class="file-link" title="Abrir">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                </svg></a>` : ''}
+              <button class="file-btn-delete" title="Eliminar" onclick="udDeleteFile('${f.id}', '${escapeHtml(displayName)}')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                </svg>
+              </button>
+            </div>
+          </div>`;
+        }).join('');
+      } catch { filesList.innerHTML = '<div class="files-empty" style="padding:1.5rem;"><div>Error al cargar archivos</div></div>'; }
+    }
+
+    async function udDeleteFile(fileId, fileName) {
+      if (!confirm(`¿Eliminar "${fileName}"?`)) return;
+      const token = getToken();
+      if (!token) return;
+      const status = document.getElementById('udUploadStatus');
+      try {
+        const res = await fetch(`${API_BASE}/portal-files?action=delete&fileId=${fileId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+        if (res.ok) { status.className = 'upload-status success'; status.textContent = `"${fileName}" eliminado`; loadUdFiles(udCurrentUserId); }
+        else { status.className = 'upload-status error'; status.textContent = 'Error al eliminar'; }
+      } catch { status.className = 'upload-status error'; status.textContent = 'Error de conexión'; }
+    }
+
+    // ── Admin User Detail: APEX ──
+    async function loadUdApex(userId) {
+      const container = document.getElementById('udApexContainer');
+      if (!container) return;
+      container.innerHTML = '<div class="files-loading"><span class="spinner light"></span></div>';
+      const token = getToken();
+      try {
+        const res = await fetch(`${API_BASE}/portal-apex-results?userId=${userId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await res.json();
+        if (!data.submission) {
+          container.innerHTML = `<div class="apex-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <div>No hay resultados APEX vinculados a este usuario.</div>
+          </div>`;
+          return;
+        }
+        renderApexResults(data.submission, container);
+      } catch { container.innerHTML = '<div class="apex-empty"><div>Error al cargar resultados APEX</div></div>'; }
     }
 
     async function updateUserPhase(userId, newPhase) {
@@ -1713,7 +1967,7 @@
             method: 'PATCH', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: newName })
           });
-          if (res.ok) { el.textContent = newName; input.replaceWith(el); loadFiles(); }
+          if (res.ok) { el.textContent = newName; input.replaceWith(el); loadFiles(); if (udCurrentUserId) loadUdFiles(udCurrentUserId); }
           else { input.replaceWith(el); uploadStatus.className = 'upload-status error'; uploadStatus.textContent = 'Error al renombrar'; }
         } catch { input.replaceWith(el); }
       }
@@ -1749,8 +2003,8 @@
       } catch { container.innerHTML = '<div class="apex-empty"><div>Error al cargar resultados</div></div>'; }
     }
 
-    function renderApexResults(sub) {
-      const container = document.getElementById('apexContainer');
+    function renderApexResults(sub, targetContainer) {
+      const container = targetContainer || document.getElementById('apexContainer');
       const research = sub.investigacion_empresa || {};
       const empresa = research.empresa || {};
       const pains = sub.pains_finales || sub.pains_detectados_inicial || [];
