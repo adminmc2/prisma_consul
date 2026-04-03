@@ -771,7 +771,7 @@
         <h2 class="panel-title" style="margin-bottom:1.5rem;">Datos personales</h2>
         <div class="profile-status" id="profileStatus"></div>
         <div class="profile-grid" id="profileGrid"></div>
-        <div class="profile-actions">
+        <div class="profile-actions" id="profileActions">
           <button class="btn-upload" onclick="saveProfile()">Guardar cambios</button>
         </div>
       </div>
@@ -1086,10 +1086,27 @@
       switchTab('documentos');
     }
 
+    function viewAsClient(userId, userName) {
+      viewingUserId = userId;
+      document.getElementById('viewingUserName').textContent = userName;
+      document.getElementById('adminViewingBanner').style.display = '';
+      // Hide admin tabs, show user tabs
+      document.querySelectorAll('.panel-tab.admin-only').forEach(t => t.style.display = 'none');
+      document.querySelectorAll('.panel-tab.user-only').forEach(t => t.style.display = 'block');
+      switchTab('apex');
+    }
+
     function stopViewingAs() {
       viewingUserId = null;
       document.getElementById('adminViewingBanner').style.display = 'none';
-      loadFiles();
+      if (isAdmin()) {
+        // Restore admin tabs, hide user tabs
+        document.querySelectorAll('.panel-tab.user-only').forEach(t => t.style.display = 'none');
+        document.querySelectorAll('.panel-tab.admin-only').forEach(t => t.style.display = 'block');
+        switchTab('dashboard');
+      } else {
+        loadFiles();
+      }
     }
 
     // ════════════════════════════════════════
@@ -1305,10 +1322,11 @@
       container.innerHTML = `
         <div class="user-detail-header">
           <div class="user-detail-avatar">${initials}</div>
-          <div>
+          <div style="flex:1;">
             <div class="user-detail-name">${escapeHtml(user.nombre || user.email.split('@')[0])}</div>
             <div class="user-detail-email">${escapeHtml(user.email)} · <span class="role-badge ${user.role}">${user.role}</span></div>
           </div>
+          ${user.role !== 'admin' ? `<button class="btn-upload" onclick="viewAsClient(${user.id}, '${escapeHtml(user.nombre || user.empresa || user.email)}')" style="font-size:0.75rem;padding:8px 18px;white-space:nowrap;">Ver como cliente</button>` : ''}
         </div>
 
         <div class="user-detail-grid">
@@ -1713,7 +1731,9 @@
       const token = getToken();
       if (!token) return;
       try {
-        const res = await fetch(`${API_BASE}/portal-apex-results`, { headers: { 'Authorization': `Bearer ${token}` } });
+        let apexUrl = `${API_BASE}/portal-apex-results`;
+        if (viewingUserId) apexUrl += `?userId=${viewingUserId}`;
+        const res = await fetch(apexUrl, { headers: { 'Authorization': `Bearer ${token}` } });
         if (res.status === 401) { clearSession(); showScreen('screen-login'); return; }
         const data = await res.json();
         if (!data.submission) {
@@ -1828,7 +1848,9 @@
       if (!token) return;
       // Get current user data from session + fresh fetch
       try {
-        const res = await fetch(`${API_BASE}/portal-profile`, { headers: { 'Authorization': `Bearer ${token}` } });
+        let profileUrl = `${API_BASE}/portal-profile`;
+        if (viewingUserId) profileUrl += `?userId=${viewingUserId}`;
+        const res = await fetch(profileUrl, { headers: { 'Authorization': `Bearer ${token}` } });
         if (res.status === 401) { clearSession(); showScreen('screen-login'); return; }
         // If endpoint doesn't exist yet, use session data
         let userData = {};
@@ -1849,13 +1871,15 @@
 
     function renderProfile(user) {
       const grid = document.getElementById('profileGrid');
+      const readOnly = viewingUserId && isAdmin();
       grid.innerHTML = PROFILE_FIELDS.map(f => `
         <div class="profile-field${f.full ? ' full-width' : ''}">
           <label class="profile-label">${f.label}</label>
-          <input class="profile-input" data-field="${f.key}" value="${escapeHtml(user[f.key] || '')}" ${f.readonly ? 'readonly' : ''}>
+          <input class="profile-input" data-field="${f.key}" value="${escapeHtml(user[f.key] || '')}" ${(f.readonly || readOnly) ? 'readonly' : ''}>
         </div>
       `).join('');
       document.getElementById('profileStatus').textContent = '';
+      document.getElementById('profileActions').style.display = readOnly ? 'none' : '';
     }
 
     async function saveProfile() {
@@ -1897,7 +1921,9 @@
       const token = getToken();
       if (!token) return;
       try {
-        const res = await fetch(`${API_BASE}/portal-files`, { headers: { 'Authorization': `Bearer ${token}` } });
+        let entUrl = `${API_BASE}/portal-files`;
+        if (viewingUserId) entUrl += `?userId=${viewingUserId}`;
+        const res = await fetch(entUrl, { headers: { 'Authorization': `Bearer ${token}` } });
         if (res.status === 401) { clearSession(); showScreen('screen-login'); return; }
         const data = await res.json();
         const entrevistas = (data.files || []).filter(f => f.docType === 'entrevista');

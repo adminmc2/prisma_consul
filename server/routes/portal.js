@@ -113,8 +113,10 @@ router.post('/portal-auth', async (req, res) => {
 router.get('/portal-apex-results', auth, async (req, res) => {
   try {
     const sql = getSQL();
-    // Get user's linked apex_submission_id
-    const users = await sql`SELECT apex_submission_id FROM portal_users WHERE id = ${req.user.id}`;
+    // Admin can view another user's APEX results
+    let targetUserId = req.user.id;
+    if (req.query.userId && req.user.role === 'admin') targetUserId = parseInt(req.query.userId);
+    const users = await sql`SELECT apex_submission_id FROM portal_users WHERE id = ${targetUserId}`;
     if (!users.length || !users[0].apex_submission_id) {
       return res.json({ submission: null });
     }
@@ -139,7 +141,10 @@ router.get('/portal-apex-results', auth, async (req, res) => {
 router.get('/portal-profile', auth, async (req, res) => {
   try {
     const sql = getSQL();
-    const rows = await sql`SELECT id, email, nombre, empresa, rfc, direccion, ciudad, cp, telefono, contacto_principal, cargo, sector FROM portal_users WHERE id = ${req.user.id}`;
+    // Admin can view another user's profile
+    let targetUserId = req.user.id;
+    if (req.query.userId && req.user.role === 'admin') targetUserId = parseInt(req.query.userId);
+    const rows = await sql`SELECT id, email, nombre, empresa, rfc, direccion, ciudad, cp, telefono, contacto_principal, cargo, sector FROM portal_users WHERE id = ${targetUserId}`;
     if (!rows.length) return res.status(404).json({ error: 'Usuario no encontrado' });
     res.json({ user: rows[0] });
   } catch (error) {
