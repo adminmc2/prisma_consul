@@ -1001,7 +1001,15 @@
     }
 
     // ── Init ──
-    function init() { if (getToken()) showPanel(); }
+    function init() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('login')) {
+        clearSession();
+        history.replaceState(null, '', window.location.pathname);
+        return;
+      }
+      if (getToken()) showPanel();
+    }
 
     // ── LOGIN ──
     const loginForm = document.getElementById('loginForm');
