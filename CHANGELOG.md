@@ -2,6 +2,35 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-04] — v3.2.0
+
+### Frontend — PRISMA Hub (portal completo)
+- **5 pestañas de cliente** — Formulario APEX, Datos personales, Documentos, Entrevistas, Análisis de flujos y procesos
+- **Formulario APEX** — visualización de resultados vinculados al usuario (empresa, dolores aceptados/rechazados, plan)
+- **Datos personales** — edición de perfil por el propio usuario, vista de solo lectura para admin
+- **Documentos** — subida con título descriptivo obligatorio, nomenclatura sistemática automática (`prefijo_001.pdf`)
+- **Entrevistas** — pestaña dedicada que filtra archivos con `doc_type = 'entrevista'`
+- **Análisis** — placeholder para web en construcción
+- **Código y nombre separados** — el código de archivo (ej. `armc_001.pdf`) se muestra como etiqueta cyan no editable, el nombre descriptivo es editable
+- **Admin: detalle de usuario con 4 sub-pestañas** — Perfil y proceso, Documentos (con subida), Formulario APEX, Análisis
+- **Admin: "Ver como cliente"** — vista de solo lectura del portal desde la perspectiva del cliente
+- **Enlace PRISMA Hub en navegación** — acceso directo desde el menú principal de la web
+
+### Backend
+- **GET /api/portal-apex-results** — devuelve resultados APEX vinculados al usuario (soporta `?userId=X` para admin)
+- **GET /api/portal-profile** — datos de perfil del usuario (soporta `?userId=X` para admin)
+- **PATCH /api/portal-profile** — edición de perfil por el propio usuario (campos limitados, sin role/phase)
+- **Upload mejorado** — `display_name` almacena título descriptivo, `file_name` almacena nombre sistemático, `drive_file_id` almacena ID real de Google Drive
+- **Rename** — solo actualiza `display_name` en BD, no modifica el nombre en Drive
+
+### Base de datos
+- Columna `display_name` en `portal_files` para nombre descriptivo
+- Columna `apex_submission_id` en `portal_users` para vincular resultados APEX
+- 46 archivos migrados a nomenclatura sistemática (`prefijo_secuencia.ext`)
+- Nombres descriptivos recuperados desde `originalFilename` de Google Drive
+
+---
+
 ## [2026-04-02] — v3.1.0
 
 ### Backend
