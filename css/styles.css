@@ -439,10 +439,6 @@ h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
 }
 
 
-/* PRISMA Hub nav link accent */
-.header__nav-hub {
-  color: var(--tech-cyan) !important;
-}
 
 .header__cta-dot {
   width: 8px;
