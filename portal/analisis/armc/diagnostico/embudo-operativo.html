@@ -288,5 +288,25 @@
     </div>
 
   </div>
+  <!-- Zoom Controls -->
+  <div class="zoom-toolbar">
+    <button onclick="zoomOut()" title="Alejar"><i class="ph ph-minus"></i></button>
+    <span id="zoomLevel" class="zoom-level">100%</span>
+    <button onclick="zoomIn()" title="Acercar"><i class="ph ph-plus"></i></button>
+    <button onclick="toggleFullscreen()" title="Pantalla completa"><i class="ph ph-arrows-out"></i></button>
+  </div>
+  <style>
+    .zoom-toolbar { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; gap: 0.4rem; z-index: 100; align-items: center; }
+    .zoom-toolbar button { width: 36px; height: 36px; border-radius: 8px; border: 1px solid rgba(49,190,239,0.3); background: rgba(26,37,53,0.95); color: #31BEEF; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all 200ms; backdrop-filter: blur(8px); }
+    .zoom-toolbar button:hover { background: #31BEEF; color: #101B2C; }
+    .zoom-level { color: #A1B8F2; font-size: 0.72rem; font-family: 'Quicksand', sans-serif; font-weight: 700; min-width: 38px; text-align: center; }
+  </style>
+  <script>
+    let zl = 100;
+    function zoomIn() { zl = Math.min(zl + 20, 200); applyZoom(); }
+    function zoomOut() { zl = Math.max(zl - 20, 60); applyZoom(); }
+    function applyZoom() { document.body.style.zoom = zl / 100; document.getElementById('zoomLevel').textContent = zl + '%'; }
+    function toggleFullscreen() { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(()=>{}); }
+  </script>
 </body>
 </html>
