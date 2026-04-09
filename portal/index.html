@@ -2298,7 +2298,7 @@
     // ── ANÁLISIS TAB ──
     const ANALISIS_SECTIONS = [
       { id: 'roles', title: 'Análisis por roles', icon: 'ph ph-users-three', desc: '7 flujos operativos analizados por rol' },
-      { id: 'diagnostico', title: 'Diagnóstico integrado', icon: 'ph ph-chart-line-up', desc: 'Hallazgos, matriz D1-D4, fricciones, embudo y cadena causal' }
+      { id: 'diagnostico', title: 'Diagnóstico integrado', icon: 'ph ph-heartbeat', desc: 'Hallazgos, matriz D1-D4, fricciones, embudo y cadena causal' }
     ];
 
     const ANALISIS_ROLES = [
@@ -2334,32 +2334,25 @@
       `).join('');
     }
 
+    const ANALISIS_SECTION_MAP = {
+      roles: { items: () => ANALISIS_ROLES, path: ANALISIS_BASE_PATH, title: 'Análisis por roles' },
+      diagnostico: { items: () => ANALISIS_DIAGNOSTICO, path: ANALISIS_DIAGNOSTICO_PATH, title: 'Diagnóstico integrado' }
+    };
+
     function analisisOpenSection(sectionId) {
-      if (sectionId === 'roles') {
-        const grid = document.getElementById('analisisRolesGrid');
-        grid.innerHTML = ANALISIS_ROLES.map(r => `
-          <div class="analisis-role-card" onclick="analisisOpenRole('${r.id}')">
-            <div class="role-icon"><i class="${r.icon}"></i></div>
-            <h3>${r.title}</h3>
-            <p>${r.desc}</p>
-          </div>
-        `).join('');
-        document.getElementById('analisisSectionTitle').textContent = 'Análisis por roles';
-        document.getElementById('analisis-sections').style.display = 'none';
-        document.getElementById('analisis-roles').style.cssText = '';
-      } else if (sectionId === 'diagnostico') {
-        const grid = document.getElementById('analisisRolesGrid');
-        grid.innerHTML = ANALISIS_DIAGNOSTICO.map(r => `
-          <div class="analisis-role-card" onclick="analisisOpenDiag('${r.id}')">
-            <div class="role-icon"><i class="${r.icon}"></i></div>
-            <h3>${r.title}</h3>
-            <p>${r.desc}</p>
-          </div>
-        `).join('');
-        document.getElementById('analisisSectionTitle').textContent = 'Diagnóstico integrado';
-        document.getElementById('analisis-sections').style.display = 'none';
-        document.getElementById('analisis-roles').style.cssText = '';
-      }
+      const section = ANALISIS_SECTION_MAP[sectionId];
+      if (!section) return;
+      const grid = document.getElementById('analisisRolesGrid');
+      grid.innerHTML = section.items().map(r => `
+        <div class="analisis-role-card" onclick="analisisOpenItem('${r.id}', '${sectionId}')">
+          <div class="role-icon"><i class="${r.icon}"></i></div>
+          <h3>${r.title}</h3>
+          <p>${r.desc}</p>
+        </div>
+      `).join('');
+      document.getElementById('analisisSectionTitle').textContent = section.title;
+      document.getElementById('analisis-sections').style.display = 'none';
+      document.getElementById('analisis-roles').style.cssText = '';
     }
 
     function analisisShowSections() {
@@ -2375,19 +2368,12 @@
       document.getElementById('analisisIframe').src = 'about:blank';
     }
 
-    function analisisOpenRole(roleId) {
-      const role = ANALISIS_ROLES.find(r => r.id === roleId);
-      if (!role) return;
-      document.getElementById('analisisIframe').src = ANALISIS_BASE_PATH + role.file;
-      document.getElementById('analisisViewerTitle').textContent = role.title;
-      document.getElementById('analisis-roles').style.display = 'none';
-      document.getElementById('analisis-viewer').style.cssText = '';
-    }
-
-    function analisisOpenDiag(diagId) {
-      const item = ANALISIS_DIAGNOSTICO.find(r => r.id === diagId);
+    function analisisOpenItem(itemId, sectionId) {
+      const section = ANALISIS_SECTION_MAP[sectionId];
+      if (!section) return;
+      const item = section.items().find(r => r.id === itemId);
       if (!item) return;
-      document.getElementById('analisisIframe').src = ANALISIS_DIAGNOSTICO_PATH + item.file;
+      document.getElementById('analisisIframe').src = section.path + item.file;
       document.getElementById('analisisViewerTitle').textContent = item.title;
       document.getElementById('analisis-roles').style.display = 'none';
       document.getElementById('analisis-viewer').style.cssText = '';
@@ -2407,31 +2393,19 @@
     }
 
     function udAnalisisOpenSection(sectionId) {
-      if (sectionId === 'roles') {
-        const grid = document.getElementById('udAnalisisRolesGrid');
-        grid.innerHTML = ANALISIS_ROLES.map(r => `
-          <div class="analisis-role-card" onclick="udAnalisisOpenRole('${r.id}')">
-            <div class="role-icon"><i class="${r.icon}"></i></div>
-            <h3>${r.title}</h3>
-            <p>${r.desc}</p>
-          </div>
-        `).join('');
-        document.getElementById('udAnalisisSectionTitle').textContent = 'Análisis por roles';
-        document.getElementById('ud-analisis-sections').style.display = 'none';
-        document.getElementById('ud-analisis-roles').style.cssText = '';
-      } else if (sectionId === 'diagnostico') {
-        const grid = document.getElementById('udAnalisisRolesGrid');
-        grid.innerHTML = ANALISIS_DIAGNOSTICO.map(r => `
-          <div class="analisis-role-card" onclick="udAnalisisOpenDiag('${r.id}')">
-            <div class="role-icon"><i class="${r.icon}"></i></div>
-            <h3>${r.title}</h3>
-            <p>${r.desc}</p>
-          </div>
-        `).join('');
-        document.getElementById('udAnalisisSectionTitle').textContent = 'Diagnóstico integrado';
-        document.getElementById('ud-analisis-sections').style.display = 'none';
-        document.getElementById('ud-analisis-roles').style.cssText = '';
-      }
+      const section = ANALISIS_SECTION_MAP[sectionId];
+      if (!section) return;
+      const grid = document.getElementById('udAnalisisRolesGrid');
+      grid.innerHTML = section.items().map(r => `
+        <div class="analisis-role-card" onclick="udAnalisisOpenItem('${r.id}', '${sectionId}')">
+          <div class="role-icon"><i class="${r.icon}"></i></div>
+          <h3>${r.title}</h3>
+          <p>${r.desc}</p>
+        </div>
+      `).join('');
+      document.getElementById('udAnalisisSectionTitle').textContent = section.title;
+      document.getElementById('ud-analisis-sections').style.display = 'none';
+      document.getElementById('ud-analisis-roles').style.cssText = '';
     }
 
     function udAnalisisShowSections() {
@@ -2447,19 +2421,12 @@
       document.getElementById('udAnalisisIframe').src = 'about:blank';
     }
 
-    function udAnalisisOpenRole(roleId) {
-      const role = ANALISIS_ROLES.find(r => r.id === roleId);
-      if (!role) return;
-      document.getElementById('udAnalisisIframe').src = ANALISIS_BASE_PATH + role.file;
-      document.getElementById('udAnalisisViewerTitle').textContent = role.title;
-      document.getElementById('ud-analisis-roles').style.display = 'none';
-      document.getElementById('ud-analisis-viewer').style.cssText = '';
-    }
-
-    function udAnalisisOpenDiag(diagId) {
-      const item = ANALISIS_DIAGNOSTICO.find(r => r.id === diagId);
+    function udAnalisisOpenItem(itemId, sectionId) {
+      const section = ANALISIS_SECTION_MAP[sectionId];
+      if (!section) return;
+      const item = section.items().find(r => r.id === itemId);
       if (!item) return;
-      document.getElementById('udAnalisisIframe').src = ANALISIS_DIAGNOSTICO_PATH + item.file;
+      document.getElementById('udAnalisisIframe').src = section.path + item.file;
       document.getElementById('udAnalisisViewerTitle').textContent = item.title;
       document.getElementById('ud-analisis-roles').style.display = 'none';
       document.getElementById('ud-analisis-viewer').style.cssText = '';
