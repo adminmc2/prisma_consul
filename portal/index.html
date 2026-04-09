@@ -604,16 +604,18 @@
     .entrevistas-empty svg { width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.4; }
 
     /* ── Análisis Tab ── */
-    .analisis-container { max-width: 900px; margin: 0 auto; padding: 2rem; }
-    .analisis-roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
-    .analisis-role-card {
+    .analisis-container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+    .analisis-sections-grid, .analisis-roles-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .analisis-section-card, .analisis-role-card {
       background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px;
       padding: 1.25rem; cursor: pointer; transition: all 300ms ease; text-align: center;
     }
-    .analisis-role-card:hover { border-color: var(--tech-cyan); transform: translateY(-4px); box-shadow: 0 8px 24px var(--accent-glow); }
-    .analisis-role-card .role-icon { font-size: 1.75rem; color: var(--tech-cyan); margin-bottom: 0.5rem; }
-    .analisis-role-card h3 { font-family: var(--font-heading); font-size: 0.95rem; color: var(--clinical-white); margin-bottom: 0.35rem; }
-    .analisis-role-card p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
+    .analisis-section-card:hover, .analisis-role-card:hover { border-color: var(--tech-cyan); transform: translateY(-4px); box-shadow: 0 8px 24px var(--accent-glow); }
+    .analisis-section-card .section-icon, .analisis-role-card .role-icon { font-size: 1.75rem; color: var(--tech-cyan); margin-bottom: 0.5rem; }
+    .analisis-section-card h3, .analisis-role-card h3 { font-family: var(--font-heading); font-size: 0.95rem; color: var(--clinical-white); margin-bottom: 0.35rem; }
+    .analisis-section-card p, .analisis-role-card p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
+    @media (max-width: 900px) { .analisis-sections-grid, .analisis-roles-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .analisis-sections-grid, .analisis-roles-grid { grid-template-columns: 1fr; } }
     .analisis-viewer-topbar {
       display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1.5rem;
       border-bottom: 1px solid var(--border-color); flex-shrink: 0;
@@ -900,14 +902,27 @@
 
     <!-- TAB: Análisis de flujos y procesos (user) -->
     <div id="tab-analisis" style="display:none;flex-direction:column;flex:1;min-height:0;">
-      <div id="analisis-grid" class="analisis-container" style="overflow-y:auto;flex:1;">
+      <!-- Capa 1: Secciones temáticas -->
+      <div id="analisis-sections" class="analisis-container" style="overflow-y:auto;flex:1;">
         <h2 style="font-family:var(--font-heading);font-size:1.2rem;color:var(--clinical-white);margin-bottom:0.3rem;">Análisis de flujos y procesos</h2>
-        <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1.5rem;">Selecciona un rol para ver su diagrama de flujo operativo</p>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1.5rem;">Selecciona una sección para explorar</p>
+        <div class="analisis-sections-grid" id="analisisSectionsGrid"></div>
+      </div>
+      <!-- Capa 2: Roles (dentro de sección) -->
+      <div id="analisis-roles" class="analisis-container" style="display:none;overflow-y:auto;flex:1;">
+        <div class="analisis-viewer-topbar" style="padding:0;border:none;margin-bottom:1rem;">
+          <button class="analisis-back-btn" onclick="analisisShowSections()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Volver
+          </button>
+          <span class="analisis-viewer-title" id="analisisSectionTitle"></span>
+        </div>
         <div class="analisis-roles-grid" id="analisisRolesGrid"></div>
       </div>
+      <!-- Capa 3: Visor iframe -->
       <div id="analisis-viewer" style="display:none;flex-direction:column;flex:1;min-height:0;">
         <div class="analisis-viewer-topbar">
-          <button class="analisis-back-btn" onclick="analisisShowGrid()">
+          <button class="analisis-back-btn" onclick="analisisShowRoles()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             Volver a roles
           </button>
@@ -1114,7 +1129,7 @@
       if (tabName === 'apex') loadApexResults();
       if (tabName === 'perfil') loadProfile();
       if (tabName === 'entrevistas') loadEntrevistas();
-      if (tabName === 'analisis') { analisisShowGrid(); loadAnalisis(); }
+      if (tabName === 'analisis') { analisisShowSections(); loadAnalisis(); }
     }
 
     // ── LOGOUT ──
@@ -1462,13 +1477,23 @@
 
         <!-- Análisis -->
         <div id="ud-analisis" class="ud-content" style="display:none;flex-direction:column;min-height:400px;">
-          <div id="ud-analisis-grid" class="analisis-container" style="overflow-y:auto;flex:1;">
-            <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">Selecciona un rol para ver su diagrama de flujo operativo</p>
+          <div id="ud-analisis-sections" class="analisis-container" style="overflow-y:auto;flex:1;">
+            <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">Selecciona una sección para explorar</p>
+            <div class="analisis-sections-grid" id="udAnalisisSectionsGrid"></div>
+          </div>
+          <div id="ud-analisis-roles" class="analisis-container" style="display:none;overflow-y:auto;flex:1;">
+            <div class="analisis-viewer-topbar" style="padding:0;border:none;margin-bottom:1rem;">
+              <button class="analisis-back-btn" onclick="udAnalisisShowSections()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Volver
+              </button>
+              <span class="analisis-viewer-title" id="udAnalisisSectionTitle"></span>
+            </div>
             <div class="analisis-roles-grid" id="udAnalisisRolesGrid"></div>
           </div>
           <div id="ud-analisis-viewer" style="display:none;flex-direction:column;flex:1;min-height:0;">
             <div class="analisis-viewer-topbar">
-              <button class="analisis-back-btn" onclick="udAnalisisShowGrid()">
+              <button class="analisis-back-btn" onclick="udAnalisisShowRoles()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                 Volver a roles
               </button>
@@ -1496,7 +1521,7 @@
       const content = document.getElementById(tabId);
       if (content) {
         content.classList.add('active');
-        if (tabId === 'ud-analisis') { content.style.display = 'flex'; udAnalisisShowGrid(); loadUdAnalisis(); }
+        if (tabId === 'ud-analisis') { content.style.display = 'flex'; udAnalisisShowSections(); loadUdAnalisis(); }
       }
       // Hide analisis when switching away
       if (tabId !== 'ud-analisis') {
@@ -2269,6 +2294,10 @@
     }
 
     // ── ANÁLISIS TAB ──
+    const ANALISIS_SECTIONS = [
+      { id: 'roles', title: 'Análisis por roles', icon: 'ph ph-users-three', desc: '7 flujos operativos analizados por rol' }
+    ];
+
     const ANALISIS_ROLES = [
       { id: 'atencion-paciente', file: 'flujo-atención-paciente.html', title: 'Atención al Paciente', icon: 'ph ph-user', desc: 'Captación, conversión, seguimiento y reportes' },
       { id: 'cirujano', file: 'flujo-cirujano.html', title: 'Cirujano', icon: 'ph ph-stethoscope', desc: 'Evaluación, procedimiento y seguimiento post' },
@@ -2280,50 +2309,106 @@
     ];
     const ANALISIS_BASE_PATH = '/portal/analisis/armc/diagramas/';
 
-    function renderAnalisisCards(containerId) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-      container.innerHTML = ANALISIS_ROLES.map(r => `
-        <div class="analisis-role-card" onclick="${containerId === 'udAnalisisRolesGrid' ? 'udAnalisisOpenRole' : 'analisisOpenRole'}('${r.id}')">
-          <div class="role-icon"><i class="${r.icon}"></i></div>
-          <h3>${r.title}</h3>
-          <p>${r.desc}</p>
+    // ── Client: Análisis Tab (3 capas) ──
+    function loadAnalisis() {
+      const grid = document.getElementById('analisisSectionsGrid');
+      if (!grid) return;
+      grid.innerHTML = ANALISIS_SECTIONS.map(s => `
+        <div class="analisis-section-card" onclick="analisisOpenSection('${s.id}')">
+          <div class="section-icon"><i class="${s.icon}"></i></div>
+          <h3>${s.title}</h3>
+          <p>${s.desc}</p>
         </div>
       `).join('');
     }
 
-    function loadAnalisis() { renderAnalisisCards('analisisRolesGrid'); }
+    function analisisOpenSection(sectionId) {
+      if (sectionId === 'roles') {
+        const grid = document.getElementById('analisisRolesGrid');
+        grid.innerHTML = ANALISIS_ROLES.map(r => `
+          <div class="analisis-role-card" onclick="analisisOpenRole('${r.id}')">
+            <div class="role-icon"><i class="${r.icon}"></i></div>
+            <h3>${r.title}</h3>
+            <p>${r.desc}</p>
+          </div>
+        `).join('');
+        document.getElementById('analisisSectionTitle').textContent = 'Análisis por roles';
+        document.getElementById('analisis-sections').style.display = 'none';
+        document.getElementById('analisis-roles').style.display = '';
+      }
+    }
+
+    function analisisShowSections() {
+      document.getElementById('analisis-viewer').style.display = 'none';
+      document.getElementById('analisis-roles').style.display = 'none';
+      document.getElementById('analisis-sections').style.display = '';
+      document.getElementById('analisisIframe').src = 'about:blank';
+    }
+
+    function analisisShowRoles() {
+      document.getElementById('analisis-viewer').style.display = 'none';
+      document.getElementById('analisis-roles').style.display = '';
+      document.getElementById('analisisIframe').src = 'about:blank';
+    }
 
     function analisisOpenRole(roleId) {
       const role = ANALISIS_ROLES.find(r => r.id === roleId);
       if (!role) return;
       document.getElementById('analisisIframe').src = ANALISIS_BASE_PATH + role.file;
       document.getElementById('analisisViewerTitle').textContent = role.title;
-      document.getElementById('analisis-grid').style.display = 'none';
+      document.getElementById('analisis-roles').style.display = 'none';
       document.getElementById('analisis-viewer').style.display = 'flex';
     }
 
-    function analisisShowGrid() {
-      document.getElementById('analisis-viewer').style.display = 'none';
-      document.getElementById('analisis-grid').style.display = '';
-      document.getElementById('analisisIframe').src = 'about:blank';
+    // ── Admin: User Detail Análisis (3 capas) ──
+    function loadUdAnalisis() {
+      const grid = document.getElementById('udAnalisisSectionsGrid');
+      if (!grid) return;
+      grid.innerHTML = ANALISIS_SECTIONS.map(s => `
+        <div class="analisis-section-card" onclick="udAnalisisOpenSection('${s.id}')">
+          <div class="section-icon"><i class="${s.icon}"></i></div>
+          <h3>${s.title}</h3>
+          <p>${s.desc}</p>
+        </div>
+      `).join('');
     }
 
-    function loadUdAnalisis() { renderAnalisisCards('udAnalisisRolesGrid'); }
+    function udAnalisisOpenSection(sectionId) {
+      if (sectionId === 'roles') {
+        const grid = document.getElementById('udAnalisisRolesGrid');
+        grid.innerHTML = ANALISIS_ROLES.map(r => `
+          <div class="analisis-role-card" onclick="udAnalisisOpenRole('${r.id}')">
+            <div class="role-icon"><i class="${r.icon}"></i></div>
+            <h3>${r.title}</h3>
+            <p>${r.desc}</p>
+          </div>
+        `).join('');
+        document.getElementById('udAnalisisSectionTitle').textContent = 'Análisis por roles';
+        document.getElementById('ud-analisis-sections').style.display = 'none';
+        document.getElementById('ud-analisis-roles').style.display = '';
+      }
+    }
+
+    function udAnalisisShowSections() {
+      document.getElementById('ud-analisis-viewer').style.display = 'none';
+      document.getElementById('ud-analisis-roles').style.display = 'none';
+      document.getElementById('ud-analisis-sections').style.display = '';
+      document.getElementById('udAnalisisIframe').src = 'about:blank';
+    }
+
+    function udAnalisisShowRoles() {
+      document.getElementById('ud-analisis-viewer').style.display = 'none';
+      document.getElementById('ud-analisis-roles').style.display = '';
+      document.getElementById('udAnalisisIframe').src = 'about:blank';
+    }
 
     function udAnalisisOpenRole(roleId) {
       const role = ANALISIS_ROLES.find(r => r.id === roleId);
       if (!role) return;
       document.getElementById('udAnalisisIframe').src = ANALISIS_BASE_PATH + role.file;
       document.getElementById('udAnalisisViewerTitle').textContent = role.title;
-      document.getElementById('ud-analisis-grid').style.display = 'none';
+      document.getElementById('ud-analisis-roles').style.display = 'none';
       document.getElementById('ud-analisis-viewer').style.display = 'flex';
-    }
-
-    function udAnalisisShowGrid() {
-      document.getElementById('ud-analisis-viewer').style.display = 'none';
-      document.getElementById('ud-analisis-grid').style.display = '';
-      document.getElementById('udAnalisisIframe').src = 'about:blank';
     }
 
     // ── Helpers ──
