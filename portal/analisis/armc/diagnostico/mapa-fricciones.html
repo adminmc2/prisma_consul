@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa de Fricciones — ARMC Diagnóstico Integrado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #101B2C; color: #FAF9F6; font-family: 'Source Sans 3', sans-serif; font-weight: 300; line-height: 1.6; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+    h1 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 2rem; color: #FAF9F6; margin-bottom: 0.25rem; }
+    h2 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1.35rem; color: #31BEEF; margin: 2.5rem 0 1rem; }
+    h3 { font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 1.05rem; margin: 1.5rem 0 0.75rem; }
+    .subtitle { color: #A1B8F2; font-size: 1rem; margin-bottom: 2rem; }
+    .badge { display: inline-block; padding: 0.35rem 0.85rem; background: rgba(153,78,149,0.15); border: 1px solid #994E95; color: #994E95; border-radius: 20px; font-size: 0.8rem; font-weight: 600; font-family: 'Quicksand', sans-serif; margin-bottom: 1.5rem; }
+
+    /* Friction cards */
+    .friction-transversal { background: #1a2535; border-left: 4px solid #ff4444; border-radius: 0 12px 12px 0; padding: 1.25rem 1.5rem; margin-bottom: 1rem; position: relative; }
+    .friction-transversal .ft-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .friction-transversal .ft-icon { color: #ff4444; font-size: 1.1rem; }
+    .friction-transversal .ft-title { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1rem; color: #ff4444; }
+    .friction-transversal .ft-count { margin-left: auto; background: rgba(255,68,68,0.12); color: #ff4444; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; font-family: 'Quicksand', sans-serif; }
+    .friction-transversal p { color: #A1B8F2; font-size: 0.9rem; margin-bottom: 0.4rem; }
+    .friction-transversal .roles-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+    .role-chip { padding: 0.15rem 0.5rem; background: rgba(49,190,239,0.08); border: 1px solid rgba(49,190,239,0.2); border-radius: 12px; font-size: 0.72rem; color: #31BEEF; font-weight: 600; font-family: 'Quicksand', sans-serif; }
+
+    /* Role-specific section */
+    .role-section { margin-bottom: 2rem; }
+    .role-header { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1rem; background: #1a2535; border-radius: 8px; margin-bottom: 0.75rem; border: 1px solid rgba(49,190,239,0.15); }
+    .role-header i { color: #31BEEF; font-size: 1.1rem; }
+    .role-header .role-name { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1rem; color: #FAF9F6; }
+    .role-header .role-person { color: #A1B8F2; font-size: 0.85rem; margin-left: auto; }
+
+    .friction-specific { background: rgba(153,78,149,0.05); border-left: 3px solid #994E95; border-radius: 0 8px 8px 0; padding: 0.85rem 1rem; margin-bottom: 0.6rem; }
+    .friction-specific .fs-title { font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.9rem; color: #994E95; margin-bottom: 0.25rem; }
+    .friction-specific p { color: #A1B8F2; font-size: 0.85rem; margin: 0; }
+
+    /* Quote */
+    .quote { background: #1a2535; border-left: 4px solid #994E95; border-radius: 0 8px 8px 0; padding: 0.85rem 1rem; margin: 0.5rem 0; }
+    .quote-text { font-style: italic; color: #A1B8F2; font-size: 0.9rem; }
+    .quote-source { color: #994E95; font-size: 0.78rem; font-weight: 600; margin-top: 0.25rem; }
+
+    /* Summary bar */
+    .summary-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 2rem 0; }
+    .summary-item { background: #1a2535; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid rgba(49,190,239,0.1); }
+    .summary-num { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 2rem; color: #ff4444; }
+    .summary-num.violet { color: #994E95; }
+    .summary-num.cyan { color: #31BEEF; }
+    .summary-label { color: #A1B8F2; font-size: 0.8rem; margin-top: 0.25rem; }
+
+    /* Note */
+    .note { background: rgba(49,190,239,0.05); border: 1px solid rgba(49,190,239,0.15); border-radius: 8px; padding: 1rem 1.25rem; margin-top: 2rem; font-size: 0.9rem; color: #A1B8F2; }
+    .note strong { color: #31BEEF; }
+
+    @media (max-width: 768px) {
+      .summary-bar { grid-template-columns: 1fr; }
+      h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="badge"><i class="ph ph-fire"></i> Diagnóstico Integrado</div>
+    <h1>Mapa de Fricciones</h1>
+    <p class="subtitle">Fricciones transversales (confirmadas por múltiples roles) y fricciones específicas por rol</p>
+
+    <div class="summary-bar">
+      <div class="summary-item">
+        <div class="summary-num">8</div>
+        <div class="summary-label">Fricciones transversales</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num violet">42+</div>
+        <div class="summary-label">Fricciones expresadas total</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-num cyan">7/7</div>
+        <div class="summary-label">Roles con D1 dominante</div>
+      </div>
+    </div>
+
+    <!-- TRANSVERSALES -->
+    <h2><i class="ph ph-arrows-merge" style="color:#ff4444"></i> Fricciones transversales</h2>
+    <p style="color:#A1B8F2; margin-bottom:1.25rem;">Problemas confirmados de forma independiente por 3 o más roles — representan fallas sistémicas, no individuales.</p>
+
+    <div class="friction-transversal">
+      <div class="ft-header">
+        <i class="ph ph-desktop-tower ft-icon"></i>
+        <span class="ft-title">Cero software en toda la operación</span>
+        <span class="ft-count">7 roles</span>
+      </div>
+      <p>No existe un solo sistema digital operativo. Todo funciona con papel, WhatsApp, memoria y Excel manual. Una agenda digital pagada lleva meses sin usarse.</p>
+      <div class="roles-list">
+        <span class="role-chip">Atención</span>
+        <span class="role-chip">Cirujano</span>
+        <span class="role-chip">Enfermero</span>
+        <span class="role-chip">Cosmiatra</span>
+        <span class="role-chip">Ayudante</span>
+        <span class="role-chip">Tricología</span>
+        <span class="role-chip">CEO</span>
+      </div>
+    </div>
+
+    <div class="friction-transversal">
+      <div class="ft-header">
+        <i class="ph ph-brain ft-icon"></i>
+        <span class="ft-title">Memoria humana como sistema de información</span>
+        <span class="ft-count">6 roles</span>
+      </div>
+      <p>Material preparado de memoria, revisiones sin agendar, cobros con inseguridad, seguimiento basado en fechas recordadas. Cuando alguien falta, la información se pierde.</p>
+      <div class="roles-list">
+        <span class="role-chip">Atención</span>
+        <span class="role-chip">Enfermero</span>
+        <span class="role-chip">Cosmiatra</span>
+        <span class="role-chip">Ayudante</span>
+        <span class="role-chip">Tricología</span>
+        <span class="role-chip">CEO</span>
+      </div>
+    </div>
+
+    <div class="friction-transversal">
+      <div class="ft-header">
+        <i class="ph ph-calendar-x ft-icon"></i>
+        <span class="ft-title">Reuniones solo reactivas — sin agenda ni follow-up</span>
+        <span class="ft-count">6 roles</span>
+      </div>
+      <p>"Solamente cuando pasa algo malo es cuando se hacen juntas." No hay coordinación proactiva, no hay minutas, no hay seguimiento de acuerdos.</p>
+      <div class="roles-list">
+        <span class="role-chip">Cirujano</span>
+        <span class="role-chip">Enfermero</span>
+        <span class="role-chip">Cosmiatra</span>
+        <span class="role-chip">Ayudante</span>
+        <span class="role-chip">Tricología</span>
+        <span class="role-chip">CEO</span>
+      </div>
+    </div>
+
+    <div class="friction-transversal">
+      <div class="ft-header">
+        <i class="ph ph-camera ft-icon"></i>
+        <span class="ft-title">Fotos clínicas dispersas en dispositivos personales</span>
+        <span class="ft-count">5 roles</span>
+      </div>
+      <p>Evidencia clínica en 4+ teléfonos personales sin sistema, sin respaldo, sin organización por paciente. Fotos post casi inexistentes.</p>
+      <div class="roles-list">
+        <span class="role-chip">Cirujano</span>
+        <span class="role-chip">Enfermero</span>
+        <span class="role-chip">Cosmiatra</span>
+        <span class="role-chip">Ayudante</span>
+        <span class="role-chip">Tricología</span>
+      </div>
+    </div>
+
+    <div class="friction-transversal">
+      <div class="ft-header">
+        <i class="ph ph-users ft-icon"></i>
+        <span class="ft-title">"Todos hacen de todo" — roles difusos</span>
+        <span class="ft-count">5 roles</span>
+      </div>
+      <p>No hay delimitación clara de funciones. Cuando alguien está ocupado, otro absorbe sus tareas sin protocolo ni capacitación.</p>
+      <div class="roles-list">
+        <span class="role-chip">Enfermero</span>
+        <span class="role-chip">Cosmiatra</span>
+        <span class="role-chip">Ayudante</span>
+        <span class="role-chip">Tricología</span>
+        <span class="role-chip">CEO</span>
+      </div>
+    </div>
+
+    <div class="friction-transversal">
+      <div class="ft-header">
+        <i class="ph ph-file-x ft-icon"></i>
+        <span class="ft-title">Historia clínica es registro muerto</span>
+        <span class="ft-count">5 roles</span>
+      </div>
+      <p>La HC existe en papel pero nadie la consulta. Campos insuficientes, nota se olvida, consentimientos sin firma. La información se transmite verbalmente.</p>
+      <div class="roles-list">
+        <span class="role-chip">Cirujano</span>
+        <span class="role-chip">Enfermero</span>
+        <span class="role-chip">Cosmiatra</span>
+        <span class="role-chip">Ayudante</span>
+        <span class="role-chip">CEO</span>
+      </div>
+    </div>
+
+    <div class="friction-transversal">
+      <div class="ft-header">
+        <i class="ph ph-arrow-u-down-right ft-icon"></i>
+        <span class="ft-title">Seguimiento post inexistente o manual</span>
+        <span class="ft-count">5 roles</span>
+      </div>
+      <p>Solo existe revisión al 3er día. No hay recordatorios, no hay reactivación, no hay tracking. El paciente desaparece y nadie lo busca.</p>
+      <div class="roles-list">
+        <span class="role-chip">Atención</span>
+        <span class="role-chip">Cirujano</span>
+        <span class="role-chip">Cosmiatra</span>
+        <span class="role-chip">Tricología</span>
+        <span class="role-chip">CEO</span>
+      </div>
+    </div>
+
+    <div class="friction-transversal">
+      <div class="ft-header">
+        <i class="ph ph-note-pencil ft-icon"></i>
+        <span class="ft-title">Documentación como fricción dominante</span>
+        <span class="ft-count">4 roles</span>
+      </div>
+      <p>Expedientes incompletos, documentación acumulada, nota diferida al final del día, doble/triple transcripción de material. Todo manual.</p>
+      <div class="roles-list">
+        <span class="role-chip">Cirujano</span>
+        <span class="role-chip">Enfermero</span>
+        <span class="role-chip">Ayudante</span>
+        <span class="role-chip">Tricología</span>
+      </div>
+    </div>
+
+    <!-- POR ROL -->
+    <h2><i class="ph ph-user-list" style="color:#994E95"></i> Fricciones destacadas por rol</h2>
+    <p style="color:#A1B8F2; margin-bottom:1.25rem;">Las fricciones más representativas que cada rol expresó en su entrevista — citas literales y problemas únicos de su posición.</p>
+
+    <!-- Atención al Paciente -->
+    <div class="role-section">
+      <div class="role-header">
+        <i class="ph ph-user"></i>
+        <span class="role-name">Atención al Paciente</span>
+        <span class="role-person">Carlos</span>
+      </div>
+      <div class="quote">
+        <div class="quote-text">"Se me hace muy pesado" — sobre confirmaciones diarias a todos los pacientes</div>
+        <div class="quote-source">— Carlos, Atención al Paciente</div>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Cero registro de leads — 90% se pierden</div>
+        <p>Sin CRM, sin Excel, sin nada. Solo 1 re-contacto antes de abandonar. 1.8M seguidores sin estrategia de captación.</p>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Dilema operativo: reportes o contestar mensajes</div>
+        <p>Una persona, sin sistema que le quite carga. Imposible hacer ambas tareas simultáneamente.</p>
+      </div>
+    </div>
+
+    <!-- Cirujano -->
+    <div class="role-section">
+      <div class="role-header">
+        <i class="ph ph-stethoscope"></i>
+        <span class="role-name">Cirujano</span>
+        <span class="role-person">Dr. Gabriel Cabrera</span>
+      </div>
+      <div class="quote">
+        <div class="quote-text">"Que nos quite esta carga de trabajo y que nos enfoquemos en la experiencia y no en hacer la historia clínica y notas"</div>
+        <div class="quote-source">— Gabriel Cabrera, Cirujano</div>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Ambos dueños sobrecargados — cuello de botella doble</div>
+        <p>Gabriel y Marisela absorben tareas administrativas que les impiden enfocarse en lo clínico y lo estratégico respectivamente.</p>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Comunicación basada en repetición verbal</div>
+        <p>"Les repito y les repito lo que tienen que hacer." Sin sistema formal de comunicación interna.</p>
+      </div>
+    </div>
+
+    <!-- Enfermero -->
+    <div class="role-section">
+      <div class="role-header">
+        <i class="ph ph-heartbeat"></i>
+        <span class="role-name">Enfermero</span>
+        <span class="role-person">Óscar González</span>
+      </div>
+      <div class="quote">
+        <div class="quote-text">"Siento que todos hacen de todo"</div>
+        <div class="quote-source">— Óscar González, Enfermero</div>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Consentimientos sin firma — riesgo legal recurrente</div>
+        <p>"Hay veces que no los firman, no nos damos cuenta." Falla regulatoria que ocurre por prisa y falta de checklist.</p>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Conteo de material triplicado</div>
+        <p>Óscar, Divani y Carlos cuentan material por separado. WhatsApp → papel → Excel. Triple transcripción sin coordinación.</p>
+      </div>
+    </div>
+
+    <!-- Cosmiatra -->
+    <div class="role-section">
+      <div class="role-header">
+        <i class="ph ph-sparkle"></i>
+        <span class="role-name">Cosmiatra</span>
+        <span class="role-person">Brisa Nazario</span>
+      </div>
+      <div class="quote">
+        <div class="quote-text">"Mis labores que yo debería de hacer casi no hay" — subutilización completa del rol</div>
+        <div class="quote-source">— Brisa Nazario, Cosmiatra</div>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Rol subutilizado — cosmiatra que hace de todo menos cosmiatría</div>
+        <p>Solo 3-4 pacientes propios vs multitask de apoyo. Sin agenda propia. Potencial desaprovechado.</p>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Dependencia total de conocimiento tácito</div>
+        <p>"Yo sí me pierdo mucho porque no sé qué onda" — cuando Carlos no está, no tiene acceso a información de pacientes.</p>
+      </div>
+    </div>
+
+    <!-- Primer Ayudante -->
+    <div class="role-section">
+      <div class="role-header">
+        <i class="ph ph-hand"></i>
+        <span class="role-name">Primer Ayudante</span>
+        <span class="role-person">Divani Coronado</span>
+      </div>
+      <div class="quote">
+        <div class="quote-text">"Donde tenemos que acelerar todo, pues es donde empiezan a hacer como los errores operativos"</div>
+        <div class="quote-source">— Divani Coronado, Primer Ayudante</div>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Documentación = fricción #1 del rol</div>
+        <p>"Registrar documentación es laborioso, absorbe mucho el tiempo." Se acumula con 2+ días cargados consecutivos.</p>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Pacientes se van sin datos completos o sin firma</div>
+        <p>Patrón recurrente: la prisa genera que se omitan pasos de documentación. Riesgo legal y clínico.</p>
+      </div>
+    </div>
+
+    <!-- Tricología -->
+    <div class="role-section">
+      <div class="role-header">
+        <i class="ph ph-eyedropper"></i>
+        <span class="role-name">Tricología</span>
+        <span class="role-person">Dra. Elián Cabrera Narváez</span>
+      </div>
+      <div class="quote">
+        <div class="quote-text">"Eso creo que me sería lo que más me quita tiempo — buscar pacientes, ver fechas, mandar recordatorios"</div>
+        <div class="quote-source">— Elián Cabrera Narváez, Tricología</div>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Operación unipersonal sin respaldo — punto único de falla</div>
+        <p>40-50 pacientes activos gestionados por una sola persona. Si Elián falta, el área se detiene completamente.</p>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Área capilar aislada del resto de la clínica</div>
+        <p>Procesos, proveedores, inventario y comunicación independientes. Reproduce los problemas sistémicos del resto.</p>
+      </div>
+    </div>
+
+    <!-- CEO -->
+    <div class="role-section">
+      <div class="role-header">
+        <i class="ph ph-chart-line-up"></i>
+        <span class="role-name">CEO/Dirección</span>
+        <span class="role-person">Dra. Marisela Narváez</span>
+      </div>
+      <div class="quote">
+        <div class="quote-text">"Descuidamos esa parte de los pacientes... ¿de qué te sirve invertir si están los equipos parados?"</div>
+        <div class="quote-source">— Marisela Narváez, CEO</div>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Sobrecarga triple: mensajes + valoraciones + gestión</div>
+        <p>Marisela absorbe 3 roles simultáneamente. Contesta mensajes 6am-9am y 7pm-10pm. Las interacciones nocturnas no se registran.</p>
+      </div>
+      <div class="friction-specific">
+        <div class="fs-title">Sin KPIs ni plan estratégico formal</div>
+        <p>"Cada uno por separado." No existe organigrama, no hay métricas de desempeño, no hay evaluación formal del equipo.</p>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong><i class="ph ph-info"></i> Patrón clave:</strong> Las 8 fricciones transversales son todas manifestaciones de D1 (Procesos Internos Ineficientes). Resolverlas requiere una plataforma centralizada — no soluciones individuales. Las fricciones por rol son síntomas específicos que desaparecen cuando la raíz (D1) se resuelve.
+    </div>
+
+  </div>
+</body>
+</html>

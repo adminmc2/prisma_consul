@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Embudo Operativo — ARMC Diagnóstico Integrado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #101B2C; color: #FAF9F6; font-family: 'Source Sans 3', sans-serif; font-weight: 300; line-height: 1.6; }
+    .container { max-width: 960px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+    h1 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 2rem; color: #FAF9F6; margin-bottom: 0.25rem; }
+    h2 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1.35rem; color: #31BEEF; margin: 2.5rem 0 1rem; }
+    .subtitle { color: #A1B8F2; font-size: 1rem; margin-bottom: 2rem; }
+    .badge { display: inline-block; padding: 0.35rem 0.85rem; background: rgba(153,78,149,0.15); border: 1px solid #994E95; color: #994E95; border-radius: 20px; font-size: 0.8rem; font-weight: 600; font-family: 'Quicksand', sans-serif; margin-bottom: 1.5rem; }
+
+    /* Funnel */
+    .funnel { margin: 2rem 0; }
+    .funnel-stage { display: flex; align-items: stretch; margin-bottom: 0; position: relative; }
+    .funnel-bar { width: 100%; position: relative; }
+    .funnel-bar-inner { padding: 1.25rem 1.5rem; border-radius: 0; position: relative; display: flex; align-items: center; gap: 1rem; }
+    .funnel-stage:first-child .funnel-bar-inner { border-radius: 12px 12px 0 0; }
+    .funnel-stage:last-child .funnel-bar-inner { border-radius: 0 0 12px 12px; }
+
+    .funnel-stage.captacion .funnel-bar-inner { background: linear-gradient(90deg, rgba(49,190,239,0.15), rgba(49,190,239,0.05)); border-left: 4px solid #31BEEF; }
+    .funnel-stage.conversion .funnel-bar-inner { background: linear-gradient(90deg, rgba(255,193,7,0.12), rgba(255,193,7,0.03)); border-left: 4px solid #FFC107; }
+    .funnel-stage.atencion .funnel-bar-inner { background: linear-gradient(90deg, rgba(76,175,80,0.12), rgba(76,175,80,0.03)); border-left: 4px solid #4CAF50; }
+    .funnel-stage.seguimiento .funnel-bar-inner { background: linear-gradient(90deg, rgba(153,78,149,0.12), rgba(153,78,149,0.03)); border-left: 4px solid #994E95; }
+    .funnel-stage.retencion .funnel-bar-inner { background: linear-gradient(90deg, rgba(255,68,68,0.12), rgba(255,68,68,0.03)); border-left: 4px solid #ff4444; }
+
+    .funnel-icon { font-size: 1.5rem; flex-shrink: 0; width: 40px; text-align: center; }
+    .funnel-stage.captacion .funnel-icon { color: #31BEEF; }
+    .funnel-stage.conversion .funnel-icon { color: #FFC107; }
+    .funnel-stage.atencion .funnel-icon { color: #4CAF50; }
+    .funnel-stage.seguimiento .funnel-icon { color: #994E95; }
+    .funnel-stage.retencion .funnel-icon { color: #ff4444; }
+
+    .funnel-content { flex: 1; }
+    .funnel-title { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1rem; color: #FAF9F6; }
+    .funnel-desc { color: #A1B8F2; font-size: 0.85rem; margin-top: 0.15rem; }
+
+    .funnel-metric { text-align: right; flex-shrink: 0; min-width: 100px; }
+    .funnel-metric-value { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 1; }
+    .funnel-stage.captacion .funnel-metric-value { color: #31BEEF; }
+    .funnel-stage.conversion .funnel-metric-value { color: #FFC107; }
+    .funnel-stage.atencion .funnel-metric-value { color: #4CAF50; }
+    .funnel-stage.seguimiento .funnel-metric-value { color: #994E95; }
+    .funnel-stage.retencion .funnel-metric-value { color: #ff4444; }
+    .funnel-metric-label { font-size: 0.72rem; color: #A1B8F2; }
+
+    /* Arrow between stages */
+    .funnel-arrow { display: flex; align-items: center; justify-content: center; padding: 0.15rem 0; position: relative; }
+    .funnel-arrow::before { content: ''; position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: rgba(49,190,239,0.15); }
+    .funnel-arrow-badge { background: #1a2535; border: 1px solid rgba(49,190,239,0.2); border-radius: 12px; padding: 0.15rem 0.6rem; font-size: 0.7rem; font-weight: 600; font-family: 'Quicksand', sans-serif; color: #A1B8F2; z-index: 1; }
+    .funnel-arrow-badge.loss { border-color: rgba(255,68,68,0.3); color: #ff4444; }
+    .funnel-arrow-badge.good { border-color: rgba(76,175,80,0.3); color: #4CAF50; }
+
+    /* Detail cards */
+    .stage-detail { background: #1a2535; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.25rem; border: 1px solid rgba(49,190,239,0.1); }
+    .stage-detail h3 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1.05rem; margin-bottom: 0.75rem; }
+    .stage-detail h3.captacion { color: #31BEEF; }
+    .stage-detail h3.conversion { color: #FFC107; }
+    .stage-detail h3.atencion { color: #4CAF50; }
+    .stage-detail h3.seguimiento { color: #994E95; }
+    .stage-detail h3.retencion { color: #ff4444; }
+    .stage-detail ul { padding-left: 1.25rem; margin: 0; }
+    .stage-detail li { color: #A1B8F2; font-size: 0.9rem; margin-bottom: 0.35rem; }
+    .stage-detail li strong { color: #FAF9F6; font-weight: 600; }
+    .stage-detail .bottleneck { background: rgba(255,68,68,0.06); border: 1px dashed rgba(255,68,68,0.25); border-radius: 6px; padding: 0.6rem 0.85rem; margin-top: 0.75rem; font-size: 0.85rem; color: #ff4444; }
+    .stage-detail .bottleneck i { margin-right: 0.3rem; }
+
+    /* Quote */
+    .quote { background: #1a2535; border-left: 4px solid #994E95; border-radius: 0 8px 8px 0; padding: 0.85rem 1rem; margin: 1rem 0; }
+    .quote-text { font-style: italic; color: #A1B8F2; font-size: 0.9rem; }
+    .quote-source { color: #994E95; font-size: 0.78rem; font-weight: 600; margin-top: 0.25rem; }
+
+    /* Conclusion */
+    .conclusion { background: linear-gradient(135deg, rgba(255,68,68,0.06), rgba(49,190,239,0.06)); border: 1px solid rgba(49,190,239,0.15); border-radius: 12px; padding: 1.5rem; margin-top: 2rem; }
+    .conclusion h2 { margin-top: 0; }
+    .conclusion p { font-size: 0.95rem; }
+    .conclusion strong { color: #31BEEF; }
+    .conclusion .red { color: #ff4444; }
+
+    @media (max-width: 768px) {
+      .funnel-bar-inner { flex-wrap: wrap; }
+      .funnel-metric { text-align: left; min-width: auto; margin-top: 0.5rem; }
+      h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="badge"><i class="ph ph-funnel"></i> Diagnóstico Integrado</div>
+    <h1>Embudo Operativo</h1>
+    <p class="subtitle">De la captación a la retención — métricas reales extraídas de las 7 entrevistas</p>
+
+    <!-- FUNNEL VISUALIZATION -->
+    <div class="funnel">
+
+      <div class="funnel-stage captacion">
+        <div class="funnel-bar">
+          <div class="funnel-bar-inner">
+            <div class="funnel-icon"><i class="ph ph-megaphone"></i></div>
+            <div class="funnel-content">
+              <div class="funnel-title">Captación</div>
+              <div class="funnel-desc">Redes sociales, referidos, presencial</div>
+            </div>
+            <div class="funnel-metric">
+              <div class="funnel-metric-value">1.8M</div>
+              <div class="funnel-metric-label">seguidores en redes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="funnel-arrow">
+        <span class="funnel-arrow-badge loss">~200 msgs/día → sin sistema de captura</span>
+      </div>
+
+      <div class="funnel-stage conversion">
+        <div class="funnel-bar">
+          <div class="funnel-bar-inner">
+            <div class="funnel-icon"><i class="ph ph-chat-circle-text"></i></div>
+            <div class="funnel-content">
+              <div class="funnel-title">Conversión (primer contacto → valoración)</div>
+              <div class="funnel-desc">WhatsApp, Instagram, teléfono — Carlos + Marisela</div>
+            </div>
+            <div class="funnel-metric">
+              <div class="funnel-metric-value">~10%</div>
+              <div class="funnel-metric-label">tasa de conversión</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="funnel-arrow">
+        <span class="funnel-arrow-badge good">~80% valoración → procedimiento</span>
+      </div>
+
+      <div class="funnel-stage atencion">
+        <div class="funnel-bar">
+          <div class="funnel-bar-inner">
+            <div class="funnel-icon"><i class="ph ph-first-aid-kit"></i></div>
+            <div class="funnel-content">
+              <div class="funnel-title">Atención (valoración + procedimiento)</div>
+              <div class="funnel-desc">Todo el equipo clínico — tasa alta de cierre</div>
+            </div>
+            <div class="funnel-metric">
+              <div class="funnel-metric-value">~10-12</div>
+              <div class="funnel-metric-label">pacientes/día</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="funnel-arrow">
+        <span class="funnel-arrow-badge loss">Solo revisión 3er día → después nada</span>
+      </div>
+
+      <div class="funnel-stage seguimiento">
+        <div class="funnel-bar">
+          <div class="funnel-bar-inner">
+            <div class="funnel-icon"><i class="ph ph-arrows-clockwise"></i></div>
+            <div class="funnel-content">
+              <div class="funnel-title">Seguimiento</div>
+              <div class="funnel-desc">Revisión post + recordatorios + reactivación</div>
+            </div>
+            <div class="funnel-metric">
+              <div class="funnel-metric-value">~0</div>
+              <div class="funnel-metric-label">sistema activo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="funnel-arrow">
+        <span class="funnel-arrow-badge loss">Sin mecanismo de reactivación</span>
+      </div>
+
+      <div class="funnel-stage retencion">
+        <div class="funnel-bar">
+          <div class="funnel-bar-inner">
+            <div class="funnel-icon"><i class="ph ph-heart"></i></div>
+            <div class="funnel-content">
+              <div class="funnel-title">Retención</div>
+              <div class="funnel-desc">Pacientes que regresan — base recurrente</div>
+            </div>
+            <div class="funnel-metric">
+              <div class="funnel-metric-value">~10%</div>
+              <div class="funnel-metric-label">retención actual (meta: 30%)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DETAIL BY STAGE -->
+    <h2><i class="ph ph-magnifying-glass" style="color:#31BEEF"></i> Detalle por etapa</h2>
+
+    <div class="stage-detail">
+      <h3 class="captacion"><i class="ph ph-megaphone"></i> Captación</h3>
+      <ul>
+        <li><strong>1.8M seguidores</strong> en redes sociales (Instagram principal, TikTok desatendido)</li>
+        <li><strong>~200 mensajes/día</strong> llegan por WhatsApp e Instagram</li>
+        <li>Carlos gestiona solo, con orden <strong>LIFO</strong> (último en llegar, primero en responder) que genera espiral negativa</li>
+        <li>Marisela absorbe mensajes nocturnos (~100) que <strong>no se registran</strong></li>
+        <li>Elián capta pacientes capilares por Instagram <strong>sin protocolo</strong></li>
+        <li>Referidos llegan presencialmente <strong>sin cita previa</strong></li>
+      </ul>
+      <div class="bottleneck"><i class="ph ph-warning"></i> Cuello de botella: volumen masivo sin sistema de captura ni priorización</div>
+    </div>
+
+    <div class="stage-detail">
+      <h3 class="conversion"><i class="ph ph-chat-circle-text"></i> Conversión</h3>
+      <ul>
+        <li><strong>Tasa de conversión ~10%</strong> del primer contacto a valoración — 90% deja en visto</li>
+        <li>Carlos hace <strong>solo 1 re-contacto</strong> antes de abandonar el lead</li>
+        <li><strong>Cero registro de leads</strong> — ni CRM, ni Excel, ni nada</li>
+        <li>Pacientes quieren <strong>precio exacto</strong> antes de valoración — Carlos no puede darlo</li>
+        <li><strong>Marisela como único punto de cierre</strong> para valoraciones complejas</li>
+        <li>Equipo no vende en seguimiento — solo Marisela y Carlos</li>
+      </ul>
+      <div class="bottleneck"><i class="ph ph-warning"></i> Cuello de botella: 1 persona (Carlos) + 1 cierre (Marisela), sin registro ni re-contacto sistematizado</div>
+    </div>
+
+    <div class="stage-detail">
+      <h3 class="atencion"><i class="ph ph-first-aid-kit"></i> Atención</h3>
+      <ul>
+        <li><strong>~10-12 pacientes/día</strong> combinados (procedimientos + consultas + revisiones)</li>
+        <li>Tasa <strong>valoración → procedimiento ~80%</strong> — fortaleza principal de ARMC</li>
+        <li><strong>~6-7 procedimientos en día fuerte</strong> (~4 inyectables + ~2 lipo láser)</li>
+        <li>Valoraciones convertidas <strong>same-day</strong> generan caos operativo (desabasto, prisa, errores)</li>
+        <li>Documentación se <strong>acumula</strong> con 2+ días cargados consecutivos</li>
+        <li>Preparación de material <strong>de memoria</strong> sin lista ni protocolo</li>
+      </ul>
+      <div class="quote">
+        <div class="quote-text">"Donde tenemos que acelerar todo, pues es donde empiezan los errores operativos"</div>
+        <div class="quote-source">— Divani Coronado, Primer Ayudante</div>
+      </div>
+    </div>
+
+    <div class="stage-detail">
+      <h3 class="seguimiento"><i class="ph ph-arrows-clockwise"></i> Seguimiento</h3>
+      <ul>
+        <li><strong>Revisión al 3er día</strong> agendada de memoria — único seguimiento formal</li>
+        <li><strong>~6-7 revisiones/semana</strong> sin agendar en ningún sistema</li>
+        <li>Carlos tiene <strong>1 plantilla</strong> de seguimiento post-op — el resto es manual</li>
+        <li>Masajes post-lipo: <strong>~5 sesiones recomendadas</strong> sin protocolo de tracking</li>
+        <li><strong>Encuesta QR</strong> de satisfacción implementada pero casi sin uso</li>
+        <li>Fotos de evolución en <strong>dispositivos personales</strong> — búsqueda manual</li>
+        <li>Tricología: seguimiento <strong>100% manual</strong> — principal carga operativa</li>
+      </ul>
+      <div class="bottleneck"><i class="ph ph-warning"></i> Cuello de botella: sin herramienta de tracking — el seguimiento depende de que alguien recuerde</div>
+    </div>
+
+    <div class="stage-detail">
+      <h3 class="retencion"><i class="ph ph-heart"></i> Retención</h3>
+      <ul>
+        <li><strong>Retención actual ~10%</strong> — solo ~25 pacientes repiten/mes de ~250 atendidos</li>
+        <li><strong>Meta declarada: 30%</strong> — 3× la cifra actual</li>
+        <li><strong>Sin mecanismo de reactivación</strong> — pacientes desaparecen sin que nadie los busque</li>
+        <li><strong>Sin recordatorios de cita</strong> — "se da por hecho que va a venir"</li>
+        <li><strong>Aparatología parada</strong>: láser, HIFU infrautilizados por falta de pacientes recurrentes</li>
+        <li>Cross-selling informal presencial, <strong>sin sistema que lo potencie</strong></li>
+        <li>Pacientes desaparecen 1 año y regresan <strong>sin contexto disponible</strong></li>
+      </ul>
+      <div class="quote">
+        <div class="quote-text">"Mucha cantidad de pacientes pero de una vez... ¿de qué te sirve invertir si están los equipos parados?"</div>
+        <div class="quote-source">— Marisela Narváez, CEO</div>
+      </div>
+    </div>
+
+    <!-- CONCLUSION -->
+    <div class="conclusion">
+      <h2><i class="ph ph-lightning" style="color:#31BEEF"></i> Dónde se pierde el valor</h2>
+      <p>El embudo de ARMC tiene una <strong>fortaleza clara</strong>: la tasa de cierre en valoración (~80%) demuestra que el equipo clínico es competente y convincente cuando el paciente llega presencialmente.</p>
+      <p>Las <span class="red">fugas críticas</span> están en los extremos del embudo:</p>
+      <ul style="padding-left: 1.5rem; margin: 0.75rem 0;">
+        <li style="color:#A1B8F2; margin-bottom:0.3rem;"><strong style="color:#FFC107;">Arriba:</strong> 90% de leads se pierden por falta de sistema de captura, priorización y re-contacto</li>
+        <li style="color:#A1B8F2; margin-bottom:0.3rem;"><strong style="color:#ff4444;">Abajo:</strong> 90% de pacientes no regresan por falta de seguimiento, recordatorios y reactivación</li>
+      </ul>
+      <p>Un ecosistema APEX resuelve ambas fugas simultáneamente: <strong>D4 captura y convierte</strong> arriba, <strong>D2+D3 retiene y reactiva</strong> abajo, y <strong>D1 es el sistema base</strong> que habilita todo.</p>
+    </div>
+
+  </div>
+</body>
+</html>

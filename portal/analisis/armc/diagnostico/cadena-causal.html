@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadena Causal — ARMC Diagnóstico Integrado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: 'transparent',
+        primaryColor: '#1a2535',
+        primaryTextColor: '#FAF9F6',
+        primaryBorderColor: '#31BEEF',
+        secondaryColor: '#1a2535',
+        secondaryBorderColor: '#994E95',
+        lineColor: '#31BEEF',
+        textColor: '#FAF9F6',
+        clusterBkg: '#162033',
+        clusterBorder: '#253545',
+        edgeLabelBackground: '#1a2535',
+        fontFamily: '"Source Sans 3", sans-serif',
+        fontSize: '14px'
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 15,
+        nodeSpacing: 50,
+        rankSpacing: 55,
+      }
+    });
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #101B2C; color: #FAF9F6; font-family: 'Source Sans 3', sans-serif; font-weight: 300; line-height: 1.6; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+    h1 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 2rem; color: #FAF9F6; margin-bottom: 0.25rem; }
+    h2 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1.35rem; color: #31BEEF; margin: 2.5rem 0 1rem; }
+    h3 { font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 1.05rem; margin: 1.5rem 0 0.75rem; }
+    p { margin-bottom: 0.75rem; }
+    .subtitle { color: #A1B8F2; font-size: 1rem; margin-bottom: 2rem; }
+    .badge { display: inline-block; padding: 0.35rem 0.85rem; background: rgba(153,78,149,0.15); border: 1px solid #994E95; color: #994E95; border-radius: 20px; font-size: 0.8rem; font-weight: 600; font-family: 'Quicksand', sans-serif; margin-bottom: 1.5rem; }
+
+    /* Mermaid */
+    .diagram-section { background: #1a2535; border: 1px solid rgba(49,190,239,0.2); border-radius: 12px; padding: 2rem; margin: 2rem 0; }
+    .mermaid-container { background: #101B2C; padding: 2rem; border-radius: 8px; overflow-x: auto; }
+    .mermaid { display: flex; justify-content: center; min-height: 400px; }
+    .mermaid .node rect, .mermaid .node polygon { rx: 8 !important; ry: 8 !important; stroke-width: 1.5px !important; }
+    .mermaid .nodeLabel, .mermaid .node .label { font-family: 'Source Sans 3', sans-serif !important; font-size: 14px !important; font-weight: 600 !important; }
+    .mermaid .edgePath path.path { stroke-width: 2px !important; opacity: 0.7; }
+    .mermaid .edgeLabel { font-size: 12px !important; font-family: 'Source Sans 3', sans-serif !important; font-weight: 600 !important; }
+    .mermaid .edgeLabel rect { rx: 4 !important; ry: 4 !important; fill: #1a2535 !important; stroke: none !important; }
+    .mermaid .edgeLabel span { color: #FAF9F6 !important; }
+    .mermaid .cluster rect { rx: 8 !important; ry: 8 !important; stroke-dasharray: 5 3; }
+    .mermaid .cluster-label .nodeLabel, .mermaid .cluster-label span { font-family: 'Quicksand', sans-serif !important; font-weight: 700 !important; font-size: 14px !important; letter-spacing: 0.5px; text-transform: uppercase; fill: #FAF9F6 !important; color: #FAF9F6 !important; }
+
+    /* Legend */
+    .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; padding: 1rem; background: rgba(26,37,53,0.5); border-radius: 8px; margin-top: 1rem; }
+    .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 600; font-family: 'Quicksand', sans-serif; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+    .legend-dot.d1 { background: #ff4444; }
+    .legend-dot.d2 { background: #31BEEF; }
+    .legend-dot.d3 { background: #994E95; }
+    .legend-dot.d4 { background: #FFC107; }
+    .legend-dot.ret { background: #4CAF50; }
+    .legend-dot.friction { background: #ff4444; border: 1px dashed #ff4444; }
+
+    /* Evidence cards */
+    .evidence-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1.5rem 0; }
+    .evidence-card { background: #1a2535; border-radius: 12px; padding: 1.25rem; border: 1px solid rgba(49,190,239,0.1); }
+    .evidence-card .link-label { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .evidence-card .link-label.d1-d2 { color: #ff4444; }
+    .evidence-card .link-label.d2-d3 { color: #31BEEF; }
+    .evidence-card .link-label.d3-d4 { color: #994E95; }
+    .evidence-card .link-label.d4-ret { color: #4CAF50; }
+    .evidence-card .link-title { font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.95rem; color: #FAF9F6; margin-bottom: 0.5rem; }
+    .evidence-card ul { padding-left: 1rem; margin: 0; }
+    .evidence-card li { color: #A1B8F2; font-size: 0.85rem; margin-bottom: 0.25rem; }
+    .evidence-card li strong { color: #FAF9F6; font-weight: 600; }
+
+    /* Conclusion */
+    .conclusion { background: linear-gradient(135deg, rgba(49,190,239,0.08), rgba(76,175,80,0.06)); border: 1px solid rgba(49,190,239,0.15); border-radius: 12px; padding: 1.5rem; margin-top: 2rem; }
+    .conclusion h2 { margin-top: 0; }
+    .conclusion p { font-size: 0.95rem; }
+    .conclusion strong { color: #31BEEF; }
+
+    /* Solution path */
+    .solution-path { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; justify-content: center; margin: 1.5rem 0; padding: 1rem; background: rgba(76,175,80,0.05); border: 1px solid rgba(76,175,80,0.2); border-radius: 8px; }
+    .sol-step { padding: 0.5rem 1rem; border-radius: 8px; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem; text-align: center; }
+    .sol-step.d1 { background: rgba(255,68,68,0.12); color: #ff4444; border: 1px solid rgba(255,68,68,0.25); }
+    .sol-step.d2 { background: rgba(49,190,239,0.12); color: #31BEEF; border: 1px solid rgba(49,190,239,0.25); }
+    .sol-step.d3 { background: rgba(153,78,149,0.12); color: #994E95; border: 1px solid rgba(153,78,149,0.25); }
+    .sol-step.d4 { background: rgba(255,193,7,0.12); color: #FFC107; border: 1px solid rgba(255,193,7,0.25); }
+    .sol-step.ret { background: rgba(76,175,80,0.12); color: #4CAF50; border: 1px solid rgba(76,175,80,0.25); }
+    .sol-arrow { color: #31BEEF; font-size: 1.25rem; }
+
+    @media (max-width: 768px) {
+      .evidence-grid { grid-template-columns: 1fr; }
+      .solution-path { flex-direction: column; }
+      .sol-arrow { transform: rotate(90deg); }
+      h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="badge"><i class="ph ph-tree-structure"></i> Diagnóstico Integrado</div>
+    <h1>Cadena Causal D1 → Retención</h1>
+    <p class="subtitle">Cómo D1 (Procesos Internos) genera en cascada D2, D3, D4 y destruye la retención — con evidencia de los 7 roles</p>
+
+    <!-- MERMAID DIAGRAM -->
+    <div class="diagram-section">
+      <div class="mermaid-container">
+        <div class="mermaid">
+flowchart TB
+  subgraph D1["D1 — PROCESOS INTERNOS INEFICIENTES"]
+    d1a["Cero software<br/>en la operación"]
+    d1b["3 agendas físicas<br/>nómadas"]
+    d1c["HC como<br/>registro muerto"]
+    d1d["Memoria humana<br/>como sistema"]
+    d1e["Documentación<br/>manual acumulada"]
+    d1f["Fotos en 4+<br/>dispositivos personales"]
+  end
+
+  subgraph D2["D2 — SEGUIMIENTO Y CLASIFICACIÓN"]
+    d2a["Sin tracking<br/>de citas"]
+    d2b["Revisión 3er día<br/>de memoria"]
+    d2c["Sin clasificación<br/>de pacientes"]
+    d2d["Fotos sin<br/>organizar"]
+  end
+
+  subgraph D3["D3 — COMUNICACIÓN PERSONALIZADA"]
+    d3a["Doble canal<br/>sin coordinación"]
+    d3b["Info genérica<br/>copy-paste"]
+    d3c["Sin flujos<br/>automáticos"]
+    d3d["Rezago ~200<br/>msgs/día"]
+  end
+
+  subgraph D4["D4 — CONVERSIÓN DE LEADS"]
+    d4a["Cero registro<br/>de leads"]
+    d4b["Solo 1<br/>re-contacto"]
+    d4c["Marisela como<br/>único cierre"]
+    d4d["Conversión<br/>~10%"]
+  end
+
+  subgraph RET["RETENCIÓN — ~10% ACTUAL"]
+    ret1["Aparatología<br/>parada"]:::friction
+    ret2["Pacientes<br/>desaparecen"]:::friction
+    ret3["Sin reactivación<br/>post"]:::friction
+  end
+
+  d1a --> d2a
+  d1b --> d2b
+  d1c --> d2c
+  d1d --> d2a
+  d1f --> d2d
+  d1e --> d2c
+
+  d2a --> d3c
+  d2c --> d3b
+  d2b --> d3a
+  d2d --> d3a
+
+  d3a --> d4c
+  d3b --> d4b
+  d3c --> d4a
+  d3d --> d4d
+
+  d4d --> ret2
+  d4a --> ret3
+  d2a --> ret1
+  d3c --> ret2
+
+  classDef default fill:#1a2535,stroke:#31BEEF,stroke-width:1.5px,color:#FAF9F6
+  classDef friction fill:#2a1015,stroke:#ff4444,stroke-width:2px,color:#ff4444
+
+  style D1 fill:#1a0f0f,stroke:#ff4444,stroke-width:2px,color:#ff4444
+  style D2 fill:#0f1a2a,stroke:#31BEEF,stroke-width:1.5px,color:#31BEEF
+  style D3 fill:#1a0f1a,stroke:#994E95,stroke-width:1.5px,color:#994E95
+  style D4 fill:#1a1a0f,stroke:#FFC107,stroke-width:1.5px,color:#FFC107
+  style RET fill:#0f1a0f,stroke:#4CAF50,stroke-width:2px,color:#4CAF50
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><span class="legend-dot d1"></span> D1 — Raíz causal</div>
+        <div class="legend-item"><span class="legend-dot d2"></span> D2 — Seguimiento</div>
+        <div class="legend-item"><span class="legend-dot d3"></span> D3 — Comunicación</div>
+        <div class="legend-item"><span class="legend-dot d4"></span> D4 — Conversión</div>
+        <div class="legend-item"><span class="legend-dot ret"></span> Retención</div>
+        <div class="legend-item"><span class="legend-dot friction"></span> Resultado negativo</div>
+      </div>
+    </div>
+
+    <!-- EVIDENCE PER LINK -->
+    <h2><i class="ph ph-link" style="color:#31BEEF"></i> Evidencia por eslabón causal</h2>
+
+    <div class="evidence-grid">
+      <div class="evidence-card">
+        <div class="link-label d1-d2">D1 → D2</div>
+        <div class="link-title">Sin procesos base, el seguimiento es imposible</div>
+        <ul>
+          <li><strong>Sin software</strong> → no hay tracking de citas ni alertas</li>
+          <li><strong>Agendas físicas</strong> → revisiones al 3er día se recuerdan de memoria</li>
+          <li><strong>HC muerta</strong> → sin historial, no se puede clasificar pacientes</li>
+          <li><strong>Fotos dispersas</strong> → sin evolución documentada por paciente</li>
+          <li>Elián: seguimiento 100% manual es su <strong>principal carga operativa</strong></li>
+        </ul>
+      </div>
+
+      <div class="evidence-card">
+        <div class="link-label d2-d3">D2 → D3</div>
+        <div class="link-title">Sin seguimiento, la comunicación es genérica</div>
+        <ul>
+          <li><strong>Sin clasificación</strong> → info genérica copy-paste para todos</li>
+          <li><strong>Sin tracking</strong> → no hay flujos automáticos posibles</li>
+          <li>Doble canal (Carlos WhatsApp + Brisa verbal) <strong>sin coordinación</strong></li>
+          <li>Brisa: "yo sí me pierdo mucho porque <strong>no sé qué onda</strong>"</li>
+          <li>Promociones enviadas <strong>sin segmentación</strong></li>
+        </ul>
+      </div>
+
+      <div class="evidence-card">
+        <div class="link-label d3-d4">D3 → D4</div>
+        <div class="link-title">Sin comunicación efectiva, los leads se pierden</div>
+        <ul>
+          <li><strong>Rezago ~200 msgs/día</strong> → pacientes se desesperan, borran mensajes</li>
+          <li>Solo <strong>1 re-contacto</strong> antes de abandonar el lead</li>
+          <li><strong>Marisela como único cierre</strong> — cuello de botella</li>
+          <li>Equipo <strong>no vende</strong> en seguimiento</li>
+          <li>1.8M seguidores, <strong>conversión ~10%</strong></li>
+        </ul>
+      </div>
+
+      <div class="evidence-card">
+        <div class="link-label d4-ret">D1+D2+D3+D4 → Retención</div>
+        <div class="link-title">La retención es el resultado del ecosistema completo</div>
+        <ul>
+          <li><strong>Retención ~10%</strong> actual vs meta 30%</li>
+          <li><strong>Aparatología parada</strong>: láser, HIFU infrautilizados</li>
+          <li><strong>Sin reactivación</strong>: pacientes desaparecen sin que nadie los busque</li>
+          <li>"Se da por hecho <strong>que va a venir</strong>" — sin recordatorios</li>
+          <li>Fuga de capital: <strong>quirófano externo</strong> por volumen bajo</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SOLUTION PATH -->
+    <h2><i class="ph ph-path" style="color:#4CAF50"></i> Ruta de solución APEX</h2>
+    <p style="color:#A1B8F2;">La cadena causal se rompe resolviendo D1 primero. Cada capa habilita la siguiente:</p>
+
+    <div class="solution-path">
+      <div class="sol-step d1">D1<br/>Sistema Base</div>
+      <span class="sol-arrow">→</span>
+      <div class="sol-step d2">D2<br/>Clasificación</div>
+      <span class="sol-arrow">→</span>
+      <div class="sol-step d3">D3<br/>Comunicación</div>
+      <span class="sol-arrow">→</span>
+      <div class="sol-step d4">D4<br/>Conversión</div>
+      <span class="sol-arrow">→</span>
+      <div class="sol-step ret">Retención<br/>30%</div>
+    </div>
+
+    <!-- CONCLUSION -->
+    <div class="conclusion">
+      <h2><i class="ph ph-target" style="color:#31BEEF"></i> Conclusión</h2>
+      <p>La cadena causal demuestra que <strong>los 4 dolores no son independientes</strong> — son capas de un mismo problema sistémico cuya raíz es D1.</p>
+      <p>Resolver D2 sin D1 es intentar hacer seguimiento sin sistema. Resolver D4 sin D3 es intentar convertir sin comunicar. La retención del 10% no es un problema de marketing ni de servicio — es el resultado natural de una operación sin infraestructura digital.</p>
+      <p>El ecosistema APEX aborda esto construyendo <strong>de abajo hacia arriba</strong>: primero la plataforma centralizada (D1), después el motor de seguimiento (D2), luego la comunicación segmentada (D3), y finalmente el pipeline de conversión (D4). La retención es el resultado — no un módulo separado.</p>
+    </div>
+
+  </div>
+</body>
+</html>

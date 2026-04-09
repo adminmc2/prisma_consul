@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matriz Dolor × Proceso — ARMC Diagnóstico Integrado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #101B2C; color: #FAF9F6; font-family: 'Source Sans 3', sans-serif; font-weight: 300; line-height: 1.6; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+    h1 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 2rem; color: #FAF9F6; margin-bottom: 0.25rem; }
+    h2 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1.35rem; color: #31BEEF; margin: 2.5rem 0 1rem; }
+    .subtitle { color: #A1B8F2; font-size: 1rem; margin-bottom: 2rem; }
+    .badge { display: inline-block; padding: 0.35rem 0.85rem; background: rgba(153,78,149,0.15); border: 1px solid #994E95; color: #994E95; border-radius: 20px; font-size: 0.8rem; font-weight: 600; font-family: 'Quicksand', sans-serif; margin-bottom: 1.5rem; }
+
+    /* Legend */
+    .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1.5rem 0; padding: 1rem; background: #1a2535; border-radius: 8px; }
+    .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 600; font-family: 'Quicksand', sans-serif; }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+    .legend-dot.dominant { background: #ff4444; }
+    .legend-dot.consequence { background: #FFC107; }
+    .legend-dot.impacted { background: #994E95; }
+    .legend-dot.tangential { background: rgba(161,184,242,0.4); }
+
+    /* Matrix table */
+    .matrix-wrapper { overflow-x: auto; margin: 1.5rem 0; border-radius: 12px; border: 1px solid rgba(49,190,239,0.15); }
+    table { width: 100%; border-collapse: collapse; min-width: 800px; }
+    thead th { background: #1a2535; padding: 1rem 0.75rem; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid rgba(49,190,239,0.2); text-align: left; position: sticky; top: 0; z-index: 2; }
+    thead th:first-child { min-width: 140px; color: #A1B8F2; }
+    thead th.d1 { color: #ff4444; }
+    thead th.d2 { color: #31BEEF; }
+    thead th.d3 { color: #994E95; }
+    thead th.d4 { color: #31BEEF; }
+    tbody tr { border-bottom: 1px solid rgba(49,190,239,0.06); transition: background 200ms; }
+    tbody tr:hover { background: rgba(49,190,239,0.03); }
+    tbody td { padding: 0.85rem 0.75rem; vertical-align: top; font-size: 0.9rem; }
+    tbody td:first-child { font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.9rem; color: #FAF9F6; background: rgba(26,37,53,0.5); white-space: nowrap; }
+    .role-icon { color: #31BEEF; margin-right: 0.4rem; }
+
+    /* Severity cells */
+    .cell { border-radius: 6px; padding: 0.5rem 0.6rem; font-size: 0.82rem; line-height: 1.4; }
+    .cell.dominant { background: rgba(255,68,68,0.08); border-left: 3px solid #ff4444; }
+    .cell.consequence { background: rgba(255,193,7,0.06); border-left: 3px solid #FFC107; }
+    .cell.impacted { background: rgba(153,78,149,0.06); border-left: 3px solid #994E95; }
+    .cell.tangential { background: rgba(161,184,242,0.04); border-left: 3px solid rgba(161,184,242,0.3); }
+    .cell .severity-label { font-weight: 600; font-family: 'Quicksand', sans-serif; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+    .cell.dominant .severity-label { color: #ff4444; }
+    .cell.consequence .severity-label { color: #FFC107; }
+    .cell.impacted .severity-label { color: #994E95; }
+    .cell.tangential .severity-label { color: #A1B8F2; }
+    .cell ul { margin: 0; padding-left: 1rem; }
+    .cell li { margin-bottom: 0.2rem; color: #A1B8F2; }
+
+    /* Summary section */
+    .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1.5rem 0; }
+    .summary-card { background: #1a2535; border-radius: 12px; padding: 1.25rem; border: 1px solid rgba(49,190,239,0.1); }
+    .summary-card h3 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.75rem; }
+    .summary-card h3.d1 { color: #ff4444; }
+    .summary-card h3.d2 { color: #31BEEF; }
+    .summary-card h3.d3 { color: #994E95; }
+    .summary-card h3.d4 { color: #31BEEF; }
+    .summary-card p { font-size: 0.9rem; color: #A1B8F2; margin-bottom: 0.5rem; }
+    .summary-card .count { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1.5rem; }
+    .summary-card .count.d1 { color: #ff4444; }
+
+    /* Note */
+    .note { background: rgba(49,190,239,0.05); border: 1px solid rgba(49,190,239,0.15); border-radius: 8px; padding: 1rem 1.25rem; margin-top: 2rem; font-size: 0.9rem; color: #A1B8F2; }
+    .note strong { color: #31BEEF; }
+
+    @media (max-width: 768px) {
+      .summary-grid { grid-template-columns: 1fr; }
+      .legend { gap: 0.75rem; }
+      h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="badge"><i class="ph ph-grid-four"></i> Diagnóstico Integrado</div>
+    <h1>Matriz Dolor × Proceso</h1>
+    <p class="subtitle">Cruce de los 4 dolores APEX con los 7 roles operativos — severidad y evidencia por intersección</p>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot dominant"></span> Dominante</div>
+      <div class="legend-item"><span class="legend-dot consequence"></span> Consecuencia directa</div>
+      <div class="legend-item"><span class="legend-dot impacted"></span> Impactado</div>
+      <div class="legend-item"><span class="legend-dot tangential"></span> Tangencial</div>
+    </div>
+
+    <div class="matrix-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Rol</th>
+            <th class="d1">D1 — Procesos Internos</th>
+            <th class="d2">D2 — Seguimiento</th>
+            <th class="d3">D3 — Comunicación</th>
+            <th class="d4">D4 — Conversión</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Atención al Paciente -->
+          <tr>
+            <td><i class="ph ph-user role-icon"></i>Atención al Paciente</td>
+            <td>
+              <div class="cell dominant">
+                <div class="severity-label">Dominante</div>
+                <ul>
+                  <li>Todo manual: copy-paste, hojitas, Word</li>
+                  <li>Agenda digital pagada sin usar</li>
+                  <li>5 apps abiertas sin interfaz unificada</li>
+                  <li>Dilema: reportes o contestar mensajes</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell consequence">
+                <div class="severity-label">Consecuencia</div>
+                <ul>
+                  <li>Revisiones de memoria (~6-7/sem)</li>
+                  <li>1 plantilla de seguimiento post-op</li>
+                  <li>Sin clasificación de pacientes</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell impacted">
+                <div class="severity-label">Impactado</div>
+                <ul>
+                  <li>Info = copy-paste genérico</li>
+                  <li>Sin flujos automáticos</li>
+                  <li>Promociones sin segmentación</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell dominant">
+                <div class="severity-label">Dominante</div>
+                <ul>
+                  <li>Conversión ~10%, 90% deja en visto</li>
+                  <li>Cero registro de leads</li>
+                  <li>1.8M seguidores sin estrategia</li>
+                  <li>Solo 1 re-contacto y abandono</li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          <!-- Cirujano -->
+          <tr>
+            <td><i class="ph ph-stethoscope role-icon"></i>Cirujano</td>
+            <td>
+              <div class="cell dominant">
+                <div class="severity-label">Dominante</div>
+                <ul>
+                  <li>HC como registro muerto</li>
+                  <li>3 agendas físicas nómadas</li>
+                  <li>Comunicación por repetición verbal</li>
+                  <li>Ambos dueños sobrecargados</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell consequence">
+                <div class="severity-label">Consecuencia</div>
+                <ul>
+                  <li>Retención real ~10%</li>
+                  <li>Aparatología parada</li>
+                  <li>Sin sistema de citas de seguimiento</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell impacted">
+                <div class="severity-label">Impactado</div>
+                <ul>
+                  <li>Doble canal sin coordinación</li>
+                  <li>Indicaciones post estandarizadas</li>
+                  <li>Sin mecanismo de reactivación</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell tangential">
+                <div class="severity-label">Indirecto</div>
+                <ul>
+                  <li>Sin CRM — leads se pierden</li>
+                  <li>~200 msgs/día sin captura</li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          <!-- Enfermero -->
+          <tr>
+            <td><i class="ph ph-heartbeat role-icon"></i>Enfermero</td>
+            <td>
+              <div class="cell dominant">
+                <div class="severity-label">Dominante</div>
+                <ul>
+                  <li>CERO software confirmado</li>
+                  <li>Material de memoria sin lista</li>
+                  <li>Conteo triplicado sin coordinación</li>
+                  <li>Bitácoras regulatorias atrasadas</li>
+                  <li>Consentimientos sin firma</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell consequence">
+                <div class="severity-label">Consecuencia</div>
+                <ul>
+                  <li>Revisión 3er día de memoria</li>
+                  <li>Sin trazabilidad de lotes</li>
+                  <li>Fotos pre/post casi inexistentes</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell impacted">
+                <div class="severity-label">Impactado</div>
+                <ul>
+                  <li>Pacientes al Instagram personal</li>
+                  <li>Consultas post sin canal formal</li>
+                  <li>Info en 3 dispositivos</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell tangential">
+                <div class="severity-label">Indirecto</div>
+                <ul>
+                  <li>Valoraciones same-day generan caos</li>
+                  <li>Desabasto por falta de planificación</li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          <!-- Cosmiatra -->
+          <tr>
+            <td><i class="ph ph-sparkle role-icon"></i>Cosmiatra</td>
+            <td>
+              <div class="cell dominant">
+                <div class="severity-label">Dominante</div>
+                <ul>
+                  <li>Rol subutilizado — multitask</li>
+                  <li>Memoria personal como sistema</li>
+                  <li>Sin agenda propia de cosmiatría</li>
+                  <li>Solapamiento generalizado</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell consequence">
+                <div class="severity-label">Consecuencia</div>
+                <ul>
+                  <li>Sin recordatorio de cita</li>
+                  <li>Pacientes desaparecen 1 año</li>
+                  <li>Sin registro de evolución</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell impacted">
+                <div class="severity-label">Impactado</div>
+                <ul>
+                  <li>Doble canal sin coordinación</li>
+                  <li>Sin conocimiento para contestar</li>
+                  <li>Encuestas QR no ejecutadas</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell tangential">
+                <div class="severity-label">Tangencial</div>
+                <ul>
+                  <li>Pacientes sin cita</li>
+                  <li>Cross-selling informal</li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          <!-- Primer Ayudante -->
+          <tr>
+            <td><i class="ph ph-hand role-icon"></i>Primer Ayudante</td>
+            <td>
+              <div class="cell dominant">
+                <div class="severity-label">Dominante</div>
+                <ul>
+                  <li>Documentación = fricción #1</li>
+                  <li>Pacientes se van sin firma</li>
+                  <li>Protocolos de memoria</li>
+                  <li>Doble registro de material</li>
+                  <li>HC con campos insuficientes</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell consequence">
+                <div class="severity-label">Consecuencia</div>
+                <ul>
+                  <li>Revisiones sin registro formal</li>
+                  <li>Fotos post casi inexistentes</li>
+                  <li>HC ignorada en transferencias</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell impacted">
+                <div class="severity-label">Impactado</div>
+                <ul>
+                  <li>Indicaciones post: solo verbal</li>
+                  <li>Dudas de recuperación constantes</li>
+                  <li>Videollamada sin protocolo</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell tangential">
+                <div class="severity-label">Indirecto</div>
+                <ul>
+                  <li>Valoraciones como respaldo</li>
+                  <li>Procedimientos same-day</li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          <!-- Tricología -->
+          <tr>
+            <td><i class="ph ph-eyedropper role-icon"></i>Tricología</td>
+            <td>
+              <div class="cell dominant">
+                <div class="severity-label">Dominante</div>
+                <ul>
+                  <li>Operación unipersonal sin respaldo</li>
+                  <li>HC duplicada papel + iPad</li>
+                  <li>Área aislada del resto</li>
+                  <li>Inventario mental</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell consequence">
+                <div class="severity-label">Consecuencia</div>
+                <ul>
+                  <li>Seguimiento 100% manual</li>
+                  <li>Sin protocolo de no-show</li>
+                  <li>Fotos dispersas entre dispositivos</li>
+                  <li>Clasificación solo en memoria</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell impacted">
+                <div class="severity-label">Impactado</div>
+                <ul>
+                  <li>Delegación genera caos</li>
+                  <li>Recordatorios copy-paste</li>
+                  <li>Sin formulario pre-consulta</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell tangential">
+                <div class="severity-label">Tangencial</div>
+                <ul>
+                  <li>Captación Instagram sin protocolo</li>
+                  <li>Sin registro de leads capilares</li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          <!-- CEO -->
+          <tr>
+            <td><i class="ph ph-chart-line-up role-icon"></i>CEO/Dirección</td>
+            <td>
+              <div class="cell dominant">
+                <div class="severity-label">Dominante</div>
+                <ul>
+                  <li>CERO software — todo manual</li>
+                  <li>"Cada uno por separado"</li>
+                  <li>Sin organigrama formal</li>
+                  <li>Sin KPIs formales</li>
+                  <li>HC como registro muerto</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell consequence">
+                <div class="severity-label">Más visible</div>
+                <ul>
+                  <li>Retención ~10% vs meta 30%</li>
+                  <li>Sin reactivación post</li>
+                  <li>Aparatología infrautilizada</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell impacted">
+                <div class="severity-label">Amplificado</div>
+                <ul>
+                  <li>Rezago ~200+ msgs/día</li>
+                  <li>Marisela contesta 6am-9am, 7pm-10pm</li>
+                  <li>Interacciones nocturnas sin registro</li>
+                </ul>
+              </div>
+            </td>
+            <td>
+              <div class="cell impacted">
+                <div class="severity-label">Cuello de botella</div>
+                <ul>
+                  <li>Marisela como único cierre</li>
+                  <li>Equipo no vende en seguimiento</li>
+                  <li>Fuga de capital: quirófano externo</li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Summary -->
+    <h2><i class="ph ph-chart-pie" style="color:#31BEEF"></i> Síntesis por dolor</h2>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <h3 class="d1"><i class="ph ph-warning-circle"></i> D1 — Procesos Internos</h3>
+        <div class="count d1">7/7 roles</div>
+        <p>Unanimidad absoluta. Es la raíz causal de todos los demás dolores. Sin un sistema base, todo lo demás falla.</p>
+      </div>
+      <div class="summary-card">
+        <h3 class="d2"><i class="ph ph-arrows-clockwise"></i> D2 — Seguimiento</h3>
+        <div class="count" style="color:#FFC107;">7/7 roles</div>
+        <p>Consecuencia directa de D1. Todos los roles reportan que el seguimiento es manual, incompleto o inexistente.</p>
+      </div>
+      <div class="summary-card">
+        <h3 class="d3"><i class="ph ph-chat-circle-dots"></i> D3 — Comunicación</h3>
+        <div class="count" style="color:#994E95;">7/7 roles</div>
+        <p>Impactado en todos los roles. Canales fragmentados, sin automatización, sin segmentación.</p>
+      </div>
+      <div class="summary-card">
+        <h3 class="d4"><i class="ph ph-funnel"></i> D4 — Conversión</h3>
+        <div class="count" style="color:#31BEEF;">Cuello de botella</div>
+        <p>Concentrado en Atención al Paciente y CEO. 90% de leads se pierden. Marisela como único punto de cierre.</p>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong><i class="ph ph-info"></i> Lectura de la matriz:</strong> D1 es dominante en los 7 roles sin excepción. D2 aparece como consecuencia directa en todos. D3 está impactado transversalmente. D4 tiene su epicentro en Atención al Paciente y CEO, mientras que para los roles clínicos es tangencial — ellos sufren las consecuencias de D4, no lo causan.
+    </div>
+
+  </div>
+</body>
+</html>

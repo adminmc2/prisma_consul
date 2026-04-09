@@ -2297,7 +2297,8 @@
 
     // ── ANÁLISIS TAB ──
     const ANALISIS_SECTIONS = [
-      { id: 'roles', title: 'Análisis por roles', icon: 'ph ph-users-three', desc: '7 flujos operativos analizados por rol' }
+      { id: 'roles', title: 'Análisis por roles', icon: 'ph ph-users-three', desc: '7 flujos operativos analizados por rol' },
+      { id: 'diagnostico', title: 'Diagnóstico integrado', icon: 'ph ph-chart-line-up', desc: 'Hallazgos, matriz D1-D4, fricciones, embudo y cadena causal' }
     ];
 
     const ANALISIS_ROLES = [
@@ -2310,6 +2311,15 @@
       { id: 'ceo', file: 'flujo-ceo.html', title: 'CEO/Dirección', icon: 'ph ph-chart-line-up', desc: 'Estrategia, visibilidad, KPIs y decisiones' }
     ];
     const ANALISIS_BASE_PATH = '/portal/analisis/armc/diagramas/';
+
+    const ANALISIS_DIAGNOSTICO = [
+      { id: 'resumen-ejecutivo', file: 'resumen-ejecutivo.html', title: 'Resumen Ejecutivo', icon: 'ph ph-target', desc: 'Hallazgos principales, métricas clave y voces del equipo' },
+      { id: 'matriz-dolor-proceso', file: 'matriz-dolor-proceso.html', title: 'Matriz Dolor × Proceso', icon: 'ph ph-grid-four', desc: 'D1-D4 cruzado con los 7 roles — severidad y evidencia' },
+      { id: 'mapa-fricciones', file: 'mapa-fricciones.html', title: 'Mapa de Fricciones', icon: 'ph ph-fire', desc: 'Fricciones transversales y específicas por rol' },
+      { id: 'embudo-operativo', file: 'embudo-operativo.html', title: 'Embudo Operativo', icon: 'ph ph-funnel', desc: 'De la captación a la retención con métricas reales' },
+      { id: 'cadena-causal', file: 'cadena-causal.html', title: 'Cadena Causal', icon: 'ph ph-tree-structure', desc: 'Diagrama D1→D2→D3→D4→Retención con evidencia' }
+    ];
+    const ANALISIS_DIAGNOSTICO_PATH = '/portal/analisis/armc/diagnostico/';
 
     // ── Client: Análisis Tab (3 capas) ──
     function loadAnalisis() {
@@ -2337,6 +2347,18 @@
         document.getElementById('analisisSectionTitle').textContent = 'Análisis por roles';
         document.getElementById('analisis-sections').style.display = 'none';
         document.getElementById('analisis-roles').style.cssText = '';
+      } else if (sectionId === 'diagnostico') {
+        const grid = document.getElementById('analisisRolesGrid');
+        grid.innerHTML = ANALISIS_DIAGNOSTICO.map(r => `
+          <div class="analisis-role-card" onclick="analisisOpenDiag('${r.id}')">
+            <div class="role-icon"><i class="${r.icon}"></i></div>
+            <h3>${r.title}</h3>
+            <p>${r.desc}</p>
+          </div>
+        `).join('');
+        document.getElementById('analisisSectionTitle').textContent = 'Diagnóstico integrado';
+        document.getElementById('analisis-sections').style.display = 'none';
+        document.getElementById('analisis-roles').style.cssText = '';
       }
     }
 
@@ -2358,6 +2380,15 @@
       if (!role) return;
       document.getElementById('analisisIframe').src = ANALISIS_BASE_PATH + role.file;
       document.getElementById('analisisViewerTitle').textContent = role.title;
+      document.getElementById('analisis-roles').style.display = 'none';
+      document.getElementById('analisis-viewer').style.cssText = '';
+    }
+
+    function analisisOpenDiag(diagId) {
+      const item = ANALISIS_DIAGNOSTICO.find(r => r.id === diagId);
+      if (!item) return;
+      document.getElementById('analisisIframe').src = ANALISIS_DIAGNOSTICO_PATH + item.file;
+      document.getElementById('analisisViewerTitle').textContent = item.title;
       document.getElementById('analisis-roles').style.display = 'none';
       document.getElementById('analisis-viewer').style.cssText = '';
     }
@@ -2388,6 +2419,18 @@
         document.getElementById('udAnalisisSectionTitle').textContent = 'Análisis por roles';
         document.getElementById('ud-analisis-sections').style.display = 'none';
         document.getElementById('ud-analisis-roles').style.cssText = '';
+      } else if (sectionId === 'diagnostico') {
+        const grid = document.getElementById('udAnalisisRolesGrid');
+        grid.innerHTML = ANALISIS_DIAGNOSTICO.map(r => `
+          <div class="analisis-role-card" onclick="udAnalisisOpenDiag('${r.id}')">
+            <div class="role-icon"><i class="${r.icon}"></i></div>
+            <h3>${r.title}</h3>
+            <p>${r.desc}</p>
+          </div>
+        `).join('');
+        document.getElementById('udAnalisisSectionTitle').textContent = 'Diagnóstico integrado';
+        document.getElementById('ud-analisis-sections').style.display = 'none';
+        document.getElementById('ud-analisis-roles').style.cssText = '';
       }
     }
 
@@ -2409,6 +2452,15 @@
       if (!role) return;
       document.getElementById('udAnalisisIframe').src = ANALISIS_BASE_PATH + role.file;
       document.getElementById('udAnalisisViewerTitle').textContent = role.title;
+      document.getElementById('ud-analisis-roles').style.display = 'none';
+      document.getElementById('ud-analisis-viewer').style.cssText = '';
+    }
+
+    function udAnalisisOpenDiag(diagId) {
+      const item = ANALISIS_DIAGNOSTICO.find(r => r.id === diagId);
+      if (!item) return;
+      document.getElementById('udAnalisisIframe').src = ANALISIS_DIAGNOSTICO_PATH + item.file;
+      document.getElementById('udAnalisisViewerTitle').textContent = item.title;
       document.getElementById('ud-analisis-roles').style.display = 'none';
       document.getElementById('ud-analisis-viewer').style.cssText = '';
     }

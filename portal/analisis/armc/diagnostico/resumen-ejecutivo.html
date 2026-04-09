@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resumen Ejecutivo — ARMC Diagnóstico Integrado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #101B2C; color: #FAF9F6; font-family: 'Source Sans 3', sans-serif; font-weight: 300; line-height: 1.6; }
+    .container { max-width: 960px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+    h1 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 2rem; color: #FAF9F6; margin-bottom: 0.25rem; }
+    h2 { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1.35rem; color: #31BEEF; margin: 2.5rem 0 1rem; }
+    h3 { font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 1.1rem; color: #FAF9F6; margin: 1.5rem 0 0.75rem; }
+    p { margin-bottom: 0.75rem; }
+    .subtitle { color: #A1B8F2; font-size: 1rem; margin-bottom: 2rem; }
+    .badge { display: inline-block; padding: 0.35rem 0.85rem; background: rgba(153,78,149,0.15); border: 1px solid #994E95; color: #994E95; border-radius: 20px; font-size: 0.8rem; font-weight: 600; font-family: 'Quicksand', sans-serif; margin-bottom: 1.5rem; }
+
+    /* KPI strip */
+    .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 2rem 0; }
+    .kpi-card { background: #1a2535; border: 1px solid rgba(49,190,239,0.2); border-radius: 12px; padding: 1.25rem; text-align: center; transition: all 300ms ease; }
+    .kpi-card:hover { border-color: #31BEEF; transform: translateY(-3px); box-shadow: 0 8px 24px rgba(49,190,239,0.1); }
+    .kpi-number { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 2.5rem; color: #31BEEF; line-height: 1; }
+    .kpi-number.red { color: #ff4444; }
+    .kpi-number.violet { color: #994E95; }
+    .kpi-number.green { color: #4CAF50; }
+    .kpi-label { color: #A1B8F2; font-size: 0.8rem; font-weight: 600; font-family: 'Quicksand', sans-serif; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.5rem; }
+
+    /* Hallazgo cards */
+    .hallazgo { background: #1a2535; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.25rem; border-left: 4px solid #31BEEF; position: relative; }
+    .hallazgo.critical { border-left-color: #ff4444; }
+    .hallazgo-num { position: absolute; top: 0.75rem; right: 1rem; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 3rem; color: rgba(49,190,239,0.06); line-height: 1; }
+    .hallazgo.critical .hallazgo-num { color: rgba(255,68,68,0.06); }
+    .hallazgo h3 { margin-top: 0; color: #31BEEF; font-size: 1.05rem; }
+    .hallazgo.critical h3 { color: #ff4444; }
+    .hallazgo p { color: #FAF9F6; font-size: 0.95rem; margin-bottom: 0.5rem; }
+    .hallazgo .evidence { color: #A1B8F2; font-size: 0.85rem; }
+    .hallazgo .roles-tag { display: inline-block; padding: 0.15rem 0.5rem; background: rgba(49,190,239,0.08); border-radius: 10px; font-size: 0.75rem; color: #31BEEF; font-weight: 600; margin-top: 0.25rem; }
+    .hallazgo.critical .roles-tag { background: rgba(255,68,68,0.08); color: #ff4444; }
+
+    /* Quote */
+    .quote-block { background: #1a2535; border-left: 4px solid #994E95; border-radius: 0 12px 12px 0; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+    .quote-text { font-style: italic; color: #A1B8F2; font-size: 1.05rem; line-height: 1.5; }
+    .quote-source { color: #994E95; font-weight: 600; font-size: 0.85rem; margin-top: 0.5rem; }
+
+    /* Metrics bar */
+    .metrics-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 2rem 0; }
+    .metric { background: #1a2535; border-radius: 8px; padding: 1rem; text-align: center; border: 1px solid rgba(49,190,239,0.1); }
+    .metric-value { font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 1.5rem; color: #ff4444; }
+    .metric-value.cyan { color: #31BEEF; }
+    .metric-desc { color: #A1B8F2; font-size: 0.8rem; margin-top: 0.25rem; }
+
+    /* Conclusion */
+    .conclusion { background: linear-gradient(135deg, rgba(49,190,239,0.08), rgba(153,78,149,0.08)); border: 1px solid rgba(49,190,239,0.2); border-radius: 12px; padding: 2rem; margin-top: 2.5rem; }
+    .conclusion h2 { margin-top: 0; }
+    .conclusion p { font-size: 1.05rem; }
+    .conclusion strong { color: #31BEEF; }
+
+    /* D1-D4 mini */
+    .dolor-mini { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: #1a2535; border-radius: 8px; margin-bottom: 0.5rem; }
+    .dolor-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dolor-dot.d1 { background: #ff4444; }
+    .dolor-dot.d2 { background: #31BEEF; }
+    .dolor-dot.d3 { background: #994E95; }
+    .dolor-dot.d4 { background: #31BEEF; }
+    .dolor-name { font-weight: 600; font-family: 'Quicksand', sans-serif; font-size: 0.9rem; }
+    .dolor-status { margin-left: auto; font-size: 0.8rem; font-weight: 600; }
+    .dolor-status.dominant { color: #ff4444; }
+    .dolor-status.consequence { color: #FFC107; }
+    .dolor-status.impacted { color: #994E95; }
+    .dolor-status.indirect { color: #A1B8F2; }
+
+    @media (max-width: 768px) {
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+      .metrics-bar { grid-template-columns: 1fr; }
+      h1 { font-size: 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .kpi-strip { grid-template-columns: 1fr; }
+      .container { padding: 1.5rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="badge"><i class="ph ph-chart-line-up"></i> Diagnóstico Integrado</div>
+    <h1>Resumen Ejecutivo</h1>
+    <p class="subtitle">Hallazgos principales del análisis operativo de ARMC — 7 roles entrevistados</p>
+
+    <!-- KPIs -->
+    <div class="kpi-strip">
+      <div class="kpi-card">
+        <div class="kpi-number">7</div>
+        <div class="kpi-label">Roles entrevistados</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-number red">42+</div>
+        <div class="kpi-label">Fricciones documentadas</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-number violet">10%</div>
+        <div class="kpi-label">Retención actual</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-number green">0</div>
+        <div class="kpi-label">Software en operación</div>
+      </div>
+    </div>
+
+    <!-- Hallazgo principal -->
+    <h2><i class="ph ph-target" style="color:#ff4444"></i> Hallazgo central</h2>
+
+    <div class="quote-block">
+      <div class="quote-text">"D1 — Procesos Internos Ineficientes es el dolor dominante. Los 7 roles lo confirman de forma independiente y unánime."</div>
+      <div class="quote-source">— Conclusión del análisis cruzado, 7 entrevistas</div>
+    </div>
+
+    <p>Todo el equipo clínico opera sin software, con agendas físicas, memoria personal y WhatsApp como únicos instrumentos. La consecuencia directa: retención del 10%, seguimiento inexistente, comunicación fragmentada y 90% de leads perdidos.</p>
+
+    <!-- D1-D4 status -->
+    <div style="margin: 1.5rem 0;">
+      <div class="dolor-mini">
+        <span class="dolor-dot d1"></span>
+        <span class="dolor-name">D1 — Procesos Internos Ineficientes</span>
+        <span class="dolor-status dominant">DOMINANTE — Unanimidad</span>
+      </div>
+      <div class="dolor-mini">
+        <span class="dolor-dot d2"></span>
+        <span class="dolor-name">D2 — Seguimiento y Clasificación</span>
+        <span class="dolor-status consequence">CONSECUENCIA DIRECTA</span>
+      </div>
+      <div class="dolor-mini">
+        <span class="dolor-dot d3"></span>
+        <span class="dolor-name">D3 — Comunicación Personalizada</span>
+        <span class="dolor-status impacted">IMPACTADO</span>
+      </div>
+      <div class="dolor-mini">
+        <span class="dolor-dot d4"></span>
+        <span class="dolor-name">D4 — Conversión de Leads</span>
+        <span class="dolor-status indirect">INDIRECTAMENTE AFECTADO</span>
+      </div>
+    </div>
+
+    <!-- Top 5 hallazgos -->
+    <h2><i class="ph ph-warning-circle" style="color:#ff4444"></i> 5 Hallazgos principales</h2>
+
+    <div class="hallazgo critical">
+      <div class="hallazgo-num">01</div>
+      <h3>Cero software en toda la operación</h3>
+      <p>No existe un solo sistema digital operativo en la clínica. Todo funciona con agendas físicas, notas de papel, WhatsApp y memoria personal. Una agenda digital pagada lleva meses sin usarse.</p>
+      <div class="evidence">Evidencia: 3 agendas físicas nómadas, inventario en WhatsApp, pagos en papel → escaneo → Excel, expedientes llenados a mano, 5 apps abiertas simultáneamente sin interfaz unificada.</div>
+      <span class="roles-tag">Confirmado por 7 de 7 roles</span>
+    </div>
+
+    <div class="hallazgo critical">
+      <div class="hallazgo-num">02</div>
+      <h3>Historia clínica es un registro muerto</h3>
+      <p>La HC existe en papel pero nadie la consulta para decisiones clínicas ni operativas. Ni el cirujano ni la primera ayudante la revisan antes de un procedimiento. La información relevante se transmite de forma verbal o se recuerda de memoria.</p>
+      <div class="evidence">Evidencia: HC con 5+ años sin actualizar, campos insuficientes para dieta y análisis facial, nota de paciente implementada hace 1 mes pero olvidada constantemente, consentimientos recurrentemente sin firma.</div>
+      <span class="roles-tag">Confirmado por 5 de 7 roles</span>
+    </div>
+
+    <div class="hallazgo critical">
+      <div class="hallazgo-num">03</div>
+      <h3>Retención del 10% — aparatología parada</h3>
+      <p>Solo 1 de cada 10 pacientes regresa. La clínica genera alto volumen de primera vez pero no retiene. Resultado: aparatología de inversión significativa (láser, HIFU) infrautilizada por falta de pacientes recurrentes.</p>
+      <div class="evidence">Evidencia: Meta de retención 30%, actual ~10%. Sin mecanismo de reactivación. Sin recordatorios de cita. Sin seguimiento post más allá de revisión al 3er día. Pacientes desaparecen un año y regresan sin contexto.</div>
+      <span class="roles-tag">Confirmado por CEO, Cirujano, Cosmiatra, Atención</span>
+    </div>
+
+    <div class="hallazgo">
+      <div class="hallazgo-num">04</div>
+      <h3>Memoria humana como único sistema de información</h3>
+      <p>Cada miembro del equipo almacena la información operativa en su propia memoria. No existen protocolos escritos que se consulten, ni registros accesibles entre roles. Cuando alguien falta, la información se pierde.</p>
+      <div class="evidence">Evidencia: Material preparado de memoria sin lista, revisiones agendadas mentalmente, seguimiento capilar basado en fechas recordadas, cobros con inseguridad por falta de tabla de precios, "todos hacen de todo" cuando alguien no está.</div>
+      <span class="roles-tag">Confirmado por 6 de 7 roles</span>
+    </div>
+
+    <div class="hallazgo">
+      <div class="hallazgo-num">05</div>
+      <h3>Fotos clínicas dispersas en 4+ dispositivos personales</h3>
+      <p>Las fotos de pacientes — evidencia clínica crítica para seguimiento y resultados — están distribuidas en los teléfonos personales de Gabriel, Divani, Óscar y Brisa sin sistema centralizado, sin respaldo y sin organización por paciente.</p>
+      <div class="evidence">Evidencia: Fotos pre tomadas pero post casi inexistentes. Búsqueda manual entre dispositivos para comparar evolución. Sin acceso cuando el dueño del teléfono no está. Tricología busca fotos iniciales vs 2 meses entre múltiples fuentes.</div>
+      <span class="roles-tag">Confirmado por 5 de 7 roles</span>
+    </div>
+
+    <!-- Métricas clave -->
+    <h2><i class="ph ph-chart-bar" style="color:#31BEEF"></i> Métricas clave del embudo</h2>
+
+    <div class="metrics-bar">
+      <div class="metric">
+        <div class="metric-value cyan">1.8M</div>
+        <div class="metric-desc">Seguidores en redes sociales</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">~200/día</div>
+        <div class="metric-desc">Mensajes recibidos sin sistema</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">~10%</div>
+        <div class="metric-desc">Conversión primer contacto</div>
+      </div>
+    </div>
+    <div class="metrics-bar">
+      <div class="metric">
+        <div class="metric-value cyan">~80%</div>
+        <div class="metric-desc">Valoración → Procedimiento</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">10%</div>
+        <div class="metric-desc">Retención actual (meta: 30%)</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value cyan">~10-12</div>
+        <div class="metric-desc">Pacientes/día combinados</div>
+      </div>
+    </div>
+
+    <!-- Voces del equipo -->
+    <h2><i class="ph ph-quotes" style="color:#994E95"></i> Voces del equipo</h2>
+
+    <div class="quote-block">
+      <div class="quote-text">"Siento que todos hacen de todo"</div>
+      <div class="quote-source">— Óscar González, Enfermero</div>
+    </div>
+
+    <div class="quote-block">
+      <div class="quote-text">"Que nos quite esta carga de trabajo y que nos enfoquemos en la experiencia y no en hacer la historia clínica y notas"</div>
+      <div class="quote-source">— Gabriel Cabrera, Cirujano</div>
+    </div>
+
+    <div class="quote-block">
+      <div class="quote-text">"Descuidamos esa parte de los pacientes... ¿de qué te sirve invertir si están los equipos parados?"</div>
+      <div class="quote-source">— Marisela Narváez, CEO</div>
+    </div>
+
+    <div class="quote-block">
+      <div class="quote-text">"Eso creo que me sería lo que más me quita tiempo — buscar pacientes, ver fechas, mandar recordatorios"</div>
+      <div class="quote-source">— Elián Cabrera Narváez, Tricología</div>
+    </div>
+
+    <!-- Conclusión -->
+    <div class="conclusion">
+      <h2><i class="ph ph-lightbulb" style="color:#31BEEF"></i> Conclusión</h2>
+      <p>ARMC tiene una <strong>base clínica sólida</strong> — el equipo es competente, la tasa de valoración a procedimiento es alta (~80%), y el volumen de primera vez es significativo. Sin embargo, toda la operación descansa sobre <strong>memoria humana y procesos manuales</strong> que generan fricciones en cascada.</p>
+      <p>El dolor D1 (Procesos Internos) es la <strong>raíz causal</strong>. Al no existir un sistema centralizado, el seguimiento falla (D2), la comunicación se fragmenta (D3), y los leads se pierden (D4). La retención del 10% es el síntoma más visible de una operación que necesita una <strong>plataforma de gestión clínica integrada</strong>.</p>
+      <p>La solución no es agregar herramientas aisladas — es construir un <strong>ecosistema APEX</strong> que resuelva D1 como base y habilite D2, D3 y D4 como capas progresivas.</p>
+    </div>
+
+  </div>
+</body>
+</html>
