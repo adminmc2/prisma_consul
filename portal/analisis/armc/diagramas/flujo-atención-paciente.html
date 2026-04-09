@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atención al Paciente — ARMC Análisis Operativo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: 'transparent',
+        primaryColor: '#1a2535',
+        primaryTextColor: '#FAF9F6',
+        primaryBorderColor: '#31BEEF',
+        secondaryColor: '#1a2535',
+        secondaryBorderColor: '#994E95',
+        lineColor: '#31BEEF',
+        textColor: '#FAF9F6',
+        clusterBkg: '#162033',
+        clusterBorder: '#253545',
+        edgeLabelBackground: '#1a2535',
+        fontFamily: '"Source Sans 3", sans-serif',
+        fontSize: '14px'
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 15,
+        nodeSpacing: 50,
+        rankSpacing: 55,
+      }
+    });
+  </script>
+  <link rel="stylesheet" href="../css/estilos-prisma.css">
+  <style>
+    .breadcrumb { margin-bottom: 2rem; padding: 1rem; background: rgba(49, 190, 239, 0.05); border-radius: 4px; }
+    .breadcrumb a { color: #31BEEF; }
+    .diagram-section { background: #1a2535; border: 1px solid #31BEEF; border-radius: 8px; padding: 2rem; margin: 2rem 0; }
+    .diagram-section h2 { margin-top: 0; }
+    .mermaid-container { background: #101B2C; padding: 2rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; }
+    .mermaid { display: flex; justify-content: center; min-height: 300px; }
+    /* Mermaid SVG overrides */
+    .mermaid .node rect, .mermaid .node polygon { rx: 8 !important; ry: 8 !important; stroke-width: 1.5px !important; }
+    .mermaid .nodeLabel, .mermaid .node .label { font-family: 'Source Sans 3', sans-serif !important; font-size: 14px !important; font-weight: 600 !important; }
+    .mermaid .edgePath path.path { stroke-width: 1.5px !important; opacity: 0.6; }
+    .mermaid .edgeLabel { font-size: 12px !important; font-family: 'Source Sans 3', sans-serif !important; font-weight: 600 !important; }
+    .mermaid .edgeLabel rect { rx: 4 !important; ry: 4 !important; fill: #1a2535 !important; stroke: none !important; }
+    .mermaid .edgeLabel span { color: #FAF9F6 !important; }
+    .mermaid .cluster rect { rx: 8 !important; ry: 8 !important; stroke-dasharray: 5 3; }
+    .mermaid .cluster-label .nodeLabel, .mermaid .cluster-label span { font-family: 'Quicksand', sans-serif !important; font-weight: 700 !important; font-size: 14px !important; letter-spacing: 0.5px; text-transform: uppercase; fill: #FAF9F6 !important; color: #FAF9F6 !important; }
+    .nav-links { display: flex; gap: 1rem; margin-top: 2rem; justify-content: space-between; }
+    .nav-links a { flex: 1; padding: 1rem; text-align: center; background: #1a2535; border: 1px solid #31BEEF; border-radius: 4px 25px 25px 4px; transition: all 400ms ease; color: #FAF9F6; text-decoration: none; }
+    .nav-links a:hover { background: #31BEEF; color: #101B2C; }
+    .status-badge { display: inline-block; padding: 0.5rem 1rem; background: #994E95; color: #FAF9F6; border-radius: 4px; font-size: 0.85rem; margin-bottom: 1rem; font-weight: 600; }
+    .quote { background: #101B2C; padding: 1rem 1.5rem; border-left: 4px solid #994E95; border-radius: 4px; margin: 1rem 0; font-style: italic; color: #A1B8F2; }
+    .quote strong { color: #994E95; font-style: normal; }
+    .gap-box { background: rgba(255, 193, 7, 0.08); border: 1px dashed #FFC107; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .gap-box strong { color: #FFC107; }
+    .resolved-box { background: rgba(76, 175, 80, 0.08); border: 1px solid #4CAF50; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .resolved-box strong { color: #4CAF50; }
+    .dato-box { background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin: 0.5rem 0; }
+    .dato-box strong { color: #31BEEF; }
+    .source-tag { font-size: 0.75rem; color: #994E95; font-weight: 600; }
+    .new-tag { font-size: 0.7rem; background: #4CAF50; color: #fff; padding: 2px 6px; border-radius: 3px; font-weight: 600; margin-left: 0.5rem; }
+    details { margin: 0.5rem 0; }
+    details summary { cursor: pointer; padding: 0.75rem 1rem; background: #101B2C; border-left: 4px solid #31BEEF; border-radius: 4px; color: #31BEEF; font-weight: 600; font-family: 'Quicksand', sans-serif; list-style: none; display: flex; align-items: center; gap: 0.5rem; transition: background 200ms ease; }
+    details summary:hover { background: rgba(49, 190, 239, 0.1); }
+    details summary::before { content: '▶'; font-size: 0.7rem; transition: transform 200ms ease; }
+    details[open] summary::before { transform: rotate(90deg); }
+    details summary::-webkit-details-marker { display: none; }
+    details .details-content { padding: 1rem 0 0 1rem; }
+
+    /* === SLIDE CARDS GRID === */
+    .slide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+    .slide-card { background: #101B2C; border: 1px solid rgba(49,190,239,0.3); border-radius: 12px; padding: 1.5rem; cursor: pointer; transition: all 300ms ease; position: relative; overflow: hidden; }
+    .slide-card:hover { border-color: #31BEEF; transform: translateY(-4px); box-shadow: 0 12px 32px rgba(49,190,239,0.15); }
+    .slide-card .card-number { font-size: 3.5rem; font-weight: 700; color: rgba(49,190,239,0.08); position: absolute; top: -0.25rem; right: 0.75rem; font-family: 'Quicksand', sans-serif; line-height: 1; }
+    .slide-card h3 { color: #FAF9F6; font-size: 1rem; margin: 0 0 0.5rem 0; font-family: 'Quicksand', sans-serif; font-weight: 600; }
+    .slide-card .card-count { color: #A1B8F2; font-size: 0.8rem; }
+    .slide-card.card-critical { border-color: rgba(255,68,68,0.4); }
+    .slide-card.card-critical:hover { border-color: #ff4444; box-shadow: 0 12px 32px rgba(255,68,68,0.15); }
+    .slide-card.card-critical .card-number { color: rgba(255,68,68,0.08); }
+    .slide-card.card-sentiment { border-color: rgba(153,78,149,0.4); }
+    .slide-card.card-sentiment:hover { border-color: #994E95; box-shadow: 0 12px 32px rgba(153,78,149,0.15); }
+    .slide-card.card-sentiment .card-number { color: rgba(153,78,149,0.08); }
+
+    /* === FULLSCREEN PRESENTATION MODAL === */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: #0a1420; z-index: 1000; flex-direction: column; }
+    .modal-overlay.active { display: flex; }
+
+    /* Progress bar */
+    .modal-progress { height: 3px; background: rgba(49,190,239,0.1); flex-shrink: 0; }
+    .modal-progress-fill { height: 100%; background: linear-gradient(90deg, #31BEEF, #994E95); transition: width 400ms ease; border-radius: 0 2px 2px 0; }
+
+    /* Top bar */
+    .modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; flex-shrink: 0; }
+    .modal-topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .modal-slide-num { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem; background: rgba(49,190,239,0.1); padding: 0.3rem 0.8rem; border-radius: 20px; }
+    .modal-slide-title { color: #A1B8F2; font-family: 'Quicksand', sans-serif; font-size: 0.85rem; font-weight: 500; }
+    .modal-close { background: none; border: none; color: #A1B8F2; font-size: 1.25rem; cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 6px; transition: all 200ms; line-height: 1; }
+    .modal-close:hover { color: #ff4444; background: rgba(255,68,68,0.1); }
+
+    /* Slide area */
+    .modal-slide-area { flex: 1; display: flex; align-items: stretch; overflow: hidden; position: relative; }
+
+    /* Side navigation arrows */
+    .modal-side-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; background: none; border: none; color: rgba(161,184,242,0.4); font-size: 2.5rem; cursor: pointer; padding: 1rem; transition: all 200ms; }
+    .modal-side-nav:hover:not(:disabled) { color: #31BEEF; }
+    .modal-side-nav:disabled { opacity: 0; cursor: default; }
+    .modal-side-nav.nav-left { left: 0.5rem; }
+    .modal-side-nav.nav-right { right: 0.5rem; }
+
+    /* Slide content wrapper */
+    .modal-slide-content { width: 100%; max-width: 900px; margin: 0 auto; padding: 0 5rem; overflow-y: auto; max-height: 100%; scrollbar-width: none; -ms-overflow-style: none; position: relative; }
+    .modal-slide-content::-webkit-scrollbar { width: 0; display: none; }
+
+    /* Scroll-down indicator — overlays bottom of slide area */
+    .scroll-hint { position: absolute; bottom: 0; left: 5rem; right: 5rem; height: 70px; background: linear-gradient(to bottom, transparent 0%, #0a1420 80%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 0.75rem; pointer-events: none; opacity: 1; transition: opacity 400ms ease; z-index: 5; }
+    .scroll-hint.hidden { opacity: 0; }
+    .scroll-hint-arrow { color: rgba(49,190,239,0.4); font-size: 1rem; animation: scrollBounce 2s ease-in-out infinite; display: flex; align-items: center; gap: 0.4rem; font-family: 'Quicksand', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; }
+    @keyframes scrollBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+
+    /* Slide title */
+    .slide-title-block { margin-bottom: 2.5rem; }
+    .slide-title-block h2 { color: #FAF9F6; font-family: 'Quicksand', sans-serif; font-size: 2rem; font-weight: 700; margin: 0 0 0.25rem 0; line-height: 1.2; }
+    .slide-title-block .slide-subtitle { color: #A1B8F2; font-size: 0.95rem; }
+
+    /* Slide items — clean bullet style */
+    .slide-item { padding: 0.85rem 0; border-bottom: 1px solid rgba(49,190,239,0.06); display: flex; gap: 0.75rem; align-items: baseline; line-height: 1.55; }
+    .slide-item:last-child { border-bottom: none; }
+    .slide-item-dot { width: 6px; height: 6px; border-radius: 50%; background: #31BEEF; flex-shrink: 0; margin-top: 0.55rem; }
+    .slide-item-dot.critical { background: #ff4444; }
+    .slide-item-dot.positive { background: #4CAF50; }
+    .slide-item-dot.sentiment { background: #994E95; }
+    .slide-item-text { color: #FAF9F6; font-size: 1.05rem; font-family: 'Source Sans 3', sans-serif; font-weight: 300; }
+    .slide-item-text strong { color: #31BEEF; font-weight: 600; }
+    .slide-item-text .critical-text { color: #ff4444; font-weight: 600; }
+    .slide-item-text .positive-text { color: #4CAF50; font-weight: 600; }
+    .slide-item-text .sentiment-text { color: #994E95; font-weight: 600; }
+
+    /* Slide section headings */
+    .slide-section-heading { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin: 2rem 0 0.75rem 0; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(49,190,239,0.15); }
+    .slide-section-heading:first-child { margin-top: 0; }
+    .slide-section-heading.critical { color: #ff4444; border-bottom-color: rgba(255,68,68,0.15); }
+
+    /* Bottom bar with dots */
+    .modal-bottombar { display: flex; align-items: center; justify-content: center; padding: 1.25rem; gap: 8px; flex-shrink: 0; }
+    .modal-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(49,190,239,0.15); transition: all 300ms ease; cursor: pointer; }
+    .modal-dot.active { background: #31BEEF; transform: scale(1.4); }
+    .modal-dot:hover:not(.active) { background: rgba(49,190,239,0.4); }
+
+    @media (max-width: 768px) {
+      .modal-slide-content { padding: 0 3.5rem; }
+      .modal-side-nav { font-size: 1.5rem; padding: 0.5rem; }
+      .slide-title-block h2 { font-size: 1.5rem; }
+      .slide-item-text { font-size: 0.95rem; }
+      .modal-topbar { padding: 0.75rem 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .slide-grid { grid-template-columns: 1fr; }
+      .modal-slide-content { padding: 0 2.5rem; }
+      .modal-side-nav { font-size: 1.25rem; }
+      .modal-bottombar { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1><i class="ph ph-user" style="color:#31BEEF"></i> Atención al Paciente — Flujo Operativo (as-is)</h1>
+      <p>Entrevistado: Carlos (Carlitos) — Entrevista completa</p>
+    </header>
+
+    <div class="breadcrumb">
+      <a href="../index.html"><i class="ph ph-arrow-left"></i> Volver al Índice</a>
+    </div>
+
+    <div class="status-badge" style="background: #4CAF50;"><i class="ph ph-check-circle"></i> ENTREVISTA COMPLETA — 2 sesiones</div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 1: DATOS CONFIRMADOS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-check-square"></i> Datos confirmados</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">181 datos organizados por flujo operativo. Fuente: Carlos (Atención al Paciente), 2 sesiones de entrevista.<br>Haz clic en cualquier tarjeta para explorar los datos.</p>
+
+      <div class="slide-grid">
+        <div class="slide-card" onclick="openSlide(0)"><span class="card-number">1</span><h3>Carlos: Perfil y rol</h3><span class="card-count">10 datos</span></div>
+        <div class="slide-card" onclick="openSlide(1)"><span class="card-number">2</span><h3>Equipo de la clínica</h3><span class="card-count">9 personas + 3 datos</span></div>
+        <div class="slide-card" onclick="openSlide(2)"><span class="card-number">3</span><h3>Canales y herramientas</h3><span class="card-count">12 datos</span></div>
+        <div class="slide-card" onclick="openSlide(3)"><span class="card-number">4</span><h3>Captación de leads</h3><span class="card-count">11 datos</span></div>
+        <div class="slide-card" onclick="openSlide(4)"><span class="card-number">5</span><h3>Flujo paciente nuevo</h3><span class="card-count">12 pasos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(5)"><span class="card-number">6</span><h3>Pipeline y métricas</h3><span class="card-count">15 datos</span></div>
+        <div class="slide-card" onclick="openSlide(6)"><span class="card-number">7</span><h3>Sistema de agenda</h3><span class="card-count">10 datos</span></div>
+        <div class="slide-card" onclick="openSlide(7)"><span class="card-number">8</span><h3>Flujo presencial</h3><span class="card-count">8 datos</span></div>
+        <div class="slide-card" onclick="openSlide(8)"><span class="card-number">9</span><h3>Cobros y facturación</h3><span class="card-count">13 datos</span></div>
+        <div class="slide-card" onclick="openSlide(9)"><span class="card-number">10</span><h3>Post-procedimiento</h3><span class="card-count">16 datos</span></div>
+        <div class="slide-card" onclick="openSlide(10)"><span class="card-number">11</span><h3>Reportes y finanzas</h3><span class="card-count">12 datos</span></div>
+        <div class="slide-card card-sentiment" onclick="openSlide(11)"><span class="card-number">12</span><h3>Lo que Carlos siente</h3><span class="card-count">7 expresiones</span></div>
+      </div>
+
+      <!-- SLIDES HIDDEN DATA (used by modal JS) -->
+      <div id="slides-data" style="display:none;">
+
+      <!-- SLIDE 0 -->
+      <div class="slide" data-title="Carlos: Perfil y rol" data-count="10 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Rol:</strong> Asistente del doctor. Única persona en el puesto. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Antigüedad:</strong> Desde dic 2023, 2 años 3 meses <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Formación:</strong> Carrera técnica en administración de empresas <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Jornada:</strong> 9 horas, empieza a las 10 AM. Sin horario fijo por tarea. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Autonomía alta:</strong> Pocas veces consulta al doctor. Contesta mayoría solo. <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Distribución de tiempo</h4>
+          <div class="dato-box"><strong>60%</strong> — iPad contestando mensajes + confirmaciones <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>20%</strong> — Cobrar <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>10%</strong> — Agendar pacientes <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>10%</strong> — Otras actividades (ayudar compañeros, compras) <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Día ideal:</strong> "Tan solo con tener el apoyo en los mensajes, con eso ya sería demasiado." <span class="source-tag">— Carlos</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 1 -->
+      <div class="slide" data-title="Equipo de la clínica" data-count="9 personas identificadas">
+        <div class="details-content">
+          <div class="dato-box"><strong>Dr. Gabriel ("Gabo" / "Gabush"):</strong> Cirujano principal. Dueño. Solo ejecuta procedimientos. Toma fotos y marca pacientes. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Dra. Maricela:</strong> Dueña. Da consultas de valoración. Ayuda con mensajes noche/mañana. Teléfono empresa. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Dr. Divani:</strong> Da consultas de valoración. Hace revisiones cuando Gabo no está. Accede al email ARMC. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Brisa Yaredi:</strong> Cosmiatra. Backup de Carlos cuando ausente. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Hermana de Gabo:</strong> Hizo la encuesta QR de satisfacción. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Persona de Excel/inventario (recién contratada):</strong> Registra ingresos diarios, costos de todo, utilidad por procedimiento. Reporta a Maricela. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Contador (nombre no mencionado):</strong> Elabora facturas. Externo. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>"El chico de las pautas":</strong> Gestiona campañas Meta. Externo. Pasa cortes mensuales. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Recepcionista del edificio:</strong> No es de la clínica. Anuncia pacientes en grupo WhatsApp. <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Interacciones de Carlos</h4>
+          <div class="dato-box"><strong>Ranking interacciones en clínica:</strong> 1. Divani, 2. Maricela, 3. Brisa <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Coordinación con médico:</strong> Presencial. Doctor sale del consultorio, le dicen a Carlos qué procedimiento, Carlos regresa con paciente a cobrar. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Consultorio libre disponible:</strong> Siempre hay uno libre para coordinación entre equipo. <span class="source-tag">— Carlos</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2 -->
+      <div class="slide" data-title="Canales, dispositivos y herramientas" data-count="12 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Dispositivo Carlos:</strong> iPad (en clínica, todas las redes sociales abiertas) <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Dispositivo Maricela:</strong> Teléfono empresa (se lleva a casa, noche/mañana) <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>1 ordenador en clínica:</strong> Solo Divani y Carlos acceden al email desde ahí. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Apps abiertas simultáneamente:</strong> WhatsApp, Instagram, Facebook, Notas — 5 apps <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Canales de contacto:</strong> WhatsApp (mayor concentración), Instagram, redes sociales <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Llamadas:</strong> 2-4 al día, resto puro mensaje <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Volumen:</strong> +100 mensajes acumulados cuando no se contesta <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Email clínica:</strong> Gmail ARMC. NO se usa para pacientes, solo notificaciones agenda digital. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Todo seguimiento con pacientes:</strong> WhatsApp + muy poco Instagram. Cero email. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Mejor herramienta:</strong> WhatsApp + Instagram <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">Peor herramienta: WhatsApp (la misma que la mejor)</strong> — "No es la herramienta, es la forma de usarlo" <span class="source-tag">— Entrevistador</span></div>
+          <div class="dato-box"><strong>Grupo WhatsApp interno:</strong> Recepcionista + todo el equipo. Ahí se anuncia llegada de pacientes. <span class="source-tag">— Carlos</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3 -->
+      <div class="slide" data-title="Captación de leads y redes sociales" data-count="11 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Campañas por procedimiento:</strong> Pautas específicas en Meta (ej: armonización facial). Persona externa las gestiona. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Pautas enlazadas:</strong> Instagram + Facebook tienen pautas enlazadas <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Ranking plataformas por contactos:</strong> 1. Instagram (más) → 2. Facebook → 3. TikTok (menos, a pesar de más seguidores) <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">1.8 millones de seguidores en redes sociales.</strong> Sin estrategia de engagement ni seguimiento. <span class="source-tag">— Entrevistador</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">TikTok: más seguidores, menos contactos.</strong> "No hay nadie pendiente en TikTok al 100. Sí perdemos un porcentaje alto de posibles pacientes." <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Comentarios en videos:</strong> Carlos copia/pega mensaje invitando a escribir por WhatsApp a todos los que comentan pidiendo info. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Likes y seguidores:</strong> No se hace nada con ellos. No hay tiempo. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Caso celebridad (Eduardo Yáñez):</strong> Campañas con resultados de celebridades generan contactos de 30-40+ años que quieren "exactamente lo mismo". Son los más difíciles. <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Tipos de procedimientos</h4>
+          <div class="dato-box"><strong>Procedimientos rápidos:</strong> Inyectables — rinomodelación, relleno de labios, botox, ácido hialurónico <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Procedimientos lentos:</strong> Múltiples combinados (5-6 diferentes). Ejemplo: caso Eduardo Yáñez. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Pacientes se "enganchan":</strong> Quieren precio exacto de procedimientos complejos. Carlos tiene que desglosar paso por paso. Se molestan. <span class="source-tag">— Carlos</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4 -->
+      <div class="slide" data-title="Flujo paciente nuevo: primer mensaje a cita" data-count="12 pasos">
+        <div class="details-content">
+          <div class="dato-box"><strong>1.</strong> Pautas/ads de ~7 procedimientos generan mensajes <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>2.</strong> Mensaje de bienvenida AUTOMATIZADO (lo único automático). Paciente deja nombre + pide info. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>3.</strong> Carlos: Notas iPad → copia → pega en WhatsApp. Manual cada vez. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>4.</strong> Info enviada: procedimiento + nota de consulta presencial + dirección + horarios <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>5.</strong> Sin paquetes prediseñados. Todo personalizado. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>6.</strong> MAYORÍA deja en vista (quieren precio exacto, no entienden que es personalizado) <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>7.</strong> Carlos re-contacta al otro día: consulta sin costo y sin compromiso <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>8.</strong> Si agendan → Carlos registra en agenda <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>9.</strong> Consulta presencial (virtual solo lejanos/EEUU con fotos) <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>10.</strong> Dra. Maricela o Dr. Divani dan la consulta de valoración (NO el cirujano principal). Explican todo: procedimiento, cuidados, plan. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>11.</strong> Si acepta → Carlos: días/horario + anticipo + indicaciones pre/post por WhatsApp <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>12.</strong> Procedimientos pequeños → se realizan al momento <span class="source-tag">— Carlos</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5 -->
+      <div class="slide" data-title="Pipeline, conversión y métricas" data-count="15 datos">
+        <div class="details-content">
+          <h4 style="color: #ff4444;">Embudo numérico mensual</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">~50 nuevos interesados/mes</strong> (contactan por primera vez) <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">~35 van a evaluación/valoración</strong> (70% de los que contactan) <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">~20 se hacen un procedimiento</strong> (40% de contacto, 57% de valoración) <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">~25 pacientes repiten procedimiento/mes</strong> (recurrentes) <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">TOTAL: ~80-100 pacientes/mes</strong> (nuevos + recurrentes) <span class="source-tag">— Entrevistador confirma</span></div>
+          <h4 style="color: #ff4444; margin-top: 1rem;">Conversión y pérdida</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Tasa de conversión: ~10%</strong> — Solo 10% de pacientes que contactan terminan agendando. 90% dejan en visto. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Gabush confirma:</strong> Es una de las cosas que más pierde usuarios <span class="source-tag">— Entrevistador citando Gabush</span></div>
+          <div class="dato-box"><strong>Razón principal de pérdida:</strong> Pacientes quieren costo exacto. Carlos no puede dar porque es personalizado. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Tiempo por paciente:</strong> Rápido ~5 min, lento hasta 30 min <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Lead rápido:</strong> "Ya me lo quiero hacer hoy" → agenda rápido <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Lead lento (MAYORÍA):</strong> Quiere precio exacto → deja en vista → Carlos re-contacta al otro día <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #ff4444; margin-top: 1rem;">Seguimiento de leads</h4>
+          <div class="dato-box"><strong>Solo 1 re-contacto:</strong> Carlos espera 24h y envía UN mensaje. Si no contesta, no vuelve a escribir. "El tiempo no me da." <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Contactos se mantienen en WhatsApp.</strong> No se borran. Solo se retoman si el paciente vuelve a escribir. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">SIN REGISTRO de leads:</strong> "No tengo ningún registro." Ningún CRM, ningún Excel, nada. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Única métrica:</strong> Datos de Meta (mensajes por campaña por mes) + cruce manual con agenda física. <span class="source-tag">— Carlos</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6 -->
+      <div class="slide" data-title="Sistema de agenda" data-count="10 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Agenda física (EN USO)</h4>
+          <div class="dato-box"><strong>Cuaderno con día y hora preimpresos.</strong> Se anota a mano. Actualmente en uso. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Disponibilidad:</strong> Cuando Gabush sale, rayan los días en la agenda. Carlos ofrece alternativas. <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Agenda digital (NO EN USO)</h4>
+          <div class="dato-box"><strong>Existe, tiene dominio web.</strong> Pacientes pueden agendar consulta directamente. Pago único, sin mensualidad. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>2 programas:</strong> 1) Público (sin contraseña): pacientes agendan valoraciones/revisiones. 2) Admin (con contraseña): equipo agenda procedimientos. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Incluye TODO:</strong> Procedimientos + valoraciones + revisiones. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Notificación:</strong> Cuando paciente agenda, llega email con opción aceptar/rechazar cita. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Carlos pidió cambios.</strong> No le convencían cosas. Recién se la entregaron "completa". <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Carlos no sabe qué programa es.</strong> <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Intención:</strong> Quieren migrar a digital para eliminar lo escrito. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">AÚN NO implementada realmente.</strong> Pocos intentos. No la usan. <span class="source-tag">— Carlos</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7 -->
+      <div class="slide" data-title="Flujo presencial en clínica" data-count="8 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Ubicación:</strong> Segundo piso de un edificio con otros doctores independientes. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Recepcionista del edificio</strong> envía nombre + motivo por grupo WhatsApp (ej: "Jorge Valoración"). <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Quién recibe al paciente:</strong> Quien esté desocupado. No hay persona fija. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Si viene a VALORACIÓN:</strong> Pasan con Divani o Maricela → valoración → Carlos entra para agendar → anticipo → indicaciones por WhatsApp. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Si viene a PROCEDIMIENTO:</strong> Expediente clínico → Carlos cobra + verifica indicaciones → fotos, marcado, anestesia → procedimiento. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Expediente clínico + consentimientos + historia:</strong> Los hace "alguien" (no Carlos, no el doctor). <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Gabush toma las fotos y marca al paciente personalmente.</strong> <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Indicaciones:</strong> Carlos las comparte por WhatsApp desde que agendan. Día del procedimiento solo verifica. <span class="source-tag">— Carlos</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8 -->
+      <div class="slide" data-title="Cobros, pagos y facturación" data-count="13 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Métodos de pago</h4>
+          <div class="dato-box"><strong>Formas de pago:</strong> Efectivo, transferencia (principal), tarjeta (pocas veces) <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Herramientas:</strong> Terminal tarjeta + "tablitas" con cuentas bancarias para transferencia <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Cobro remoto:</strong> Carlos envía foto de cuenta por WhatsApp → paciente manda comprobante → Carlos verifica → registra <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Política de anticipos</h4>
+          <div class="dato-box"><strong>Sin anticipo = sin cita.</strong> "Si no dan un anticipo no les agendo el procedimiento." <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Pagos a plazos:</strong> Informal. "La cantidad que quieras en el tiempo que quieras." <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Regla absoluta:</strong> Sin liquidar pago completo NO se realiza el procedimiento. <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Registro y facturación</h4>
+          <div class="dato-box"><strong>Registro de pagos:</strong> "Hojitas verdes" con: fecha, nombre, qué paga, cantidad, forma de pago. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Pocos pacientes piden factura.</strong> <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Proceso factura:</strong> Carlos pide datos → envía al contador → Contador elabora y envía directo al paciente (con copia a Carlos). <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Recibo simple:</strong> Hoja membretada en Word. Carlos edita fecha/nombre/cantidad → imprime → firma. Si no está el paciente, escanea y envía por WhatsApp en PDF. <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Precios y proveedores</h4>
+          <div class="dato-box"><strong>Ajuste de precios:</strong> 1x/año en enero. Extra si proveedor sube. Carlos + Maricela deciden juntos. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Proveedores:</strong> 1 fijo por producto. Clientes frecuentes. Comunicación por WhatsApp. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Carlos hace compras:</strong> Farmacia, papelería. Tarjeta clínica o efectivo de caja. Factura tickets. <span class="source-tag">— Carlos</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 9 -->
+      <div class="slide" data-title="Post-procedimiento, revisiones y satisfacción" data-count="16 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Seguimiento post-op</h4>
+          <div class="dato-box"><strong>Plantilla de seguimiento:</strong> Solo tiene una para preguntar "¿cómo se siente?". Nada más. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Todo lo demás es escrito personalmente cada vez.</strong> <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Dudas post-op por mensaje:</strong> Carlos responde directamente (inflamación/moretón = normal). Avisa a doctores si necesario. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Dudas post-op presencial:</strong> Los doctores responden directamente. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Autonomía con existentes:</strong> Muy pocos casos consulta a doctores. Solo problemas de salud ajenos al procedimiento. <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Revisiones</h4>
+          <div class="dato-box"><strong>Frecuencia:</strong> Depende del procedimiento (4 días, 1 semana, 15 días). <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Agendamiento:</strong> La persona que atiende agenda revisión ese día. Si no, Carlos manda mensaje después. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Seguimiento de revisiones: DE MEMORIA.</strong> Carlos no tiene anotado quién necesita revisión. ~6-7/semana sin agendar. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Cuando Gabo no está, Divani hace revisiones.</strong> Pocos pacientes quieren esperar. <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Masajes post-op</h4>
+          <div class="dato-box"><strong>Ejemplo lipo cara y papada:</strong> 5-6 masajes, 500 pesos c/u, 1-2/semana. Primer masaje a los 4 días. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Sin protocolo formal.</strong> Cantidad depende de cómo desinflama el paciente. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Info de masajes se comunica ANTES del procedimiento.</strong> <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Satisfacción y quejas</h4>
+          <div class="dato-box"><strong>Encuesta QR:</strong> Hecha por hermana de Gabo. Presencial. Se ha usado MUY POCO. No se envía por WhatsApp. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Quejas: muy pocas.</strong> Normalmente recuperación normal confundida con problema. Sin protocolo formal. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Promociones:</strong> 2×1 y 20% descuento. Se envían a pacientes no atendidos + frecuentes. <span class="source-tag">— Carlos</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 10 -->
+      <div class="slide" data-title="Reportes y control financiero" data-count="12 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Reportes de Carlos</h4>
+          <div class="dato-box"><strong>Reporte diario:</strong> Hojitas verdes con todo lo trabajado. Se envía diario por WhatsApp a Gabush/Maricela. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Formato:</strong> A mano en hojitas verdes + a veces en Notas iPad. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Inventarios:</strong> Carlos lleva inventario de productos dermatológicos. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Reporte de Meta:</strong> El chico de las pautas entrega mensajes recibidos por campaña. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Frecuencia:</strong> Hoja verde = diario. Pautas Meta = 1 vez/mes. Inventarios = 2 veces/mes. <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #ff4444; margin-top: 1rem;">Problemas de reportes</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Embudo de conversión: INCOMPLETO.</strong> Carlos NO lleva reporte de quién contacta → quién agenda → quién se opera. "El tiempo no me lo permite." <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">DILEMA: O reportes al 100% O contestar mensajes.</strong> No puede hacer las dos cosas. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Orden de respuesta:</strong> Carlos contesta desde el ÚLTIMO mensaje al primero. Paciente que se desespera y manda otro sube arriba, queda de último, se enoja más. "Cadenita." <span class="source-tag">— Carlos</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Control financiero (persona nueva)</h4>
+          <div class="dato-box"><strong>Persona nueva:</strong> Hace Exceles con inventario + ingresos diarios. Tiene costos de todo (hasta cada jeringa). <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Flujo:</strong> Carlos registra en hojitas verdes → escanea → persona Excel → reporta a Maricela. <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Objetivo:</strong> Saber utilidad por cada procedimiento. Implementación reciente. <span class="source-tag">— Carlos</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 11 -->
+      <div class="slide" data-title="Lo que Carlos siente sobre su trabajo" data-count="7 expresiones">
+        <div class="details-content">
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se me hace muy pesado"</strong> — sobre confirmaciones <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Un poquito tardado"</strong> — re-contactar pacientes que dejan en vista <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">Pacientes "se desesperan", "borran mensajes", "se enojan"</strong> — por demora <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">Pacientes "dejan en vista"</strong> — quieren precio exacto <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"No me convencían" cosas de la agenda digital</strong> — pidió actualizaciones <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Lo que más le gusta:</strong> Interactuar con pacientes. Bromas. Aprovecha para recomendar productos (cross-selling informal). <span class="source-tag">— Carlos</span></div>
+          <div class="dato-box"><strong>Carlos tiene experiencia post-op:</strong> Maneja dudas directamente. Calma al paciente. <span class="source-tag">— Carlos</span></div>
+        </div>
+      </div>
+
+      </div><!-- /slides-data -->
+    </section>
+
+    <!-- FULLSCREEN PRESENTATION MODAL -->
+    <div class="modal-overlay" id="slideModal">
+      <div class="modal-progress"><div class="modal-progress-fill" id="progressFill"></div></div>
+      <div class="modal-topbar">
+        <div class="modal-topbar-left">
+          <span class="modal-slide-num" id="slideNum"></span>
+          <span class="modal-slide-title" id="slideTitle"></span>
+        </div>
+        <button class="modal-close" onclick="closeModal()" title="Cerrar (Esc)">&times;</button>
+      </div>
+      <div class="modal-slide-area">
+        <button class="modal-side-nav nav-left" id="btnPrev" onclick="prevSlide()"><i class="ph ph-caret-left"></i></button>
+        <div class="modal-slide-content" id="modalBody"></div>
+        <div class="scroll-hint" id="scrollHint"><span class="scroll-hint-arrow"><i class="ph ph-caret-down"></i> scroll</span></div>
+        <button class="modal-side-nav nav-right" id="btnNext" onclick="nextSlide()"><i class="ph ph-caret-right"></i></button>
+      </div>
+      <div class="modal-bottombar" id="modalDots"></div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 3: DIAGRAMA -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-flow-arrow"></i> Diagrama de Flujo — Rol de Carlos (solo datos confirmados)</h2>
+      <p style="color: #A1B8F2;">181 datos de entrevista. Flujo completo del rol de Atención al Paciente.</p>
+      <div class="mermaid-container">
+        <div class="mermaid">
+flowchart TD
+    classDef default fill:#1a2535,stroke:#31BEEF,stroke-width:1.5px,color:#FAF9F6
+    classDef friction fill:#2a1015,stroke:#ff4444,stroke-width:2px,color:#ff4444
+    classDef auto fill:#0f2015,stroke:#4CAF50,stroke-width:1.5px,color:#4CAF50
+    classDef decision fill:#1f1525,stroke:#994E95,stroke-width:1.5px,color:#FAF9F6
+    classDef entry fill:#0f1f2f,stroke:#31BEEF,stroke-width:1.5px,color:#31BEEF
+
+    subgraph CAP["CAPTACIÓN — ~50 contactos/mes"]
+        A["Pautas Meta — 7 procedimientos"]:::entry --> B["Paciente escribe por WhatsApp o Instagram"]
+        B --> C["Bienvenida automática"]:::auto
+        C --> D["Carlos copia y pega info desde Notas iPad"]
+    end
+
+    subgraph CONV["CONVERSIÓN — tasa 10%"]
+        D --> E{"Responde"}:::decision
+        E -->|"90% deja en vista"| F["1 re-contacto a 24h"]
+        F --> G{"Contesta"}:::decision
+        G -->|"No"| H["ABANDONADO — sin CRM ni registro"]:::friction
+        G -->|"Sí"| I
+        E -->|"10% agenda"| I["Agenda en cuaderno físico"]
+        I --> J["CONFIRMACIONES DIARIAS — 60% del tiempo"]:::friction
+    end
+
+    subgraph VAL["VALORACIÓN — ~35 llegan/mes"]
+        J --> K["Recepcionista anuncia en grupo WhatsApp"]
+        K --> L["Quien esté libre recibe"]
+        L --> M{"Maricela o Divani dan valoración"}:::decision
+        M -->|"Acepta"| N["Carlos cobra anticipo y envía indicaciones"]
+        M -->|"Pequeño"| O["Se realiza al momento"]
+    end
+
+    subgraph PROC["PROCEDIMIENTO — ~20 se operan/mes"]
+        N --> N2["Recepcionista anuncia llegada"]
+        N2 --> P["Expediente y consentimientos"]
+        P --> Q["Carlos cobra saldo final"]
+        Q --> R["Gabush toma fotos y marca"]
+        R --> S["PROCEDIMIENTO"]:::entry
+    end
+
+    subgraph POST["POST-PROCEDIMIENTO"]
+        S --> T["Plantilla: cómo se siente"]
+        T --> U{"Dudas"}:::decision
+        U -->|"Mensaje"| V["Carlos responde"]
+        U -->|"Presencial"| W["Doctores responden"]
+        V --> X["REVISIONES DE MEMORIA — 6-7/sem"]:::friction
+        W --> X
+        X --> Y["Masajes post-op sin protocolo"]
+    end
+
+    subgraph RET["RETENCIÓN — ~25 repiten/mes"]
+        Y --> Z["Promociones 2x1 y 20%"]
+        O --> Z2["Cross-selling informal"]
+        Z --> Z2
+    end
+
+    subgraph REP["REPORTES"]
+        Q -.->|"registro"| R2["Hojitas verdes a mano"]
+        R2 -.-> R3["Scan y persona Excel"]
+        R3 -.-> R4["Reporte a Maricela"]
+    end
+        </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.5rem; font-size: 0.85rem; padding: 0.75rem 1rem; background: rgba(26,37,53,0.5); border-radius: 6px;">
+        <span style="color: #4CAF50;">● Automatizado</span>
+        <span style="color: #994E95;">● Decisión</span>
+        <span style="color: #ff4444;">● Fricción</span>
+        <span style="color: #31BEEF;">● Entrada/Salida</span>
+        <span style="color: #A1B8F2;">┈┈ Flujo secundario</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 5: VACÍOS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-question"></i> Vacíos de información</h2>
+
+      <details>
+        <summary style="border-left-color: #4CAF50; color: #4CAF50;">Vacíos resueltos durante la entrevista (7)</summary>
+        <div class="details-content">
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Herramienta de agenda?</strong> Cuaderno físico (día/hora preimpreso). Agenda digital existe pero NO en uso aún.</div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Proceso de cobros?</strong> Efectivo/transferencia/tarjeta. Hojitas verdes. Cobro remoto vía WhatsApp.</div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Facturación?</strong> Carlos recopila datos → contador elabora → envía directo al paciente.</div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Seguimiento post-procedimiento?</strong> Carlos envía plantilla "¿cómo se siente?". Dudas por mensaje: Carlos responde. Presencial: doctores.</div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Quién da la consulta?</strong> Dra. Maricela o Dr. Divani. NO el cirujano principal.</div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Indicaciones pre/post?</strong> Carlos las comparte por WhatsApp desde que agendan.</div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Cierre de caja?</strong> Persona nueva. Carlos escanea hojitas verdes → persona Excel → reporta a Maricela.</div>
+        </div>
+      </details>
+
+      <details>
+        <summary style="border-left-color: #4CAF50; color: #4CAF50;">Vacíos resueltos por otras entrevistas (10)</summary>
+        <div class="details-content">
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Quién hace el expediente clínico?</strong> Divani Duarte (Primer Ayudante). Él hace expediente, historia clínica, consentimientos. <span class="source-tag">— Resuelto por Divani Duarte, Primer Ayudante</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Dr. Divani?</strong> Divani Duarte = Primer Ayudante. Rol: valoraciones (respaldo de Maricela) + área operativa pre-quirúrgica. <span class="source-tag">— Resuelto por Divani Duarte, Primer Ayudante</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Los masajes? ¿Quién los hace?</strong> Brisa (cosmiatra). Cuando Óscar está anestesiando y llega paciente de masaje, Brisa se ocupa. <span class="source-tag">— Resuelto por Divani Duarte, Primer Ayudante</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Protocolos de revisión escritos? ¿O de memoria?</strong> De memoria — toda la organización. Divani: "Protocolos funcionan a nivel de mente, no consultan documento." No es solo Carlos, es sistémico. <span class="source-tag">— Resuelto por Divani Duarte, Primer Ayudante</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Indicaciones por WhatsApp estandarizadas?</strong> Sí, son "respuestas rápidas" con cuidados listados, estandarizadas por ley. Se dan verbal (Divani) + WhatsApp (Carlos). No se entrega documento físico. <span class="source-tag">— Resuelto por Divani Duarte, Primer Ayudante</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Las hojitas verdes? ¿Quién más las ve? ¿Se archivan?</strong> Brisa también las usa: "Yo lo anoto en una hojita verde donde se anota todo lo que se ha vendido y todo lo que hemos usado de material." Flujo completo: múltiples roles escriben (Carlos, Brisa) → Carlos escanea → persona de Excel procesa → reporta a Maricela. Registro doble (WhatsApp + hoja física). <span class="source-tag">— Resuelto por Divani Duarte (Primer Ayudante), Brisa Nazario (Cosmiatra)</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Recurrencia? ¿Cómo sabe Carlos cuándo un paciente necesita nuevo procedimiento?</strong> No existe sistema. No hay tracking, no hay recordatorios, no hay seguimiento activo. Brisa: "No les mandamos como tal 'oye, no veniste', no, nada." "Es algo que no hacemos." Pacientes desaparecen y regresan por su cuenta: "no he venido en un año y ya viene." <span class="source-tag">— Resuelto por Brisa Nazario, Cosmiatra</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿1.8M seguidores?</strong> Principalmente en Instagram. Confirmado como canal principal de captación — pacientes escriben al Instagram de ARMC y de ahí se derivan. <span class="source-tag">— Resuelto por Dra. Elián Cabrera, Tricología</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Coordinación Carlos-Maricela? ¿Duplican respuestas en WhatsApp?</strong> No duplican — cobertura complementaria por horarios. Carlos: 10am–7pm. Marisela: 7pm–10pm y 6am–9am. Cuando Carlos está saturado, Marisela ayuda en el inter. Lo que Marisela contesta de noche NO se registra. Marisela tiene que supervisar personalmente si Carlos mandó el seguimiento post-tratamiento. <span class="source-tag">— Resuelto por Dra. Marisela Narváez, CEO/Dirección</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> ¿Persona nueva de Excel/inventario? ¿Nombre? ¿Interno o externo?</strong> Es Bob ("Boby"). No está en la clínica — está en la obra de la nueva sede supervisando construcción. Además recibe las hojas diarias de procedimientos/ventas y las captura digitalmente. Marisela quiere integrarlo al 100% en inventario. Horario: 9am–7pm. Marisela sugirió entrevistarlo. <span class="source-tag">— Resuelto por Dra. Marisela Narváez, CEO/Dirección</span></div>
+        </div>
+      </details>
+
+      <h3 style="color: #FFC107;">Vacíos pendientes (3)</h3>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> ¿Qué programa es la agenda digital?</strong> Carlos no lo sabe. <span class="source-tag" style="color: #4CAF50;">AMPLIADO por Óscar González (Enfermero): confirma CERO software en toda la operación. Hay 3 agendas físicas separadas (valoraciones, revisiones, procedimientos), todas compartidas. Ningún rol tiene agenda propia.</span> <span class="source-tag" style="color: #4CAF50;">AMPLIADO por Brisa Nazario (Cosmiatra): "Apenas acaban de implementar la agenda digital." Necesita email+teléfono del paciente, pero HC nunca recolectó emails (~10 hasta ahora). "No hay nada más que la física." Emails solo en HCs nuevas, NO retroactivo.</span> <span class="source-tag" style="color: #4CAF50;">AMPLIADO por Dra. Marisela Narváez (CEO): confirma 3 agendas separadas (procedimientos, valoraciones, revisiones). No menciona agenda digital — solo agendas como referencia operativa. "Lo anotan en la historia clínica pero lo ven en la agenda."</span></div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> ¿Quién es "el chico de las pautas"?</strong> ¿Interno o externo? <span class="source-tag" style="color: #4CAF50;">AMPLIADO por Dra. Marisela Narváez (CEO): confirma "pautas publicitarias en Facebook, Instagram" como canal de captación, pero NO identifica a la persona que las gestiona.</span></div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Ventas / Experiencia / Reportes:</strong> 3 de 6 áreas del organigrama sin describir por Carlos. <span class="source-tag" style="color: #4CAF50;">AMPLIADO por Dra. Marisela Narváez (CEO): confirma que no hay reporte central ("cada uno por separado"), no hay evaluación formal del equipo, no hay clasificación de pacientes. El equipo no vende en seguimiento. Aparatología parada por falta de retención.</span></div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 6: HANDOFFS / FRICCIONES -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-arrows-left-right"></i> Puntos de Handoff</h2>
+      <div class="dato-box"><strong>Carlos ↔ Maricela:</strong> Comparten mensajes iPad/teléfono. Coordinación no descrita.</div>
+      <div class="dato-box"><strong>Carlos → Dra. Maricela / Dr. Divani:</strong> Paciente llega a consulta. Ellos dan valoración y presupuesto. Carlos retoma para cobrar/agendar.</div>
+      <div class="dato-box"><strong>Carlos → Cirujano principal:</strong> No descrito cómo se comunica el plan quirúrgico. Cirujano solo ejecuta procedimientos.</div>
+      <div class="dato-box"><strong>Carlos → Doctores (post-op):</strong> Carlos avisa cuando paciente reporta síntoma por mensaje. Doctores le dicen qué responder.</div>
+      <div class="dato-box"><strong>Carlos → Contador:</strong> Envía comprobante + email + constancia fiscal. Contador elabora factura.</div>
+      <div class="dato-box"><strong>Carlos → Brisa Yaredi:</strong> Backup cuando ausente. Mecanismo no descrito. <span class="source-tag" style="color: #4CAF50;">Divani Duarte (Primer Ayudante): Brisa también hace cobros con terminal cuando Carlos saturado</span></div>
+    </section>
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-fire"></i> Fricciones expresadas por Carlos</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Citas literales — lo que Carlos siente y expresa sobre su trabajo.</p>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se me hace muy pesado"</strong> — confirmaciones diarias a todos los pacientes</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Un poquito tardado"</strong> — re-contactar pacientes que dejan en vista</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">Pacientes "se desesperan", "borran mensajes", "se enojan"</strong> — por demora en respuesta</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">Pacientes "dejan en vista"</strong> — quieren precio exacto antes de consulta</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"No me convencían" cosas de la agenda digital</strong> — pidió actualizaciones al sistema</div>
+    </section>
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-magnifying-glass"></i> Fricciones identificadas por análisis</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Fricciones operativas derivadas de los datos confirmados.</p>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Seguimiento de revisiones DE MEMORIA — problema sistémico</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">~6-7 revisiones/semana sin agendar. Carlos no tiene anotado quién necesita revisión. Divani confirma ser fuente directa: agenda verbalmente con el paciente pero omite anotar — "se me pasa". Resultado: pacientes llegan sin registro. No es falla individual, es organizacional.</p>
+        <span class="source-tag">Carlos + Divani Duarte, Primer Ayudante</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Cero registro de leads</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Ni CRM, ni Excel, ni libreta. Imposible medir, optimizar o recuperar leads perdidos.</p>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Solo 1 re-contacto, luego abandono</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Carlos espera 24h y envía UN mensaje. Si no contesta, no vuelve a escribir. 90% de leads se pierden.</p>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Embudo de conversión sin medir</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">No puede rastrear quién contacta, quién agenda, quién se opera. Sin datos no hay optimización posible.</p>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Dilema: reportes O contestar mensajes</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Carlos no puede hacer ambas cosas. Elige contestar y sacrifica toda la visibilidad del negocio.</p>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Agenda digital pagada pero sin usar</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Existe, tiene dominio web, está lista. Pocos intentos de adopción. Siguen con cuaderno físico a mano.</p>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Orden LIFO de respuesta genera espiral negativa</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Contesta del último al primero. Paciente que se desespera y reenvía sube arriba, el anterior queda último, se enoja más.</p>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">1.8M seguidores sin estrategia de captación</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">TikTok tiene más seguidores pero genera menos contactos. Nadie atiende esa red. Se pierde un porcentaje alto de posibles pacientes.</p>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Todo manual: copy-paste, hojitas verdes, Word — confirmado por equipo clínico</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Info de procedimientos = copy-paste desde Notas iPad. Pagos = hojitas verdes a mano. Recibos = Word editado. Único automatismo: mensaje de bienvenida. Divani confirma desde el lado clínico: "básicamente todo es escrito, apenas empezamos a digitalizar." Es sistémico.</p>
+        <span class="source-tag">Carlos + Divani Duarte, Primer Ayudante</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 7: MAPEO A DOLORES APEX -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-target"></i> Mapeo a los 4 Dolores APEX</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Análisis completado. Dolor dominante: <strong style="color: #ff4444;">D4 (Conversión)</strong>. Causa raíz: <strong style="color: #31BEEF;">D1 (Procesos)</strong>.</p>
+
+      <!-- D1 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D1 — Procesos Internos Ineficientes → SISTEMA BASE</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Plataforma Centralizada de Gestión Clínica</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Todo manual: copy-paste desde Notas iPad, hojitas verdes, Word para recibos</li>
+          <li>Confirmaciones diarias a mano a todos los pacientes</li>
+          <li>Agenda digital pagada y lista pero siguen con cuaderno físico</li>
+          <li>Registro de pagos en papel → escaneo → persona de Excel</li>
+          <li>Dilema reportes vs mensajes: una persona, sin sistema que le quite carga</li>
+          <li>5 apps abiertas simultáneamente sin interfaz unificada</li>
+        </ul>
+      </div>
+
+      <!-- D2 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D2 — Seguimiento y Clasificación de Pacientes → CLASIFICACIÓN</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Seguimiento y Clasificación Automática</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Seguimiento de revisiones DE MEMORIA (~6-7/semana sin agendar)</li>
+          <li>Solo 1 plantilla de seguimiento post-op, el resto escrito a mano cada vez</li>
+          <li>Sin protocolo formal de masajes post-op — sin registro de evolución</li>
+          <li>Encuesta QR de satisfacción casi sin usar</li>
+          <li>Sin clasificación de pacientes por tipo, estado o tratamiento</li>
+          <li>Carlos responde dudas post-op sin acceso al historial del paciente</li>
+        </ul>
+      </div>
+
+      <!-- D3 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #994E95; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #994E95; font-size: 1.1rem;">D3 — Comunicación Personalizada con Pacientes → COMUNICACIÓN</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Comunicación Segmentada e Inteligente</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Info de procedimientos = copy-paste genérico, no personalizado por caso</li>
+          <li>Indicaciones pre/post por WhatsApp manualmente cada vez</li>
+          <li>Sin flujos automáticos — todo depende de que Carlos escriba</li>
+          <li>Promociones (2×1, 20% dto) sin segmentación de audiencia</li>
+        </ul>
+      </div>
+
+      <!-- D4 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #994E95; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #994E95; font-size: 1.1rem;">D4 — Conversión de Leads Publicitarios a Pacientes → CONVERSIÓN</strong>
+        <span style="display: inline-block; background: #ff4444; color: #fff; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.75rem; margin-left: 0.5rem; vertical-align: middle;">DOLOR DOMINANTE</span>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Pipeline de Conversión de Leads</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Tasa de conversión ~10% — 90% deja en visto</li>
+          <li>Cero registro de leads (ni CRM, ni Excel, nada)</li>
+          <li>Solo 1 re-contacto y abandono — "el tiempo no me da"</li>
+          <li>Embudo sin medir — imposible optimizar</li>
+          <li>1.8M seguidores sin estrategia de captación (TikTok desatendido)</li>
+          <li>Orden LIFO genera espiral negativa con pacientes</li>
+          <li>+100 mensajes acumulados sin contestar</li>
+          <li>Pacientes quieren precio exacto, Carlos no puede dar → fricción</li>
+        </ul>
+      </div>
+
+      <!-- RET -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #4CAF50; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #4CAF50; font-size: 1.1rem;">Retención = Ecosistema Integrado (D1+D2+D3+D4)</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0; line-height: 1.7;">~25 pacientes repiten/mes. Cross-selling informal (Carlos recomienda productos). Sin sistema que lo potencie — depende de la relación personal de Carlos con cada paciente.</p>
+      </div>
+
+      <!-- Conclusión -->
+      <div style="background: rgba(255, 68, 68, 0.08); padding: 1rem; border: 1px solid rgba(255, 68, 68, 0.2); border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444;">Conclusión desde este rol</strong>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li><strong style="color: #994E95;">D4 es el dolor dominante</strong> — Carlos es el embudo de conversión completo y está saturado</li>
+          <li><strong style="color: #31BEEF;">D1 es la causa raíz</strong> — sin automatización de procesos, Carlos no tiene tiempo para convertir</li>
+          <li>D2 y D3 son consecuencia: sin sistema base no puede ni hacer seguimiento ni personalizar comunicación</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="nav-links">
+      <a href="../index.html"><i class="ph ph-arrow-left"></i> Índice Principal</a>
+      <a href="flujo-cirujano.html">Siguiente: Cirujano <i class="ph ph-arrow-right"></i></a>
+    </div>
+
+    <footer class="footer">
+      <p>ARMC — Aesthetic Rejuvenation Medical Center — Abril 2026 — PRISMA Consulting</p>
+    </footer>
+  </div>
+  <!-- Slide Presentation JS -->
+  <script>
+    (function() {
+      var slides = document.querySelectorAll('#slides-data .slide');
+      var modal = document.getElementById('slideModal');
+      var slideNum = document.getElementById('slideNum');
+      var slideTitle = document.getElementById('slideTitle');
+      var progressFill = document.getElementById('progressFill');
+      var modalBody = document.getElementById('modalBody');
+      var modalDots = document.getElementById('modalDots');
+      var btnPrev = document.getElementById('btnPrev');
+      var btnNext = document.getElementById('btnNext');
+      var scrollHint = document.getElementById('scrollHint');
+      var current = 0;
+      var total = slides.length;
+
+      // Build dots
+      for (var i = 0; i < total; i++) {
+        var dot = document.createElement('span');
+        dot.className = 'modal-dot';
+        dot.addEventListener('click', (function(idx) {
+          return function() { goToSlide(idx); };
+        })(i));
+        modalDots.appendChild(dot);
+      }
+
+      // Transform raw dato-box HTML into clean slide format
+      function transformContent(slide) {
+        var title = slide.getAttribute('data-title');
+        var count = slide.getAttribute('data-count');
+        var source = slide.querySelector('.details-content');
+        var html = '<div class="slide-title-block"><h2>' + title + '</h2><span class="slide-subtitle">' + count + '</span></div>';
+
+        var children = source.children;
+        for (var i = 0; i < children.length; i++) {
+          var el = children[i];
+          if (el.tagName === 'H4') {
+            // Section heading
+            var cls = 'slide-section-heading';
+            if (el.style.color && el.style.color.indexOf('4444') !== -1) cls += ' critical';
+            html += '<div class="' + cls + '">' + el.textContent + '</div>';
+          } else if (el.classList.contains('dato-box')) {
+            // Determine dot type from border color
+            var dotCls = 'slide-item-dot';
+            var style = el.getAttribute('style') || '';
+            if (style.indexOf('ff4444') !== -1) dotCls += ' critical';
+            else if (style.indexOf('4CAF50') !== -1) dotCls += ' positive';
+            else if (style.indexOf('994E95') !== -1) dotCls += ' sentiment';
+
+            // Get text content: strip source-tag, transform strong styling
+            var clone = el.cloneNode(true);
+            // Remove source tags
+            var tags = clone.querySelectorAll('.source-tag, .new-tag');
+            for (var t = 0; t < tags.length; t++) tags[t].remove();
+
+            // Transform strong colors to classes
+            var strongs = clone.querySelectorAll('strong');
+            for (var s = 0; s < strongs.length; s++) {
+              var sStyle = strongs[s].getAttribute('style') || '';
+              if (sStyle.indexOf('ff4444') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'critical-text';
+              } else if (sStyle.indexOf('4CAF50') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'positive-text';
+              } else if (sStyle.indexOf('994E95') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'sentiment-text';
+              }
+            }
+
+            var text = clone.innerHTML.replace(/<span class="source-tag">.*?<\/span>/g, '').trim();
+            html += '<div class="slide-item"><span class="' + dotCls + '"></span><span class="slide-item-text">' + text + '</span></div>';
+          }
+        }
+        return html;
+      }
+
+      function updateDots() {
+        var dots = modalDots.querySelectorAll('.modal-dot');
+        for (var i = 0; i < dots.length; i++) {
+          dots[i].classList.toggle('active', i === current);
+        }
+      }
+
+      function goToSlide(idx) {
+        current = idx;
+        var slide = slides[current];
+        slideNum.textContent = (current + 1) + ' / ' + total;
+        slideTitle.textContent = slide.getAttribute('data-count');
+        progressFill.style.width = ((current + 1) / total * 100) + '%';
+        modalBody.innerHTML = transformContent(slide);
+        modalBody.scrollTop = 0;
+        updateDots();
+        setTimeout(checkScrollHint, 50);
+        btnPrev.disabled = current === 0;
+        btnNext.disabled = current === total - 1;
+      }
+
+      window.openSlide = function(idx) {
+        goToSlide(idx);
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      };
+
+      window.closeModal = function() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+      };
+
+      window.prevSlide = function() {
+        if (current > 0) goToSlide(current - 1);
+      };
+
+      window.nextSlide = function() {
+        if (current < total - 1) goToSlide(current + 1);
+      };
+
+      // Scroll hint: show/hide based on scroll position
+      function checkScrollHint() {
+        var el = modalBody;
+        var canScroll = el.scrollHeight > el.clientHeight + 10;
+        var nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 30;
+        if (!canScroll || nearBottom) {
+          scrollHint.classList.add('hidden');
+        } else {
+          scrollHint.classList.remove('hidden');
+        }
+      }
+      modalBody.addEventListener('scroll', checkScrollHint);
+
+      // Keyboard + click outside
+      document.addEventListener('keydown', function(e) {
+        if (!modal.classList.contains('active')) return;
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'ArrowRight') nextSlide();
+      });
+
+      // Click on dark area closes
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal || e.target.classList.contains('modal-slide-area')) closeModal();
+      });
+    })();
+  </script>
+
+  <script>mermaid.contentLoaded();</script>
+</body>
+</html>

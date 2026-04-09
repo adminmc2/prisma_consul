@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARMC Análisis Operativo — PRISMA Consulting</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Mermaid -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+  </script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/estilos-prisma.css">
+  <style>
+    .hero {
+      background: linear-gradient(135deg, #101B2C 0%, #1a2535 50%, #0a1420 100%);
+      padding: 4rem 2rem;
+      text-align: center;
+      margin-bottom: 3rem;
+      border-bottom: 3px solid #31BEEF;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(49, 190, 239, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(153, 78, 149, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #31BEEF, #994E95);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: #A1B8F2;
+      margin-bottom: 2rem;
+    }
+
+    .diagram-nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 3rem 0;
+    }
+
+    .diagram-card {
+      background: linear-gradient(135deg, #1a2535, #0d1b2a);
+      border: 2px solid #31BEEF;
+      border-radius: 8px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 400ms ease;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .diagram-card:hover {
+      border-color: #994E95;
+      transform: translateY(-8px);
+      box-shadow: 0 12px 32px rgba(49, 190, 239, 0.3);
+      background: linear-gradient(135deg, #0d1b2a, #1a2535);
+    }
+
+    .diagram-card h3 {
+      margin-top: 0;
+      color: #31BEEF;
+      font-size: 1.25rem;
+    }
+
+    .diagram-card p {
+      font-size: 0.9rem;
+      margin: 0;
+      color: #A1B8F2;
+    }
+
+    .progress-section {
+      background: #1a2535;
+      border-left: 4px solid #31BEEF;
+      padding: 2rem;
+      margin: 3rem 0;
+      border-radius: 4px;
+    }
+
+    .progress-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .progress-item {
+      text-align: center;
+      padding: 1rem;
+      background: #101B2C;
+      border-radius: 4px;
+      border: 1px solid #31BEEF;
+    }
+
+    .progress-item strong {
+      display: block;
+      font-size: 1.5rem;
+      color: #31BEEF;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-item span {
+      font-size: 0.85rem;
+      color: #A1B8F2;
+    }
+
+    .section {
+      margin: 3rem 0;
+    }
+
+    .methodology {
+      background: rgba(49, 190, 239, 0.05);
+      border-left: 4px solid #31BEEF;
+      padding: 1.5rem;
+      border-radius: 4px;
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <h1><i class="ph ph-crosshair" style="color:#31BEEF"></i> ARMC — Análisis Operativo</h1>
+        <p>7 Roles • 7 Diagramas de Flujo • Diagnóstico Integrado</p>
+      </div>
+    </header>
+
+    <!-- Main Navigation -->
+    <section class="section">
+      <h2>Diagramas de Flujo por Rol</h2>
+      <p style="color: #A1B8F2; margin-bottom: 2rem;">
+        Selecciona un diagrama para ver el flujo operativo actual (as-is) de cada rol:
+      </p>
+
+      <div class="diagram-nav">
+        <a href="diagramas/flujo-atención-paciente.html" class="diagram-card">
+          <h3><i class="ph ph-user"></i> Atención al Paciente</h3>
+          <p>Captación, conversión, seguimiento y reportes</p>
+        </a>
+
+        <a href="diagramas/flujo-cirujano.html" class="diagram-card">
+          <h3><i class="ph ph-stethoscope"></i> Cirujano</h3>
+          <p>Evaluación, procedimiento y seguimiento post</p>
+        </a>
+
+        <a href="diagramas/flujo-enfermero.html" class="diagram-card">
+          <h3><i class="ph ph-heartbeat"></i> Enfermero</h3>
+          <p>Preparación, asistencia quirúrgica y cuidados</p>
+        </a>
+
+        <a href="diagramas/flujo-cosmiatra.html" class="diagram-card">
+          <h3><i class="ph ph-sparkle"></i> Cosmiatra</h3>
+          <p>Consulta, tratamientos y seguimiento dermatológico</p>
+        </a>
+
+        <a href="diagramas/flujo-primer-ayudante.html" class="diagram-card">
+          <h3><i class="ph ph-hand"></i> Primer Ayudante</h3>
+          <p>Asistencia quirúrgica y preparación de materiales</p>
+        </a>
+
+        <a href="diagramas/flujo-tricologia.html" class="diagram-card">
+          <h3><i class="ph ph-eyedropper"></i> Tricología y Microinjerto</h3>
+          <p>Diagnóstico capilar, microinjerto y comunicación</p>
+        </a>
+
+        <a href="diagramas/flujo-ceo.html" class="diagram-card">
+          <h3><i class="ph ph-chart-line-up"></i> CEO/Dirección</h3>
+          <p>Estrategia, visibilidad, KPIs y decisiones</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- Progress Section -->
+    <section class="progress-section">
+      <h2>Estado del Análisis</h2>
+      <div class="progress-grid">
+        <div class="progress-item">
+          <strong><i class="ph ph-check-circle" style="color:#4CAF50"></i></strong>
+          <span>Entrevistas</span>
+          <span>7/7 completas</span>
+        </div>
+        <div class="progress-item">
+          <strong><i class="ph ph-check-circle" style="color:#4CAF50"></i></strong>
+          <span>Diagramas</span>
+          <span>7/7 MODO FINAL</span>
+        </div>
+        <div class="progress-item">
+          <strong><i class="ph ph-check-circle" style="color:#4CAF50"></i></strong>
+          <span>Diagnóstico D1-D4</span>
+          <span>Completado por rol</span>
+        </div>
+        <div class="progress-item">
+          <strong><i class="ph ph-hourglass" style="color:#A1B8F2"></i></strong>
+          <span>Propuesta</span>
+          <span>Pendiente</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Methodology Section -->
+    <section class="section">
+      <h2>Metodología APEX</h2>
+
+      <div class="methodology">
+        <h3>¿Cómo se lee este análisis?</h3>
+        <p>
+          Cada diagrama muestra el <strong>flujo actual (as-is)</strong> basado en las entrevistas operativas realizadas.
+        </p>
+        <h4>Elementos clave:</h4>
+        <ul style="color: #A1B8F2; margin-left: 2rem;">
+          <li><strong>Fases</strong> — Etapas del proceso (ej: Captación → Conversión → Seguimiento)</li>
+          <li><strong>Handoffs</strong> — Puntos de transferencia entre roles</li>
+          <li><strong>Fricciones</strong> — Cuellos de botella identificados</li>
+          <li><strong>Herramientas</strong> — Sistemas usados (Excel, WhatsApp, papel, etc.)</li>
+          <li><strong>Gaps</strong> — Información que no fluye correctamente</li>
+        </ul>
+      </div>
+
+      <div class="methodology">
+        <h3>Los 4 Dolores (D1-D4)</h3>
+        <p>Cada fricción se mapea a uno de los 4 dolores empresariales:</p>
+        <ul style="color: #A1B8F2; margin-left: 2rem; margin-top: 1rem;">
+          <li><strong>D1</strong> — Procesos Internos: Falta de estandarización, duplicación</li>
+          <li><strong>D2</strong> — Seguimiento y Clasificación: Pérdida de información, trazabilidad</li>
+          <li><strong>D3</strong> — Comunicación Personalizada: Falta de contexto en handoffs</li>
+          <li><strong>D4</strong> — Conversión de Leads: Velocidad, conversión, recurrencia</li>
+        </ul>
+      </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>
+        PRISMA Consulting • APEX Methodology<br>
+        ARMC — Aesthetic Rejuvenation Medical Center<br>
+        Análisis Operativo • Marzo 2026
+      </p>
+      <p style="margin-top: 1rem; font-size: 0.8rem;">
+        <strong>P</strong>harma · <strong>R</strong>esearch · <strong>I</strong>nnovation · <strong>S</strong>trategy · <strong>M</strong>arketing · <strong>A</strong>nalytics
+      </p>
+    </footer>
+  </div>
+
+  <!-- Mermaid Init -->
+  <script>
+    mermaid.contentLoaded();
+  </script>
+</body>
+</html>

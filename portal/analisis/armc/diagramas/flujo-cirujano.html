@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cirujano — Flujo Operativo (as-is) — ARMC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: 'transparent',
+        primaryColor: '#1a2535',
+        primaryTextColor: '#FAF9F6',
+        primaryBorderColor: '#31BEEF',
+        secondaryColor: '#1a2535',
+        secondaryBorderColor: '#994E95',
+        lineColor: '#31BEEF',
+        textColor: '#FAF9F6',
+        clusterBkg: '#162033',
+        clusterBorder: '#253545',
+        edgeLabelBackground: '#1a2535',
+        fontFamily: '"Source Sans 3", sans-serif',
+        fontSize: '14px'
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 15,
+        nodeSpacing: 50,
+        rankSpacing: 55,
+      }
+    });
+  </script>
+  <link rel="stylesheet" href="../css/estilos-prisma.css">
+  <style>
+    .breadcrumb { margin-bottom: 2rem; padding: 1rem; background: rgba(49, 190, 239, 0.05); border-radius: 4px; }
+    .breadcrumb a { color: #31BEEF; }
+    .diagram-section { background: #1a2535; border: 1px solid #31BEEF; border-radius: 8px; padding: 2rem; margin: 2rem 0; }
+    .diagram-section h2 { margin-top: 0; }
+    .mermaid-container { background: #101B2C; padding: 2rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; }
+    .mermaid { display: flex; justify-content: center; min-height: 300px; }
+    .mermaid .node rect, .mermaid .node polygon { rx: 8 !important; ry: 8 !important; stroke-width: 1.5px !important; }
+    .mermaid .nodeLabel, .mermaid .node .label { font-family: 'Source Sans 3', sans-serif !important; font-size: 14px !important; font-weight: 600 !important; }
+    .mermaid .edgePath path.path { stroke-width: 1.5px !important; opacity: 0.6; }
+    .mermaid .edgeLabel { font-size: 12px !important; font-family: 'Source Sans 3', sans-serif !important; font-weight: 600 !important; }
+    .mermaid .edgeLabel rect { rx: 4 !important; ry: 4 !important; fill: #1a2535 !important; stroke: none !important; }
+    .mermaid .edgeLabel span { color: #FAF9F6 !important; }
+    .mermaid .cluster rect { rx: 8 !important; ry: 8 !important; stroke-dasharray: 5 3; }
+    .mermaid .cluster-label .nodeLabel, .mermaid .cluster-label span { font-family: 'Quicksand', sans-serif !important; font-weight: 700 !important; font-size: 14px !important; letter-spacing: 0.5px; text-transform: uppercase; fill: #FAF9F6 !important; color: #FAF9F6 !important; }
+    .nav-links { display: flex; gap: 1rem; margin-top: 2rem; justify-content: space-between; }
+    .nav-links a { flex: 1; padding: 1rem; text-align: center; background: #1a2535; border: 1px solid #31BEEF; border-radius: 4px 25px 25px 4px; transition: all 400ms ease; color: #FAF9F6; text-decoration: none; }
+    .nav-links a:hover { background: #31BEEF; color: #101B2C; }
+    .status-badge { display: inline-block; padding: 0.5rem 1rem; background: #FFC107; color: #101B2C; border-radius: 4px; font-size: 0.85rem; margin-bottom: 1rem; font-weight: 600; }
+    .counter-bar { display: flex; gap: 2rem; padding: 1rem; background: #101B2C; border-radius: 4px; margin: 1rem 0; font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.9rem; }
+    .counter-bar span { color: #A1B8F2; }
+    .counter-bar .count { color: #31BEEF; font-size: 1.1rem; }
+    .counter-bar .count-warn { color: #FFC107; font-size: 1.1rem; }
+    .dato-box { background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin: 0.5rem 0; }
+    .dato-box strong { color: #31BEEF; }
+    .source-tag { font-size: 0.75rem; color: #994E95; font-weight: 600; }
+    .tag-new { display: inline-block; background: #31BEEF; color: #101B2C; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; }
+    .gap-box { background: rgba(255, 193, 7, 0.08); border: 1px dashed #FFC107; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .gap-box strong { color: #FFC107; }
+    .resolved-box { background: rgba(76, 175, 80, 0.08); border: 1px solid #4CAF50; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .resolved-box strong { color: #4CAF50; }
+    .handoff-box { background: #101B2C; padding: 1rem; border-left: 4px solid #A1B8F2; border-radius: 4px; margin: 0.5rem 0; }
+    .handoff-box strong { color: #A1B8F2; }
+    .friction-box { background: rgba(255, 68, 68, 0.05); padding: 1rem; border-left: 4px solid #ff4444; border-radius: 4px; margin: 0.5rem 0; }
+    .friction-box strong { color: #ff4444; }
+    .blocked-section { background: rgba(255, 193, 7, 0.05); border: 1px dashed #FFC107; border-radius: 8px; padding: 2rem; margin: 2rem 0; text-align: center; }
+    .blocked-section h2 { color: #FFC107; margin-top: 0; }
+    .fragment-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .fragment-table th, .fragment-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid rgba(49, 190, 239, 0.1); }
+    .fragment-table th { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .fragment-table td { color: #A1B8F2; font-size: 0.9rem; }
+
+    /* Slide grid */
+    .slide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+    .slide-card { background: #101B2C; border: 1px solid rgba(49,190,239,0.3); border-radius: 12px; padding: 1.5rem; cursor: pointer; transition: all 300ms ease; position: relative; overflow: hidden; }
+    .slide-card:hover { border-color: #31BEEF; transform: translateY(-4px); box-shadow: 0 12px 32px rgba(49,190,239,0.15); }
+    .slide-card .card-number { font-size: 3.5rem; font-weight: 700; color: rgba(49,190,239,0.08); position: absolute; top: -0.25rem; right: 0.75rem; font-family: 'Quicksand', sans-serif; line-height: 1; }
+    .slide-card h3 { color: #FAF9F6; font-size: 1rem; margin: 0 0 0.5rem 0; font-family: 'Quicksand', sans-serif; font-weight: 600; }
+    .slide-card .card-count { color: #A1B8F2; font-size: 0.8rem; }
+    .slide-card.card-critical { border-color: rgba(255,68,68,0.4); }
+    .slide-card.card-critical:hover { border-color: #ff4444; box-shadow: 0 12px 32px rgba(255,68,68,0.15); }
+    .slide-card.card-critical .card-number { color: rgba(255,68,68,0.08); }
+    .slide-card.card-sentiment { border-color: rgba(153,78,149,0.4); }
+    .slide-card.card-sentiment:hover { border-color: #994E95; box-shadow: 0 12px 32px rgba(153,78,149,0.15); }
+    .slide-card.card-sentiment .card-number { color: rgba(153,78,149,0.08); }
+
+    /* Modal overlay */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: #0a1420; z-index: 1000; flex-direction: column; }
+    .modal-overlay.active { display: flex; }
+    .modal-progress { height: 3px; background: rgba(49,190,239,0.1); flex-shrink: 0; }
+    .modal-progress-fill { height: 100%; background: linear-gradient(90deg, #31BEEF, #994E95); transition: width 400ms ease; border-radius: 0 2px 2px 0; }
+    .modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; flex-shrink: 0; }
+    .modal-topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .modal-slide-num { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem; background: rgba(49,190,239,0.1); padding: 0.3rem 0.8rem; border-radius: 20px; }
+    .modal-slide-title { color: #A1B8F2; font-family: 'Quicksand', sans-serif; font-size: 0.85rem; font-weight: 500; }
+    .modal-close { background: none; border: none; color: #A1B8F2; font-size: 1.25rem; cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 6px; transition: all 200ms; line-height: 1; }
+    .modal-close:hover { color: #ff4444; background: rgba(255,68,68,0.1); }
+    .modal-slide-area { flex: 1; display: flex; align-items: stretch; overflow: hidden; position: relative; }
+    .modal-side-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; background: none; border: none; color: rgba(161,184,242,0.4); font-size: 2.5rem; cursor: pointer; padding: 1rem; transition: all 200ms; }
+    .modal-side-nav:hover:not(:disabled) { color: #31BEEF; }
+    .modal-side-nav:disabled { opacity: 0; cursor: default; }
+    .modal-side-nav.nav-left { left: 0.5rem; }
+    .modal-side-nav.nav-right { right: 0.5rem; }
+    .modal-slide-content { width: 100%; max-width: 900px; margin: 0 auto; padding: 0 5rem; overflow-y: auto; max-height: 100%; scrollbar-width: none; -ms-overflow-style: none; position: relative; }
+    .modal-slide-content::-webkit-scrollbar { width: 0; display: none; }
+    .scroll-hint { position: absolute; bottom: 0; left: 5rem; right: 5rem; height: 70px; background: linear-gradient(to bottom, transparent 0%, #0a1420 80%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 0.75rem; pointer-events: none; opacity: 1; transition: opacity 400ms ease; z-index: 5; }
+    .scroll-hint.hidden { opacity: 0; }
+    .scroll-hint-arrow { color: rgba(49,190,239,0.4); font-size: 1rem; animation: scrollBounce 2s ease-in-out infinite; display: flex; align-items: center; gap: 0.4rem; font-family: 'Quicksand', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; }
+    @keyframes scrollBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+    .slide-title-block { margin-bottom: 2.5rem; }
+    .slide-title-block h2 { color: #FAF9F6; font-family: 'Quicksand', sans-serif; font-size: 2rem; font-weight: 700; margin: 0 0 0.25rem 0; line-height: 1.2; }
+    .slide-title-block .slide-subtitle { color: #A1B8F2; font-size: 0.95rem; }
+    .slide-item { padding: 0.85rem 0; border-bottom: 1px solid rgba(49,190,239,0.06); display: flex; gap: 0.75rem; align-items: baseline; line-height: 1.55; }
+    .slide-item:last-child { border-bottom: none; }
+    .slide-item-dot { width: 6px; height: 6px; border-radius: 50%; background: #31BEEF; flex-shrink: 0; margin-top: 0.55rem; }
+    .slide-item-dot.critical { background: #ff4444; }
+    .slide-item-dot.positive { background: #4CAF50; }
+    .slide-item-dot.sentiment { background: #994E95; }
+    .slide-item-text { color: #FAF9F6; font-size: 1.05rem; font-family: 'Source Sans 3', sans-serif; font-weight: 300; }
+    .slide-item-text strong { color: #31BEEF; font-weight: 600; }
+    .slide-item-text .critical-text { color: #ff4444; font-weight: 600; }
+    .slide-item-text .positive-text { color: #4CAF50; font-weight: 600; }
+    .slide-item-text .sentiment-text { color: #994E95; font-weight: 600; }
+    .slide-section-heading { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin: 2rem 0 0.75rem 0; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(49,190,239,0.15); }
+    .slide-section-heading:first-child { margin-top: 0; }
+    .slide-section-heading.critical { color: #ff4444; border-bottom-color: rgba(255,68,68,0.15); }
+    .modal-bottombar { display: flex; align-items: center; justify-content: center; padding: 1.25rem; gap: 8px; flex-shrink: 0; }
+    .modal-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(49,190,239,0.15); transition: all 300ms ease; cursor: pointer; }
+    .modal-dot.active { background: #31BEEF; transform: scale(1.4); }
+    .modal-dot:hover:not(.active) { background: rgba(49,190,239,0.4); }
+    @media (max-width: 768px) { .modal-slide-content { padding: 0 3.5rem; } .modal-side-nav { font-size: 1.5rem; padding: 0.5rem; } .slide-title-block h2 { font-size: 1.5rem; } .slide-item-text { font-size: 0.95rem; } .modal-topbar { padding: 0.75rem 1.5rem; } }
+    @media (max-width: 480px) { .slide-grid { grid-template-columns: 1fr; } .modal-slide-content { padding: 0 2.5rem; } .modal-side-nav { font-size: 1.25rem; } .modal-bottombar { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1><i class="ph ph-stethoscope" style="color:#31BEEF"></i> Cirujano — Flujo Operativo (as-is)</h1>
+      <p>Entrevistado: Dr. Gabriel Cabrera — Entrevista completa (8 fragmentos)</p>
+    </header>
+
+    <div class="breadcrumb">
+      <a href="../index.html"><i class="ph ph-arrow-left"></i> Volver al Índice</a>
+    </div>
+
+    <div class="status-badge" style="background:#4CAF50;"><i class="ph ph-check-circle"></i> ENTREVISTA COMPLETA — 8 fragmentos</div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 1: DATOS CONFIRMADOS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-check-square"></i> Datos confirmados</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">53 datos organizados por flujo operativo. Fuente: Dr. Gabriel Cabrera (Cirujano), 1 sesión de entrevista + cruces con 6 roles.<br>Haz clic en cualquier tarjeta para explorar los datos.</p>
+
+      <div class="slide-grid">
+        <div class="slide-card" onclick="openSlide(0)"><span class="card-number">1</span><h3>Gabriel — Perfil y estructura</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card" onclick="openSlide(1)"><span class="card-number">2</span><h3>Valoraciones y captación</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(2)"><span class="card-number">3</span><h3>Pre-procedimiento y briefing</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card" onclick="openSlide(3)"><span class="card-number">4</span><h3>Procedimiento, interacción y fotos</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(4)"><span class="card-number">5</span><h3>Documentación y HC</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(5)"><span class="card-number">6</span><h3>Post-procedimiento y seguimiento</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(6)"><span class="card-number">7</span><h3>Coordinación y comunicación</h3><span class="card-count">4 datos</span></div>
+        <div class="slide-card" onclick="openSlide(7)"><span class="card-number">8</span><h3>Área capilar — Elián</h3><span class="card-count">5 datos</span></div>
+        <div class="slide-card card-sentiment" onclick="openSlide(8)"><span class="card-number">9</span><h3>Visión y estrategia</h3><span class="card-count">8 datos</span></div>
+      </div>
+
+      <!-- SLIDES HIDDEN DATA -->
+      <div id="slides-data" style="display:none;">
+
+      <!-- SLIDE 0: PERFIL Y ESTRUCTURA -->
+      <div class="slide" data-title="Gabriel — Perfil, rol y estructura" data-count="6 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Propiedad:</strong> Gabriel y su madre Marisela son los dueños de la clínica. Todo se factura a la clínica — no existen procedimientos separados ni facturación personal. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Gabriel hace prácticamente todos los procedimientos:</strong> "Trato de hacer la mayoría." Solo cuando está muy lleno, atrasado o ausente, Divani realiza procedimientos. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Pacientes piden médico específico:</strong> Algunos ya piden directamente con Divani, otros directamente con Gabriel. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Miércoles = contenido de redes sociales:</strong> Ese día Gabriel no hace procedimientos. Se dedica a crear contenido de redes sociales de la clínica. Divani y el equipo sí ven pacientes. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Gabriel también da valoraciones — con costo:</strong> ~1-2 valoraciones cada 15 días. Las valoraciones normales (Maricela/Divani) son gratuitas. Carlos recibe la solicitud, informa del costo, procesa el pago, y separa en la agenda. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Actualización profesional — congresos internacionales:</strong> España, Corea, Brasil, Turquía. Último: Harvard — actualizaciones en tecnología láser, toxina botulínica, ácido hialurónico. Patrocinados por laboratorios. <span class="source-tag">— Gabriel, Cirujano</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 1: VALORACIONES Y CAPTACIÓN -->
+      <div class="slide" data-title="Valoraciones y captación" data-count="6 datos">
+        <div class="details-content">
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Valoraciones — Maricela primero, Divani respaldo:</strong> "Principalmente todas las valoraciones las hace la doctora Maricela." Marisela es el único punto de cierre de ventas: "No hay valoración que yo no dé que el paciente no se quede." Cuello de botella estratégico — el equipo recibió curso de ventas sin resultado. <span class="source-tag">— Gabriel, Cirujano · Marisela, CEO</span></div>
+          <div class="dato-box"><strong>Gabriel no participa en valoraciones normales:</strong> Confía en las que hacen Maricela y Divani. Solo da valoraciones cuando las solicitan específicamente y con costo. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Procedimiento casi nunca mismo día según Gabriel — contradicho por equipo:</strong> "Es muy raro." Pero Divani y Óscar contradicen: procedimientos sencillos (botox, rinomodelación) SÍ se hacen el mismo día con frecuencia, causando desabasto de botox y caos en preparación. <span class="source-tag">— Gabriel, Cirujano · Divani, Primer Ayudante · Óscar, Enfermero</span></div>
+          <div class="dato-box"><strong>Pacientes foráneos — valoración virtual:</strong> "Se hace la valoración virtual en línea y ya llegan directo al procedimiento." Gabriel prefiere presencial: "no ves al paciente, no lo puedes tocar." <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Gabriel quiere ser la imagen y voz del sistema:</strong> "Que quede yo como la imagen y como la voz." Marisela confirma: ya es el motor de captación. Captación actual = pautas Facebook/Instagram + videos de Gabriel + estados WhatsApp. <span class="source-tag">— Gabriel, Cirujano · Marisela, CEO</span></div>
+          <div class="dato-box"><strong>Tasa valoración→procedimiento ~80%:</strong> La fuga masiva ocurre antes de llegar a la clínica (~10% conversión desde primer contacto WhatsApp), no después. Una vez en valoración presencial, 80% se hacen el procedimiento. <span class="source-tag">— Óscar, Enfermero · Carlos, Atención al Paciente</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: PRE-PROCEDIMIENTO -->
+      <div class="slide" data-title="Pre-procedimiento y briefing" data-count="6 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Gabriel no participa en preparación:</strong> Toda la preparación (anestesia, limpieza, expediente) la hacen Divani, Óscar o Brisa. Gabriel no interviene en este paso. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Flujo de información hacia Gabriel:</strong> Llega a la clínica → revisa la agenda → ve qué procedimientos hay → equipo le da informe verbal → Gabriel se presenta, planifica, marca con plumones → equipo prepara (anestesia, limpieza) → Gabriel ejecuta. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Quién informa a Gabriel:</strong> Divani, Óscar o Carlos — cualquiera que tenga la información. Brisa por lo general no participa en el briefing. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Gabriel NO lee la historia clínica:</strong> La información se la dan verbalmente justo antes. Divani tampoco lee la HC en transferencias — dependencia verbal bidireccional. Marisela confirma: "Lo anotan en la historia clínica pero lo ven en la agenda." La HC es registro muerto. Sin continuidad paciente-asistente: "a quien esté desocupado." <span class="source-tag">— Gabriel, Cirujano · Divani, Primer Ayudante · Marisela, CEO</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Material preparado de memoria, sin verificación:</strong> Óscar prepara todo de memoria ("ya me sé el material"), Gabriel nunca lo revisa. Confianza total sin red de seguridad documental. Si Óscar se fuera, reemplazo no tendría nada documentado. <span class="source-tag">— Óscar, Enfermero</span></div>
+          <div class="dato-box"><strong>Tres agendas físicas compartidas:</strong> Valoraciones, procedimientos y revisiones. Sin bloques horarios, todo mezclado. Agenda nómada de consultorio en consultorio. Si Carlos no está o la agenda no está disponible, el registro se pierde. <span class="source-tag">— Gabriel, Cirujano · Divani, Primer Ayudante</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: PROCEDIMIENTO E INTERACCIÓN -->
+      <div class="slide" data-title="Procedimiento, interacción y fotos" data-count="6 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Gabriel ejecuta la gran mayoría de procedimientos:</strong> Divani se encarga cuando Gabriel está lleno o ausente — inyectables y lipo facial láser. En invasivos (blefaroplastia), Divani solo anestesia y espera a Gabriel. <span class="source-tag">— Gabriel, Cirujano · Divani, Primer Ayudante</span></div>
+          <div class="dato-box"><strong>Asistentes se turnan en cirugías:</strong> Divani y Óscar alternan (uno y uno). A veces Divani no entra a quirúrgicos y se queda solo con inyectables. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Interacción con paciente es social, no clínica:</strong> "Lo que les gusta es interactuar conmigo, que les platique, que les cuente." Solo pregunta al paciente dudas muy específicas. La información clínica ya la tiene del equipo. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Gabriel NO escribe en la historia clínica:</strong> La HC la escriben Divani o Óscar. Al final del día, ambos completan las notas juntos con distancia temporal del procedimiento. <span class="source-tag">— Gabriel, Cirujano · Óscar, Enfermero</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Fotos en dispositivos personales sin sistema centralizado:</strong> Gabriel toma fotos antes de marcar — para contenido de redes, no para expediente. Óscar es tercer teléfono personal con fotos. Elián: cuarto patrón de dispersión (celular + iPad). Fotos post casi inexistentes. Ninguna se vincula al expediente. Problema sistémico confirmado por todos los roles. <span class="source-tag">— Gabriel, Cirujano · Brisa, Cosmiatra · Óscar, Enfermero · Elián, Tricología</span></div>
+          <div class="dato-box"><strong>Consentimiento fotográfico en aviso de privacidad:</strong> Los pacientes aceptan uso de fotos y videos para redes sociales y educativo. Solo Gabriel y a veces Divani toman fotos de pacientes para procedimientos. <span class="source-tag">— Gabriel, Cirujano · Marisela, CEO</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: DOCUMENTACIÓN Y HC -->
+      <div class="slide" data-title="Documentación y HC" data-count="6 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Norma 004 — expediente clínico estandarizado:</strong> "Esa historia clínica no se puede cambiar." Regulada por norma 004. Se le pueden agregar cosas, pero no quitar. HC obligatoriamente impresa: "No puede haber historias clínicas digitales." Gabriel acepta modelo propuesto: digital primero → impresión para archivo → envío digital al paciente. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Propuesta: HC estética como complemento:</strong> Gabriel propone documento separado con antecedentes estéticos (rellenos, toxina, etc.). Elián ya tiene un sistema dual funcional en tricología (papel + iPad Pages) como precedente operativo — aunque no alimenta ningún sistema. <span class="source-tag">— Gabriel, Cirujano · Elián, Tricología</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Frustración principal — falta de documentación y caos:</strong> "Sí, justo." Confirmado desde todos los ángulos: Brisa (HC sin actualizar 5 años, nota de paciente se olvida), Óscar (dificultades crónicas, consentimientos sin firma, folder vacío), Marisela ("cada uno por separado", información fragmentada, Bob apenas empezando a digitalizar). <span class="source-tag">— Gabriel, Cirujano · Brisa, Cosmiatra · Óscar, Enfermero · Marisela, CEO</span></div>
+          <div class="dato-box"><strong>Complicaciones documentadas en notas de HC:</strong> Se detectan en valoraciones de seguimiento (masajes, revisiones). El paciente lo reporta a quien le esté dando la revisión y se anota. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Error de imprenta en HC:</strong> Campo duplicado "edad" debería ser "teléfono." HC foliadas por norma, no se pudieron corregir. Lo que el equipo pedía era agregar teléfono y domicilio, no cambiar la HC. <span class="source-tag">— Marisela, CEO</span></div>
+          <div class="dato-box"><strong>Campos adicionales van en nota de evolución aparte:</strong> Lo que Brisa quería agregar (tipo de piel, evolución cutánea) debe ir como nota separada por norma. Marisela acepta propuesta de botón de cámara dentro del sistema que suba fotos directamente a la HC digital. <span class="source-tag">— Marisela, CEO</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: POST-PROCEDIMIENTO Y SEGUIMIENTO -->
+      <div class="slide" data-title="Post-procedimiento y seguimiento" data-count="6 datos">
+        <div class="details-content">
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Indicaciones post estandarizadas — pero sin reactivación:</strong> Verbal por quien esté con el paciente + WhatsApp PDF. Doble canal sin coordinación (Carlos templates, Brisa verbal). Una vez que el paciente se va, no se envía nada más. Sin mecanismo de reactivación. Aparatología (láser, HIFU) parada: "¿De qué te sirve invertir si están los equipos parados?" <span class="source-tag">— Gabriel, Cirujano · Brisa, Cosmiatra · Marisela, CEO</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Retención real ~10% — la percepción de Gabriel no coincide con la realidad:</strong> Gabriel: "Casi siempre todos vienen a sus revisiones." Realidad: retención ~10%, meta 30%. Brisa: no hay recordatorio, pacientes desaparecen hasta un año. Carlos no envía seguimiento post. Marisela supervisa personalmente. Gabriel ve revisiones inmediatas (3 días); la retención a largo plazo es radicalmente distinta. <span class="source-tag">— Gabriel, Cirujano · Brisa, Cosmiatra · Elián, Tricología · Marisela, CEO</span></div>
+          <div class="dato-box"><strong>Seguimiento activo solo en tricología y manual:</strong> Elián es el único rol con seguimiento activo pero 100% manual: anota fechas en recetas, copy-paste recordatorios por WhatsApp. Principal carga operativa. Aun así, cancelaciones frecuentes. Ningún rol en ARMC tiene sistema de seguimiento automatizado. <span class="source-tag">— Elián, Tricología</span></div>
+          <div class="dato-box"><strong>Roles que más necesitan checklist:</strong> Carlos (atención al paciente) y Divani (primer ayudante) — los que Gabriel considera que requieren más guía detallada paso a paso. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Protocolo revisión quirúrgica:</strong> Revisión al 3er día como regla universal. Paciente que no viene: nota de inasistencia + mensaje pidiendo que agende. <span class="source-tag">— Gabriel, Cirujano · Óscar, Enfermero</span></div>
+          <div class="dato-box"><strong>Volumen estimado de la clínica:</strong> ~10-12 pacientes/día combinados (procedimientos + consultas + revisiones). Divani hace 6-7 en día fuerte (~4 inyectables + ~2 lipo láser). Tasa valoración→procedimiento ~80%. Desglose exacto Gabriel vs Divani sigue sin dato directo. <span class="source-tag">— Óscar, Enfermero · Divani, Primer Ayudante</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6: COORDINACIÓN Y COMUNICACIÓN -->
+      <div class="slide" data-title="Coordinación y comunicación" data-count="4 datos">
+        <div class="details-content">
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Reuniones solo reactivas — unanimidad total:</strong> "Solamente cuando hay algún tema de desorganización." Brisa: "Como tal no hay reuniones." Óscar: "Solo cuando pasa algo malo." Coordinación completamente sobre la marcha, verbal, sin registro. Todos los roles coinciden. <span class="source-tag">— Gabriel, Cirujano · Brisa, Cosmiatra · Óscar, Enfermero</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Comunicación basada en repetición — intentos fallidos de mejora:</strong> "Les repito y les repito lo que tienen que hacer." Prefiere instrucciones por escrito, alarmas o recordatorios. Óscar confirma desde el otro lado: "Ya lo hemos platicado, lo hemos hecho, pero no ha habido ningún cambio." Sin herramientas ni sistema, los intentos fracasan. "Siento que todos hacen de todo." <span class="source-tag">— Gabriel, Cirujano · Óscar, Enfermero</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Para atender más pacientes necesita TIEMPO — ambos dueños sobrecargados:</strong> Gabriel: "Tiempo. Eso es lo que necesito." No más equipo, no más personal. Marisela también sobrecargada — tres roles en una persona: contesta ~200 mensajes/día, hace todas las valoraciones, gestiona compras. Ambos pierden tiempo en tareas que un sistema podría automatizar. <span class="source-tag">— Gabriel, Cirujano · Marisela, CEO</span></div>
+          <div class="dato-box"><strong>Cancelaciones de última hora:</strong> Pacientes cancelan cirugías última hora, penalización de $2,000 pesos. Deja espacios vacíos en la agenda. Carga de trabajo irregular e impredecible. <span class="source-tag">— Óscar, Enfermero</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7: ÁREA CAPILAR -->
+      <div class="slide" data-title="Área capilar — Elián" data-count="5 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Elián es hermana de Gabriel:</strong> Dra. Elián Cabrera Narváez, 8 meses en la clínica. Maneja tricología/capilar. También lidera consulta de control de peso (tirzepatida). <span class="source-tag">— Gabriel, Cirujano · Elián, Tricología</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Operación unipersonal sin respaldo — punto único de falla:</strong> Servicios completamente independientes. Área capilar opera como clínica dentro de la clínica: procesos, proveedores, inventario separados. 40-50 pacientes activos manejados por una sola persona. Si Elián se ausenta, el área se detiene. <span class="source-tag">— Gabriel, Cirujano · Elián, Tricología</span></div>
+          <div class="dato-box"><strong>No existe servicio complementario capilar-cirugía:</strong> Los servicios de Elián y Gabriel no se requieren mutuamente para ningún procedimiento. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Visión de integración declarada pero no materializada:</strong> "La idea es que todo se integre bajo un mismo servicio unificado." La realidad: aislamiento total. Ni siquiera el inventario de tricología aparece en la entrevista de Marisela. A pesar de la independencia, reproduce los mismos problemas sistémicos: dispositivos personales, seguimiento de memoria, cero software. <span class="source-tag">— Gabriel, Cirujano · Elián, Tricología · Marisela, CEO</span></div>
+          <div class="dato-box"><strong>Sin coordinación estandarizada Gabriel-Elián:</strong> No se describió en detalle cómo se coordinan para casos compartidos (capilar + cirugía). Vacío de información que persiste. <span class="source-tag">— Gabriel, Cirujano · Elián, Tricología</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8: VISIÓN Y ESTRATEGIA -->
+      <div class="slide" data-title="Visión y estrategia" data-count="8 datos">
+        <div class="details-content">
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">Clínica modelo — Dr. Simon en Beverly Hills:</strong> "Concepto luxury donde el paciente, desde que llega, ya lo reciben con su nombre completo, le ofrecen una bebida personalizada. Todo es más bien la experiencia, no tanto los resultados." <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">Segunda clínica modelo — Dr. Igor Alves (Brasil):</strong> Armonizaciones faciales, clínica lujosa, experiencia increíble. "Él solamente ve cuatro pacientes al día, cada paciente le da como dos horas y media." <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">Estrategia: menos pacientes, más valor:</strong> "Preferiría hacer dos y cobrarlas súper bien." Modelo luxury. Marisela coincide en dirección pero con énfasis en retención: "con que le dijeran ven una vez al mes al facial, cuántos pacientes no tuviéramos diario." Ambas necesidades convergen en un sistema. <span class="source-tag">— Gabriel, Cirujano · Marisela, CEO</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">Visión luxury — experiencia premium:</strong> "Que sientas que estás invirtiendo en ti. Eso es a lo que a mí me gustaría llegar y no que sea algo tan metódico de médicos." Ejemplo: brindis cuando cierran un deal caro. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Visión a 2 años — día a día con sistema:</strong> "Tener en la aplicación lo que voy a hacer en el día con el resumen de los pacientes, alguna nota que haga que el paciente se sienta escuchado, recordatorios para que la experiencia sea más personalizada." <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Quitar carga administrativa para enfocarse en experiencia:</strong> "Que nos quite esta carga de trabajo y que nos enfoquemos en la experiencia y no en hacer la historia clínica y notas." <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Servicios a incorporar a corto-medio plazo:</strong> Máquina de faciales, cámara hiperbárica, máquina de corporal. Contexto: la aparatología existente ya está infrautilizada por falta de retención. Nueva sede con quirófano propio en ~1 año, elimina fuga de capital por renta de quirófano externo. <span class="source-tag">— Gabriel, Cirujano · Marisela, CEO</span></div>
+          <div class="dato-box"><strong>Estructura de propiedad:</strong> Gabriel y Marisela son dueños. Expansion en curso: nueva sede, quirófano propio, más personal necesario. Cirujano plástico ya contratado por honorarios (no en nómina). <span class="source-tag">— Marisela, CEO</span></div>
+        </div>
+      </div>
+
+      </div><!-- /slides-data -->
+    </section>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="slideModal">
+      <div class="modal-progress"><div class="modal-progress-fill" id="progressFill"></div></div>
+      <div class="modal-topbar">
+        <div class="modal-topbar-left">
+          <span class="modal-slide-num" id="slideNum"></span>
+          <span class="modal-slide-title" id="slideTitle"></span>
+        </div>
+        <button class="modal-close" onclick="closeModal()" title="Cerrar (Esc)">&times;</button>
+      </div>
+      <div class="modal-slide-area">
+        <button class="modal-side-nav nav-left" id="btnPrev" onclick="prevSlide()"><i class="ph ph-caret-left"></i></button>
+        <div class="modal-slide-content" id="modalBody"></div>
+        <div class="scroll-hint" id="scrollHint"><span class="scroll-hint-arrow"><i class="ph ph-caret-down"></i> scroll</span></div>
+        <button class="modal-side-nav nav-right" id="btnNext" onclick="nextSlide()"><i class="ph ph-caret-right"></i></button>
+      </div>
+      <div class="modal-bottombar" id="modalDots"></div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- DIAGRAMA DE FLUJO -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-flow-arrow"></i> Diagrama de Flujo — Rol de Cirujano (solo datos confirmados)</h2>
+      <p style="color: #A1B8F2;">53 datos de entrevista. Flujo completo del rol de Cirujano — desde captación de contenido hasta seguimiento y documentación.</p>
+
+      <div class="mermaid">
+flowchart TD
+    classDef default fill:#1a2535,stroke:#31BEEF,stroke-width:1.5px,color:#FAF9F6
+    classDef friction fill:#2a1015,stroke:#ff4444,stroke-width:2px,color:#ff4444
+    classDef auto fill:#0f2015,stroke:#4CAF50,stroke-width:1.5px,color:#4CAF50
+    classDef decision fill:#1f1525,stroke:#994E95,stroke-width:1.5px,color:#FAF9F6
+    classDef entry fill:#0f1f2f,stroke:#31BEEF,stroke-width:1.5px,color:#31BEEF
+
+    subgraph CAP["CAPTACIÓN — Gabriel genera contenido"]
+        C1["Instagram/TikTok:<br/>Gabriel crea videos"]:::entry
+        C1 --> C2["Leads entran por Meta ads + WhatsApp"]
+        C2 --> C3["Carlos filtra 10am-7pm,<br/>Marisela cubre 6-9am / 7-10pm"]
+        C3 --> C4{"Lead<br/>agenda"}:::decision
+        C4 -->|"Mayoría no"| C5["Sin CRM — leads se pierden"]:::friction
+        C4 -->|"Sí"| V1
+    end
+
+    subgraph VAL["VALORACIÓN — $500 MXN, ~30 min"]
+        V1["Paciente llega — WhatsApp anuncia"]:::entry
+        V1 --> V2["Carlos cobra valoración"]
+        V2 --> V3["Gabriel evalúa + propone plan"]
+        V3 --> V4{"Mismo<br/>día"}:::decision
+        V4 -->|"Casos menores"| PP1
+        V4 -->|"No"| V5["Agendar en agenda física"]
+        V5 --> PP1
+    end
+
+    subgraph PREP["PRE-PROCEDIMIENTO — briefing verbal"]
+        PP1["Divani/Óscar/Carlos informan de forma oral"]:::friction
+        PP1 --> PP2["Gabriel NO consulta HC ni expediente"]:::friction
+        PP2 --> PP3["Material preparado de memoria por Óscar"]
+        PP3 --> PP4["Consentimientos + fotos antes + marcado"]
+        PP4 --> PP5["Anestesia infiltrada — siempre Óscar"]
+    end
+
+    subgraph PROC["PROCEDIMIENTO — ~2h cirugía / ~30 min inyectable"]
+        PP5 --> PR1{"Tipo de<br/>procedimiento"}:::decision
+        PR1 -->|"Cirugía"| PR2["Gabriel opera + Óscar asiste"]
+        PR1 -->|"Lipo facial"| PR3["Divani opera + Óscar anestesia"]
+        PR1 -->|"Inyectable"| PR4["Divani opera sola"]
+        PR2 --> PR5["Fotos durante — celular personal"]:::friction
+        PR3 --> PR5
+        PR4 --> PR5
+    end
+
+    subgraph POST["POST-PROCEDIMIENTO — revisión 3er día"]
+        PR5 --> PO1["Indicaciones verbales + receta"]
+        PO1 --> PO2["Carlos envía PDF por WhatsApp"]
+        PO2 --> PO3["Revisión obligatoria al 3er día"]
+        PO3 --> PO4["Fotos después — comparativo manual"]
+    end
+
+    subgraph SEG["SEGUIMIENTO — sin sistema activo"]
+        PO4 --> S1["Sin recordatorios ni seguimiento"]:::friction
+        S1 --> S2["Pacientes desaparecen sin aviso"]:::friction
+        S2 --> S3["Retención real ~10%, meta 30%"]:::friction
+        S3 --> S4["Cross-selling no sistematizado"]:::friction
+    end
+
+    subgraph DOC["DOCUMENTACIÓN — todo manual, diferido"]
+        PR5 -.->|"al final del día"| D1["HC y notas — Divani/Óscar completan"]:::friction
+        D1 -.-> D2["Fotos dispersas en 4+ dispositivos"]:::friction
+        D2 -.-> D3["Backlog de expedientes incompletos"]:::friction
+        PO2 -.->|"coordinación"| D4["Reuniones solo cuando hay problema"]:::friction
+        D4 -.-> D5["Comunicación por repetición verbal"]:::friction
+    end
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.5rem; font-size: 0.85rem; padding: 0.75rem 1rem; background: rgba(26,37,53,0.5); border-radius: 6px;">
+        <span style="color: #4CAF50;">● Automatizado</span>
+        <span style="color: #994E95;">● Decisión</span>
+        <span style="color: #ff4444;">● Fricción</span>
+        <span style="color: #31BEEF;">● Entrada/Salida</span>
+        <span style="color: #A1B8F2;">┈┈ Flujo secundario</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 2: VACÍOS DE INFORMACIÓN -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-question"></i> Vacíos de información</h2>
+
+      <details>
+        <summary style="border-left-color: #4CAF50; color: #4CAF50;">Vacíos resueltos por otras entrevistas (1)</summary>
+        <div class="details-content">
+          <div class="resolved-box">
+            <strong><i class="ph ph-check-circle"></i> Papel de la hermana de Gabriel en la clínica</strong>
+            — Resuelto: Elián es hermana de Gabriel, maneja tricología/capilar de forma independiente. No hay servicios complementarios entre capilar y cirugía. Dra. Elián Cabrera Narváez, 8 meses en la clínica, 40-50 pacientes activos, operación unipersonal sin respaldo. También lidera consulta de control de peso (tirzepatida).
+            <span class="source-tag">— Resuelto por Elián Cabrera Narváez, Tricología</span>
+          </div>
+        </div>
+      </details>
+
+      <h3 style="color: #FFC107;"><i class="ph ph-warning"></i> Vacíos pendientes (1)</h3>
+      <div class="gap-box">
+        <strong><i class="ph ph-warning"></i> Volumen exacto de procedimientos por semana</strong>
+        — Gabriel ofreció pasar los datos pero no se proporcionaron en la entrevista. El desglose exacto Gabriel vs Divani por semana sigue sin dato directo.
+        <span class="source-tag" style="color: #4CAF50;">AMPLIADO por Divani Coronado (Primer Ayudante): 6-7 procedimientos en día fuerte (~4 inyectables + ~2 lipo láser). Óscar González (Enfermero): ~10-12 pacientes/día combinados (procedimientos + consultas + revisiones), tasa valoración→procedimiento ~80%.</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 3: HANDOFFS IDENTIFICADOS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-arrows-left-right"></i> Puntos de Handoff</h2>
+      <div class="dato-box"><strong>Carlos → Gabriel:</strong> Carlos recibe solicitud del paciente que quiere valoración con Gabriel, informa del costo ($500 MXN), procesa pago, y separa en la agenda el día de la valoración.</div>
+
+      <div class="dato-box"><strong>Equipo → Gabriel:</strong> Cualquiera de los tres (Divani, Óscar o Carlos) que tenga la información le da al cirujano un informe verbal del paciente. Gabriel no consulta la HC. Dependencia verbal bidireccional: Divani tampoco lee la HC en el flujo inverso. Óscar prepara material de memoria sin verificación — confianza total sin red de seguridad documental.</div>
+
+      <div class="dato-box"><strong>Gabriel → Equipo:</strong> Gabriel termina el procedimiento. Quien esté con el paciente (Divani u Óscar) le da indicaciones verbales y después Carlos envía por WhatsApp el PDF estandarizado. Doble canal sin coordinación: Carlos manda templates digitales, Brisa explica verbalmente en clínica. Cuando Carlos no está, Brisa contesta WhatsApp sin contexto completo.</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 4: FRICCIONES EXPRESADAS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-fire"></i> Fricciones expresadas por Gabriel</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Citas literales — lo que Gabriel siente y expresa sobre su trabajo.</p>
+
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Les repito y les repito y les repito lo que tienen que hacer"</strong> — frustración con la falta de sistema de comunicación</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Solamente cuando hay algún tema de desorganización o que se perdió algo"</strong> — reuniones solo cuando hay problemas</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Que nos quite esta carga de trabajo y que nos enfoquemos en la experiencia y no en hacer la historia clínica y notas"</strong> — carga administrativa impide enfocarse en la experiencia</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Tiempo. Eso es lo que necesito"</strong> — recurso que más necesita para atender más pacientes</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Preferiría hacer dos y cobrarlas súper bien"</strong> — modelo actual de volumen no coincide con la visión luxury</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 5: FRICCIONES IDENTIFICADAS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-magnifying-glass"></i> Fricciones identificadas por análisis</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Fricciones operativas derivadas de los datos confirmados.</p>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Cirujano opera sin consultar expediente — información solo verbal</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Gabriel recibe toda la información del paciente de forma oral. No lee la HC ni consulta antecedentes escritos. Divani tampoco lee la HC — dependencia verbal bidireccional. Marisela confirma: "Lo anotan en la historia clínica pero lo ven en la agenda." La HC es registro muerto. Sin continuidad paciente-asistente: "a quien esté desocupado."</p>
+        <span class="source-tag">— Gabriel, Cirujano · Divani, Primer Ayudante · Marisela, CEO</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Reuniones solo reactivas — unanimidad total en los 6 roles</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">No hay reuniones regulares de planificación ni seguimiento. Coordinación completamente sobre la marcha, verbal, sin registro. Todos los roles entrevistados coinciden sin excepción.</p>
+        <span class="source-tag">— Gabriel, Cirujano · Brisa, Cosmiatra · Óscar, Enfermero</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Comunicación basada en repetición — intentos fallidos de mejora</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Gabriel repite instrucciones constantemente. Óscar confirma desde el otro lado: han intentado mejorar la organización pero sin herramientas ni sistema, los intentos fracasan. Falta de delimitación de funciones: "Siento que todos hacen de todo."</p>
+        <span class="source-tag">— Gabriel, Cirujano · Óscar, Enfermero</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Fotos en dispositivos personales sin sistema — problema sistémico</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Gabriel, Óscar, Brisa y Elián almacenan fotos clínicas en celulares e iPads personales. Fotos post casi inexistentes. Ninguna se vincula al expediente. Cuatro patrones de dispersión confirmados. Si se pierde un teléfono, se pierde el registro fotográfico.</p>
+        <span class="source-tag">— Gabriel, Cirujano · Brisa, Cosmiatra · Óscar, Enfermero · Elián, Tricología</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Retención real ~10% — percepción del cirujano no coincide con realidad</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Gabriel: "Casi siempre vienen a sus revisiones." Realidad: retención ~10%, meta 30%. Pacientes desaparecen hasta un año. Sin seguimiento post, sin reactivación. Aparatología parada por falta de retención. Gabriel solo ve revisiones inmediatas (3er día); la retención a largo plazo es radicalmente diferente.</p>
+        <span class="source-tag">— Gabriel, Cirujano · Brisa, Cosmiatra · Elián, Tricología · Marisela, CEO</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Procedimientos mismo día — percepción vs realidad operativa</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Gabriel dice "es muy raro" que se hagan procedimientos el mismo día de la valoración. Divani y Óscar contradicen: procedimientos sencillos (botox, rinomodelación) SÍ se hacen mismo día con frecuencia, causando desabasto de botox y caos en preparación.</p>
+        <span class="source-tag">— Gabriel, Cirujano · Divani, Primer Ayudante · Óscar, Enfermero</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Ambos dueños sobrecargados — cuello de botella doble</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Gabriel necesita "tiempo" para atender más pacientes. Marisela ejerce tres roles simultáneamente: contesta ~200 mensajes/día, hace todas las valoraciones, gestiona compras. Ambos pierden tiempo en tareas que un sistema podría automatizar. El cuello de botella no es el personal sino la carga administrativa de los dueños.</p>
+        <span class="source-tag">— Gabriel, Cirujano · Marisela, CEO</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Área capilar aislada — reproduce problemas sistémicos</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Visión de integración declarada pero no materializada. Elián opera como clínica dentro de la clínica: procesos, proveedores, inventario separados. 40-50 pacientes manejados por una sola persona. Reproduce mismos problemas: dispositivos personales, seguimiento manual, cero software. Si Elián se ausenta, el área se detiene.</p>
+        <span class="source-tag">— Gabriel, Cirujano · Elián, Tricología · Marisela, CEO</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 6: MAPEO D1-D4 -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-target"></i> Mapeo a los 4 Dolores APEX</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Análisis completado. Dolor dominante: <strong style="color: #ff4444;">D1 (Procesos Internos)</strong>. Gabriel opera dentro de una clínica sin sistemas — la visión luxury que persigue es inalcanzable sin resolver primero la base operativa.</p>
+
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #ff4444; border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444; font-size: 1.1rem;">D1 — Procesos Internos Ineficientes → DOLOR DOMINANTE</strong>
+        <span style="display: inline-block; background: #ff4444; color: #fff; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.75rem; margin-left: 0.5rem; vertical-align: middle;">DOLOR DOMINANTE</span>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Plataforma Centralizada de Gestión Clínica</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>HC como registro muerto — ni Gabriel ni Divani la consultan para decisiones clínicas</li>
+          <li>Briefing 100% verbal sin red de seguridad documental — si Óscar se va, nada está documentado</li>
+          <li>Material preparado de memoria sin protocolos escritos ni verificación</li>
+          <li>3 agendas físicas nómadas sin bloques horarios — epicentro del caos operativo</li>
+          <li>Reuniones solo reactivas — unanimidad total en los 6 roles entrevistados</li>
+          <li>Comunicación por repetición verbal — intentos de mejora fracasan sin herramientas</li>
+          <li>Fotos clínicas dispersas en 4+ dispositivos personales sin vinculación al expediente</li>
+          <li>Documentación diferida al final del día — backlog de expedientes incompletos</li>
+          <li>Ambos dueños sobrecargados con tareas administrativas que un sistema automatizaría</li>
+          <li>Área capilar aislada reproduce mismos problemas sistémicos — cero software en toda la operación</li>
+        </ul>
+      </div>
+
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D2 — Seguimiento y Clasificación de Pacientes → CONSECUENCIA DIRECTA</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Seguimiento y Clasificación Automática</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Retención real ~10% — Gabriel percibe "casi siempre vienen" pero solo ve revisiones del 3er día</li>
+          <li>Sin recordatorios, sin sistema de citas de seguimiento, sin reactivación post-tratamiento</li>
+          <li>Pacientes desaparecen sin aviso — regresan meses después o no regresan</li>
+          <li>Sin clasificación ni segmentación — todos los pacientes reciben el mismo (nulo) seguimiento</li>
+          <li>Aparatología parada por falta de retención: equipos comprados sin pacientes recurrentes</li>
+          <li>Elián tiene seguimiento manual (recetas como tracking) pero es insostenible y con alta cancelación</li>
+        </ul>
+      </div>
+
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #994E95; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #994E95; font-size: 1.1rem;">D3 — Comunicación Personalizada con Pacientes → IMPACTADO</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Comunicación Segmentada e Inteligente</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Doble canal sin coordinación — Carlos envía templates por WhatsApp, Brisa explica verbalmente</li>
+          <li>Indicaciones post estandarizadas, no personalizadas por procedimiento ni paciente</li>
+          <li>Sin mecanismo de reactivación — una vez que el paciente se va, no se envía nada más</li>
+          <li>Gabriel quiere "experiencia personalizada" pero no hay datos para personalizar</li>
+          <li>Visión luxury requiere comunicación premium que hoy no existe (brindis, nombre completo, bebida personalizada)</li>
+        </ul>
+      </div>
+
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D4 — Conversión de Leads Publicitarios a Pacientes → INDIRECTAMENTE AFECTADO</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Pipeline de Conversión de Leads</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Sin CRM — leads que no agendan se pierden sin registro ni seguimiento</li>
+          <li>~200 mensajes/día entre Carlos y Marisela sin sistema de captura ni métricas</li>
+          <li>Conversión primer contacto→valoración ~10% — la fuga masiva ocurre antes de llegar a clínica</li>
+          <li>Tasa valoración→procedimiento ~80% — el problema NO es el cierre sino el pipeline previo</li>
+          <li>Gabriel genera contenido (Instagram/TikTok) pero no tiene visibilidad del funnel de conversión</li>
+        </ul>
+      </div>
+
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #4CAF50; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #4CAF50; font-size: 1.1rem;">Retención = Ecosistema Integrado (D1+D2+D3+D4)</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0; line-height: 1.7;">Desde la perspectiva del cirujano, la retención es el resultado que más impacta su visión: menos pacientes nuevos, más valor por paciente recurrente. Pero el ecosistema hoy está roto: sin procesos base (D1) no hay datos; sin datos no hay seguimiento (D2); sin seguimiento no hay comunicación personalizada (D3); sin pipeline (D4) se depende de volumen de leads nuevos en vez de retener los existentes. Gabriel quiere el modelo Dr. Simon / Dr. Igor Alves — imposible sin resolver la cadena completa.</p>
+      </div>
+
+      <div style="background: rgba(255, 68, 68, 0.08); padding: 1rem; border: 1px solid rgba(255, 68, 68, 0.2); border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444;">Conclusión desde este rol</strong>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li><strong style="color: #ff4444;">D1 es abrumadoramente el dolor dominante</strong> — Gabriel opera sin HC, sin sistemas, sin coordinación formal. 10 de 10 evidencias operativas apuntan a procesos internos rotos.</li>
+          <li><strong style="color: #31BEEF;">D2 es consecuencia directa</strong> — sin procesos base no hay seguimiento posible. Retención real ~10% demuestra el costo de no tener D1 resuelto.</li>
+          <li><strong style="color: #994E95;">D3 es impactado</strong> — la visión luxury de Gabriel requiere comunicación personalizada que hoy no existe porque no hay datos para personalizar.</li>
+          <li>D4 es indirectamente afectado desde este rol — Gabriel genera el contenido pero no tiene visibilidad del pipeline. La fuga masiva ocurre antes de llegar a la clínica.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="nav-links">
+      <a href="flujo-ceo.html"><i class="ph ph-arrow-left"></i> Anterior: CEO/Dirección</a>
+      <a href="../index.html">Volver al Índice <i class="ph ph-house"></i></a>
+    </div>
+
+    <footer class="footer">
+      <p>ARMC — Aesthetic Rejuvenation Medical Center — Análisis Operativo — Abril 2026 — PRISMA Consulting</p>
+    </footer>
+  </div>
+
+  <script>
+    (function() {
+      var slides = document.querySelectorAll('#slides-data .slide');
+      var modal = document.getElementById('slideModal');
+      var slideNum = document.getElementById('slideNum');
+      var slideTitle = document.getElementById('slideTitle');
+      var progressFill = document.getElementById('progressFill');
+      var modalBody = document.getElementById('modalBody');
+      var modalDots = document.getElementById('modalDots');
+      var btnPrev = document.getElementById('btnPrev');
+      var btnNext = document.getElementById('btnNext');
+      var scrollHint = document.getElementById('scrollHint');
+      var current = 0;
+      var total = slides.length;
+
+      for (var i = 0; i < total; i++) {
+        var dot = document.createElement('span');
+        dot.className = 'modal-dot';
+        dot.addEventListener('click', (function(idx) {
+          return function() { goToSlide(idx); };
+        })(i));
+        modalDots.appendChild(dot);
+      }
+
+      function transformContent(slide) {
+        var title = slide.getAttribute('data-title');
+        var count = slide.getAttribute('data-count');
+        var source = slide.querySelector('.details-content');
+        var html = '<div class="slide-title-block"><h2>' + title + '</h2><span class="slide-subtitle">' + count + '</span></div>';
+        var children = source.children;
+        for (var i = 0; i < children.length; i++) {
+          var el = children[i];
+          if (el.tagName === 'H4') {
+            var cls = 'slide-section-heading';
+            if (el.style.color && el.style.color.indexOf('4444') !== -1) cls += ' critical';
+            html += '<div class="' + cls + '">' + el.textContent + '</div>';
+          } else if (el.classList.contains('dato-box')) {
+            var dotCls = 'slide-item-dot';
+            var style = el.getAttribute('style') || '';
+            if (style.indexOf('ff4444') !== -1) dotCls += ' critical';
+            else if (style.indexOf('4CAF50') !== -1) dotCls += ' positive';
+            else if (style.indexOf('994E95') !== -1) dotCls += ' sentiment';
+            var clone = el.cloneNode(true);
+            var tags = clone.querySelectorAll('.source-tag, .new-tag');
+            for (var t = 0; t < tags.length; t++) tags[t].remove();
+            var strongs = clone.querySelectorAll('strong');
+            for (var s = 0; s < strongs.length; s++) {
+              var sStyle = strongs[s].getAttribute('style') || '';
+              if (sStyle.indexOf('ff4444') !== -1) { strongs[s].removeAttribute('style'); strongs[s].className = 'critical-text'; }
+              else if (sStyle.indexOf('4CAF50') !== -1) { strongs[s].removeAttribute('style'); strongs[s].className = 'positive-text'; }
+              else if (sStyle.indexOf('994E95') !== -1) { strongs[s].removeAttribute('style'); strongs[s].className = 'sentiment-text'; }
+            }
+            var text = clone.innerHTML.replace(/<span class="source-tag">.*?<\/span>/g, '').trim();
+            html += '<div class="slide-item"><span class="' + dotCls + '"></span><span class="slide-item-text">' + text + '</span></div>';
+          }
+        }
+        return html;
+      }
+
+      function updateDots() {
+        var dots = modalDots.querySelectorAll('.modal-dot');
+        for (var i = 0; i < dots.length; i++) { dots[i].classList.toggle('active', i === current); }
+      }
+
+      function goToSlide(idx) {
+        current = idx;
+        var slide = slides[current];
+        slideNum.textContent = (current + 1) + ' / ' + total;
+        slideTitle.textContent = slide.getAttribute('data-count');
+        progressFill.style.width = ((current + 1) / total * 100) + '%';
+        modalBody.innerHTML = transformContent(slide);
+        modalBody.scrollTop = 0;
+        updateDots();
+        setTimeout(checkScrollHint, 50);
+        btnPrev.disabled = current === 0;
+        btnNext.disabled = current === total - 1;
+      }
+
+      window.openSlide = function(idx) { goToSlide(idx); modal.classList.add('active'); document.body.style.overflow = 'hidden'; };
+      window.closeModal = function() { modal.classList.remove('active'); document.body.style.overflow = ''; };
+      window.prevSlide = function() { if (current > 0) goToSlide(current - 1); };
+      window.nextSlide = function() { if (current < total - 1) goToSlide(current + 1); };
+
+      function checkScrollHint() {
+        var el = modalBody;
+        var canScroll = el.scrollHeight > el.clientHeight + 10;
+        var nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 30;
+        if (!canScroll || nearBottom) { scrollHint.classList.add('hidden'); } else { scrollHint.classList.remove('hidden'); }
+      }
+      modalBody.addEventListener('scroll', checkScrollHint);
+
+      document.addEventListener('keydown', function(e) {
+        if (!modal.classList.contains('active')) return;
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'ArrowRight') nextSlide();
+      });
+
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal || e.target.classList.contains('modal-slide-area')) closeModal();
+      });
+    })();
+  </script>
+  <script>mermaid.contentLoaded();</script>
+</body>
+</html>

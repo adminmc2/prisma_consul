@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CEO/Dirección — Flujo Operativo (as-is) — ARMC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: 'transparent',
+        primaryColor: '#1a2535',
+        primaryTextColor: '#FAF9F6',
+        primaryBorderColor: '#31BEEF',
+        secondaryColor: '#1a2535',
+        secondaryBorderColor: '#994E95',
+        lineColor: '#31BEEF',
+        textColor: '#FAF9F6',
+        clusterBkg: '#162033',
+        clusterBorder: '#253545',
+        edgeLabelBackground: '#1a2535',
+        fontFamily: '"Source Sans 3", sans-serif',
+        fontSize: '14px'
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 15,
+        nodeSpacing: 50,
+        rankSpacing: 55,
+      }
+    });
+  </script>
+  <link rel="stylesheet" href="../css/estilos-prisma.css">
+  <style>
+    .breadcrumb { margin-bottom: 2rem; padding: 1rem; background: rgba(49, 190, 239, 0.05); border-radius: 4px; }
+    .breadcrumb a { color: #31BEEF; }
+    .diagram-section { background: #1a2535; border: 1px solid #31BEEF; border-radius: 8px; padding: 2rem; margin: 2rem 0; }
+    .diagram-section h2 { margin-top: 0; }
+    .mermaid-container { background: #101B2C; padding: 2rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; }
+    .mermaid { display: flex; justify-content: center; min-height: 300px; }
+    .mermaid .node rect, .mermaid .node polygon { rx: 8 !important; ry: 8 !important; stroke-width: 1.5px !important; }
+    .mermaid .nodeLabel, .mermaid .node .label { font-family: 'Source Sans 3', sans-serif !important; font-size: 14px !important; font-weight: 600 !important; }
+    .mermaid .edgePath path.path { stroke-width: 1.5px !important; opacity: 0.6; }
+    .mermaid .edgeLabel { font-size: 12px !important; font-family: 'Source Sans 3', sans-serif !important; font-weight: 600 !important; }
+    .mermaid .edgeLabel rect { rx: 4 !important; ry: 4 !important; fill: #1a2535 !important; stroke: none !important; }
+    .mermaid .edgeLabel span { color: #FAF9F6 !important; }
+    .mermaid .cluster rect { rx: 8 !important; ry: 8 !important; stroke-dasharray: 5 3; }
+    .mermaid .cluster-label .nodeLabel, .mermaid .cluster-label span { font-family: 'Quicksand', sans-serif !important; font-weight: 700 !important; font-size: 14px !important; letter-spacing: 0.5px; text-transform: uppercase; fill: #FAF9F6 !important; color: #FAF9F6 !important; }
+    .nav-links { display: flex; gap: 1rem; margin-top: 2rem; justify-content: space-between; }
+    .nav-links a { flex: 1; padding: 1rem; text-align: center; background: #1a2535; border: 1px solid #31BEEF; border-radius: 4px 25px 25px 4px; transition: all 400ms ease; color: #FAF9F6; text-decoration: none; }
+    .nav-links a:hover { background: #31BEEF; color: #101B2C; }
+    .status-badge { display: inline-block; padding: 0.5rem 1rem; background: #FFC107; color: #101B2C; border-radius: 4px; font-size: 0.85rem; margin-bottom: 1rem; font-weight: 600; }
+    .counter-bar { display: flex; gap: 2rem; padding: 1rem; background: #101B2C; border-radius: 4px; margin: 1rem 0; font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.9rem; }
+    .counter-bar span { color: #A1B8F2; }
+    .counter-bar .count { color: #31BEEF; font-size: 1.1rem; }
+    .counter-bar .count-warn { color: #FFC107; font-size: 1.1rem; }
+    .dato-box { background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin: 0.5rem 0; }
+    .dato-box strong { color: #31BEEF; }
+    .source-tag { font-size: 0.75rem; color: #994E95; font-weight: 600; }
+    .tag-new { display: inline-block; background: #31BEEF; color: #101B2C; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; }
+    .gap-box { background: rgba(255, 193, 7, 0.08); border: 1px dashed #FFC107; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .gap-box strong { color: #FFC107; }
+    .resolved-box { background: rgba(76, 175, 80, 0.08); border: 1px solid #4CAF50; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .resolved-box strong { color: #4CAF50; }
+    .handoff-box { background: #101B2C; padding: 1rem; border-left: 4px solid #A1B8F2; border-radius: 4px; margin: 0.5rem 0; }
+    .handoff-box strong { color: #A1B8F2; }
+    .friction-box { background: rgba(255, 68, 68, 0.05); padding: 1rem; border-left: 4px solid #ff4444; border-radius: 4px; margin: 0.5rem 0; }
+    .friction-box strong { color: #ff4444; }
+    .blocked-section { background: rgba(255, 193, 7, 0.05); border: 1px dashed #FFC107; border-radius: 8px; padding: 2rem; margin: 2rem 0; text-align: center; }
+    .blocked-section h2 { color: #FFC107; margin-top: 0; }
+    .fragment-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .fragment-table th, .fragment-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid rgba(49, 190, 239, 0.1); }
+    .fragment-table th { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .fragment-table td { color: #A1B8F2; font-size: 0.9rem; }
+
+    /* === SLIDE CARDS GRID === */
+    .slide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+    .slide-card { background: #101B2C; border: 1px solid rgba(49,190,239,0.3); border-radius: 12px; padding: 1.5rem; cursor: pointer; transition: all 300ms ease; position: relative; overflow: hidden; }
+    .slide-card:hover { border-color: #31BEEF; transform: translateY(-4px); box-shadow: 0 12px 32px rgba(49,190,239,0.15); }
+    .slide-card .card-number { font-size: 3.5rem; font-weight: 700; color: rgba(49,190,239,0.08); position: absolute; top: -0.25rem; right: 0.75rem; font-family: 'Quicksand', sans-serif; line-height: 1; }
+    .slide-card h3 { color: #FAF9F6; font-size: 1rem; margin: 0 0 0.5rem 0; font-family: 'Quicksand', sans-serif; font-weight: 600; }
+    .slide-card .card-count { color: #A1B8F2; font-size: 0.8rem; }
+    .slide-card.card-critical { border-color: rgba(255,68,68,0.4); }
+    .slide-card.card-critical:hover { border-color: #ff4444; box-shadow: 0 12px 32px rgba(255,68,68,0.15); }
+    .slide-card.card-critical .card-number { color: rgba(255,68,68,0.08); }
+    .slide-card.card-sentiment { border-color: rgba(153,78,149,0.4); }
+    .slide-card.card-sentiment:hover { border-color: #994E95; box-shadow: 0 12px 32px rgba(153,78,149,0.15); }
+    .slide-card.card-sentiment .card-number { color: rgba(153,78,149,0.08); }
+
+    /* === FULLSCREEN PRESENTATION MODAL === */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: #0a1420; z-index: 1000; flex-direction: column; }
+    .modal-overlay.active { display: flex; }
+    .modal-progress { height: 3px; background: rgba(49,190,239,0.1); flex-shrink: 0; }
+    .modal-progress-fill { height: 100%; background: linear-gradient(90deg, #31BEEF, #994E95); transition: width 400ms ease; border-radius: 0 2px 2px 0; }
+    .modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; flex-shrink: 0; }
+    .modal-topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .modal-slide-num { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem; background: rgba(49,190,239,0.1); padding: 0.3rem 0.8rem; border-radius: 20px; }
+    .modal-slide-title { color: #A1B8F2; font-family: 'Quicksand', sans-serif; font-size: 0.85rem; font-weight: 500; }
+    .modal-close { background: none; border: none; color: #A1B8F2; font-size: 1.25rem; cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 6px; transition: all 200ms; line-height: 1; }
+    .modal-close:hover { color: #ff4444; background: rgba(255,68,68,0.1); }
+    .modal-slide-area { flex: 1; display: flex; align-items: stretch; overflow: hidden; position: relative; }
+    .modal-side-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; background: none; border: none; color: rgba(161,184,242,0.4); font-size: 2.5rem; cursor: pointer; padding: 1rem; transition: all 200ms; }
+    .modal-side-nav:hover:not(:disabled) { color: #31BEEF; }
+    .modal-side-nav:disabled { opacity: 0; cursor: default; }
+    .modal-side-nav.nav-left { left: 0.5rem; }
+    .modal-side-nav.nav-right { right: 0.5rem; }
+    .modal-slide-content { width: 100%; max-width: 900px; margin: 0 auto; padding: 0 5rem; overflow-y: auto; max-height: 100%; scrollbar-width: none; -ms-overflow-style: none; position: relative; }
+    .modal-slide-content::-webkit-scrollbar { width: 0; display: none; }
+    .scroll-hint { position: absolute; bottom: 0; left: 5rem; right: 5rem; height: 70px; background: linear-gradient(to bottom, transparent 0%, #0a1420 80%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 0.75rem; pointer-events: none; opacity: 1; transition: opacity 400ms ease; z-index: 5; }
+    .scroll-hint.hidden { opacity: 0; }
+    .scroll-hint-arrow { color: rgba(49,190,239,0.4); font-size: 1rem; animation: scrollBounce 2s ease-in-out infinite; display: flex; align-items: center; gap: 0.4rem; font-family: 'Quicksand', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; }
+    @keyframes scrollBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+    .slide-title-block { margin-bottom: 2.5rem; }
+    .slide-title-block h2 { color: #FAF9F6; font-family: 'Quicksand', sans-serif; font-size: 2rem; font-weight: 700; margin: 0 0 0.25rem 0; line-height: 1.2; }
+    .slide-title-block .slide-subtitle { color: #A1B8F2; font-size: 0.95rem; }
+    .slide-item { padding: 0.85rem 0; border-bottom: 1px solid rgba(49,190,239,0.06); display: flex; gap: 0.75rem; align-items: baseline; line-height: 1.55; }
+    .slide-item:last-child { border-bottom: none; }
+    .slide-item-dot { width: 6px; height: 6px; border-radius: 50%; background: #31BEEF; flex-shrink: 0; margin-top: 0.55rem; }
+    .slide-item-dot.critical { background: #ff4444; }
+    .slide-item-dot.positive { background: #4CAF50; }
+    .slide-item-dot.sentiment { background: #994E95; }
+    .slide-item-text { color: #FAF9F6; font-size: 1.05rem; font-family: 'Source Sans 3', sans-serif; font-weight: 300; }
+    .slide-item-text strong { color: #31BEEF; font-weight: 600; }
+    .slide-item-text .critical-text { color: #ff4444; font-weight: 600; }
+    .slide-item-text .positive-text { color: #4CAF50; font-weight: 600; }
+    .slide-item-text .sentiment-text { color: #994E95; font-weight: 600; }
+    .slide-section-heading { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin: 2rem 0 0.75rem 0; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(49,190,239,0.15); }
+    .slide-section-heading:first-child { margin-top: 0; }
+    .slide-section-heading.critical { color: #ff4444; border-bottom-color: rgba(255,68,68,0.15); }
+    .modal-bottombar { display: flex; align-items: center; justify-content: center; padding: 1.25rem; gap: 8px; flex-shrink: 0; }
+    .modal-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(49,190,239,0.15); transition: all 300ms ease; cursor: pointer; }
+    .modal-dot.active { background: #31BEEF; transform: scale(1.4); }
+    .modal-dot:hover:not(.active) { background: rgba(49,190,239,0.4); }
+
+    @media (max-width: 768px) {
+      .modal-slide-content { padding: 0 3.5rem; }
+      .modal-side-nav { font-size: 1.5rem; padding: 0.5rem; }
+      .slide-title-block h2 { font-size: 1.5rem; }
+      .slide-item-text { font-size: 0.95rem; }
+      .modal-topbar { padding: 0.75rem 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .slide-grid { grid-template-columns: 1fr; }
+      .modal-slide-content { padding: 0 2.5rem; }
+      .modal-side-nav { font-size: 1.25rem; }
+      .modal-bottombar { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1><i class="ph ph-chart-line-up" style="color:#31BEEF"></i> CEO/Dirección — Flujo Operativo (as-is)</h1>
+      <p>Entrevistado: Dra. Marisela Narváez — Entrevista completa (9 fragmentos)</p>
+    </header>
+
+    <div class="breadcrumb">
+      <a href="../index.html"><i class="ph ph-arrow-left"></i> Volver al Índice</a>
+    </div>
+
+    <div class="status-badge" style="background: #4CAF50;"><i class="ph ph-check-circle"></i> ENTREVISTA COMPLETA — 1 sesión, 9 fragmentos</div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 1: DATOS CONFIRMADOS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-check-square"></i> Datos confirmados</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">69 datos organizados por flujo operativo. Fuente: Dra. Marisela Narváez (CEO/Dirección), 1 sesión de entrevista.<br>Haz clic en cualquier tarjeta para explorar los datos.</p>
+
+      <div class="slide-grid">
+        <div class="slide-card" onclick="openSlide(0)"><span class="card-number">1</span><h3>Marisela: Perfil y rol</h3><span class="card-count">8 datos</span></div>
+        <div class="slide-card" onclick="openSlide(1)"><span class="card-number">2</span><h3>Expansión y servicios</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card" onclick="openSlide(2)"><span class="card-number">3</span><h3>Captación y flujo del paciente</h3><span class="card-count">8 datos</span></div>
+        <div class="slide-card" onclick="openSlide(3)"><span class="card-number">4</span><h3>Agendas y seguimiento</h3><span class="card-count">7 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(4)"><span class="card-number">5</span><h3>Retención — problema central</h3><span class="card-count">9 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(5)"><span class="card-number">6</span><h3>Mensajes y sobrecarga</h3><span class="card-count">7 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(6)"><span class="card-number">7</span><h3>Registro, inventario y reportes</h3><span class="card-count">8 datos</span></div>
+        <div class="slide-card" onclick="openSlide(7)"><span class="card-number">8</span><h3>Expediente y regulación</h3><span class="card-count">7 datos</span></div>
+        <div class="slide-card" onclick="openSlide(8)"><span class="card-number">9</span><h3>Bob y equipo futuro</h3><span class="card-count">8 datos</span></div>
+        <div class="slide-card card-sentiment" onclick="openSlide(9)"><span class="card-number">10</span><h3>Lo que Marisela siente</h3><span class="card-count">13 expresiones</span></div>
+      </div>
+
+      <!-- SLIDES HIDDEN DATA (used by modal JS) -->
+      <div id="slides-data" style="display:none;">
+
+      <!-- SLIDE 0 -->
+      <div class="slide" data-title="Marisela: Perfil y rol" data-count="8 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Contexto:</strong> Marisela es la última entrevistada. Todo el equipo operativo ya fue entrevistado previamente (Carlos, Divani, Óscar, Brisa, Elián). <span class="source-tag">— Entrevistador</span></div>
+          <div class="dato-box"><strong>Rol:</strong> Directora de la clínica. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Responsabilidades (3):</strong> 1) Supervisar que todo funcione. 2) Compra y pedidos de material. 3) Hacer todas las valoraciones de los pacientes. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Estadío de la clínica:</strong> "Yo creo que está en crecimiento." Empezaron con un consultorio pequeño y han crecido progresivamente. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Historia:</strong> Marisela empezó la clínica sola. Gabriel se unió hace 10 años. Desde entonces han tenido crecimiento. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Relación con Elián:</strong> Marisela se refiere a Elián como "hija." Confirma relación familiar directa. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Fortaleza — Gabriel:</strong> "Gabriel es muy bueno en lo que hace y todos los procedimientos que hace son buenos. De hecho, por eso llegan los pacientes." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Gabriel buscó ayuda externa:</strong> "Gabo empezó a buscar y me dijo: podemos ver esta idea de implementar este sistema." La búsqueda de PRISMA fue motivada por la falta de seguimiento y ventas adicionales. <span class="source-tag">— Marisela</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 1 -->
+      <div class="slide" data-title="Expansión y servicios" data-count="6 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Expansión en curso:</strong> Compró casa para trasladar la clínica. Permisos retrasados (fachada catalogada). Actualmente rentan. Estiman ~1 año para mudarse. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Quirófano propio:</strong> En la nueva sede pretenden tener quirófano propio. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Cirugía plástica estética:</strong> Ya realizan cirugías. Cirujano plástico contratado por honorarios (no en nómina). <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Fuga de capital — quirófano externo:</strong> "Hay mucha fuga de capital porque hay que pagar renta de quirófano." El quirófano propio eliminaría esta fuga. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Cámara hiperbárica:</strong> Gabriel quiere integrar una cámara hiperbárica como servicio adicional. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Contratación futura:</strong> Se va a necesitar más personal al mudarse a la nueva sede. <span class="source-tag">— Marisela</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2 -->
+      <div class="slide" data-title="Captación y flujo del paciente" data-count="8 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Captación de pacientes:</strong> Pautas publicitarias en Facebook e Instagram, estados de WhatsApp con promociones, y videos de Gabriel. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Grupo de WhatsApp de llegada:</strong> Solo para ARMC, no compartido con otros negocios del edificio. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Flujo completo del paciente (visión CEO):</strong> 1) Captación (mensajes). 2) Valoración + presupuesto (Marisela). 3) Si acepta → agendar. 4) Recibe quien esté desocupado. 5) Historia clínica. 6) Pago (Carlos). 7) Fotos + marcaciones (Gabriel). 8) Anestesia (Óscar/Divani). 9) Procedimiento (Gabriel). 10) Limpieza + indicaciones + receta + cita revisión. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Asignación por disponibilidad:</strong> "A quien esté desocupado y a quien le toque." No hay asignación por especialidad ni por continuidad con el paciente. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Indicaciones al paciente:</strong> Se envían por WhatsApp y se explican presencialmente post-procedimiento. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Historia clínica como registro continuo:</strong> En la HC se reporta lo que se hizo. El equipo sabe qué viene a hacer el paciente. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Agenda vs HC:</strong> "Lo anotan en la historia clínica pero lo ven en la agenda." La agenda es referencia rápida del día; la HC es registro detallado. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Sin continuidad de asistente:</strong> El paciente no siempre es atendido por el mismo asistente. La referencia para saber qué pasó es la agenda. <span class="source-tag">— Marisela</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3 -->
+      <div class="slide" data-title="Agendas y seguimiento" data-count="7 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Tres agendas separadas:</strong> Procedimientos, valoraciones y revisiones. En la de revisiones: nombre + procedimiento de revisión. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Agenda suficiente — HC no se consulta:</strong> Para el equipo, lo anotado en la agenda es suficiente. No consultan la historia clínica para atender al paciente. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Post-tratamiento: solo indicaciones.</strong> Una vez que el paciente se va, no se le envía nada más allá de las indicaciones iniciales por WhatsApp. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Seguimiento día siguiente (protocolo ideal):</strong> Carlos debería mandar mensaje al día siguiente. Revisión presencial a los 3 días. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Carlos no manda mensajes de seguimiento:</strong> "He notado que no los manda. Se espera hasta que llegue el paciente." Marisela tiene que revisar el teléfono y recordarle. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">No hay mecanismo de reactivación:</strong> No tienen proceso para reactivar pacientes que terminaron tratamiento. Marisela confirma: "No." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Cupones digitales recién implementados:</strong> Cupones digitales para los pocos pacientes recurrentes — facial, Hollywood Peel, tratamientos. <span class="source-tag">— Marisela</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4 -->
+      <div class="slide" data-title="Retención — problema central" data-count="9 datos">
+        <div class="details-content">
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Conversión inicial alta (Marisela):</strong> "No hay valoración que yo no dé que el paciente no se quede." Marisela es el motor de conversión. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">PROBLEMA PRINCIPAL — Retención baja:</strong> El equipo no ofrece tratamientos adicionales en citas de seguimiento. "Mucha cantidad de pacientes pero de una vez, no de que sea un paciente constante." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Tasa de retención ~10%:</strong> "Más o menos un 10% queda. Muy poquito, muy muy poquitito." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Meta de retención: 30%:</strong> "Con que regresara el 30% estaría esto maravilloso." Actual ~10%, objetivo: triplicar. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Curso de ventas sin efecto:</strong> Pagaron un curso de ventas al equipo. "No sé si sea apatía o qué sea, pero ahí en esa parte es la que yo siento que estamos atorados." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Servicios disponibles no ofrecidos:</strong> Faciales, masajes, HIFU, aparatología — el equipo no los ofrece activamente en citas de seguimiento. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Aparatología parada:</strong> "¿De qué te sirve hacer una inversión de ciertos sistemas láser, HIFU, todo eso si están los equipos parados? Porque no hay como tal la venta posterior." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Oportunidad perdida — faciales mensuales:</strong> "Con que le dijeran 'ven una vez al mes al facial', cuántos pacientes no tuviéramos diario." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Prioridad #1 — Seguimiento al paciente:</strong> "Lo que me interesa mucho es la parte del seguimiento al paciente. Creo que eso es lo principal." <span class="source-tag">— Marisela</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5 -->
+      <div class="slide" data-title="Mensajes y sobrecarga" data-count="7 datos">
+        <div class="details-content">
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Marisela cubre mensajes fuera de horario:</strong> Carlos: 10am–7pm. Marisela: 7pm–10pm y 6am–9am. Si Carlos se satura, ella cubre. Cobertura combinada: 6am–10pm. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Volumen de mensajes:</strong> ~100+ en horario nocturno (7pm–10pm). Otros ~100+ en las mañanas (6am–9am). Carga combinada muy alta. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">200 mensajes acumulados:</strong> Si Marisela no contesta de noche, Carlos amanece con ~200 mensajes. "Imagínate que lo deje yo con 200 mensajes." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Rezago = pérdida de pacientes:</strong> Paciente dice "voy a llegar tarde", no recibe respuesta. "Ya no me contestó, ya no voy." Se pierden avisos urgentes por acumulación de mensajes. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Marisela no puede desconectarse:</strong> Gabriel le dice que se desconecte, pero ella no puede porque "se carga muchísimo." Siente la responsabilidad de cubrir. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Leads curiosos:</strong> "Nos llegan muchos mensajes, pero muchos pacientes únicamente como que preguntan." Lo considera normal e inevitable. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Marisela no registra interacciones nocturnas:</strong> Lo que contesta de 7pm–10pm y 6am–9am no se registra. "Ya no lo registro, de por sí apenas me doy tiempo." <span class="source-tag">— Marisela</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6 -->
+      <div class="slide" data-title="Registro, inventario y reportes" data-count="8 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Bitácoras diarias en papel:</strong> Hojas de papel donde anotan procedimientos realizados (hipopapada, etc.). <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Captura digital reciente:</strong> Las hojas se pasan a un chico que captura digitalmente. Proceso apenas implementado (~1 mes). <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Sistema de captura desconocido:</strong> Marisela no sabe en qué sistema se captura la información. "La verdad no sé decirte." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Inventario dividido:</strong> Óscar lleva una parte del inventario y Divani otra. Sin sistema de alertas. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Falla en control de inventario:</strong> "Abrí el refri de casualidad y vi que ya nada más quedaba un botox y no me habían avisado." Control reactivo. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">No hay clasificación de pacientes:</strong> No tienen clasificación (nuevo, cautivo, VIP). Marisela confirma: "No." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Clasificación sería importante:</strong> Marisela reconoce que sí sería importante. "Yo creo que sí sería importante." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">No hay reporte central:</strong> Cada área maneja su información por separado. No existe dashboard ni reporte centralizado. "Cada uno por separado." <span class="source-tag">— Marisela</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7 -->
+      <div class="slide" data-title="Expediente y regulación" data-count="7 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Expediente clínico en papel:</strong> Historias clínicas impresas con consentimientos informados. Notas se van añadiendo al expediente físico. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Fotos solo en dispositivo de Gabriel:</strong> Las fotografías de pacientes no se añaden al expediente. Las tiene Gabriel en su móvil. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Servicios sí registrados, productos no:</strong> Los procedimientos sí se registran. Los productos NO por restricción regulatoria. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Regulación COFEPRIS:</strong> En CDMX no se puede vender directamente productos de farmacia. Productos deben darse "integrados a la consulta", no como venta. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Workaround propuesto:</strong> Registrar como "consulta dermatológica + productos entregados" — parte de la consulta, no venta directa. Trazabilidad sin conflicto regulatorio. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Sin evaluación formal del equipo:</strong> No tiene métricas ni herramientas para evaluar al equipo. "¿Como qué puede ser?" <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Métricas de captación incompletas:</strong> Carlos registra parcialmente los leads. Lo que Marisela contesta de noche/mañana no se registra en ningún lado. <span class="source-tag">— Marisela</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8 -->
+      <div class="slide" data-title="Bob y equipo futuro" data-count="8 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Bob — nuevo rol:</strong> "Otro chico que se llama Bob" está empezando a capturar y llevar el inventario con mayor control. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Bob — ubicación:</strong> No está en la clínica. Está en la obra de la nueva sede supervisando construcción. "Aparte de eso me está ayudando a supervisar." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Flujo de información hacia Bob:</strong> Al final del día le mandan la hoja de procedimientos y ventas. Él captura todo digitalmente. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Bob — horario:</strong> 9am a 6-7pm. Disponible para entrevista. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Plan para Bob:</strong> Integrarlo al 100% en inventario "y justamente no tengamos el tema de que a la mera hora faltó botox." <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Marisela sugiere entrevistar a Bob:</strong> Ella misma propone que JP hable con Bob. Lo considera parte clave del equipo. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Entrevista de Gabriel pendiente:</strong> Estaba agendada justo después de Marisela pero se reagendó porque Gabriel estaba con pacientes. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box"><strong>Dos entrevistas pendientes:</strong> Bob y Gabriel. Se coordinarán al día siguiente para agendar ambas. <span class="source-tag">— Marisela</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 9 -->
+      <div class="slide" data-title="Lo que Marisela siente" data-count="13 expresiones">
+        <div class="details-content">
+          <h4 style="color: #994E95;">Frustración con la retención</h4>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Mucha cantidad de pacientes pero de una vez, no de que sea un paciente constante."</strong> <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Más o menos un 10% queda. Muy poquito, muy muy poquitito."</strong> <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"No sé si sea apatía o qué sea, pero ahí en esa parte es la que yo siento que estamos atorados."</strong> — Sobre el equipo que no vende. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"¿De qué te sirve hacer una inversión si están los equipos parados?"</strong> — Inversión desperdiciada. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Con que le dijeran 'ven una vez al mes al facial', cuántos pacientes no tuviéramos diario."</strong> — Visión clara de la oportunidad. <span class="source-tag">— Marisela</span></div>
+          <h4 style="color: #994E95;">Sobrecarga y agotamiento</h4>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Imagínate que lo deje yo con 200 mensajes. ¿Cuánto crees que se va a tardar?"</strong> <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Ya no lo registro, de por sí apenas me doy tiempo."</strong> — Sobre sus interacciones nocturnas. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se carga muchísimo."</strong> — No puede desconectarse del teléfono. <span class="source-tag">— Marisela</span></div>
+          <h4 style="color: #994E95;">Frustración con el equipo</h4>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"He notado que no los manda. Se espera hasta que llegue el paciente."</strong> — Carlos no envía seguimiento. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Tengo que estar tras de él revisando."</strong> — Supervisión manual de Carlos. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Abrí el refri de casualidad y vi que nada más quedaba un botox y no me habían avisado."</strong> — Inventario sin control. <span class="source-tag">— Marisela</span></div>
+          <h4 style="color: #994E95;">Orgullo y esperanza</h4>
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">"No hay valoración que yo no dé que el paciente no se quede."</strong> — Orgullo en su tasa de conversión. <span class="source-tag">— Marisela</span></div>
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">"Gabriel es muy bueno en lo que hace."</strong> — Confianza en el motor técnico de la clínica. <span class="source-tag">— Marisela</span></div>
+        </div>
+      </div>
+
+      </div><!-- /slides-data -->
+    </section>
+
+    <!-- FULLSCREEN PRESENTATION MODAL -->
+    <div class="modal-overlay" id="slideModal">
+      <div class="modal-progress"><div class="modal-progress-fill" id="progressFill"></div></div>
+      <div class="modal-topbar">
+        <div class="modal-topbar-left">
+          <span class="modal-slide-num" id="slideNum"></span>
+          <span class="modal-slide-title" id="slideTitle"></span>
+        </div>
+        <button class="modal-close" onclick="closeModal()" title="Cerrar (Esc)">&times;</button>
+      </div>
+      <div class="modal-slide-area">
+        <button class="modal-side-nav nav-left" id="btnPrev" onclick="prevSlide()"><i class="ph ph-caret-left"></i></button>
+        <div class="modal-slide-content" id="modalBody"></div>
+        <div class="scroll-hint" id="scrollHint"><span class="scroll-hint-arrow"><i class="ph ph-caret-down"></i> scroll</span></div>
+        <button class="modal-side-nav nav-right" id="btnNext" onclick="nextSlide()"><i class="ph ph-caret-right"></i></button>
+      </div>
+      <div class="modal-bottombar" id="modalDots"></div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 2: DIAGRAMA DE FLUJO -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-flow-arrow"></i> Diagrama de Flujo — Rol de Marisela (solo datos confirmados)</h2>
+      <p style="color: #A1B8F2;">69 datos de entrevista. Flujo completo del rol de CEO/Dirección.</p>
+      <div class="mermaid-container">
+        <div class="mermaid">
+flowchart TD
+    classDef default fill:#1a2535,stroke:#31BEEF,stroke-width:1.5px,color:#FAF9F6
+    classDef friction fill:#2a1015,stroke:#ff4444,stroke-width:2px,color:#ff4444
+    classDef auto fill:#0f2015,stroke:#4CAF50,stroke-width:1.5px,color:#4CAF50
+    classDef decision fill:#1f1525,stroke:#994E95,stroke-width:1.5px,color:#FAF9F6
+    classDef entry fill:#0f1f2f,stroke:#31BEEF,stroke-width:1.5px,color:#31BEEF
+
+    subgraph CAP["CAPTACIÓN — ~200+ mensajes/día"]
+        C1["Pautas Meta + WhatsApp<br/>+ videos Gabriel"]:::entry
+        C1 --> C2["Carlos 10am-7pm<br/>Marisela 6am-9am / 7pm-10pm"]:::friction
+        C2 --> C3{"Lead<br/>agenda"}:::decision
+        C3 -->|"Mayoría no"| C4["Sin CRM ni registro nocturno"]:::friction
+        C3 -->|"Sí"| V1
+    end
+
+    subgraph VAL["CONVERSIÓN — Marisela único punto de cierre"]
+        V1["Paciente llega — WhatsApp anuncia"]:::entry
+        V1 --> V2["Marisela o Divani valoran"]
+        V2 --> V3["Presupuesto + cierre"]
+        V3 --> P1
+    end
+
+    subgraph PROC["PROCEDIMIENTO — asignación por disponibilidad"]
+        P1["Recibe quien esté desocupado"]:::friction
+        P1 --> P2["HC + consentimientos + pago"]
+        P2 --> P3["Gabriel opera"]:::entry
+        P3 --> P4["Indicaciones + receta + cita revisión"]
+    end
+
+    subgraph SEG["SEGUIMIENTO — gap principal"]
+        P4 --> S1["Carlos debería enviar<br/>mensaje al día siguiente"]
+        S1 --> S2["No los manda — Marisela supervisa"]:::friction
+        S2 --> S3["Equipo NO ofrece<br/>servicios adicionales"]:::friction
+        S3 --> S4["Sin reactivación post-tratamiento"]:::friction
+    end
+
+    subgraph RET["RETENCIÓN — 10% actual, meta 30%"]
+        S4 --> R1["Curso de ventas — sin efecto"]:::friction
+        R1 --> R2["Aparatología parada"]:::friction
+        R2 --> R3["Cupones digitales<br/>recién implementados"]
+    end
+
+    subgraph REG["REGISTRO Y CONTROL — sin visibilidad central"]
+        P2 -.->|"registro"| RE1["Bitácoras papel →<br/>Bob captura digital ~1 mes"]
+        RE1 -.-> RE2["Sin reporte central"]:::friction
+        P3 -.->|"consumo"| RE3["Inventario dividido<br/>Óscar/Divani"]:::friction
+        RE3 -.-> RE4["Falla: botox agotado<br/>sin aviso"]:::friction
+        RE4 -.-> RE5["Bob centralizando"]
+        RE1 -.-> RE6["HC papel — fotos solo<br/>en móvil de Gabriel"]:::friction
+    end
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.5rem; font-size: 0.85rem; padding: 0.75rem 1rem; background: rgba(26,37,53,0.5); border-radius: 6px;">
+        <span style="color: #4CAF50;">● Automatizado</span>
+        <span style="color: #994E95;">● Decisión</span>
+        <span style="color: #ff4444;">● Fricción</span>
+        <span style="color: #31BEEF;">● Entrada/Salida</span>
+        <span style="color: #A1B8F2;">┈┈ Flujo secundario</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 3: VACÍOS DE INFORMACIÓN -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-question"></i> Vacíos de información</h2>
+
+      <details>
+        <summary style="border-left-color: #4CAF50; color: #4CAF50;">Vacíos resueltos durante la entrevista (5)</summary>
+        <div class="details-content">
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Rol exacto de Marisela en la clínica</strong> — Directora de la clínica. Responsabilidades: supervisión general, compras/pedidos de material, valoraciones de pacientes. <span class="source-tag">— Marisela</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Planes de contratación al mudarse</strong> — Sí, van a necesitar más personal al mudarse a la nueva sede. <span class="source-tag">— Marisela</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Quién es Bob y su rol formal</strong> — Bob está en la obra de la nueva sede supervisando construcción. Además recibe las hojas diarias de procedimientos/ventas y las captura digitalmente. Horario: 9am–7pm. Marisela quiere integrarlo al 100% en inventario. <span class="source-tag">— Marisela</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Cómo ve los procesos actuales</strong> — Flujo completo de 10 pasos descrito, 3 agendas identificadas, seguimiento fallido, reactivación inexistente. Prioridad #1 declarada: "Lo que me interesa mucho es la parte del seguimiento al paciente. Creo que eso es lo principal." Confirmado por los 5 roles operativos. <span class="source-tag">— Marisela</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Relación con el Dr. Gabriel y toma de decisiones</strong> — Gabriel = motor técnico + contenido + buscó PRISMA. Marisela = operación + compras + valoraciones + contrataciones. Carlos confirma ambos "dueños", precios decididos juntos. División informal pero funcional: Gabriel ejecuta, Marisela administra. <span class="source-tag">— Marisela + Carlos, At. Paciente + Divani, Primer Ayudante + Óscar, Enfermero</span></div>
+        </div>
+      </details>
+
+      <h3 style="color: #FFC107;">Vacío pendiente (1)</h3>
+
+      <div class="gap-box">
+        <strong><i class="ph ph-warning"></i> Volumen real de ventas y métricas de productos</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Nadie en la clínica tiene este dato. Servicios sí se registran pero productos NO por regulación COFEPRIS. Captura digital lleva ~1 mes. Workaround propuesto por Marisela (consulta + productos entregados) pero aún no implementado. El dato simplemente no existe internamente.</p>
+        <span class="source-tag" style="color: #4CAF50;">Divani, Primer Ayudante: registro de material doble (WhatsApp + hoja física) → Carlos pasa a Excel. Triple transcripción.</span><br>
+        <span class="source-tag" style="color: #4CAF50;">Óscar, Enfermero: inventario cada 15 días en teléfono personal. WhatsApp = único registro contable. Desabasto y caducidad han ocurrido.</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- PUNTOS DE HANDOFF -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-arrows-left-right"></i> Puntos de Handoff</h2>
+
+      <div class="dato-box"><strong>Marisela → Equipo operativo (post-valoración):</strong> Marisela hace la valoración inicial y cierra la venta. El paciente pasa al equipo para citas de seguimiento y revisiones. El equipo no continúa ofreciendo tratamientos ni productos adicionales.</div>
+      <div class="dato-box"><strong>Equipo → Capturista (bitácoras):</strong> El equipo escribe procedimientos diarios en hojas de papel. Un capturista los pasa a formato digital. Proceso nuevo (~1 mes). Sistema desconocido por Marisela.</div>
+      <div class="dato-box"><strong>Óscar + Divani → Bob (inventario):</strong> Óscar y Divani llevan inventario parcial cada uno. Bob está empezando a centralizar el control de inventario con avisos anticipados.</div>
+      <div class="dato-box"><strong>Equipo recepción → Carlos (pago):</strong> Una vez que Divani, Óscar o Brisa completan la historia clínica, Carlos procesa el pago antes de que Gabriel inicie el procedimiento.</div>
+      <div class="dato-box"><strong>Carlos → Gabriel (procedimiento):</strong> Tras el pago, Gabriel toma fotos, hace marcaciones. Óscar o Divani anestesian. Gabriel realiza el procedimiento.</div>
+      <div class="dato-box"><strong>Gabriel → Asistente (post-procedimiento):</strong> El asistente limpia al paciente, recuerda indicaciones, envía indicaciones por WhatsApp, entrega receta y agenda cita de revisión.</div>
+      <div class="dato-box"><strong>Asistente → Carlos (seguimiento post-salida):</strong> Carlos debería mandar mensaje al día siguiente preguntando cómo está el paciente. Frecuentemente no lo hace. Marisela supervisa personalmente.</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FRICCIONES EXPRESADAS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-fire"></i> Fricciones expresadas por Marisela</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Citas literales — lo que Marisela siente y expresa sobre la operación.</p>
+
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Mucha cantidad de pacientes pero de una vez"</strong> — retención baja, solo ~10% se convierte en paciente recurrente</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"No sé si sea apatía o qué sea, pero ahí en esa parte es la que yo siento que estamos atorados"</strong> — el equipo no vende en citas de seguimiento</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Hay mucha fuga de capital porque hay que pagar renta de quirófano"</strong> — cada cirugía requiere quirófano externo</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Abrí el refri de casualidad y no me habían avisado"</strong> — inventario sin alertas ni sistema de aviso</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Cada uno por separado"</strong> — cada persona maneja su información sin visibilidad central</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"He notado que no los manda, se espera hasta que llegue el paciente"</strong> — Carlos no envía seguimiento post-tratamiento</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Descuidamos esa parte de los pacientes"</strong> — rezago de ~200+ mensajes diarios acumulados sin respuesta</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Ya no lo registro, de por sí apenas me doy tiempo"</strong> — las interacciones nocturnas de Marisela no se registran</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"¿De qué te sirve invertir si están los equipos parados?"</strong> — aparatología infrautilizada por falta de retención</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FRICCIONES IDENTIFICADAS POR ANÁLISIS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-magnifying-glass"></i> Fricciones identificadas por análisis</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Fricciones operativas derivadas de los datos confirmados.</p>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Marisela como único punto de conversión — cuello de botella estratégico</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Marisela es la única que logra cerrar la venta y que el paciente se quede. Si ella no está en el contacto posterior, no hay conversión. El equipo recibió curso de ventas sin resultado. El crecimiento de la clínica está limitado por la disponibilidad de una sola persona para cerrar.</p>
+        <span class="source-tag">— Marisela</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Sobrecarga de dirección — tres roles en una persona</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Marisela contesta mensajes (6am–9am y 7pm–10pm), hace valoraciones, gestiona compras, supervisa inventario y cubre a Carlos cuando se satura. Sin estructura de delegación ni supervisión formal.</p>
+        <span class="source-tag">— Marisela + Divani, Primer Ayudante + Carlos, Atención al Paciente</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Información fragmentada sin reporte central</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Cada persona maneja su información por separado. No hay visibilidad centralizada para dirección. Marisela no sabe cuántos leads reales entran, qué se vendió ni cuánto inventario queda. Métricas parciales distribuidas en 6 personas sin consolidar.</p>
+        <span class="source-tag">— Marisela + Óscar, Enfermero + Divani, Primer Ayudante + Carlos, Atención al Paciente</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Inventario sin sistema — control fragmentado</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Óscar y Divani llevan inventario por separado, sin alertas. Se han dado desabastos y caducidades. Bob apenas empezando a centralizar. WhatsApp como único registro contable sin formato ni estructura.</p>
+        <span class="source-tag">— Marisela + Óscar, Enfermero + Divani, Primer Ayudante</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Sin continuidad paciente-asistente</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">El paciente es atendido por "quien esté desocupado." Sin asignación por continuidad ni por especialidad. La agenda es la única referencia de contexto. No hay historial de interacciones accesible.</p>
+        <span class="source-tag">— Marisela + Brisa, Cosmiatra + Óscar, Enfermero</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Historia clínica como registro muerto</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">La HC no se usa como referencia operativa. El equipo se basa solo en la agenda. La HC queda como registro que no informa decisiones clínicas ni de seguimiento.</p>
+        <span class="source-tag">— Marisela + Óscar, Enfermero + Divani, Primer Ayudante</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">No existe mecanismo de reactivación de pacientes</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Sin seguimiento a largo plazo, sin ofertas de servicios adicionales, sin recordatorios de mantenimiento. Retención ~10% actual vs meta 30%. Los pacientes terminan tratamiento y desaparecen.</p>
+        <span class="source-tag">— Marisela</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Digitalización incipiente sin supervisión</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">La captura digital de bitácoras tiene ~1 mes. Marisela no sabe en qué sistema se hace. No hay histórico digital consolidado. Sin trazabilidad ni estándares definidos.</p>
+        <span class="source-tag">— Marisela</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Fotos clínicas aisladas en dispositivo de Gabriel</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Las fotografías de pacientes no están integradas al expediente. Solo Gabriel las tiene en su móvil. Silo de información sin trazabilidad ni respaldo.</p>
+        <span class="source-tag">— Marisela + Óscar, Enfermero</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Aparatología infrautilizada por falta de retención</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Inversión en láser, HIFU y equipos parada porque no hay venta posterior ni retención activa. ROI negativo mientras no exista seguimiento post-procedimiento.</p>
+        <span class="source-tag">— Marisela</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">No existe plan estratégico formal</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Visión clara de Marisela (crecimiento, nueva sede, quirófano, nuevos servicios) pero sin objetivos cuantificados ni plan de negocio documentado. El equipo identifica problemas pero las soluciones se estancan.</p>
+        <span class="source-tag">— Marisela + Divani, Primer Ayudante</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">No existen KPIs formales ni herramientas de medición</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Sin reporte central, sin evaluación del equipo, sin tracking de ticket medio ni satisfacción. Carlos registra leads parcialmente. Marisela no registra interacciones nocturnas. Métricas informales recopiladas desde 6 roles sin consolidar.</p>
+        <span class="source-tag">— Marisela + Carlos, Atención al Paciente + Óscar, Enfermero + Brisa, Cosmiatra + Elián, Tricología</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">No existe estructura organizacional formal — confirmado por 5 roles</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">9 personas mapeadas sin organigrama, jerarquía de reporte ni supervisión formal. "Todos hacen de todo." No hay delimitación de funciones, reuniones regulares ni coordinación proactiva.</p>
+        <span class="source-tag">— Marisela + Óscar, Enfermero + Brisa, Cosmiatra + Divani, Primer Ayudante + Elián, Tricología</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- MAPEO A DOLORES APEX -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-target"></i> Mapeo a los 4 Dolores APEX</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Análisis completado. Dolor dominante: <strong style="color: #ff4444;">D1 (Procesos Internos)</strong>. D2 es la consecuencia más visible. D3 y D4 amplificados por la sobrecarga de dirección.</p>
+
+      <!-- D1 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #ff4444; border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444; font-size: 1.1rem;">D1 — Procesos Internos Ineficientes → DOLOR DOMINANTE</strong>
+        <span style="display: inline-block; background: #ff4444; color: #fff; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.75rem; margin-left: 0.5rem; vertical-align: middle;">DOLOR DOMINANTE</span>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Plataforma Centralizada de Gestión Clínica</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>CERO software — todo manual, agenda física, bitácoras en papel, inventario en WhatsApp</li>
+          <li>Información fragmentada — "cada uno por separado", sin reporte central para dirección</li>
+          <li>Digitalización incipiente (~1 mes), Marisela no sabe en qué sistema se captura</li>
+          <li>Historia clínica como registro muerto — no se consulta operativamente, solo la agenda</li>
+          <li>Sin continuidad paciente-asistente — "quien esté desocupado", sin asignación</li>
+          <li>Inventario sin alertas — Óscar y Divani por separado, desabastos y caducidades documentados</li>
+          <li>Fotos clínicas aisladas en dispositivo personal de Gabriel — silo sin respaldo</li>
+          <li>No existe estructura organizacional formal — 9 personas sin organigrama ni supervisión</li>
+          <li>No existe plan estratégico formal — visión clara pero sin objetivos cuantificados</li>
+          <li>No existen KPIs formales — métricas parciales distribuidas en 6 personas sin consolidar</li>
+        </ul>
+      </div>
+
+      <!-- D2 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D2 — Seguimiento y Clasificación de Pacientes → CONSECUENCIA MÁS VISIBLE</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Seguimiento y Clasificación Automática</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Retención ~10% actual vs meta 30% — "mucha cantidad de pacientes pero de una vez"</li>
+          <li>Carlos no envía seguimiento post-tratamiento — Marisela tiene que supervisar personalmente</li>
+          <li>No existe mecanismo de reactivación de pacientes post-tratamiento</li>
+          <li>Sin clasificación de pacientes por tipo, tratamiento o etapa</li>
+          <li>Aparatología infrautilizada (láser, HIFU) — ROI negativo sin retención activa</li>
+        </ul>
+      </div>
+
+      <!-- D3 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #994E95; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #994E95; font-size: 1.1rem;">D3 — Comunicación Personalizada con Pacientes → AMPLIFICADO POR SOBRECARGA</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Comunicación Segmentada e Inteligente</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Rezago de ~200+ mensajes diarios — ~100 nocturnos + ~100 matutinos acumulados</li>
+          <li>Marisela sobrecargada: contesta de 6am–9am y 7pm–10pm además de dirección, compras y valoraciones</li>
+          <li>Lo que Marisela contesta de noche no se registra — dato real de captación desconocido</li>
+          <li>Avisos urgentes de pacientes se pierden en el rezago ("voy tarde a mi cita")</li>
+        </ul>
+      </div>
+
+      <!-- D4 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D4 — Conversión de Leads Publicitarios a Pacientes → LIMITADO POR CUELLO DE BOTELLA</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Pipeline de Conversión de Leads</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Marisela como único punto de cierre — si ella no está en el contacto, no hay conversión</li>
+          <li>Equipo no vende en seguimiento — curso de ventas pagado sin resultado</li>
+          <li>Fuga de capital por quirófano externo — renta por cada cirugía del cirujano plástico</li>
+          <li>Sin evaluación formal del equipo — supervisión manual e intuitiva</li>
+        </ul>
+      </div>
+
+      <!-- Retención -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #4CAF50; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #4CAF50; font-size: 1.1rem;">Retención = Ecosistema Integrado (D1+D2+D3+D4)</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0; line-height: 1.7;">Desde la perspectiva de dirección, la retención del 10% es el síntoma más visible de los 4 dolores operando simultáneamente. Sin procesos internos (D1), no hay datos para clasificar pacientes (D2). Sin clasificación, la comunicación es genérica o inexistente (D3). Sin comunicación, los leads que Marisela convierte no regresan (D4). El ciclo se cierra en la sobrecarga de una sola persona intentando cubrir todo el embudo.</p>
+      </div>
+
+      <!-- Conclusión -->
+      <div style="background: rgba(255, 68, 68, 0.08); padding: 1rem; border: 1px solid rgba(255, 68, 68, 0.2); border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444;">Conclusión desde este rol</strong>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li><strong style="color: #ff4444;">D1 es el dolor dominante</strong> — la ausencia total de sistemas, estructura y procesos formales impacta cada aspecto de la operación. Marisela lo ve desde todos los ángulos como directora.</li>
+          <li><strong style="color: #31BEEF;">D2 es la consecuencia más dolorosa</strong> — retención del 10% con meta del 30%, aparatología parada, pacientes que no regresan. Es el síntoma que más preocupa a Marisela.</li>
+          <li><strong style="color: #994E95;">D3 amplificado por sobrecarga</strong> — Marisela absorbe la comunicación fuera de horario porque no hay sistema ni equipo que lo sostenga.</li>
+          <li><strong style="color: #31BEEF;">D4 limitado por cuello de botella</strong> — la conversión depende exclusivamente de Marisela, el equipo no cierra ventas.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="nav-links">
+      <a href="flujo-tricologia.html"><i class="ph ph-arrow-left"></i> Anterior: Tricología</a>
+      <a href="flujo-cirujano.html">Siguiente: Cirujano <i class="ph ph-arrow-right"></i></a>
+    </div>
+
+    <footer class="footer">
+      <p>ARMC — Aesthetic Rejuvenation Medical Center — Análisis Operativo — Abril 2026 — PRISMA Consulting</p>
+    </footer>
+  </div>
+  <script>
+    (function() {
+      var slides = document.querySelectorAll('#slides-data .slide');
+      var modal = document.getElementById('slideModal');
+      var slideNum = document.getElementById('slideNum');
+      var slideTitle = document.getElementById('slideTitle');
+      var progressFill = document.getElementById('progressFill');
+      var modalBody = document.getElementById('modalBody');
+      var modalDots = document.getElementById('modalDots');
+      var btnPrev = document.getElementById('btnPrev');
+      var btnNext = document.getElementById('btnNext');
+      var scrollHint = document.getElementById('scrollHint');
+      var current = 0;
+      var total = slides.length;
+
+      // Build dots
+      for (var i = 0; i < total; i++) {
+        var dot = document.createElement('span');
+        dot.className = 'modal-dot';
+        dot.addEventListener('click', (function(idx) {
+          return function() { goToSlide(idx); };
+        })(i));
+        modalDots.appendChild(dot);
+      }
+
+      // Transform raw dato-box HTML into clean slide format
+      function transformContent(slide) {
+        var title = slide.getAttribute('data-title');
+        var count = slide.getAttribute('data-count');
+        var source = slide.querySelector('.details-content');
+        var html = '<div class="slide-title-block"><h2>' + title + '</h2><span class="slide-subtitle">' + count + '</span></div>';
+
+        var children = source.children;
+        for (var i = 0; i < children.length; i++) {
+          var el = children[i];
+          if (el.tagName === 'H4') {
+            var cls = 'slide-section-heading';
+            if (el.style.color && el.style.color.indexOf('4444') !== -1) cls += ' critical';
+            html += '<div class="' + cls + '">' + el.textContent + '</div>';
+          } else if (el.classList.contains('dato-box')) {
+            var dotCls = 'slide-item-dot';
+            var style = el.getAttribute('style') || '';
+            if (style.indexOf('ff4444') !== -1) dotCls += ' critical';
+            else if (style.indexOf('4CAF50') !== -1) dotCls += ' positive';
+            else if (style.indexOf('994E95') !== -1) dotCls += ' sentiment';
+
+            var clone = el.cloneNode(true);
+            var tags = clone.querySelectorAll('.source-tag, .new-tag');
+            for (var t = 0; t < tags.length; t++) tags[t].remove();
+
+            var strongs = clone.querySelectorAll('strong');
+            for (var s = 0; s < strongs.length; s++) {
+              var sStyle = strongs[s].getAttribute('style') || '';
+              if (sStyle.indexOf('ff4444') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'critical-text';
+              } else if (sStyle.indexOf('4CAF50') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'positive-text';
+              } else if (sStyle.indexOf('994E95') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'sentiment-text';
+              }
+            }
+
+            var text = clone.innerHTML.replace(/<span class="source-tag">.*?<\/span>/g, '').trim();
+            html += '<div class="slide-item"><span class="' + dotCls + '"></span><span class="slide-item-text">' + text + '</span></div>';
+          }
+        }
+        return html;
+      }
+
+      function updateDots() {
+        var dots = modalDots.querySelectorAll('.modal-dot');
+        for (var i = 0; i < dots.length; i++) {
+          dots[i].classList.toggle('active', i === current);
+        }
+      }
+
+      function goToSlide(idx) {
+        current = idx;
+        var slide = slides[current];
+        slideNum.textContent = (current + 1) + ' / ' + total;
+        slideTitle.textContent = slide.getAttribute('data-count');
+        progressFill.style.width = ((current + 1) / total * 100) + '%';
+        modalBody.innerHTML = transformContent(slide);
+        modalBody.scrollTop = 0;
+        updateDots();
+        setTimeout(checkScrollHint, 50);
+        btnPrev.disabled = current === 0;
+        btnNext.disabled = current === total - 1;
+      }
+
+      window.openSlide = function(idx) {
+        goToSlide(idx);
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      };
+
+      window.closeModal = function() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+      };
+
+      window.prevSlide = function() {
+        if (current > 0) goToSlide(current - 1);
+      };
+
+      window.nextSlide = function() {
+        if (current < total - 1) goToSlide(current + 1);
+      };
+
+      function checkScrollHint() {
+        var el = modalBody;
+        var canScroll = el.scrollHeight > el.clientHeight + 10;
+        var nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 30;
+        if (!canScroll || nearBottom) {
+          scrollHint.classList.add('hidden');
+        } else {
+          scrollHint.classList.remove('hidden');
+        }
+      }
+      modalBody.addEventListener('scroll', checkScrollHint);
+
+      document.addEventListener('keydown', function(e) {
+        if (!modal.classList.contains('active')) return;
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'ArrowRight') nextSlide();
+      });
+
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal || e.target.classList.contains('modal-slide-area')) closeModal();
+      });
+    })();
+  </script>
+
+  <script>mermaid.contentLoaded();</script>
+</body>
+</html>

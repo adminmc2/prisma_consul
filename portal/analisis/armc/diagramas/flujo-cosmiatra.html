@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cosmiatra — Flujo Operativo (as-is) — ARMC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: 'transparent',
+        primaryColor: '#1a2535',
+        primaryTextColor: '#FAF9F6',
+        primaryBorderColor: '#31BEEF',
+        secondaryColor: '#1a2535',
+        secondaryBorderColor: '#994E95',
+        lineColor: '#31BEEF',
+        textColor: '#FAF9F6',
+        clusterBkg: '#162033',
+        clusterBorder: '#253545',
+        edgeLabelBackground: '#1a2535',
+        fontFamily: '"Source Sans 3", sans-serif',
+        fontSize: '14px'
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 15,
+        nodeSpacing: 50,
+        rankSpacing: 55,
+      }
+    });
+  </script>
+  <link rel="stylesheet" href="../css/estilos-prisma.css">
+  <style>
+    .breadcrumb { margin-bottom: 2rem; padding: 1rem; background: rgba(49, 190, 239, 0.05); border-radius: 4px; }
+    .breadcrumb a { color: #31BEEF; }
+    .diagram-section { background: #1a2535; border: 1px solid #31BEEF; border-radius: 8px; padding: 2rem; margin: 2rem 0; }
+    .diagram-section h2 { margin-top: 0; }
+    .mermaid-container { background: #101B2C; padding: 2rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; }
+    .mermaid { display: flex; justify-content: center; min-height: 300px; }
+    .mermaid .node rect, .mermaid .node polygon { rx: 8 !important; ry: 8 !important; stroke-width: 1.5px !important; }
+    .mermaid .nodeLabel, .mermaid .node .label { font-family: 'Source Sans 3', sans-serif !important; font-size: 14px !important; font-weight: 600 !important; }
+    .mermaid .edgePath path.path { stroke-width: 1.5px !important; opacity: 0.6; }
+    .mermaid .edgeLabel { font-size: 12px !important; font-family: 'Source Sans 3', sans-serif !important; font-weight: 600 !important; }
+    .mermaid .edgeLabel rect { rx: 4 !important; ry: 4 !important; fill: #1a2535 !important; stroke: none !important; }
+    .mermaid .edgeLabel span { color: #FAF9F6 !important; }
+    .mermaid .cluster rect { rx: 8 !important; ry: 8 !important; stroke-dasharray: 5 3; }
+    .mermaid .cluster-label .nodeLabel, .mermaid .cluster-label span { font-family: 'Quicksand', sans-serif !important; font-weight: 700 !important; font-size: 14px !important; letter-spacing: 0.5px; text-transform: uppercase; fill: #FAF9F6 !important; color: #FAF9F6 !important; }
+    .nav-links { display: flex; gap: 1rem; margin-top: 2rem; justify-content: space-between; }
+    .nav-links a { flex: 1; padding: 1rem; text-align: center; background: #1a2535; border: 1px solid #31BEEF; border-radius: 4px 25px 25px 4px; transition: all 400ms ease; color: #FAF9F6; text-decoration: none; }
+    .nav-links a:hover { background: #31BEEF; color: #101B2C; }
+    .status-badge { display: inline-block; padding: 0.5rem 1rem; background: #4CAF50; color: #FAF9F6; border-radius: 4px; font-size: 0.85rem; margin-bottom: 1rem; font-weight: 600; }
+    .counter-bar { display: flex; gap: 2rem; padding: 1rem; background: #101B2C; border-radius: 4px; margin: 1rem 0; font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.9rem; }
+    .counter-bar span { color: #A1B8F2; }
+    .counter-bar .count { color: #31BEEF; font-size: 1.1rem; }
+    .counter-bar .count-warn { color: #FFC107; font-size: 1.1rem; }
+    .quote { background: #101B2C; padding: 1rem 1.5rem; border-left: 4px solid #994E95; border-radius: 4px; margin: 1rem 0; font-style: italic; color: #A1B8F2; }
+    .quote strong { color: #994E95; font-style: normal; }
+    .gap-box { background: rgba(255, 193, 7, 0.08); border: 1px dashed #FFC107; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .gap-box strong { color: #FFC107; }
+    .resolved-box { background: rgba(76, 175, 80, 0.08); border: 1px solid #4CAF50; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .resolved-box strong { color: #4CAF50; }
+    .dato-box { background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin: 0.5rem 0; }
+    .dato-box strong { color: #31BEEF; }
+    .source-tag { font-size: 0.75rem; color: #994E95; font-weight: 600; }
+
+    /* Slide grid */
+    .slide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+    .slide-card { background: #101B2C; border: 1px solid rgba(49,190,239,0.3); border-radius: 12px; padding: 1.5rem; cursor: pointer; transition: all 300ms ease; position: relative; overflow: hidden; }
+    .slide-card:hover { border-color: #31BEEF; transform: translateY(-4px); box-shadow: 0 12px 32px rgba(49,190,239,0.15); }
+    .slide-card .card-number { font-size: 3.5rem; font-weight: 700; color: rgba(49,190,239,0.08); position: absolute; top: -0.25rem; right: 0.75rem; font-family: 'Quicksand', sans-serif; line-height: 1; }
+    .slide-card h3 { color: #FAF9F6; font-size: 1rem; margin: 0 0 0.5rem 0; font-family: 'Quicksand', sans-serif; font-weight: 600; }
+    .slide-card .card-count { color: #A1B8F2; font-size: 0.8rem; }
+    .slide-card.card-critical { border-color: rgba(255,68,68,0.4); }
+    .slide-card.card-critical:hover { border-color: #ff4444; box-shadow: 0 12px 32px rgba(255,68,68,0.15); }
+    .slide-card.card-critical .card-number { color: rgba(255,68,68,0.08); }
+    .slide-card.card-sentiment { border-color: rgba(153,78,149,0.4); }
+    .slide-card.card-sentiment:hover { border-color: #994E95; box-shadow: 0 12px 32px rgba(153,78,149,0.15); }
+    .slide-card.card-sentiment .card-number { color: rgba(153,78,149,0.08); }
+
+    /* Modal overlay */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: #0a1420; z-index: 1000; flex-direction: column; }
+    .modal-overlay.active { display: flex; }
+    .modal-progress { height: 3px; background: rgba(49,190,239,0.1); flex-shrink: 0; }
+    .modal-progress-fill { height: 100%; background: linear-gradient(90deg, #31BEEF, #994E95); transition: width 400ms ease; border-radius: 0 2px 2px 0; }
+    .modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; flex-shrink: 0; }
+    .modal-topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .modal-slide-num { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem; background: rgba(49,190,239,0.1); padding: 0.3rem 0.8rem; border-radius: 20px; }
+    .modal-slide-title { color: #A1B8F2; font-family: 'Quicksand', sans-serif; font-size: 0.85rem; font-weight: 500; }
+    .modal-close { background: none; border: none; color: #A1B8F2; font-size: 1.25rem; cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 6px; transition: all 200ms; line-height: 1; }
+    .modal-close:hover { color: #ff4444; background: rgba(255,68,68,0.1); }
+    .modal-slide-area { flex: 1; display: flex; align-items: stretch; overflow: hidden; position: relative; }
+    .modal-side-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; background: none; border: none; color: rgba(161,184,242,0.4); font-size: 2.5rem; cursor: pointer; padding: 1rem; transition: all 200ms; }
+    .modal-side-nav:hover:not(:disabled) { color: #31BEEF; }
+    .modal-side-nav:disabled { opacity: 0; cursor: default; }
+    .modal-side-nav.nav-left { left: 0.5rem; }
+    .modal-side-nav.nav-right { right: 0.5rem; }
+    .modal-slide-content { width: 100%; max-width: 900px; margin: 0 auto; padding: 0 5rem; overflow-y: auto; max-height: 100%; scrollbar-width: none; -ms-overflow-style: none; position: relative; }
+    .modal-slide-content::-webkit-scrollbar { width: 0; display: none; }
+    .scroll-hint { position: absolute; bottom: 0; left: 5rem; right: 5rem; height: 70px; background: linear-gradient(to bottom, transparent 0%, #0a1420 80%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 0.75rem; pointer-events: none; opacity: 1; transition: opacity 400ms ease; z-index: 5; }
+    .scroll-hint.hidden { opacity: 0; }
+    .scroll-hint-arrow { color: rgba(49,190,239,0.4); font-size: 1rem; animation: scrollBounce 2s ease-in-out infinite; display: flex; align-items: center; gap: 0.4rem; font-family: 'Quicksand', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; }
+    @keyframes scrollBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+    .slide-title-block { margin-bottom: 2.5rem; }
+    .slide-title-block h2 { color: #FAF9F6; font-family: 'Quicksand', sans-serif; font-size: 2rem; font-weight: 700; margin: 0 0 0.25rem 0; line-height: 1.2; }
+    .slide-title-block .slide-subtitle { color: #A1B8F2; font-size: 0.95rem; }
+    .slide-item { padding: 0.85rem 0; border-bottom: 1px solid rgba(49,190,239,0.06); display: flex; gap: 0.75rem; align-items: baseline; line-height: 1.55; }
+    .slide-item:last-child { border-bottom: none; }
+    .slide-item-dot { width: 6px; height: 6px; border-radius: 50%; background: #31BEEF; flex-shrink: 0; margin-top: 0.55rem; }
+    .slide-item-dot.critical { background: #ff4444; }
+    .slide-item-dot.positive { background: #4CAF50; }
+    .slide-item-dot.sentiment { background: #994E95; }
+    .slide-item-text { color: #FAF9F6; font-size: 1.05rem; font-family: 'Source Sans 3', sans-serif; font-weight: 300; }
+    .slide-item-text strong { color: #31BEEF; font-weight: 600; }
+    .slide-item-text .critical-text { color: #ff4444; font-weight: 600; }
+    .slide-item-text .positive-text { color: #4CAF50; font-weight: 600; }
+    .slide-item-text .sentiment-text { color: #994E95; font-weight: 600; }
+    .slide-section-heading { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin: 2rem 0 0.75rem 0; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(49,190,239,0.15); }
+    .slide-section-heading:first-child { margin-top: 0; }
+    .slide-section-heading.critical { color: #ff4444; border-bottom-color: rgba(255,68,68,0.15); }
+    .modal-bottombar { display: flex; align-items: center; justify-content: center; padding: 1.25rem; gap: 8px; flex-shrink: 0; }
+    .modal-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(49,190,239,0.15); transition: all 300ms ease; cursor: pointer; }
+    .modal-dot.active { background: #31BEEF; transform: scale(1.4); }
+    .modal-dot:hover:not(.active) { background: rgba(49,190,239,0.4); }
+
+    @media (max-width: 768px) {
+      .modal-slide-content { padding: 0 3.5rem; }
+      .modal-side-nav { font-size: 1.5rem; padding: 0.5rem; }
+      .slide-title-block h2 { font-size: 1.5rem; }
+      .slide-item-text { font-size: 0.95rem; }
+      .modal-topbar { padding: 0.75rem 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .slide-grid { grid-template-columns: 1fr; }
+      .modal-slide-content { padding: 0 2.5rem; }
+      .modal-side-nav { font-size: 1.25rem; }
+      .modal-bottombar { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1><i class="ph ph-sparkle" style="color:#31BEEF"></i> Cosmiatra — Flujo Operativo (as-is)</h1>
+      <p>Entrevistado: Brisa Nazario — Entrevista completa (8 fragmentos)</p>
+    </header>
+
+    <div class="breadcrumb">
+      <a href="../index.html"><i class="ph ph-arrow-left"></i> Volver al Índice</a>
+    </div>
+
+    <div class="status-badge"><i class="ph ph-check-circle"></i> ENTREVISTA COMPLETA — 8 fragmentos</div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 1: DATOS CONFIRMADOS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-check-square"></i> Datos confirmados</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">115 datos organizados por flujo operativo. Fuente: Brisa Nazario (Cosmiatra), 1 sesión de entrevista.<br>Haz clic en cualquier tarjeta para explorar los datos.</p>
+
+      <div class="slide-grid">
+        <div class="slide-card" onclick="openSlide(0)"><span class="card-number">1</span><h3>Brisa: Perfil y rol</h3><span class="card-count">9 datos</span></div>
+        <div class="slide-card" onclick="openSlide(1)"><span class="card-number">2</span><h3>Apertura y preparación</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card" onclick="openSlide(2)"><span class="card-number">3</span><h3>Recepción y triaje</h3><span class="card-count">8 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(3)"><span class="card-number">4</span><h3>Documentación clínica</h3><span class="card-count">16 datos</span></div>
+        <div class="slide-card" onclick="openSlide(4)"><span class="card-number">5</span><h3>Tratamientos y aparatología</h3><span class="card-count">10 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(5)"><span class="card-number">6</span><h3>Seguimiento y revisiones</h3><span class="card-count">12 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(6)"><span class="card-number">7</span><h3>Herramientas y agenda</h3><span class="card-count">12 datos</span></div>
+        <div class="slide-card" onclick="openSlide(7)"><span class="card-number">8</span><h3>Comunicación y canales</h3><span class="card-count">9 datos</span></div>
+        <div class="slide-card" onclick="openSlide(8)"><span class="card-number">9</span><h3>Cobros y registro</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card" onclick="openSlide(9)"><span class="card-number">10</span><h3>Registro fotográfico y encuestas</h3><span class="card-count">9 datos</span></div>
+        <div class="slide-card" onclick="openSlide(10)"><span class="card-number">11</span><h3>Suministros y coordinación</h3><span class="card-count">7 datos</span></div>
+        <div class="slide-card card-sentiment" onclick="openSlide(11)"><span class="card-number">12</span><h3>Lo que Brisa siente</h3><span class="card-count">8 expresiones</span></div>
+      </div>
+
+      <!-- SLIDES HIDDEN DATA -->
+      <div id="slides-data" style="display:none;">
+
+      <!-- SLIDE 0: PERFIL Y ROL -->
+      <div class="slide" data-title="Brisa: Perfil y rol" data-count="9 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Puesto:</strong> Cosmiatra. Masajes faciales y cosmiatría. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Antigüedad:</strong> ~2 años en la clínica. "Como un año y 8 meses... ya hago 2 años." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">SUBUTILIZACIÓN — casi no tiene trabajo propio de cosmiatría.</strong> "Pero casi no hay, o sea, mis labores que yo debería de hacer casi no hay." El rol está definido pero no se ejecuta. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Se dedica a ayudar a todos.</strong> "Yo me dedico como que ayudar a todos." Consecuencia directa de no tener trabajo propio suficiente. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Ve "casi a todos" los pacientes.</strong> Su rol se ha expandido más allá de cosmiatría — confirma subutilización del rol específico. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Volumen:</strong> 3-4 pacientes propios (masaje) + ~8-9 en total contando apoyo. La mayoría es apoyo a otros. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">No tiene actividad que le ocupe más tiempo:</strong> "No tengo como tal uno porque todo el día estoy haciendo todo." Multitarea permanente. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Ayuda proactivamente:</strong> "Yo sí veo como que alguien necesita ayuda, pues voy o trato de ayudarles en lo que puedo." Iniciativa propia, no asignada. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Interacción principal:</strong> Divani, Dra. Elián y Gabo (Gabriel). Depende del día y de quién esté disponible. <span class="source-tag">— Brisa</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 1: APERTURA Y PREPARACIÓN -->
+      <div class="slide" data-title="Apertura y preparación del día" data-count="6 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Primera en llegar a la clínica.</strong> "Normalmente yo soy la primera en llegar." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Abre todos los consultorios y revisa que estén ordenados.</strong> "Llego, abro todos los consultorios y me pongo a revisar que estén ordenados." Consultorio por consultorio. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Personal de limpieza desordena los consultorios.</strong> "Ellos acomodan donde sea porque pues no saben dónde van las cosas." Brisa reordena cada mañana. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Revisión de camillas y equipamiento:</strong> 5-10 min según hora de llegada. "Revisar que las camillas estén bien puestas, todo, todo, todo." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Todo el equipo espera al primer paciente.</strong> "Ya de ahí pues como todos nos esperamos a que llegue el primer paciente o el segundo." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Revisan la agenda para saber cirugías del día.</strong> "Cuando llegamos vemos que va a haber tres cirugías, pues ya nos esperamos a esas tres cirugías." <span class="source-tag">— Brisa</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: RECEPCIÓN Y TRIAJE -->
+      <div class="slide" data-title="Recepción y triaje de pacientes" data-count="8 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Confirma tipo de paciente al llegar:</strong> "Checo de qué es el paciente y ya si dice revisión o dice procedimiento, pues veo de qué es." Va y pregunta directamente. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Diferencia paciente nuevo vs existente:</strong> "Vemos si ya es paciente o si todavía no es paciente para hacer expediente." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Expediente nuevo → junta papeles → Divani.</strong> "Si va a ser el nuevo expediente, junto los papeles y se los paso al doctor Divani para que vaya... el expediente y demás." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Si no es paciente nuevo, pasa directo al proceso.</strong> "Ya pasó con él, ya hace toda la función." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Prepara para el médico + despide al paciente + da cita + limpia.</strong> "Yo trato de ayudarle lo más que pueda como para que cuando llegue el médico ya nada más lo aplique rápido y se vaya. Ya yo me quedaría como a despedir al paciente, a darle su cita y a limpiar." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Si Brisa está ocupada, el consultorio queda sucio.</strong> "Si yo estoy haciendo algo y se queda ahí lo sucio, pues ya se queda sucio. Alguien más tiene que hacerlo, pero a veces no lo hacen." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Pacientes cambian de opinión al llegar.</strong> "Pasa mucho que varios apartan algo, apartan labios y ya cuando están aquí te están preguntando si es lo mejor." El equipo tiene que revaluar sobre la marcha. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Muchos pacientes llegan sin cita.</strong> "Muchos llegan sin cita, nada más como que ya cuando está aquí ya está." Sin previsibilidad de la agenda. <span class="source-tag">— Brisa</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: DOCUMENTACIÓN CLÍNICA -->
+      <div class="slide" data-title="Documentación clínica" data-count="16 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Historia clínica</h4>
+          <div class="dato-box"><strong>HC estandarizada — misma para todos.</strong> "La historia clínica es la misma para todos, nada más." Un solo formato independientemente del procedimiento. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Divani es el principal, Brisa de respaldo.</strong> "Principalmente si Divan está ocupado porque él es el que las llena más, ya lo hago yo." "Por lo general siempre está ocupado." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Brisa frecuentemente termina los expedientes.</strong> "Yo soy la que la termino." Inicia Divani y termina Brisa, o Brisa lo hace completo. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">HC no se actualiza — vigente 5 años.</strong> "Lo que preguntamos de un inicio ya se queda." No se actualiza si cambian datos (estado civil, medicamentos, hijos). <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Antes no sabía llenar HC — aprendió con el tiempo.</strong> "Yo no sabía llenar una historia. Ya ahorita ya lo estamos haciendo bien." Antes las dejaban incompletas. <span class="source-tag">— Brisa</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Consentimientos</h4>
+          <div class="dato-box"><strong>Consentimientos varían por procedimiento.</strong> ~10 tipos + 1 general. Cada procedimiento invasivo requiere uno nuevo. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Brisa entrega consentimiento durante la HC.</strong> "Al momento de que yo le estoy haciendo la historia, pues ya le tengo que entregar el consentimiento, esperarme a que los firme." Proceso simultáneo. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Consentimiento fotográfico incluido en consentimientos existentes.</strong> "Ahí viene establecido lo de toma de fotografías." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Consentimientos sin firma — problema pasado, mejorado.</strong> "A veces no checaba que algunos no lo habían firmado." Ahora: "ya quedarnos a esperar a que ya los firme." <span class="source-tag">— Brisa</span></div>
+          <h4 style="color: #ff4444; margin-top: 1rem;">Nota de paciente</h4>
+          <div class="dato-box"><strong>Nota de paciente — recién implementada.</strong> "Implementamos algo que es nota de paciente, que cada que viene algo lo vamos a ir anotando." Incluye: lo que se hizo + cuándo se le dio cita de revisión. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Nota de paciente se olvida frecuentemente.</strong> "La verdad sí se nos olvida luego hacer nota de paciente." "A veces ya se nos va el tiempo." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Cada quien debería hacer su propia nota — pero no se hace.</strong> "Se supone que cada quien tendría que hacer su hoja." Si otro rol no la hace, la información se pierde. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Brisa depende de que otros le informen.</strong> "Yo no la hago [por otro]." Si otro rol atiende y no registra, Brisa no tiene cómo saber qué se hizo. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Consentimientos sí se actualizan — uno nuevo por cada procedimiento.</strong> "En cuanto a los consentimientos, eso sí se actualiza." <span class="source-tag">— Brisa</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Estructura del expediente</h4>
+          <div class="dato-box"><strong>3 partes:</strong> 1) Historia clínica (una vez, 5 años). 2) Consentimientos (uno nuevo por procedimiento invasivo). 3) Nota de paciente (registro por visita — recién implementado, se olvida). <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Recomendaciones no médicas: nota física o verbal.</strong> Para cosas simples, verbal sin papel. "Si es algo fácil, tres veces al día, se lo doy así y ya." <span class="source-tag">— Brisa</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: TRATAMIENTOS Y APARATOLOGÍA -->
+      <div class="slide" data-title="Tratamientos y aparatología" data-count="10 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Tratamientos propios</h4>
+          <div class="dato-box"><strong>Masaje facial:</strong> 15 minutos. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Masaje corporal:</strong> ~1 hora. Pero "casi no hay" de estos. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Depilación láser:</strong> ~1.5 horas. No frecuente. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Protocolo post-lipo:</strong> 5 masajes semanales → cita al mes → resultado a 3 meses. Brisa cita a los 2 meses. "Terminan sus masajes, dejan de venir y yo los cito un mes después." <span class="source-tag">— Brisa</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Aparatología</h4>
+          <div class="dato-box"><strong>Brisa opera toda la aparatología:</strong> radio, ultrasonidos, HIFU, depilación láser, picosegundos. Es la operadora de todos los equipos. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Escáner facial tiene memoria de pacientes.</strong> Buscable por nombre, almacena fechas, puede crear comparativos. Único equipo que guarda datos del paciente. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Otros equipos no almacenan datos de pacientes.</strong> Radio, ultrasonidos, HIFU, depilación, picosegundos — sin información del paciente. <span class="source-tag">— Brisa</span></div>
+          <h4 style="color: #ff4444; margin-top: 1rem;">Registro de evolución</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">NO hay registro de evolución entre sesiones de masaje.</strong> Son 5 masajes recomendados, una vez por semana. En la nota solo pone "todo bien". <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Nota de evolución: solo excepciones.</strong> "Nada más si veo como algo o que se le tiene que poner un medicamento, eso ya se anota." Solo se documenta lo anormal. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Ayuda a "la doctora Elián" y a "Gabo" (Gabriel).</strong> Cuando no tiene pacientes propios, entra a ayudar a cualquiera de los dos. <span class="source-tag">— Brisa</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: SEGUIMIENTO Y REVISIONES -->
+      <div class="slide" data-title="Seguimiento y revisiones" data-count="12 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Flujo de revisiones</h4>
+          <div class="dato-box"><strong>Brisa agenda revisiones post-procedimiento.</strong> "Normalmente yo siempre les doy revisiones de a lo que venían." Ella asigna las citas. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Evaluación en revisiones:</strong> recuperación visual + bienestar general. "Los veo que vayan bien en su recuperación, que no tengan algo fuera de lo normal." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Flujo: masaje → recomendaciones → cita.</strong> "Les hago su masaje, les doy recomendaciones y les doy cita." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Agendamiento:</strong> Brisa propone fecha → paciente confirma → se anota en la agenda. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Si detecta algo anormal → consulta al más cercano:</strong> Divani, Gabo, Óscar. Sin preferencia jerárquica — al que esté disponible. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Consultas clínicas NO quedan documentadas.</strong> "Solamente viene y lo revisa y ya no queda documentado, no queda nada." <span class="source-tag">— Brisa</span></div>
+          <h4 style="color: #ff4444; margin-top: 1rem;">Ausencia de seguimiento activo</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">NO hay recordatorio de cita:</strong> "Se da por hecho que va a venir, no se le manda mensaje para recordar, no nada." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">NO hay seguimiento activo si el paciente no viene.</strong> "No les mandamos como tal 'oye, no veniste', no, nada." Sin alertas ni recontacto. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Detecta ausencias por la agenda.</strong> "Cuando llego también me pongo a ver la agenda y ya veo que no vino." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Si paciente no confirma → manda WhatsApp después.</strong> Canal personal, no institucional. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Pacientes desaparecen y regresan sin aviso.</strong> "No he venido en un año y ya viene." Sin contexto previo disponible. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Función de Brisa termina con el tratamiento.</strong> "No, mi función termina hasta que termino el tratamiento." Sin seguimiento posterior. <span class="source-tag">— Brisa</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6: HERRAMIENTAS Y AGENDA -->
+      <div class="slide" data-title="Herramientas y agenda" data-count="12 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Agendas</h4>
+          <div class="dato-box"><strong>3 agendas físicas:</strong> valoraciones, procedimientos y revisiones. Todas compartidas. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>NO tiene agenda propia de cosmiatría.</strong> "Todos los que yo veo están en revisiones." Usa la agenda compartida de revisiones. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Agenda digital recién implementada — apenas funcional.</strong> "Apenas acaban de implementar la agenda digital." No es la herramienta principal. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Agenda digital requiere email y teléfono del paciente.</strong> Enviaría recordatorios de cita. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">HC nunca recolectó emails — solo ~10 correos hasta ahora.</strong> Apenas están empezando a recogerlos. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Actualmente solo la agenda física es operativa.</strong> "No hay nada más que la física." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Emails se recogen en HCs nuevas, NO retroactivamente.</strong> "Todavía no." Pacientes existentes sin email. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Sin cuadernos personales.</strong> Solo la agenda de revisiones y notas muy específicas muy ocasionales. <span class="source-tag">— Brisa</span></div>
+          <h4 style="color: #ff4444; margin-top: 1rem;">Sistema de información: la memoria</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Historial del paciente: DE MEMORIA.</strong> "Normalmente más porque me acuerdo casi de todos." Recuerda pacientes y procedimientos de memoria. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Si no recuerda → pregunta a Óscar o al equipo.</strong> "Le digo a Óscar, 'No te acuerdas de que venía él?' Y ellos se acuerdan." Memoria colectiva. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Si nadie recuerda → expediente físico.</strong> "Ya vamos por el expediente." Último recurso. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Si expediente no es claro → chat de WhatsApp.</strong> "Vamos a su chat a lo que anduvo texteando." WhatsApp como respaldo cuando el expediente falla. <span class="source-tag">— Brisa</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7: COMUNICACIÓN Y CANALES -->
+      <div class="slide" data-title="Comunicación y canales" data-count="9 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Comunicación con pacientes</h4>
+          <div class="dato-box"><strong>WhatsApp manejado por Carlos y Dra. Elián.</strong> Brisa no participa en la comunicación digital de la clínica. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Indicaciones post por WhatsApp estandarizadas por procedimiento.</strong> "Ya están estandarizados." Templates predefinidos que Carlos envía. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Doble canal de indicaciones:</strong> WhatsApp (Carlos) + verbal (en clínica). "Le explicamos un poquito qué tiene que hacer después." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Da recomendaciones generales incluso a pacientes que no atendió.</strong> "Trato de dar recomendaciones, aunque no sea mi paciente. Que no fume, que no tome, que recomendacioncitas, me despido y adiós." <span class="source-tag">— Brisa</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Recomendaciones de productos</h4>
+          <div class="dato-box"><strong>Brisa recomienda productos por experiencia acumulada.</strong> "Hay varias cosas que yo ya voy aprendiendo con el paso del tiempo." No por protocolo. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Para casos complicados, consulta a Gabriel.</strong> "Cuando yo veo que ya es algo más complicado, ya le pregunto a Gabo." Confirmación verbal sin registro. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Medicamento → receta formal. Crema → recomendación verbal.</strong> Sin registro de qué se recomendó a quién. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Sin protocolo formal para recomendar productos.</strong> Aprende con el tiempo, sin catálogo, sin registro. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Cuando Carlos se va de vacaciones, Brisa contesta WhatsApp y "se pierde mucho".</strong> "Yo sí me pierdo mucho porque no sé qué onda." No tiene el contexto de Carlos. <span class="source-tag">— Brisa</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8: COBROS Y REGISTRO -->
+      <div class="slide" data-title="Cobros y registro financiero" data-count="6 datos">
+        <div class="details-content">
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Brisa también cobra — cuando Carlitas tiene gente.</strong> "Cuando Carlitas tiene gente, pues ya cobro yo." También la doctora le pide. Otra función fuera de su rol. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Porcentajes de cobro a meses — no los sabe.</strong> "Se me olvida cuántos meses. Entonces tengo que ir corriendo a preguntar a cuánto sube." Sin tabla de referencia accesible. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Formas de pago:</strong> terminal, transferencia o efectivo. "Cualquiera." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Registro de pagos: hoja verde.</strong> "Yo lo anoto en una hojita verde donde se anota todo lo que se ha vendido y todo lo que hemos usado de material." Registro manual. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Efectivo se entrega a la doctora o a Carlos.</strong> "El efectivo pues se lo entrego siempre a la doctora o a Carlitos, a cualquiera de ellos dos." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Busca a quien la pueda apoyar cuando termina.</strong> "Ya cobré, ya hice la historia, ya el paciente ya está listo, pues ya nada más busco a alguien que me ayude." Ciclo continuo de apoyo cruzado. <span class="source-tag">— Brisa</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 9: REGISTRO FOTOGRÁFICO Y ENCUESTAS -->
+      <div class="slide" data-title="Registro fotográfico y encuestas" data-count="9 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Registro fotográfico</h4>
+          <div class="dato-box"><strong>Brisa NO hace registro fotográfico propio.</strong> Ella no toma fotos de sus pacientes de masaje. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Fotos las toma Divani o Gabriel — en su teléfono personal.</strong> "Las tienen ahí en su teléfono." Consistente con otros roles. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Fotos: antes (pre-procedimiento) y después (al mes o 2-3 meses).</strong> Resultado final a los 3 meses, pero Brisa cita a los 2. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Acceso a fotos: por fecha en la galería del teléfono.</strong> Sin carpetas por paciente, sin sistema. Brisa no tiene acceso directo. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Comparativo fotográfico lo hacen Divani o Gabriel.</strong> Brisa no participa. <span class="source-tag">— Brisa</span></div>
+          <h4 style="color: #ff4444; margin-top: 1rem;">Encuestas de calidad</h4>
+          <div class="dato-box"><strong>Encuestas de calidad por código QR digital.</strong> "Tienen que escanear el código QR y luego ya aparecer." No son en papel. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Cada persona que atiende debería darla al paciente.</strong> Proceso definido pero no ejecutado. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Brisa se olvida siempre de darlas.</strong> "Se me olvida siempre hacerlas." "Te lo juro, se me olvida." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Pacientes no contestaban → Brisa les decía que era para una promoción.</strong> Estrategia informal para aumentar respuestas. <span class="source-tag">— Brisa</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 10: SUMINISTROS Y COORDINACIÓN -->
+      <div class="slide" data-title="Suministros y coordinación" data-count="7 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Suministros</h4>
+          <div class="dato-box"><strong>Brisa detecta falta de suministros de aparatos.</strong> "Si faltan chips, pues ya les digo." Es la que más usa los equipos. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Cadena de suministros:</strong> Brisa → Óscar → doctora, o directamente Brisa → Carlos "para que sea más rápido." <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>No interactúa con proveedores — solo escala la necesidad.</strong> Se lo pide a alguien y ellos se encargan. <span class="source-tag">— Brisa</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Coordinación y bitácoras</h4>
+          <div class="dato-box"><strong>Brisa lleva bitácora de limpieza y refrigerador.</strong> Dos de las tres bitácoras COFEPRIS. Las tiene al día. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">No hay reuniones de equipo formales.</strong> "Como tal no hay reuniones." Coordinación completamente informal. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box"><strong>Coordinación sobre la marcha.</strong> "Ya me dio mi comentario, ah, vino a esto y le hicimos esto." Información compartida verbalmente, sin registro. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">"Todos hacen cosas que están fuera de su área."</strong> Solapamiento generalizado confirmado como quinto rol. Causa: tiempo y horario, no falta de definición. <span class="source-tag">— Brisa</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 11: LO QUE BRISA SIENTE -->
+      <div class="slide" data-title="Lo que Brisa siente" data-count="8 expresiones">
+        <div class="details-content">
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Mis labores que yo debería de hacer casi no hay"</strong> — subutilización del rol. Se dedica a ayudar a todos en vez de ejercer cosmiatría. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Todos hacen cosas que están fuera de su área"</strong> — solapamiento generalizado. Quinto rol que lo confirma. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Sería más fácil si tuviéramos como una base más completa"</strong> — necesidad espontánea de acceso a información digital del paciente. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Que actualicemos lo de las agendas digitales para que sea más fácil"</strong> — petición espontánea al cierre de la entrevista. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">"Yo sí me pierdo mucho porque no sé qué onda"</strong> — cuando Carlos se va de vacaciones y ella contesta WhatsApp. Dependencia total del conocimiento tácito de Carlos. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">"No tengo yo como el de Carlitos, el que ya sabe bien cómo contestar"</strong> — reconoce falta de conocimiento para gestionar comunicación con pacientes. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se me olvida siempre hacerlas, te lo juro se me olvida"</strong> — encuestas de calidad. Proceso definido pero no ejecutado. <span class="source-tag">— Brisa</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Es algo que no hacemos"</strong> — recordatorios de cita. Reconocimiento consciente de un vacío operativo. <span class="source-tag">— Brisa</span></div>
+        </div>
+      </div>
+
+      </div><!-- /slides-data -->
+    </section>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="slideModal">
+      <div class="modal-progress"><div class="modal-progress-fill" id="progressFill"></div></div>
+      <div class="modal-topbar">
+        <div class="modal-topbar-left">
+          <span class="modal-slide-num" id="slideNum"></span>
+          <span class="modal-slide-title" id="slideTitle"></span>
+        </div>
+        <button class="modal-close" onclick="closeModal()" title="Cerrar (Esc)">&times;</button>
+      </div>
+      <div class="modal-slide-area">
+        <button class="modal-side-nav nav-left" id="btnPrev" onclick="prevSlide()"><i class="ph ph-caret-left"></i></button>
+        <div class="modal-slide-content" id="modalBody"></div>
+        <div class="scroll-hint" id="scrollHint"><span class="scroll-hint-arrow"><i class="ph ph-caret-down"></i> scroll</span></div>
+        <button class="modal-side-nav nav-right" id="btnNext" onclick="nextSlide()"><i class="ph ph-caret-right"></i></button>
+      </div>
+      <div class="modal-bottombar" id="modalDots"></div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 2: DIAGRAMA -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-flow-arrow"></i> Diagrama de Flujo — Rol de Cosmiatra (solo datos confirmados)</h2>
+      <p style="color: #A1B8F2;">115 datos de entrevista. Flujo completo del rol de Cosmiatra — desde apertura de clínica hasta seguimiento y coordinación.</p>
+      <div class="mermaid-container">
+        <div class="mermaid">
+flowchart TD
+    classDef default fill:#1a2535,stroke:#31BEEF,stroke-width:1.5px,color:#FAF9F6
+    classDef friction fill:#2a1015,stroke:#ff4444,stroke-width:2px,color:#ff4444
+    classDef auto fill:#0f2015,stroke:#4CAF50,stroke-width:1.5px,color:#4CAF50
+    classDef decision fill:#1f1525,stroke:#994E95,stroke-width:1.5px,color:#FAF9F6
+    classDef entry fill:#0f1f2f,stroke:#31BEEF,stroke-width:1.5px,color:#31BEEF
+
+    subgraph APERTURA["APERTURA DÍA — primera en llegar"]
+        A1["Brisa llega, abre y revisa consultorios"]:::entry
+        A1 --> A2["Reordena lo que limpieza desacomodó"]:::friction
+        A2 --> A3["Revisa agenda, espera primer paciente"]
+    end
+
+    subgraph TRIAJE["RECEPCIÓN Y TRIAJE — sin previsibilidad"]
+        A3 --> T1{"Paciente<br/>nuevo"}:::decision
+        T1 -->|"Sí"| T2["Junta expediente → pasa a Divani"]
+        T1 -->|"No"| T3["Pasa directo al proceso"]
+        T2 --> T4["Prepara consultorio para médico"]
+        T3 --> T4
+        T4 --> T5["Muchos llegan sin cita o cambian de opinión"]:::friction
+    end
+
+    subgraph DOC["DOCUMENTACIÓN — Brisa como respaldo de Divani"]
+        T4 --> D1["HC estandarizada — no se actualiza, vigente 5 años"]:::friction
+        D1 --> D2["Consentimientos ~10 tipos, firma en el momento"]
+        D2 --> D3["Nota de paciente — se olvida frecuentemente"]:::friction
+    end
+
+    subgraph TRAT["TRATAMIENTOS — 3-4 propios + apoyo a todos"]
+        D2 --> TR1{"Tipo de<br/>tratamiento"}:::decision
+        TR1 -->|"Masaje"| TR2["Facial 15 min o corporal ~1h"]
+        TR1 -->|"Aparatología"| TR3["Depilación, HIFU, radio, pico"]
+        TR1 -->|"Apoyo"| TR4["Ayuda a Divani, Elián o Gabo"]
+        TR2 --> TR5["Opera toda la aparatología"]
+        TR3 --> TR5
+        TR5 --> TR6["Escáner facial con memoria de pacientes"]:::auto
+        TR5 --> TR7["Sin registro de evolución entre sesiones"]:::friction
+    end
+
+    subgraph SEG["SEGUIMIENTO — sin sistema activo"]
+        TR7 --> S1["Agenda revisión post-procedimiento"]
+        TR6 --> S1
+        TR4 --> S1
+        S1 --> S2["Evaluación visual + masaje + recomendaciones"]
+        S2 --> S3["Propone cita → anota en agenda"]
+        S3 --> S4["Sin recordatorio ni seguimiento activo"]:::friction
+        S4 --> S5["Pacientes desaparecen y regresan sin aviso"]:::friction
+    end
+
+    subgraph COBROS["COBROS — cuando Carlos no puede"]
+        T4 -.->|"Carlos ocupado"| CO1["Brisa cobra sin saber porcentajes a meses"]:::friction
+        CO1 -.-> CO2["Registra en hoja verde → efectivo a doctora"]
+    end
+
+    subgraph COM["COMUNICACIÓN — doble canal, sin coordinación"]
+        S2 -.->|"indicaciones post"| CM1["WhatsApp Carlos + verbal Brisa"]
+        CM1 -.-> CM2["Recomendaciones sin protocolo ni registro"]:::friction
+        CM2 -.-> CM3["Sin Carlos, Brisa contesta y se pierde"]:::friction
+    end
+        </div>
+      </div>
+
+      <!-- Leyenda -->
+      <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.5rem; font-size: 0.85rem; padding: 0.75rem 1rem; background: rgba(26,37,53,0.5); border-radius: 6px;">
+        <span style="color: #4CAF50;">● Automatizado</span>
+        <span style="color: #994E95;">● Decisión</span>
+        <span style="color: #ff4444;">● Fricción</span>
+        <span style="color: #31BEEF;">● Entrada/Salida</span>
+        <span style="color: #A1B8F2;">┈┈ Flujo secundario</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- VACÍOS DE INFORMACIÓN -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-question"></i> Vacíos de información</h2>
+
+      <details>
+        <summary style="border-left-color: #4CAF50; color: #4CAF50;">Vacíos resueltos durante la entrevista (14)</summary>
+        <div class="details-content">
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Antigüedad de Brisa</strong> — ~2 años en la clínica. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Volumen de pacientes al día</strong> — 3-4 propios (masaje) + ~8-9 en total contando apoyo. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Agenda propia de cosmiatría</strong> — No tiene. Usa la agenda de revisiones compartida. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Bitácora COFEPRIS</strong> — Brisa lleva bitácora de limpieza y refrigerador. Las tiene al día. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Historia clínica</strong> — Misma para todos. Divani la llena principalmente, Brisa como respaldo. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> "La doctora"</strong> — Doctora Elián. Rol no documentado en organigrama previo. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Registro fotográfico</strong> — Brisa NO toma fotos. Las toman Divani o Gabriel en teléfonos personales. Se buscan por fecha. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Herramientas / software</strong> — Agenda física (principal), agenda digital apenas funcional (~10 emails), escáner facial con memoria. Sin software de gestión. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Tipos de tratamiento</strong> — Masaje facial (15 min), corporal (~1h), depilación láser (~1.5h). Principalmente post-lipo. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Seguimiento post-procedimiento</strong> — Evaluación visual + bienestar, masaje, recomendaciones, cita. Consultas no documentadas. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Relación con el cirujano (Gabriel)</strong> — Consulta a Gabo para casos complicados o recomendaciones de productos. Comunicación verbal, sin registro. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Rutinas dermocosméticas</strong> — Recomienda por experiencia. Sin protocolo, sin catálogo, sin registro. Cremas = verbal. Medicamento = receta formal. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Comunicación con pacientes post</strong> — Carlos envía por WhatsApp. Brisa explica verbalmente en clínica. Doble canal sin coordinación. <span class="source-tag">— Brisa</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Identidad de "doctor Diy"</strong> — Divani, Primer Ayudante. <span class="source-tag">— Confirmado por usuario</span></div>
+        </div>
+      </details>
+
+      <h3 style="color: #FFC107;">Vacíos pendientes (1)</h3>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Historia estética separada</strong> — La HC es la misma para todos. Nunca se mencionó si existe una historia estética específica de cosmiatría (diagnósticos, tipo de piel, evolución cutánea). Sobrevive las 8 fragmentos → gap organizacional real. <span class="source-tag" style="color: #4CAF50;">AMPLIADO por Dra. Marisela Narváez (CEO): confirma "no hay clasificación de pacientes." Servicios como faciales, masajes, HIFU, aparatología disponibles pero no ofrecidos activamente. No menciona historia estética separada — confirma HC única para todo. Divani (Primer Ayudante) identifica deficiencia en "sección de análisis facial" de la HC, siendo que la mayoría de los procedimientos son de rostro. Gap persiste.</span></div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- PUNTOS DE HANDOFF -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-arrows-left-right"></i> Puntos de Handoff</h2>
+
+      <div class="dato-box"><strong>Brisa ↔ Divani:</strong> Brisa pasa expediente de paciente nuevo a Divani para HC. Cuando Divani está ocupado, Brisa completa la HC como respaldo.</div>
+      <div class="dato-box"><strong>Brisa ↔ Carlos:</strong> Carlos envía indicaciones post por WhatsApp (templates), Brisa explica verbalmente en clínica. Cuando Carlos no está, Brisa contesta WhatsApp sin contexto y se pierde.</div>
+      <div class="dato-box"><strong>Brisa → Carlos/Doctora:</strong> Cobros cuando Carlos está saturado. Entrega efectivo a la doctora o a Carlos. No conoce porcentajes de meses sin intereses.</div>
+      <div class="dato-box"><strong>Brisa → Gabriel/Divani:</strong> Consultas clínicas verbales cuando detecta algo anormal en seguimiento. Sin registro ni documentación.</div>
+      <div class="dato-box"><strong>Brisa → Óscar/Carlos:</strong> Detecta faltantes de suministros de aparatología y escala a Óscar o directamente a Carlos para que sea más rápido.</div>
+      <div class="dato-box"><strong>Equipo → Brisa:</strong> Todos le piden apoyo ad-hoc: limpieza, preparación, documentación. "Yo me dedico como que ayudar a todos."</div>
+      <div class="dato-box"><strong>Divani/Gabriel → Brisa:</strong> Registro fotográfico — ellos toman fotos en teléfonos personales. Brisa no tiene acceso directo, busca por fecha en galería ajena.</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FRICCIONES EXPRESADAS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-fire"></i> Fricciones expresadas por Brisa</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Citas literales — lo que Brisa siente y expresa sobre su trabajo.</p>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Mis labores que yo debería de hacer casi no hay"</strong> — subutilización del rol de cosmiatra, se dedica a ayudar a todos</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Todos hacen cosas que están fuera de su área"</strong> — solapamiento generalizado, quinto rol que lo confirma</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Sería más fácil si tuviéramos como una base más completa"</strong> — necesidad espontánea de acceso a información digital del paciente</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Que actualicemos lo de las agendas digitales para que sea más fácil"</strong> — petición espontánea al cierre de la entrevista</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Yo sí me pierdo mucho porque no sé qué onda"</strong> — cuando Carlos se va y ella contesta WhatsApp, dependencia total del conocimiento tácito</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"No tengo yo como el de Carlitos, el que ya sabe bien cómo contestar"</strong> — reconoce falta de conocimiento para gestionar comunicación con pacientes</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se me olvida siempre hacerlas, te lo juro se me olvida"</strong> — encuestas de calidad, proceso definido pero no ejecutado</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Es algo que no hacemos"</strong> — recordatorios de cita, reconocimiento consciente de un vacío operativo</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"La verdad sí se nos olvida luego hacer nota de paciente"</strong> — nota recién implementada que no se ejecuta consistentemente</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Si yo estoy haciendo algo y se queda ahí lo sucio, pues ya se queda sucio"</strong> — cuando Brisa no limpia, nadie lo hace</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"No he venido en un año y ya viene"</strong> — pacientes desaparecen y regresan sin contexto previo disponible</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FRICCIONES IDENTIFICADAS POR ANÁLISIS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-magnifying-glass"></i> Fricciones identificadas por análisis</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Fricciones operativas derivadas de los datos confirmados.</p>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Rol subutilizado — cosmiatra que hace de todo menos cosmiatría</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">3-4 pacientes propios de masaje vs ~8-9 en total. El resto es apoyo a otros: cobra, limpia, documenta, despacha. "Yo me dedico como que ayudar a todos." El puesto está definido pero no se ejecuta. Consecuencia: multitarea permanente sin actividad que le ocupe más tiempo.</p>
+        <span class="source-tag">— Brisa</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Memoria personal como sistema de información — cuarto rol que lo confirma</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Cadena de consulta: 1) memoria personal, 2) preguntar al equipo, 3) expediente físico, 4) chat de WhatsApp. "Normalmente más porque me acuerdo casi de todos." Cuando nadie recuerda, el expediente es el último recurso. Cuando el expediente no es claro, revisan el historial de WhatsApp. Información clínica distribuida sin control.</p>
+        <span class="source-tag">— Brisa + Óscar, Enfermero + Divani, Primer Ayudante</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Cero seguimiento activo post-procedimiento — pacientes desaparecen</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Sin recordatorio de cita, sin recontacto si no asiste, sin alertas. "Se da por hecho que va a venir." Brisa detecta ausencias revisando la agenda, pero no hay mecanismo institucional. Pacientes desaparecen un año y regresan sin contexto. La función de Brisa termina con el tratamiento — nadie continúa después.</p>
+        <span class="source-tag">— Brisa + Óscar, Enfermero + Carlos, Atención al Paciente</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Documentación fragmentada — tres capas que fallan por separado</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">HC no se actualiza (vigente 5 años sin cambios). Nota de paciente recién implementada pero se olvida ("la verdad sí se nos olvida"). Cada rol debería hacer su nota pero no lo hace. Brisa depende de que otros le informen. Consentimientos sin firma fue problema recurrente. Triple capa de documentación (HC + consentimientos + nota) donde cada una falla por motivos distintos.</p>
+        <span class="source-tag">— Brisa + Óscar, Enfermero + Divani, Primer Ayudante</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Sin agenda propia de cosmiatría — invisibilidad del rol</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Brisa no tiene agenda propia. Todos sus pacientes están en la agenda compartida de revisiones. No hay forma de distinguir pacientes de cosmiatría vs revisiones generales. La agenda digital apenas tiene ~10 emails recolectados. Agenda física sigue siendo la única herramienta operativa.</p>
+        <span class="source-tag">— Brisa</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Doble canal de comunicación sin coordinación</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Carlos envía indicaciones post por WhatsApp (templates estandarizados). Brisa explica verbalmente en clínica. Dos canales sin coordinación — el paciente recibe información por dos vías diferentes. Cuando Carlos no está, Brisa contesta WhatsApp sin contexto ("me pierdo mucho"). Recomendaciones de productos por experiencia sin protocolo ni registro.</p>
+        <span class="source-tag">— Brisa + Carlos, Atención al Paciente</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Sin registro de evolución entre sesiones — gap clínico</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">5 masajes post-lipo recomendados (uno por semana), pero entre sesiones la nota solo dice "todo bien". Solo se documenta lo anormal. No hay tracking de evolución del paciente entre sesiones. El protocolo post-lipo (5 sesiones → cita al mes → resultado 3 meses) no tiene soporte documental.</p>
+        <span class="source-tag">— Brisa</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Coordinación completamente informal — sin reuniones ni registros</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">"Como tal no hay reuniones." Información clínica compartida verbalmente sobre la marcha. Consultas a Gabo o Divani no quedan documentadas. Suministros se reportan verbalmente. Solapamiento generalizado confirmado por quinto rol: "Todos hacen cosas que están fuera de su área." Causa identificada: tiempo y horario, no falta de definición de rol.</p>
+        <span class="source-tag">— Brisa + Óscar, Enfermero</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Encuestas de calidad y registro fotográfico — procesos definidos no ejecutados</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Encuestas QR existen pero Brisa se olvida siempre de darlas. Registro fotográfico lo hacen Divani o Gabriel en teléfonos personales — Brisa no tiene acceso. Fotos buscables solo por fecha en galería. Sin carpetas por paciente. Dos procesos diseñados que no se ejecutan por falta de integración en el flujo diario.</p>
+        <span class="source-tag">— Brisa</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- MAPEO D1-D4 (PENDIENTE) -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-target"></i> Mapeo a los 4 Dolores APEX</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Análisis completado. Dolor dominante: <strong style="color: #ff4444;">D1 (Procesos Internos)</strong>. Brisa es el rol que más evidencia la subutilización y el solapamiento causados por la ausencia de sistemas.</p>
+
+      <!-- D1 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #ff4444; border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444; font-size: 1.1rem;">D1 — Procesos Internos Ineficientes → DOLOR DOMINANTE</strong>
+        <span style="display: inline-block; background: #ff4444; color: #fff; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.75rem; margin-left: 0.5rem; vertical-align: middle;">DOLOR DOMINANTE</span>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Plataforma Centralizada de Gestión Clínica</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Rol subutilizado — 3-4 pacientes propios vs multitarea permanente de apoyo a todos los roles</li>
+          <li>Memoria personal como sistema de información — cadena: memoria → equipo → expediente → WhatsApp</li>
+          <li>HC no se actualiza (vigente 5 años), nota de paciente se olvida, consentimientos con fallas de firma</li>
+          <li>Sin agenda propia de cosmiatría — todos sus pacientes en agenda compartida de revisiones</li>
+          <li>Agenda digital apenas funcional (~10 emails), agenda física como única herramienta operativa</li>
+          <li>Coordinación completamente informal — sin reuniones, información compartida verbalmente</li>
+          <li>Solapamiento generalizado confirmado por quinto rol: "Todos hacen cosas fuera de su área"</li>
+          <li>Cobros fuera de rol sin tabla de porcentajes accesible — corre a preguntar cada vez</li>
+          <li>Limpieza desordena consultorios cada noche — Brisa reordena cada mañana sin protocolo</li>
+        </ul>
+      </div>
+
+      <!-- D2 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D2 — Seguimiento y Clasificación de Pacientes → CONSECUENCIA DIRECTA</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Seguimiento y Clasificación Automática</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Sin recordatorio de cita — "se da por hecho que va a venir"</li>
+          <li>Sin seguimiento activo si el paciente no asiste — ni alertas ni recontacto</li>
+          <li>Pacientes desaparecen un año y regresan sin contexto previo disponible</li>
+          <li>Sin registro de evolución entre sesiones de masaje — nota solo dice "todo bien"</li>
+          <li>Consultas clínicas a Gabo/Divani no quedan documentadas</li>
+          <li>Función de Brisa termina con el tratamiento — nadie continúa después</li>
+          <li>Fotos en teléfonos personales de Divani/Gabriel — Brisa sin acceso directo</li>
+        </ul>
+      </div>
+
+      <!-- D3 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #994E95; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #994E95; font-size: 1.1rem;">D3 — Comunicación Personalizada con Pacientes → IMPACTADO</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Comunicación Segmentada e Inteligente</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Doble canal (WhatsApp Carlos + verbal Brisa) sin coordinación — paciente recibe info por dos vías</li>
+          <li>Cuando Carlos no está, Brisa contesta y "se pierde mucho" — dependencia total del conocimiento tácito</li>
+          <li>Recomendaciones de productos por experiencia acumulada — sin protocolo, sin catálogo, sin registro</li>
+          <li>Encuestas de calidad QR definidas pero no ejecutadas — "se me olvida siempre"</li>
+        </ul>
+      </div>
+
+      <!-- D4 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D4 — Conversión de Leads Publicitarios a Pacientes → INDIRECTAMENTE AFECTADO</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Pipeline de Conversión de Leads</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Pacientes llegan sin cita — sin previsibilidad en la agenda</li>
+          <li>Pacientes cambian de opinión al llegar — el equipo revalúa sobre la marcha</li>
+          <li>Cross-selling presencial informal — Brisa recomienda a todos, sin registro ni tracking</li>
+        </ul>
+      </div>
+
+      <!-- Retención -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #4CAF50; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #4CAF50; font-size: 1.1rem;">Retención = Ecosistema Integrado (D1+D2+D3+D4)</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0; line-height: 1.7;">Desde la perspectiva de Brisa, la retención depende del seguimiento post-procedimiento: recordatorios, recontacto, evolución documentada. Sin sistema base (D1), el seguimiento depende de la memoria. Sin seguimiento (D2), los pacientes desaparecen. Brisa lo pide espontáneamente: "sería más fácil si tuviéramos como una base más completa" y "que actualicemos lo de las agendas digitales."</p>
+      </div>
+
+      <!-- Conclusión -->
+      <div style="background: rgba(255, 68, 68, 0.08); padding: 1rem; border: 1px solid rgba(255, 68, 68, 0.2); border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444;">Conclusión desde este rol</strong>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li><strong style="color: #ff4444;">D1 es el dolor dominante</strong> — Brisa vive las 9 fricciones identificadas y todas nacen de un rol sin herramientas, sin agenda propia y sin sistemas. Es el quinto rol en confirmar que "todos hacen de todo."</li>
+          <li><strong style="color: #31BEEF;">D2 es consecuencia directa</strong> — sin plataforma, el seguimiento post depende de la memoria y termina cuando termina el tratamiento. Nadie continúa después.</li>
+          <li><strong style="color: #994E95;">D3 es impactado</strong> — la comunicación se fragmenta en dos canales sin coordinación, y cuando Carlos no está, Brisa queda sin contexto para responder.</li>
+          <li>D4 es tangencial desde este rol — Brisa no participa en conversión, pero sufre la imprevisibilidad (pacientes sin cita, cambio de opinión al llegar).</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="nav-links">
+      <a href="flujo-enfermero.html"><i class="ph ph-arrow-left"></i> Anterior: Enfermero</a>
+      <a href="flujo-primer-ayudante.html">Siguiente: Primer Ayudante <i class="ph ph-arrow-right"></i></a>
+    </div>
+
+    <footer class="footer">
+      <p>ARMC — Aesthetic Rejuvenation Medical Center — Análisis Operativo — Abril 2026 — PRISMA Consulting</p>
+    </footer>
+  </div>
+
+  <!-- Slide Presentation JS -->
+  <script>
+    (function() {
+      var slides = document.querySelectorAll('#slides-data .slide');
+      var modal = document.getElementById('slideModal');
+      var slideNum = document.getElementById('slideNum');
+      var slideTitle = document.getElementById('slideTitle');
+      var progressFill = document.getElementById('progressFill');
+      var modalBody = document.getElementById('modalBody');
+      var modalDots = document.getElementById('modalDots');
+      var btnPrev = document.getElementById('btnPrev');
+      var btnNext = document.getElementById('btnNext');
+      var scrollHint = document.getElementById('scrollHint');
+      var current = 0;
+      var total = slides.length;
+
+      for (var i = 0; i < total; i++) {
+        var dot = document.createElement('span');
+        dot.className = 'modal-dot';
+        dot.addEventListener('click', (function(idx) {
+          return function() { goToSlide(idx); };
+        })(i));
+        modalDots.appendChild(dot);
+      }
+
+      function transformContent(slide) {
+        var title = slide.getAttribute('data-title');
+        var count = slide.getAttribute('data-count');
+        var source = slide.querySelector('.details-content');
+        var html = '<div class="slide-title-block"><h2>' + title + '</h2><span class="slide-subtitle">' + count + '</span></div>';
+
+        var children = source.children;
+        for (var i = 0; i < children.length; i++) {
+          var el = children[i];
+          if (el.tagName === 'H4') {
+            var cls = 'slide-section-heading';
+            if (el.style.color && el.style.color.indexOf('4444') !== -1) cls += ' critical';
+            html += '<div class="' + cls + '">' + el.textContent + '</div>';
+          } else if (el.classList.contains('dato-box')) {
+            var dotCls = 'slide-item-dot';
+            var style = el.getAttribute('style') || '';
+            if (style.indexOf('ff4444') !== -1) dotCls += ' critical';
+            else if (style.indexOf('4CAF50') !== -1) dotCls += ' positive';
+            else if (style.indexOf('994E95') !== -1) dotCls += ' sentiment';
+
+            var clone = el.cloneNode(true);
+            var tags = clone.querySelectorAll('.source-tag, .new-tag');
+            for (var t = 0; t < tags.length; t++) tags[t].remove();
+
+            var strongs = clone.querySelectorAll('strong');
+            for (var s = 0; s < strongs.length; s++) {
+              var sStyle = strongs[s].getAttribute('style') || '';
+              if (sStyle.indexOf('ff4444') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'critical-text';
+              } else if (sStyle.indexOf('4CAF50') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'positive-text';
+              } else if (sStyle.indexOf('994E95') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'sentiment-text';
+              }
+            }
+
+            var text = clone.innerHTML.replace(/<span class="source-tag">.*?<\/span>/g, '').trim();
+            html += '<div class="slide-item"><span class="' + dotCls + '"></span><span class="slide-item-text">' + text + '</span></div>';
+          }
+        }
+        return html;
+      }
+
+      function updateDots() {
+        var dots = modalDots.querySelectorAll('.modal-dot');
+        for (var i = 0; i < dots.length; i++) {
+          dots[i].classList.toggle('active', i === current);
+        }
+      }
+
+      function goToSlide(idx) {
+        current = idx;
+        var slide = slides[current];
+        slideNum.textContent = (current + 1) + ' / ' + total;
+        slideTitle.textContent = slide.getAttribute('data-count');
+        progressFill.style.width = ((current + 1) / total * 100) + '%';
+        modalBody.innerHTML = transformContent(slide);
+        modalBody.scrollTop = 0;
+        updateDots();
+        setTimeout(checkScrollHint, 50);
+        btnPrev.disabled = current === 0;
+        btnNext.disabled = current === total - 1;
+      }
+
+      window.openSlide = function(idx) {
+        goToSlide(idx);
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      };
+
+      window.closeModal = function() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+      };
+
+      window.prevSlide = function() {
+        if (current > 0) goToSlide(current - 1);
+      };
+
+      window.nextSlide = function() {
+        if (current < total - 1) goToSlide(current + 1);
+      };
+
+      function checkScrollHint() {
+        var el = modalBody;
+        var canScroll = el.scrollHeight > el.clientHeight + 10;
+        var nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 30;
+        if (!canScroll || nearBottom) {
+          scrollHint.classList.add('hidden');
+        } else {
+          scrollHint.classList.remove('hidden');
+        }
+      }
+      modalBody.addEventListener('scroll', checkScrollHint);
+
+      document.addEventListener('keydown', function(e) {
+        if (!modal.classList.contains('active')) return;
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'ArrowRight') nextSlide();
+      });
+
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal || e.target.classList.contains('modal-slide-area')) closeModal();
+      });
+    })();
+  </script>
+</body>
+</html>

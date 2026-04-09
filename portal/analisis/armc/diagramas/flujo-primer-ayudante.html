@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Primer Ayudante — ARMC Análisis Operativo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: 'transparent',
+        primaryColor: '#1a2535',
+        primaryTextColor: '#FAF9F6',
+        primaryBorderColor: '#31BEEF',
+        secondaryColor: '#1a2535',
+        secondaryBorderColor: '#994E95',
+        lineColor: '#31BEEF',
+        textColor: '#FAF9F6',
+        clusterBkg: '#162033',
+        clusterBorder: '#253545',
+        edgeLabelBackground: '#1a2535',
+        fontFamily: '"Source Sans 3", sans-serif',
+        fontSize: '14px'
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 15,
+        nodeSpacing: 50,
+        rankSpacing: 55,
+      }
+    });
+  </script>
+  <link rel="stylesheet" href="../css/estilos-prisma.css">
+  <style>
+    .breadcrumb { margin-bottom: 2rem; padding: 1rem; background: rgba(49, 190, 239, 0.05); border-radius: 4px; }
+    .breadcrumb a { color: #31BEEF; }
+    .diagram-section { background: #1a2535; border: 1px solid #31BEEF; border-radius: 8px; padding: 2rem; margin: 2rem 0; }
+    .diagram-section h2 { margin-top: 0; }
+    .mermaid-container { background: #101B2C; padding: 2rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; }
+    .mermaid { display: flex; justify-content: center; min-height: 300px; }
+    /* Mermaid SVG overrides */
+    .mermaid .node rect, .mermaid .node polygon { rx: 8 !important; ry: 8 !important; stroke-width: 1.5px !important; }
+    .mermaid .nodeLabel, .mermaid .node .label { font-family: 'Source Sans 3', sans-serif !important; font-size: 14px !important; font-weight: 600 !important; }
+    .mermaid .edgePath path.path { stroke-width: 1.5px !important; opacity: 0.6; }
+    .mermaid .edgeLabel { font-size: 12px !important; font-family: 'Source Sans 3', sans-serif !important; font-weight: 600 !important; }
+    .mermaid .edgeLabel rect { rx: 4 !important; ry: 4 !important; fill: #1a2535 !important; stroke: none !important; }
+    .mermaid .edgeLabel span { color: #FAF9F6 !important; }
+    .mermaid .cluster rect { rx: 8 !important; ry: 8 !important; stroke-dasharray: 5 3; }
+    .mermaid .cluster-label .nodeLabel, .mermaid .cluster-label span { font-family: 'Quicksand', sans-serif !important; font-weight: 700 !important; font-size: 14px !important; letter-spacing: 0.5px; text-transform: uppercase; fill: #FAF9F6 !important; color: #FAF9F6 !important; }
+    .nav-links { display: flex; gap: 1rem; margin-top: 2rem; justify-content: space-between; }
+    .nav-links a { flex: 1; padding: 1rem; text-align: center; background: #1a2535; border: 1px solid #31BEEF; border-radius: 4px 25px 25px 4px; transition: all 400ms ease; color: #FAF9F6; text-decoration: none; }
+    .nav-links a:hover { background: #31BEEF; color: #101B2C; }
+    .status-badge { display: inline-block; padding: 0.5rem 1rem; background: #994E95; color: #FAF9F6; border-radius: 4px; font-size: 0.85rem; margin-bottom: 1rem; font-weight: 600; }
+    .quote { background: #101B2C; padding: 1rem 1.5rem; border-left: 4px solid #994E95; border-radius: 4px; margin: 1rem 0; font-style: italic; color: #A1B8F2; }
+    .quote strong { color: #994E95; font-style: normal; }
+    .gap-box { background: rgba(255, 193, 7, 0.08); border: 1px dashed #FFC107; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .gap-box strong { color: #FFC107; }
+    .resolved-box { background: rgba(76, 175, 80, 0.08); border: 1px solid #4CAF50; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .resolved-box strong { color: #4CAF50; }
+    .dato-box { background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin: 0.5rem 0; }
+    .dato-box strong { color: #31BEEF; }
+    .source-tag { font-size: 0.75rem; color: #994E95; font-weight: 600; }
+    details { margin: 0.5rem 0; }
+    details summary { cursor: pointer; padding: 0.75rem 1rem; background: #101B2C; border-left: 4px solid #31BEEF; border-radius: 4px; color: #31BEEF; font-weight: 600; font-family: 'Quicksand', sans-serif; list-style: none; display: flex; align-items: center; gap: 0.5rem; transition: background 200ms ease; }
+    details summary:hover { background: rgba(49, 190, 239, 0.1); }
+    details summary::before { content: '▶'; font-size: 0.7rem; transition: transform 200ms ease; }
+    details[open] summary::before { transform: rotate(90deg); }
+    details summary::-webkit-details-marker { display: none; }
+    details .details-content { padding: 1rem 0 0 1rem; }
+
+    /* === SLIDE CARDS GRID === */
+    .slide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+    .slide-card { background: #101B2C; border: 1px solid rgba(49,190,239,0.3); border-radius: 12px; padding: 1.5rem; cursor: pointer; transition: all 300ms ease; position: relative; overflow: hidden; }
+    .slide-card:hover { border-color: #31BEEF; transform: translateY(-4px); box-shadow: 0 12px 32px rgba(49,190,239,0.15); }
+    .slide-card .card-number { font-size: 3.5rem; font-weight: 700; color: rgba(49,190,239,0.08); position: absolute; top: -0.25rem; right: 0.75rem; font-family: 'Quicksand', sans-serif; line-height: 1; }
+    .slide-card h3 { color: #FAF9F6; font-size: 1rem; margin: 0 0 0.5rem 0; font-family: 'Quicksand', sans-serif; font-weight: 600; }
+    .slide-card .card-count { color: #A1B8F2; font-size: 0.8rem; }
+    .slide-card.card-critical { border-color: rgba(255,68,68,0.4); }
+    .slide-card.card-critical:hover { border-color: #ff4444; box-shadow: 0 12px 32px rgba(255,68,68,0.15); }
+    .slide-card.card-critical .card-number { color: rgba(255,68,68,0.08); }
+    .slide-card.card-sentiment { border-color: rgba(153,78,149,0.4); }
+    .slide-card.card-sentiment:hover { border-color: #994E95; box-shadow: 0 12px 32px rgba(153,78,149,0.15); }
+    .slide-card.card-sentiment .card-number { color: rgba(153,78,149,0.08); }
+
+    /* === FULLSCREEN PRESENTATION MODAL === */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: #0a1420; z-index: 1000; flex-direction: column; }
+    .modal-overlay.active { display: flex; }
+
+    /* Progress bar */
+    .modal-progress { height: 3px; background: rgba(49,190,239,0.1); flex-shrink: 0; }
+    .modal-progress-fill { height: 100%; background: linear-gradient(90deg, #31BEEF, #994E95); transition: width 400ms ease; border-radius: 0 2px 2px 0; }
+
+    /* Top bar */
+    .modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; flex-shrink: 0; }
+    .modal-topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .modal-slide-num { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem; background: rgba(49,190,239,0.1); padding: 0.3rem 0.8rem; border-radius: 20px; }
+    .modal-slide-title { color: #A1B8F2; font-family: 'Quicksand', sans-serif; font-size: 0.85rem; font-weight: 500; }
+    .modal-close { background: none; border: none; color: #A1B8F2; font-size: 1.25rem; cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 6px; transition: all 200ms; line-height: 1; }
+    .modal-close:hover { color: #ff4444; background: rgba(255,68,68,0.1); }
+
+    /* Slide area */
+    .modal-slide-area { flex: 1; display: flex; align-items: stretch; overflow: hidden; position: relative; }
+
+    /* Side navigation arrows */
+    .modal-side-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; background: none; border: none; color: rgba(161,184,242,0.4); font-size: 2.5rem; cursor: pointer; padding: 1rem; transition: all 200ms; }
+    .modal-side-nav:hover:not(:disabled) { color: #31BEEF; }
+    .modal-side-nav:disabled { opacity: 0; cursor: default; }
+    .modal-side-nav.nav-left { left: 0.5rem; }
+    .modal-side-nav.nav-right { right: 0.5rem; }
+
+    /* Slide content wrapper */
+    .modal-slide-content { width: 100%; max-width: 900px; margin: 0 auto; padding: 0 5rem; overflow-y: auto; max-height: 100%; scrollbar-width: none; -ms-overflow-style: none; position: relative; }
+    .modal-slide-content::-webkit-scrollbar { width: 0; display: none; }
+
+    /* Scroll-down indicator — overlays bottom of slide area */
+    .scroll-hint { position: absolute; bottom: 0; left: 5rem; right: 5rem; height: 70px; background: linear-gradient(to bottom, transparent 0%, #0a1420 80%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 0.75rem; pointer-events: none; opacity: 1; transition: opacity 400ms ease; z-index: 5; }
+    .scroll-hint.hidden { opacity: 0; }
+    .scroll-hint-arrow { color: rgba(49,190,239,0.4); font-size: 1rem; animation: scrollBounce 2s ease-in-out infinite; display: flex; align-items: center; gap: 0.4rem; font-family: 'Quicksand', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; }
+    @keyframes scrollBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+
+    /* Slide title */
+    .slide-title-block { margin-bottom: 2.5rem; }
+    .slide-title-block h2 { color: #FAF9F6; font-family: 'Quicksand', sans-serif; font-size: 2rem; font-weight: 700; margin: 0 0 0.25rem 0; line-height: 1.2; }
+    .slide-title-block .slide-subtitle { color: #A1B8F2; font-size: 0.95rem; }
+
+    /* Slide items — clean bullet style */
+    .slide-item { padding: 0.85rem 0; border-bottom: 1px solid rgba(49,190,239,0.06); display: flex; gap: 0.75rem; align-items: baseline; line-height: 1.55; }
+    .slide-item:last-child { border-bottom: none; }
+    .slide-item-dot { width: 6px; height: 6px; border-radius: 50%; background: #31BEEF; flex-shrink: 0; margin-top: 0.55rem; }
+    .slide-item-dot.critical { background: #ff4444; }
+    .slide-item-dot.positive { background: #4CAF50; }
+    .slide-item-dot.sentiment { background: #994E95; }
+    .slide-item-text { color: #FAF9F6; font-size: 1.05rem; font-family: 'Source Sans 3', sans-serif; font-weight: 300; }
+    .slide-item-text strong { color: #31BEEF; font-weight: 600; }
+    .slide-item-text .critical-text { color: #ff4444; font-weight: 600; }
+    .slide-item-text .positive-text { color: #4CAF50; font-weight: 600; }
+    .slide-item-text .sentiment-text { color: #994E95; font-weight: 600; }
+
+    /* Slide section headings */
+    .slide-section-heading { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin: 2rem 0 0.75rem 0; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(49,190,239,0.15); }
+    .slide-section-heading:first-child { margin-top: 0; }
+    .slide-section-heading.critical { color: #ff4444; border-bottom-color: rgba(255,68,68,0.15); }
+
+    /* Bottom bar with dots */
+    .modal-bottombar { display: flex; align-items: center; justify-content: center; padding: 1.25rem; gap: 8px; flex-shrink: 0; }
+    .modal-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(49,190,239,0.15); transition: all 300ms ease; cursor: pointer; }
+    .modal-dot.active { background: #31BEEF; transform: scale(1.4); }
+    .modal-dot:hover:not(.active) { background: rgba(49,190,239,0.4); }
+
+    @media (max-width: 768px) {
+      .modal-slide-content { padding: 0 3.5rem; }
+      .modal-side-nav { font-size: 1.5rem; padding: 0.5rem; }
+      .slide-title-block h2 { font-size: 1.5rem; }
+      .slide-item-text { font-size: 0.95rem; }
+      .modal-topbar { padding: 0.75rem 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .slide-grid { grid-template-columns: 1fr; }
+      .modal-slide-content { padding: 0 2.5rem; }
+      .modal-side-nav { font-size: 1.25rem; }
+      .modal-bottombar { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1><i class="ph ph-first-aid-kit" style="color:#31BEEF"></i> Primer Ayudante — Flujo Operativo (as-is)</h1>
+      <p>Entrevistado: Divani Duarte — Entrevista completa (9 fragmentos)</p>
+    </header>
+
+    <div class="breadcrumb">
+      <a href="../index.html"><i class="ph ph-arrow-left"></i> Volver al Índice</a>
+    </div>
+
+    <div class="status-badge" style="background: #4CAF50;"><i class="ph ph-check-circle"></i> ENTREVISTA COMPLETA — 1 sesión, 9 fragmentos</div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 1: DATOS CONFIRMADOS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-check-square"></i> Datos confirmados</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">121 datos organizados por flujo operativo. Fuente: Divani Duarte (Primer Ayudante), 1 sesión de entrevista.<br>Haz clic en cualquier tarjeta para explorar los datos.</p>
+
+      <div class="slide-grid">
+        <div class="slide-card" onclick="openSlide(0)"><span class="card-number">1</span><h3>Divani: Perfil y rol</h3><span class="card-count">10 datos</span></div>
+        <div class="slide-card" onclick="openSlide(1)"><span class="card-number">2</span><h3>Equipo y coordinación</h3><span class="card-count">10 datos</span></div>
+        <div class="slide-card" onclick="openSlide(2)"><span class="card-number">3</span><h3>Valoraciones</h3><span class="card-count">8 datos</span></div>
+        <div class="slide-card" onclick="openSlide(3)"><span class="card-number">4</span><h3>Preparación pre-procedimiento</h3><span class="card-count">13 datos</span></div>
+        <div class="slide-card" onclick="openSlide(4)"><span class="card-number">5</span><h3>Procedimientos</h3><span class="card-count">11 datos</span></div>
+        <div class="slide-card" onclick="openSlide(5)"><span class="card-number">6</span><h3>Día típico y triaje</h3><span class="card-count">13 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(6)"><span class="card-number">7</span><h3>Documentación — fricción principal</h3><span class="card-count">17 datos</span></div>
+        <div class="slide-card" onclick="openSlide(7)"><span class="card-number">8</span><h3>Fotos y registro de material</h3><span class="card-count">9 datos</span></div>
+        <div class="slide-card" onclick="openSlide(8)"><span class="card-number">9</span><h3>Post-procedimiento</h3><span class="card-count">8 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(9)"><span class="card-number">10</span><h3>Agenda — fricción</h3><span class="card-count">7 datos</span></div>
+        <div class="slide-card" onclick="openSlide(10)"><span class="card-number">11</span><h3>Protocolos e historia clínica</h3><span class="card-count">13 datos</span></div>
+        <div class="slide-card card-sentiment" onclick="openSlide(11)"><span class="card-number">12</span><h3>Lo que Divani siente</h3><span class="card-count">13 expresiones</span></div>
+      </div>
+
+      <!-- SLIDES HIDDEN DATA (used by modal JS) -->
+      <div id="slides-data" style="display:none;">
+
+      <!-- SLIDE 0 -->
+      <div class="slide" data-title="Divani: Perfil y rol" data-count="10 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Nombre y puesto:</strong> Divani Duarte. Primer Ayudante. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Dos áreas de trabajo:</strong> Diagnóstica (valoraciones) + operativa (quirúrgica). <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Antigüedad en ARMC:</strong> ~1 año y 3 meses (aproximadamente año y medio). <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Experiencia previa:</strong> Mismo puesto en otra clínica durante 3 años. Total: ~4.5 años de experiencia. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Formación:</strong> Misma formación médica que Gabriel. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Edad y experiencia relativa:</strong> 2 años mayor que Gabriel, con 2 años menos de experiencia clínica. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Alcance de procedimientos:</strong> Capacitado para inyectables (botox, rellenos, estimuladores) y liposucción facial láser. NO blefaroplastia ni invasivos del área ocular. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>A quién asiste:</strong> Solo asiste en procedimientos del Dr. Gabriel. De ningún otro doctor. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Médico principal:</strong> En la mayoría de los procedimientos, Divani es el médico principal. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Lo que más le gusta:</strong> Valoraciones (aterrizar expectativas) + hacer procedimientos. "El estrés desaparece, no estoy pensando en otra cosa." <span class="source-tag">— Divani</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 1 -->
+      <div class="slide" data-title="Equipo y coordinación" data-count="10 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Maricela:</strong> Principal en valoraciones. Divani es su respaldo. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Trabajo habitual:</strong> Normalmente trabaja solo. Apoyo ocasional de Brisa (cosmiatra) y Óscar (enfermero) en lipo facial láser. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Comunicación de llegadas:</strong> Recepcionista/secretaria general avisa por grupo WhatsApp cuando llegan pacientes y a qué vienen. Carlos complementa con detalle específico del procedimiento ("viene a relleno de labios"). <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Si no saben a qué viene el paciente:</strong> Preguntan de forma agradable: "Recuérdame qué procedimiento vamos a hacer hoy." <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Asignación de tareas:</strong> Sin asignación fija. Procesos se adaptan según quién esté desocupado. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Absorción de tareas:</strong> Cada quien tiene que absorber parte de las labores del otro cuando todos están ocupados simultáneamente. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Distribución en lipo facial:</strong> Simultánea — Divani marca + fotos, Óscar anestesia, Brisa en masajes si hay pendientes. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Cobros:</strong> Carlos es el principal. Si está saturado, Divani cobra solo por transferencia (teme equivocarse con la terminal). Divani pide a Brisa que apoye cuando el cobro no es transferencia. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Brisa en cobros:</strong> Brisa maneja la terminal cuando Carlos no está disponible. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Datos administrativos:</strong> Números de cuenta, cobros — los maneja Carlos. No van en historia clínica. <span class="source-tag">— Divani</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2 -->
+      <div class="slide" data-title="Valoraciones" data-count="8 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Cuándo hace valoraciones:</strong> Cuando la Dra. Maricela está ocupada. Él es el respaldo. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Qué hace en la valoración:</strong> Diagnostica, propone tratamientos y presenta opciones. Enfoque expectativa vs realidad: "Tú qué quieres, de eso se puede lograr esto." <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Servicio ambulatorio:</strong> No existe. No hay atención a domicilio. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Pacientes remotos — procedimientos sencillos:</strong> Revisión por videollamada o video para procedimientos simples (botox). Duración: 3-5 minutos. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Pacientes remotos — procedimientos complejos:</strong> Liposucción facial, blefaroplastia: el paciente debe estar cerca de la clínica ~2 semanas. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Procedimientos mismo día:</strong> Algunos se realizan el mismo día de la valoración (botox, rinomodelación) sin necesidad de agendar para otro día. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Carga de agenda variable:</strong> Varía porque a veces el procedimiento se hace directamente después de la valoración. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Pacientes de seguimiento:</strong> Cuando ya conocen a Divani, él prepara y hace el procedimiento completo sin necesidad de esperar a Gabriel. <span class="source-tag">— Divani</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3 -->
+      <div class="slide" data-title="Preparación pre-procedimiento" data-count="13 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Expediente y documentación:</strong> Divani hace expediente clínico, historia clínica y consentimientos informados. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Identificación:</strong> Obtiene copia de identificación del paciente. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Anestesia:</strong> Hace bloqueos peribales (ej: labios). Prácticamente todos los procedimientos usan lidocaína con epinefrina (anestesia local). <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Fotos del antes:</strong> Toma fotos del "antes" para archivo fotográfico. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Marcado del paciente:</strong> Marca al paciente antes del procedimiento. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Distribución de la preparación:</strong> 50/50. A veces Divani solo; a veces Brisa le apoya: desmaquilla al paciente y carga la anestesia. Divani llega y "nada más llego a picar." <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>En lipo facial:</strong> Óscar anestesia casi siempre (es más rápido). Divani toma fotos y marca. Optimización de tiempos simultánea. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Situaciones especiales:</strong> Enfermedades, peso, alergias se detectan en la valoración. Desde ahí saben si necesitan cuidado previo o medicamento adicional. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Verificación de alergias:</strong> Siempre preguntan al paciente que recuerde sus alergias antes del procedimiento. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Alerta verbal de alergias:</strong> A veces ni leen la historia clínica — el aviso es verbal: "Oye, Óscar, este paciente es alérgico a tal cosa." <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Estándar por procedimiento:</strong> Hay un estándar por tipo, pero los detalles particulares se detectan en la valoración. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Quién prepara instrumental:</strong> Lee la historia clínica para saber qué preparar (cuando la consultan). <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Información previa del paciente:</strong> El paciente NO manda información previa. Todo se completa cuando viene presencialmente. <span class="source-tag">— Divani</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4 -->
+      <div class="slide" data-title="Procedimientos" data-count="11 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Tipos de procedimientos:</strong> Liposucción facial láser, relleno de labios, rinomodelación. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Capacidad autónoma:</strong> Procedimientos de seguimiento con pacientes que ya lo conocen: Divani los prepara y ejecuta completo. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Misma formación que Gabriel:</strong> Misma base médica aunque con menos años de experiencia clínica. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Procedimientos invasivos:</strong> En blefaroplastia, Divani solo anestesia y espera a que Gabriel intervenga. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Aceptación del paciente:</strong> Se pregunta al paciente; si no tiene oposición, Divani hace el procedimiento completo. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Día fuerte:</strong> 6-7 procedimientos solo Divani. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Distribución habitual:</strong> ~4 inyectables estéticos + ~2 liposucciones láser por día fuerte. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Duración promedio:</strong> Procedimientos (relleno labios, botox): ~40 minutos. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Tratamiento para bajar de peso:</strong> También dan tirzepatida. Se pregunta sobre dosis anterior, dolor abdominal, náuseas para ajustar. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Mezclas y medicación:</strong> A veces el enfermero/Brisa prepara; muchas veces Divani mismo. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Libertad de protocolo:</strong> Divani actúa con libertad sobre el protocolo considerando particularidades del paciente. <span class="source-tag">— Divani</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5 -->
+      <div class="slide" data-title="Día típico y triaje" data-count="13 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Inicio del día</h4>
+          <div class="dato-box"><strong>Llegada:</strong> Divani llega ~10 AM. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Rutina matutina:</strong> Al llegar revisa la agenda directamente. Todos los del equipo hacen lo mismo; nadie espera que alguien le diga. Carlos o Brisa complementan con orientación verbal. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #31BEEF;">Triaje y priorización</h4>
+          <div class="dato-box"><strong>Prioridad de atención:</strong> Revisión (15-20 min) > Valoración > Procedimiento (~40 min). La revisión es más rápida y se atiende primero para agilizar el flujo. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Cuando se acumulan pacientes:</strong> Esperan ~30 minutos. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Revisiones de seguimiento:</strong> Duran 10-20 minutos máximo. Son evaluaciones físicas sin instrumentación ni pruebas. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Dudas constantes en revisiones:</strong> Pacientes siempre tienen dudas de reafirmación de piel y recuperación. "Pasa mucho." Divani tiene que explicar constantemente, alargando las revisiones. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #31BEEF;">Horarios</h4>
+          <div class="dato-box"><strong>Comida:</strong> Divani y Carlos comen juntos 2-3 PM. Brisa y Óscar 3-4 PM. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Días cargados:</strong> Salen desfasados (~2:30 PM en vez de 2:00 PM). <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #31BEEF;">Espacio físico</h4>
+          <div class="dato-box"><strong>Consultorios:</strong> 5 en total: 4 operativos + 1 solo para valoraciones. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Flujo entre consultorios:</strong> Post-procedimiento, Divani sale y va al siguiente consultorio. Brisa le avisa si hay revisión o inyección pendiente. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #31BEEF;">Registro de toxina</h4>
+          <div class="dato-box"><strong>Registro de botulínica:</strong> Divani lleva registro de toxina botulínica. ~90% de las veces él provee el botox cuando se necesita. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Busca automatizar:</strong> Sí buscan que los procesos estén automatizados/definidos, pero se les complica. <span class="source-tag">— Divani</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6 -->
+      <div class="slide" data-title="Documentación — fricción principal" data-count="17 datos">
+        <div class="details-content">
+          <h4 style="color: #ff4444;">Estado general</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Todo manual:</strong> "Apenas empezamos a digitalizar algunos datos, pero básicamente todo es escrito." <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">La fricción #1:</strong> Rellenar formatos es lo que más fricción genera. "Eso es lo que me genera un poquito más." Confirmado en múltiples momentos de la entrevista. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #ff4444;">Cuándo se documenta</h4>
+          <div class="dato-box"><strong>Documentación diferida:</strong> Se hace "a la par" del procedimiento, en espacios muertos entre pacientes, o hasta un día después. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Anotaciones rápidas:</strong> Durante el procedimiento se hacen notas rápidas; se completan después. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Acumulación de backlog:</strong> Si hay 2+ días seguidos cargados, los documentos se acumulan. "Se nos empiezan a acumular documentos." <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Apoyo externo:</strong> Óscar y Brisa ayudan a catalogar documentos y llenar información faltante cuando se acumula, aunque no participaron en los procedimientos. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #ff4444;">Formato y contenido</h4>
+          <div class="dato-box"><strong>Formato estandarizado:</strong> Las historias clínicas vienen en formato pre-llenado para llenar rápido. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Notas estandarizadas:</strong> Las notas de procedimiento ya están estandarizadas; solo cambia la cantidad de producto aplicado. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Campos vacíos:</strong> Algunos rubros no relevantes se dejan vacíos inicialmente (ej: dieta para inyectables) y se rellenan después. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Registro en chat grupal:</strong> Grupo interno donde anotan lo realizado: "vino Divani y se puso 32 unidades de botox" + confirman consentimiento firmado. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #ff4444;">Errores por prisa</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Prisa = errores:</strong> Cuando hay prisa (Gabriel tiene otro procedimiento encima), aceleran documentación. "Donde tenemos que acelerar todo, empiezan los errores operativos en la información plasmada." <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Patrón de error:</strong> Anestesian primero, dejan historia clínica para después. El paciente se va sin completar datos o sin firma recabada. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Durante el procedimiento:</strong> NO se registra nada (tiempo, material, incidencias) — todo de memoria. Solo cosas "muy importantes" se anotan de inmediato. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #ff4444;">Propuesta interna fallida</h4>
+          <div class="dato-box"><strong>Pre-papeleo propuesto:</strong> Divani ya propuso que pacientes vengan 1-2 días antes solo para papeleo. "Ya lo había expresado una vez, pero no lo vemos como muy viable." <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #31BEEF;">Lo que sí se puede delegar</h4>
+          <div class="dato-box"><strong>Historia clínica médica:</strong> NO puede completarla el paciente solo. Requiere guía profesional (ej: paciente dice "hipotiroidismo" pero es secundario por neoplasia). <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Ficha de identificación delegable:</strong> Lo que SÍ podría adelantar el paciente: dirección, correo, teléfono, familiar responsable. Dato estratégico para diseño D1. <span class="source-tag">— Divani</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7 -->
+      <div class="slide" data-title="Fotos y registro de material" data-count="9 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Fotos</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Fotos antes:</strong> Muchas. Fotos después: casi no se toman. "Las postitas a veces nos faltan." <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Dispositivos personales:</strong> Gabriel toma fotos con su teléfono personal y Divani con el suyo. Sin sistema centralizado. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Sin vinculación al expediente:</strong> Las fotos se quedan en el dispositivo personal y en la nube del teléfono. NO se vinculan al expediente del paciente. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Sin borrado:</strong> No borran las fotos. Se quedan guardadas. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #31BEEF;">Contenido de notas clínicas</h4>
+          <div class="dato-box"><strong>Complicaciones:</strong> Cambios inesperados y complicaciones SÍ quedan registrados en la nota. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Descripción técnica:</strong> En la nota se describe: sangrado (ml), cantidad de anestesia (200-250ml), voltaje/energía del láser. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #31BEEF;">Registro de material</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Doble registro:</strong> Se anota en grupo WhatsApp (nombre paciente + productos) Y en hoja física en consultorio. Misma información duplicada. Carlos después la pasa a Excel. Triple transcripción: WhatsApp → papel → Excel. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Excel de Carlos:</strong> Carlos lleva balances diarios en Excel usando esa información de material. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Limpieza de sala:</strong> "Se me olvida recoger." Brisa y Óscar limpian y preparan el material. Divani solo tira los punzocortantes. <span class="source-tag">— Divani</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8 -->
+      <div class="slide" data-title="Post-procedimiento" data-count="8 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Indicaciones post</h4>
+          <div class="dato-box"><strong>Entrega de indicaciones:</strong> Explicación verbal de Divani + Carlos manda por WhatsApp respuestas rápidas con cuidados listados. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Sin documento físico:</strong> No se entrega documento físico de indicaciones al paciente. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Estandarizadas por ley:</strong> Las indicaciones post están estandarizadas legalmente. Se dan verbal + WhatsApp. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #31BEEF;">Seguimiento de revisiones</h4>
+          <div class="dato-box"><strong>Protocolo quirúrgicos:</strong> Revisión al 3er día, luego semanal. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Protocolo inyectables:</strong> Revisión a los 15 días. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Complicaciones:</strong> Cita al día siguiente o al 3er día. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Fechas concretas:</strong> Se le dice al paciente la fecha exacta de revisión. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Preferencia de comunicación:</strong> Divani prefiere WhatsApp sobre correo. "El WhatsApp lo reviso más." JPV enviará el diagrama personalizado por WhatsApp directo (no en grupo) para validación antes de la propuesta. <span class="source-tag">— Divani</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 9 -->
+      <div class="slide" data-title="Agenda — fricción" data-count="7 datos">
+        <div class="details-content">
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Interrupción para anotar:</strong> Divani fue interrumpido durante la entrevista para anotar en la agenda ("rinomodelación dos anticipo"). La agenda requiere atención inmediata incluso fuera del horario de procedimientos. <span class="source-tag">— Observación</span></div>
+          <div class="dato-box"><strong>Divani también usa la agenda:</strong> No solo Carlos. Divani anota directamente en la agenda física. <span class="source-tag">— Observación</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Agenda saturada:</strong> La agenda se satura, pacientes encimados. No hay espacio para el papeleo. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Omisión de revisiones:</strong> Divani omite anotar revisiones en la agenda física. "Se me pasa anotarlos directamente." <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Agenda nómada:</strong> La agenda física anda de consultorio en consultorio, no siempre disponible cuando se necesita. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Registro perdido:</strong> Si Carlos no está o la agenda no está disponible, el registro se pierde. El paciente sabe que va a venir; la clínica no. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Pacientes sin agendar:</strong> Pacientes llegan sin estar agendados. "¿Quién lo agendó?" — "Fui yo, se me olvidó." <span class="source-tag">— Divani</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 10 -->
+      <div class="slide" data-title="Protocolos e historia clínica" data-count="13 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Estado de los protocolos</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Protocolos de memoria:</strong> Existen pero funcionan "a nivel de mente." Ya los tienen presentes; no consultan documentos antes del procedimiento. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">HC ignorada en transferencias:</strong> Cuando recibe paciente transferido por Gabriel, NO lee la historia clínica. Corrobora verbalmente. "Hago preguntas directas al paciente" — no le da tiempo. No es excepción; es la norma. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Protocolo de transferencia:</strong> Se presenta, dice qué va a hacer, pregunta alergias directamente al paciente. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #31BEEF;">Contenido de la historia clínica</h4>
+          <div class="dato-box"><strong>Ficha de identificación:</strong> La HC contiene teléfono, correo, dirección, edad, fecha de nacimiento. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Verificación de quién prepara:</strong> Quien prepara el instrumental lee la historia clínica para saber qué preparar (cuando la consultan). <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Deficiencia — dieta:</strong> Falta desarrollar sección de dieta en la HC, necesaria para el control del medicamento para bajar de peso (tirzepatida). <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Deficiencia — análisis facial:</strong> Falta desarrollar sección de análisis facial, siendo que la mayoría de los procedimientos son de rostro. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #31BEEF;">Tiempos y tirzepatida</h4>
+          <div class="dato-box"><strong>Tiempos no estandarizados:</strong> Regla informal: no pasar de 1 hora en procedimientos, 20 minutos en revisiones. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Tirzepatida:</strong> Pregunta sobre dosis anterior, dolor abdominal, náuseas y vómito para ajustar la dosis. <span class="source-tag">— Divani</span></div>
+          <h4 style="color: #31BEEF;">Digitalización</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Inicio de digitalización:</strong> "Apenas empezamos a digitalizar algunos datos, pero básicamente todo es escrito." No especifica qué datos exactamente. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Automatización buscada:</strong> Sí buscan que esté automatizado/definido, pero se les complica. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Propuesta de pre-papeleo:</strong> Divani ya propuso internamente que pacientes vengan antes solo para papeleo. No fue aprobada. El equipo reconoce el problema sin tener solución implementada. <span class="source-tag">— Divani</span></div>
+          <div class="dato-box"><strong>Parte médica no delegable:</strong> La historia clínica médica requiere guía profesional para completarse. La ficha de identificación sí podría adelantarla el paciente antes de llegar. <span class="source-tag">— Divani</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 11 -->
+      <div class="slide" data-title="Lo que Divani siente sobre su trabajo" data-count="13 expresiones">
+        <div class="details-content">
+          <h4 style="color: #ff4444;">Fricciones expresadas</h4>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Registrar documentación es laborioso, absorbe mucho el tiempo"</strong> — la tarea que más tiempo le ocupa <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se satura la agenda, pacientes encimados"</strong> — no hay espacio para el papeleo <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se me pasa anotarlos directamente"</strong> — sobre registrar revisiones en la agenda física <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Pasa mucho"</strong> — pacientes siempre con dudas de recuperación, hay que explicar constantemente <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se nos empiezan a acumular documentos"</strong> — cuando hay 2+ días cargados consecutivos <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"A veces sí se nos complica un poquito"</strong> — sobre tener procesos automatizados/definidos <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Cada quien tiene que como absorber parte de las labores del otro"</strong> — cuando todos se ocupan simultáneamente <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"No vaya a cobrar yo mal"</strong> — inseguridad con la terminal de cobro, por eso solo cobra transferencias <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Las postitas a veces nos faltan"</strong> — fotos post-procedimiento no se toman consistentemente <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se me olvida recoger"</strong> — no limpia la sala post-procedimiento; lo hacen Brisa y Óscar <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Lo de rellenar los formatos, eso es lo que me genera un poquito más"</strong> — confirma documentación como dolor principal de su rol <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Donde tenemos que acelerar todo, pues es donde empiezan a hacer como los errores operativos en cuanto a la información plasmada"</strong> — prisa genera errores en documentación <span class="source-tag">— Divani</span></div>
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Lo que más le gusta:</strong> Valoraciones + procedimientos. "El estrés desaparece, no estoy pensando en otra cosa." <span class="source-tag">— Divani</span></div>
+        </div>
+      </div>
+
+      </div><!-- /slides-data -->
+    </section>
+
+    <!-- FULLSCREEN PRESENTATION MODAL -->
+    <div class="modal-overlay" id="slideModal">
+      <div class="modal-progress"><div class="modal-progress-fill" id="progressFill"></div></div>
+      <div class="modal-topbar">
+        <div class="modal-topbar-left">
+          <span class="modal-slide-num" id="slideNum"></span>
+          <span class="modal-slide-title" id="slideTitle"></span>
+        </div>
+        <button class="modal-close" onclick="closeModal()" title="Cerrar (Esc)">&times;</button>
+      </div>
+      <div class="modal-slide-area">
+        <button class="modal-side-nav nav-left" id="btnPrev" onclick="prevSlide()"><i class="ph ph-caret-left"></i></button>
+        <div class="modal-slide-content" id="modalBody"></div>
+        <div class="scroll-hint" id="scrollHint"><span class="scroll-hint-arrow"><i class="ph ph-caret-down"></i> scroll</span></div>
+        <button class="modal-side-nav nav-right" id="btnNext" onclick="nextSlide()"><i class="ph ph-caret-right"></i></button>
+      </div>
+      <div class="modal-bottombar" id="modalDots"></div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 2: DIAGRAMA DE FLUJO -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-flow-arrow"></i> Diagrama de Flujo — Rol de Divani (solo datos confirmados)</h2>
+      <p style="color: #A1B8F2;">121 datos de entrevista. Flujo completo del rol de Primer Ayudante.</p>
+      <div class="mermaid-container">
+        <div class="mermaid">
+flowchart TD
+    classDef default fill:#1a2535,stroke:#31BEEF,stroke-width:1.5px,color:#FAF9F6
+    classDef friction fill:#2a1015,stroke:#ff4444,stroke-width:2px,color:#ff4444
+    classDef auto fill:#0f2015,stroke:#4CAF50,stroke-width:1.5px,color:#4CAF50
+    classDef decision fill:#1f1525,stroke:#994E95,stroke-width:1.5px,color:#FAF9F6
+    classDef entry fill:#0f1f2f,stroke:#31BEEF,stroke-width:1.5px,color:#31BEEF
+
+    subgraph INICIO["INICIO DÍA — llega ~10 AM"]
+        I1["Divani llega, revisa agenda"]:::entry --> I2["WhatsApp: recepcionista anuncia llegadas"]
+        I2 --> I3{"Tipo de<br/>cita"}:::decision
+        I3 -->|"Revisión 15-20 min"| I4["Evaluación física + dudas constantes"]:::friction
+        I3 -->|"Valoración"| V1
+        I3 -->|"Procedimiento ~40 min"| P1
+    end
+
+    subgraph VAL["VALORACIÓN — respaldo de Maricela"]
+        V1["Divani o Maricela valoran"] --> V2["Diagnóstico + opciones de tratamiento"]
+        V2 --> V3{"Mismo<br/>día"}:::decision
+        V3 -->|"Sí: botox, rinomodelación"| P1
+        V3 -->|"No"| V4["Agendar para otro día"]
+    end
+
+    subgraph PREP["PREPARACIÓN — 50/50 Divani o Brisa"]
+        P1["Expediente + HC + consentimientos MANUAL"]:::entry --> P2["Alergias: aviso verbal, sin consultar HC"]:::friction
+        P2 --> P3["Fotos antes + marcado + anestesia"]
+    end
+
+    subgraph PROC["PROCEDIMIENTO — ~4 inyectables + ~2 lipo/día"]
+        P3 --> PR1{"Tipo de<br/>procedimiento"}:::decision
+        PR1 -->|"Inyectables"| PR2["Divani: procedimiento completo"]
+        PR1 -->|"Lipo facial"| PR3["Óscar anestesia, Divani opera"]
+        PR1 -->|"Blefaroplastia"| PR4["Gabriel opera, Divani asiste"]
+        PR2 --> PR5["Protocolos de memoria — no consultan docs"]:::friction
+        PR3 --> PR5
+        PR4 --> PR5
+    end
+
+    subgraph DOC["DOCUMENTACIÓN — fricción #1, todo manual"]
+        PR5 --> D1["Notas rápidas + fotos teléfono personal"]
+        D1 --> D2{"Tiempo<br/>disponible"}:::decision
+        D2 -->|"Sí"| D3["Completar HC + notas + registro material"]
+        D2 -->|"Prisa"| D4["Paciente se va sin datos o firma"]:::friction
+        D2 -->|"Días cargados"| D5["Backlog — Óscar/Brisa rellenan sin contexto"]:::friction
+        D3 --> D6["Registro doble: WhatsApp + hoja física"]:::friction
+        D5 --> D6
+    end
+
+    subgraph POST["POST-PROCEDIMIENTO"]
+        D6 --> PO1["Carlos cobra + indicaciones WhatsApp"]
+        D4 -.-> PO1
+        PO1 --> PO2["REVISIONES DE MEMORIA — sin registro formal"]:::friction
+    end
+
+    subgraph AGD["AGENDA — fricción sistémica"]
+        PO2 -.->|"agendar revisión"| AG1["Agenda física nómada"]
+        AG1 -.-> AG2["Omite anotar — paciente llega sin registro"]:::friction
+    end
+        </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.5rem; font-size: 0.85rem; padding: 0.75rem 1rem; background: rgba(26,37,53,0.5); border-radius: 6px;">
+        <span style="color: #4CAF50;">● Automatizado</span>
+        <span style="color: #994E95;">● Decisión</span>
+        <span style="color: #ff4444;">● Fricción</span>
+        <span style="color: #31BEEF;">● Entrada/Salida</span>
+        <span style="color: #A1B8F2;">┈┈ Flujo secundario</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- VACÍOS DE INFORMACIÓN -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-question"></i> Vacíos de información</h2>
+
+      <details>
+        <summary style="border-left-color: #4CAF50; color: #4CAF50;">Vacíos resueltos durante la entrevista (11)</summary>
+        <div class="details-content">
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> De 6-7 procedimientos/día, cuántos quirúrgicos vs no quirúrgicos</strong> — ~4 inyectables estéticos + ~2 lipo láser. Todos no quirúrgicos invasivos. <span class="source-tag">— Divani</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Tiempo dedicado a documentación entre pacientes</strong> — No hay tiempo dedicado exclusivamente. Se hace en paralelo, espacios muertos, o hasta el día siguiente. Si 2+ días cargados, se acumula y Óscar/Brisa ayudan. <span class="source-tag">— Divani</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Tipo de anestesia</strong> — Lidocaína con epinefrina, anestesia local para prácticamente todos los procedimientos. Óscar anestesia en lipo facial (más rápido). <span class="source-tag">— Divani</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Criterio de apoyo: Brisa vs Óscar</strong> — No hay criterio fijo, se adaptan según disponibilidad. En lipo facial: Óscar anestesia (más rápido), Brisa: desmaquillaje/prep. "Cada quien absorbe labores del otro." <span class="source-tag">— Divani</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Formato del expediente clínico</strong> — TODO escrito/manual. "Apenas empezamos a digitalizar algunos datos, pero básicamente todo es escrito." <span class="source-tag">— Divani</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Fotos y marcado: Divani, Gabush, o ambos</strong> — AMBOS. Gabriel toma con su teléfono personal, Divani con el suyo. No era contradicción. <span class="source-tag">— Divani</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Almacenamiento de fotos</strong> — Teléfonos personales (Gabriel y Divani). Respaldo en nube del teléfono personal. Sin sistema centralizado. <span class="source-tag">— Divani</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Cuántos consultorios</strong> — 5 total: 4 consultorios operativos + 1 solo para valoraciones. <span class="source-tag">— Divani</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Respaldo de fotos</strong> — En nube del teléfono personal (iCloud/Google). No se vinculan al expediente. No se borran. <span class="source-tag">— Divani</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Lista completa de procedimientos que Divani NO hace</strong> — Solo blefaroplastia y procedimientos invasivos del área ocular. No hay más. <span class="source-tag">— Divani</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> El "grupito" donde anotan procedimientos</strong> — Es el mismo chat WhatsApp del equipo. No hay uno diferente. <span class="source-tag">— Divani</span></div>
+        </div>
+      </details>
+
+      <details>
+        <summary style="border-left-color: #4CAF50; color: #4CAF50;">Vacíos resueltos por otras entrevistas (2)</summary>
+        <div class="details-content">
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Consentimientos por procedimiento o genéricos</strong> — Hay 2 consentimientos informados (genéricos) + 1 consentimiento específico del procedimiento (lipo, fillers, botox, etc.). Son 3 documentos de consentimiento en total, dentro de un folder que incluye también historia clínica y aviso de privacidad. <span class="source-tag">— Resuelto por Óscar González, Enfermero</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Información pre-procedimiento a pacientes de lejos</strong> — Carlos es quien envía la info por WhatsApp. "Les mandan mensaje al WhatsApp. Eso se encarga Carlitos." WhatsApp manejado por Carlos y Dra. Elián. <span class="source-tag">— Resuelto por Brisa Nazario, Cosmiatra</span></div>
+        </div>
+      </details>
+
+      <h3 style="color: #FFC107;">Vacíos pendientes (3)</h3>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Proporción valoraciones Divani vs Maricela</strong> — No queda claro cuántas valoraciones hace cada uno por semana. <span class="source-tag" style="color: #4CAF50;">AMPLIADO por Dra. Marisela Narváez (CEO): confirma que "hacer todas las valoraciones de los pacientes" es una de sus 3 responsabilidades principales. Motor de conversión: "No hay valoración que yo no dé que el paciente no se quede." Divani es respaldo cuando ella está ocupada. Proporción exacta sigue sin cuantificarse.</span></div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Proporción de procedimientos Divani vs Gabriel</strong> — Cuántos hace cada uno por semana.</div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Aceptación del paciente</strong> — Qué porcentaje acepta que Divani haga el procedimiento.</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- HANDOFFS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-arrows-left-right"></i> Puntos de Handoff</h2>
+
+      <div class="dato-box"><strong>Divani ↔ Maricela:</strong> Divani cubre valoraciones cuando Maricela está ocupada. Mecanismo de traspaso no descrito en detalle.</div>
+      <div class="dato-box"><strong>Divani ↔ Gabriel:</strong> Divani hace procedimientos menores de forma autónoma (inyectables, lipo facial). En invasivos (blefaroplastia), Divani solo anestesia y espera a Gabriel. Se pregunta al paciente antes de proceder.</div>
+      <div class="dato-box"><strong>Divani ← Brisa/Óscar:</strong> Apoyo ocasional en lipo facial láser. Divani normalmente trabaja solo. Sin asignación fija: según disponibilidad. En lipo: Óscar anestesia (más rápido), Brisa desmaquilla + carga anestesia.</div>
+      <div class="dato-box"><strong>Recepcionista/Secretaria → Equipo (WhatsApp):</strong> Avisa cuando llega paciente y a qué viene. Carlos complementa con detalle específico del procedimiento.</div>
+      <div class="dato-box"><strong>Divani → Óscar/Brisa (documentación):</strong> Cuando se acumulan documentos (2+ días cargados), Óscar y Brisa ayudan a catalogar y llenar información faltante, sin haber participado en el procedimiento.</div>
+      <div class="dato-box"><strong>Divani → Carlos (cobros):</strong> Carlos maneja cobros administrativos. Si saturado, Divani cobra solo transferencias; para terminal pide a Brisa.</div>
+      <div class="dato-box"><strong>Divani → Carlos (indicaciones post):</strong> Divani da indicaciones verbalmente al paciente. Carlos las refuerza enviando respuestas rápidas estandarizadas por WhatsApp.</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FRICCIONES EXPRESADAS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-fire"></i> Fricciones expresadas por Divani</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Citas literales — lo que Divani siente y expresa sobre su trabajo.</p>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Registrar documentación es laborioso, absorbe mucho el tiempo"</strong> — la tarea que más tiempo le ocupa</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se satura la agenda, pacientes encimados"</strong> — no hay espacio para el papeleo</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se me pasa anotarlos directamente"</strong> — omite registrar revisiones en la agenda física</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Pasa mucho"</strong> — pacientes siempre con dudas de recuperación; hay que explicar constantemente</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se nos empiezan a acumular documentos"</strong> — cuando hay 2+ días cargados consecutivos</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"A veces sí se nos complica un poquito"</strong> — sobre tener procesos automatizados/definidos</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Cada quien tiene que como absorber parte de las labores del otro"</strong> — cuando todos se ocupan simultáneamente</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"No vaya a cobrar yo mal"</strong> — inseguridad con la terminal de cobro</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Las postitas a veces nos faltan"</strong> — fotos post-procedimiento no se toman consistentemente</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se me olvida recoger"</strong> — no limpia sala post-procedimiento; Brisa/Óscar lo hacen</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Lo de rellenar los formatos, eso es lo que me genera un poquito más"</strong> — confirma documentación como dolor #1 de su rol</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Donde tenemos que acelerar todo, pues es donde empiezan a hacer como los errores operativos en cuanto a la información plasmada"</strong> — prisa genera errores en documentación</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FRICCIONES IDENTIFICADAS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-magnifying-glass"></i> Fricciones identificadas por análisis</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Fricciones operativas derivadas de los datos confirmados.</p>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Documentación es la fricción #1 — ciclo completo confirmado</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Declarado como "lo que más tiempo ocupa" (expresado verbalmente). Patrón completo: se hace en paralelo / en espacios muertos / hasta el día siguiente. Con 2+ días cargados se acumula backlog. Con prisa se anestesia primero y el paciente se va sin datos o sin firma. Riesgo de pérdida de detalle por distancia temporal con el procedimiento.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Agenda física nómada = registro perdido</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">La agenda anda de consultorio en consultorio. Divani agenda verbalmente con el paciente pero no lo anota siempre. Si Carlos no está o la agenda no está disponible, el registro se pierde. Resultado: pacientes llegan sin estar agendados.</p>
+        <span class="source-tag">— Divani + Carlos, Atención al Paciente</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Delegación de documentación a personal ausente del procedimiento</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Óscar y Brisa ayudan a catalogar y rellenar información faltante cuando se acumula, pero no participaron en el procedimiento. Rellenan campos sin contexto directo de lo que ocurrió.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Protocolos de memoria, no se consultan — riesgo clínico</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Funcionan "a nivel de mente." Los protocolos existen pero no se consultan antes del procedimiento. Si alguien olvida un detalle clínico (alergia, cuidado previo), no hay red de seguridad documental.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Alertas clínicas verbales en vez de sistema formal</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Alergias y cuidados especiales se comunican de voz: "Oye, Óscar, este paciente es alérgico a tal cosa." A veces ni leen la historia clínica. Un olvido verbal en el momento adecuado representa riesgo clínico real.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Historia clínica ignorada en transferencias de pacientes</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Cuando Gabriel transfiere un paciente, Divani NO lee el expediente — corrobora verbalmente con el paciente. "Hago preguntas directas." Depende 100% de la memoria del paciente para alergias y antecedentes. No es excepción, es la norma.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Deficiencias reconocidas en historia clínica</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Campos insuficientes para: (1) dieta/control de peso (dan tirzepatida pero no tienen espacio en la HC), (2) análisis facial detallado (mayoría de procedimientos son de rostro). Divani lo reconoce explícitamente.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Fotos post-procedimiento casi inexistentes</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Fotos del "antes" sí se toman. Fotos del "después" casi nunca. Sin evidencia fotográfica de resultados, es imposible medir outcomes o hacer seguimiento visual comparativo.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Fotos en dispositivos personales sin sistema centralizado</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Gabriel toma fotos con su teléfono, Divani con el suyo. Las fotos no se vinculan al expediente del paciente. Un cambio de dispositivo representa riesgo de pérdida del archivo fotográfico clínico.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Doble registro manual de material</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Se anota en grupo WhatsApp (nombre paciente + productos) Y en hoja física en consultorio. Misma información duplicada manualmente. Carlos después la pasa a Excel. Triple transcripción: WhatsApp → papel → Excel.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Indicaciones post sin documento formal al paciente</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Las indicaciones están estandarizadas por ley, pero se entregan solo verbal + WhatsApp. No se entrega documento físico. Si el paciente pierde el chat o no lo lee, pierde las indicaciones.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Pacientes se van sin datos completos o sin firma</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Cuando hay prisa (Gabriel tiene otro procedimiento), se anestesia primero y se deja la documentación para después. El paciente se va y faltan datos o firmas. Divani lo describe como patrón recurrente.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Propuesta interna de pre-papeleo descartada como "no viable"</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Divani ya propuso que pacientes vengan 1-2 días antes solo para papeleo. Fue descartado. El equipo reconoce el problema pero no tiene solución implementada. Señal de dolor organizacional sistémico.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Dudas constantes de recuperación alargan las revisiones</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">"Pasa mucho" — pacientes siempre tienen dudas sobre reafirmación de piel y recuperación. Divani tiene que explicar constantemente en cada revisión, lo que extiende la duración y comprime el tiempo disponible para el resto del flujo.</p>
+        <span class="source-tag">— Divani</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Todo manual/escrito, sin digitalización real</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">"Básicamente todo es escrito." Apenas empiezan a digitalizar. El paciente no manda información previa — todo se completa presencialmente. Confirma y agrava las fricciones de documentación.</p>
+        <span class="source-tag">— Divani + Carlos, Atención al Paciente</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- MAPEO A DOLORES APEX -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-target"></i> Mapeo a los 4 Dolores APEX</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Análisis completado. Dolor dominante: <strong style="color: #ff4444;">D1 (Procesos Internos)</strong>. D2 y D3 son consecuencia directa.</p>
+
+      <!-- D1 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #ff4444; border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444; font-size: 1.1rem;">D1 — Procesos Internos Ineficientes → DOLOR DOMINANTE</strong>
+        <span style="display: inline-block; background: #ff4444; color: #fff; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.75rem; margin-left: 0.5rem; vertical-align: middle;">DOLOR DOMINANTE</span>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Plataforma Centralizada de Gestión Clínica</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Todo manual/escrito. "Básicamente todo es escrito, apenas empezamos a digitalizar."</li>
+          <li>Documentación es la fricción #1: laboriosa, se acumula, genera errores por prisa</li>
+          <li>Pacientes se van sin datos completos o sin firma — patrón recurrente</li>
+          <li>Protocolos de memoria — no se consultan documentos antes del procedimiento</li>
+          <li>Agenda física nómada — registros perdidos por omisión o por no encontrar la agenda</li>
+          <li>Doble registro de material (WhatsApp + hoja física) → triple transcripción con Excel de Carlos</li>
+          <li>Fotos en dispositivos personales sin sistema centralizado</li>
+          <li>Historia clínica con campos insuficientes (dieta, análisis facial)</li>
+          <li>Propuesta interna de pre-papeleo descartada — dolor reconocido sin solución</li>
+        </ul>
+      </div>
+
+      <!-- D2 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D2 — Seguimiento y Clasificación de Pacientes → CONSECUENCIA DIRECTA</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Seguimiento y Clasificación Automática</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Revisiones de seguimiento sin registro formal — contribuye al problema sistémico</li>
+          <li>Fotos post-procedimiento casi inexistentes — sin evidencia de outcomes</li>
+          <li>Seguimiento con fechas concretas pero sin sistema que las rastree</li>
+          <li>Historia clínica ignorada en transferencias — depende de la memoria del paciente</li>
+        </ul>
+      </div>
+
+      <!-- D3 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #994E95; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #994E95; font-size: 1.1rem;">D3 — Comunicación Personalizada con Pacientes → IMPACTADO</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Comunicación Segmentada e Inteligente</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Indicaciones post: verbal + WhatsApp, sin documento formal al paciente</li>
+          <li>Dudas constantes de recuperación que alargan revisiones ("pasa mucho") — comunicación pre-procedimiento insuficiente</li>
+          <li>Pacientes de lejos: videollamada informal, sin protocolo establecido</li>
+        </ul>
+      </div>
+
+      <!-- D4 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D4 — Conversión de Leads Publicitarios a Pacientes → INDIRECTAMENTE AFECTADO</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Pipeline de Conversión de Leads</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Valoraciones como respaldo de Maricela — Divani participa en el primer contacto clínico</li>
+          <li>Procedimientos mismo día de valoración (flujo directo) — ventaja operativa observable</li>
+          <li>Ficha de identificación delegable vs HC requiere profesional — dato estratégico para pre-registro D1</li>
+        </ul>
+      </div>
+
+      <!-- Retención -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #4CAF50; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #4CAF50; font-size: 1.1rem;">Retención = Ecosistema Integrado (D1+D2+D3+D4)</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0; line-height: 1.7;">Los pacientes de seguimiento recurrentes que Divani trata directamente son la evidencia viva de retención. Los 4 dolores en acción: sin D1 resuelto, las revisiones se pierden, la comunicación post es informal y la experiencia del paciente depende de la memoria y disposición de cada miembro del equipo.</p>
+      </div>
+
+      <!-- Conclusión -->
+      <div style="background: rgba(255, 68, 68, 0.08); padding: 1rem; border: 1px solid rgba(255, 68, 68, 0.2); border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444;">Conclusión desde este rol</strong>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li><strong style="color: #ff4444;">D1 es claramente el dolor dominante</strong> — Divani lidia directamente con las ineficiencias de procesos internos en cada procedimiento</li>
+          <li><strong style="color: #31BEEF;">D2 y D3 son consecuencia</strong> — sin un sistema base de D1, el seguimiento y la comunicación no pueden mejorar</li>
+          <li>D4 es tangencial desde este rol — Divani toca la conversión solo en valoraciones como respaldo</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="nav-links">
+      <a href="flujo-cosmiatra.html"><i class="ph ph-arrow-left"></i> Anterior: Cosmiatra</a>
+      <a href="flujo-ceo.html">Siguiente: CEO <i class="ph ph-arrow-right"></i></a>
+    </div>
+
+    <footer class="footer">
+      <p>ARMC — Aesthetic Rejuvenation Medical Center — Abril 2026 — PRISMA Consulting</p>
+    </footer>
+  </div>
+
+  <!-- Slide Presentation JS -->
+  <script>
+    (function() {
+      var slides = document.querySelectorAll('#slides-data .slide');
+      var modal = document.getElementById('slideModal');
+      var slideNum = document.getElementById('slideNum');
+      var slideTitle = document.getElementById('slideTitle');
+      var progressFill = document.getElementById('progressFill');
+      var modalBody = document.getElementById('modalBody');
+      var modalDots = document.getElementById('modalDots');
+      var btnPrev = document.getElementById('btnPrev');
+      var btnNext = document.getElementById('btnNext');
+      var scrollHint = document.getElementById('scrollHint');
+      var current = 0;
+      var total = slides.length;
+
+      // Build dots
+      for (var i = 0; i < total; i++) {
+        var dot = document.createElement('span');
+        dot.className = 'modal-dot';
+        dot.addEventListener('click', (function(idx) {
+          return function() { goToSlide(idx); };
+        })(i));
+        modalDots.appendChild(dot);
+      }
+
+      // Transform raw dato-box HTML into clean slide format
+      function transformContent(slide) {
+        var title = slide.getAttribute('data-title');
+        var count = slide.getAttribute('data-count');
+        var source = slide.querySelector('.details-content');
+        var html = '<div class="slide-title-block"><h2>' + title + '</h2><span class="slide-subtitle">' + count + '</span></div>';
+
+        var children = source.children;
+        for (var i = 0; i < children.length; i++) {
+          var el = children[i];
+          if (el.tagName === 'H4') {
+            // Section heading
+            var cls = 'slide-section-heading';
+            if (el.style.color && el.style.color.indexOf('4444') !== -1) cls += ' critical';
+            html += '<div class="' + cls + '">' + el.textContent + '</div>';
+          } else if (el.classList.contains('dato-box')) {
+            // Determine dot type from border color
+            var dotCls = 'slide-item-dot';
+            var style = el.getAttribute('style') || '';
+            if (style.indexOf('ff4444') !== -1) dotCls += ' critical';
+            else if (style.indexOf('4CAF50') !== -1) dotCls += ' positive';
+            else if (style.indexOf('994E95') !== -1) dotCls += ' sentiment';
+
+            // Get text content: strip source-tag, transform strong styling
+            var clone = el.cloneNode(true);
+            // Remove source tags
+            var tags = clone.querySelectorAll('.source-tag, .new-tag');
+            for (var t = 0; t < tags.length; t++) tags[t].remove();
+
+            // Transform strong colors to classes
+            var strongs = clone.querySelectorAll('strong');
+            for (var s = 0; s < strongs.length; s++) {
+              var sStyle = strongs[s].getAttribute('style') || '';
+              if (sStyle.indexOf('ff4444') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'critical-text';
+              } else if (sStyle.indexOf('4CAF50') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'positive-text';
+              } else if (sStyle.indexOf('994E95') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'sentiment-text';
+              }
+            }
+
+            var text = clone.innerHTML.replace(/<span class="source-tag">.*?<\/span>/g, '').trim();
+            html += '<div class="slide-item"><span class="' + dotCls + '"></span><span class="slide-item-text">' + text + '</span></div>';
+          }
+        }
+        return html;
+      }
+
+      function updateDots() {
+        var dots = modalDots.querySelectorAll('.modal-dot');
+        for (var i = 0; i < dots.length; i++) {
+          dots[i].classList.toggle('active', i === current);
+        }
+      }
+
+      function goToSlide(idx) {
+        current = idx;
+        var slide = slides[current];
+        slideNum.textContent = (current + 1) + ' / ' + total;
+        slideTitle.textContent = slide.getAttribute('data-count');
+        progressFill.style.width = ((current + 1) / total * 100) + '%';
+        modalBody.innerHTML = transformContent(slide);
+        modalBody.scrollTop = 0;
+        updateDots();
+        setTimeout(checkScrollHint, 50);
+        btnPrev.disabled = current === 0;
+        btnNext.disabled = current === total - 1;
+      }
+
+      window.openSlide = function(idx) {
+        goToSlide(idx);
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      };
+
+      window.closeModal = function() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+      };
+
+      window.prevSlide = function() {
+        if (current > 0) goToSlide(current - 1);
+      };
+
+      window.nextSlide = function() {
+        if (current < total - 1) goToSlide(current + 1);
+      };
+
+      // Scroll hint: show/hide based on scroll position
+      function checkScrollHint() {
+        var el = modalBody;
+        var canScroll = el.scrollHeight > el.clientHeight + 10;
+        var nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 30;
+        if (!canScroll || nearBottom) {
+          scrollHint.classList.add('hidden');
+        } else {
+          scrollHint.classList.remove('hidden');
+        }
+      }
+      modalBody.addEventListener('scroll', checkScrollHint);
+
+      // Keyboard + click outside
+      document.addEventListener('keydown', function(e) {
+        if (!modal.classList.contains('active')) return;
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'ArrowRight') nextSlide();
+      });
+
+      // Click on dark area closes
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal || e.target.classList.contains('modal-slide-area')) closeModal();
+      });
+    })();
+  </script>
+
+  <script>mermaid.contentLoaded();</script>
+</body>
+</html>

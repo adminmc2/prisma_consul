@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enfermero — ARMC Análisis Operativo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: 'transparent',
+        primaryColor: '#1a2535',
+        primaryTextColor: '#FAF9F6',
+        primaryBorderColor: '#31BEEF',
+        secondaryColor: '#1a2535',
+        secondaryBorderColor: '#994E95',
+        lineColor: '#31BEEF',
+        textColor: '#FAF9F6',
+        clusterBkg: '#162033',
+        clusterBorder: '#253545',
+        edgeLabelBackground: '#1a2535',
+        fontFamily: '"Source Sans 3", sans-serif',
+        fontSize: '14px'
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 15,
+        nodeSpacing: 50,
+        rankSpacing: 55,
+      }
+    });
+  </script>
+  <link rel="stylesheet" href="../css/estilos-prisma.css">
+  <style>
+    .breadcrumb { margin-bottom: 2rem; padding: 1rem; background: rgba(49, 190, 239, 0.05); border-radius: 4px; }
+    .breadcrumb a { color: #31BEEF; }
+    .diagram-section { background: #1a2535; border: 1px solid #31BEEF; border-radius: 8px; padding: 2rem; margin: 2rem 0; }
+    .diagram-section h2 { margin-top: 0; }
+    .mermaid-container { background: #101B2C; padding: 2rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; }
+    .mermaid { display: flex; justify-content: center; min-height: 300px; }
+    .mermaid .node rect, .mermaid .node polygon { rx: 8 !important; ry: 8 !important; stroke-width: 1.5px !important; }
+    .mermaid .nodeLabel, .mermaid .node .label { font-family: 'Source Sans 3', sans-serif !important; font-size: 14px !important; font-weight: 600 !important; }
+    .mermaid .edgePath path.path { stroke-width: 1.5px !important; opacity: 0.6; }
+    .mermaid .edgeLabel { font-size: 12px !important; font-family: 'Source Sans 3', sans-serif !important; font-weight: 600 !important; }
+    .mermaid .edgeLabel rect { rx: 4 !important; ry: 4 !important; fill: #1a2535 !important; stroke: none !important; }
+    .mermaid .edgeLabel span { color: #FAF9F6 !important; }
+    .mermaid .cluster rect { rx: 8 !important; ry: 8 !important; stroke-dasharray: 5 3; }
+    .mermaid .cluster-label .nodeLabel, .mermaid .cluster-label span { font-family: 'Quicksand', sans-serif !important; font-weight: 700 !important; font-size: 14px !important; letter-spacing: 0.5px; text-transform: uppercase; fill: #FAF9F6 !important; color: #FAF9F6 !important; }
+    .nav-links { display: flex; gap: 1rem; margin-top: 2rem; justify-content: space-between; }
+    .nav-links a { flex: 1; padding: 1rem; text-align: center; background: #1a2535; border: 1px solid #31BEEF; border-radius: 4px 25px 25px 4px; transition: all 400ms ease; color: #FAF9F6; text-decoration: none; }
+    .nav-links a:hover { background: #31BEEF; color: #101B2C; }
+    .status-badge { display: inline-block; padding: 0.5rem 1rem; background: #4CAF50; color: #FAF9F6; border-radius: 4px; font-size: 0.85rem; margin-bottom: 1rem; font-weight: 600; }
+    .counter-bar { display: flex; gap: 2rem; padding: 1rem; background: #101B2C; border-radius: 4px; margin: 1rem 0; font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.9rem; }
+    .counter-bar span { color: #A1B8F2; }
+    .counter-bar .count { color: #31BEEF; font-size: 1.1rem; }
+    .counter-bar .count-warn { color: #FFC107; font-size: 1.1rem; }
+    .quote { background: #101B2C; padding: 1rem 1.5rem; border-left: 4px solid #994E95; border-radius: 4px; margin: 1rem 0; font-style: italic; color: #A1B8F2; }
+    .quote strong { color: #994E95; font-style: normal; }
+    .gap-box { background: rgba(255, 193, 7, 0.08); border: 1px dashed #FFC107; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .gap-box strong { color: #FFC107; }
+    .resolved-box { background: rgba(76, 175, 80, 0.08); border: 1px solid #4CAF50; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .resolved-box strong { color: #4CAF50; }
+    .dato-box { background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin: 0.5rem 0; }
+    .dato-box strong { color: #31BEEF; }
+    .source-tag { font-size: 0.75rem; color: #994E95; font-weight: 600; }
+
+    /* Slide grid */
+    .slide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+    .slide-card { background: #101B2C; border: 1px solid rgba(49,190,239,0.3); border-radius: 12px; padding: 1.5rem; cursor: pointer; transition: all 300ms ease; position: relative; overflow: hidden; }
+    .slide-card:hover { border-color: #31BEEF; transform: translateY(-4px); box-shadow: 0 12px 32px rgba(49,190,239,0.15); }
+    .slide-card .card-number { font-size: 3.5rem; font-weight: 700; color: rgba(49,190,239,0.08); position: absolute; top: -0.25rem; right: 0.75rem; font-family: 'Quicksand', sans-serif; line-height: 1; }
+    .slide-card h3 { color: #FAF9F6; font-size: 1rem; margin: 0 0 0.5rem 0; font-family: 'Quicksand', sans-serif; font-weight: 600; }
+    .slide-card .card-count { color: #A1B8F2; font-size: 0.8rem; }
+    .slide-card.card-critical { border-color: rgba(255,68,68,0.4); }
+    .slide-card.card-critical:hover { border-color: #ff4444; box-shadow: 0 12px 32px rgba(255,68,68,0.15); }
+    .slide-card.card-critical .card-number { color: rgba(255,68,68,0.08); }
+    .slide-card.card-sentiment { border-color: rgba(153,78,149,0.4); }
+    .slide-card.card-sentiment:hover { border-color: #994E95; box-shadow: 0 12px 32px rgba(153,78,149,0.15); }
+    .slide-card.card-sentiment .card-number { color: rgba(153,78,149,0.08); }
+
+    /* Modal overlay */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: #0a1420; z-index: 1000; flex-direction: column; }
+    .modal-overlay.active { display: flex; }
+    .modal-progress { height: 3px; background: rgba(49,190,239,0.1); flex-shrink: 0; }
+    .modal-progress-fill { height: 100%; background: linear-gradient(90deg, #31BEEF, #994E95); transition: width 400ms ease; border-radius: 0 2px 2px 0; }
+    .modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; flex-shrink: 0; }
+    .modal-topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .modal-slide-num { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem; background: rgba(49,190,239,0.1); padding: 0.3rem 0.8rem; border-radius: 20px; }
+    .modal-slide-title { color: #A1B8F2; font-family: 'Quicksand', sans-serif; font-size: 0.85rem; font-weight: 500; }
+    .modal-close { background: none; border: none; color: #A1B8F2; font-size: 1.25rem; cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 6px; transition: all 200ms; line-height: 1; }
+    .modal-close:hover { color: #ff4444; background: rgba(255,68,68,0.1); }
+    .modal-slide-area { flex: 1; display: flex; align-items: stretch; overflow: hidden; position: relative; }
+    .modal-side-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; background: none; border: none; color: rgba(161,184,242,0.4); font-size: 2.5rem; cursor: pointer; padding: 1rem; transition: all 200ms; }
+    .modal-side-nav:hover:not(:disabled) { color: #31BEEF; }
+    .modal-side-nav:disabled { opacity: 0; cursor: default; }
+    .modal-side-nav.nav-left { left: 0.5rem; }
+    .modal-side-nav.nav-right { right: 0.5rem; }
+    .modal-slide-content { width: 100%; max-width: 900px; margin: 0 auto; padding: 0 5rem; overflow-y: auto; max-height: 100%; scrollbar-width: none; -ms-overflow-style: none; position: relative; }
+    .modal-slide-content::-webkit-scrollbar { width: 0; display: none; }
+    .scroll-hint { position: absolute; bottom: 0; left: 5rem; right: 5rem; height: 70px; background: linear-gradient(to bottom, transparent 0%, #0a1420 80%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 0.75rem; pointer-events: none; opacity: 1; transition: opacity 400ms ease; z-index: 5; }
+    .scroll-hint.hidden { opacity: 0; }
+    .scroll-hint-arrow { color: rgba(49,190,239,0.4); font-size: 1rem; animation: scrollBounce 2s ease-in-out infinite; display: flex; align-items: center; gap: 0.4rem; font-family: 'Quicksand', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; }
+    @keyframes scrollBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+    .slide-title-block { margin-bottom: 2.5rem; }
+    .slide-title-block h2 { color: #FAF9F6; font-family: 'Quicksand', sans-serif; font-size: 2rem; font-weight: 700; margin: 0 0 0.25rem 0; line-height: 1.2; }
+    .slide-title-block .slide-subtitle { color: #A1B8F2; font-size: 0.95rem; }
+    .slide-item { padding: 0.85rem 0; border-bottom: 1px solid rgba(49,190,239,0.06); display: flex; gap: 0.75rem; align-items: baseline; line-height: 1.55; }
+    .slide-item:last-child { border-bottom: none; }
+    .slide-item-dot { width: 6px; height: 6px; border-radius: 50%; background: #31BEEF; flex-shrink: 0; margin-top: 0.55rem; }
+    .slide-item-dot.critical { background: #ff4444; }
+    .slide-item-dot.positive { background: #4CAF50; }
+    .slide-item-dot.sentiment { background: #994E95; }
+    .slide-item-text { color: #FAF9F6; font-size: 1.05rem; font-family: 'Source Sans 3', sans-serif; font-weight: 300; }
+    .slide-item-text strong { color: #31BEEF; font-weight: 600; }
+    .slide-item-text .critical-text { color: #ff4444; font-weight: 600; }
+    .slide-item-text .positive-text { color: #4CAF50; font-weight: 600; }
+    .slide-item-text .sentiment-text { color: #994E95; font-weight: 600; }
+    .slide-section-heading { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin: 2rem 0 0.75rem 0; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(49,190,239,0.15); }
+    .slide-section-heading:first-child { margin-top: 0; }
+    .slide-section-heading.critical { color: #ff4444; border-bottom-color: rgba(255,68,68,0.15); }
+    .modal-bottombar { display: flex; align-items: center; justify-content: center; padding: 1.25rem; gap: 8px; flex-shrink: 0; }
+    .modal-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(49,190,239,0.15); transition: all 300ms ease; cursor: pointer; }
+    .modal-dot.active { background: #31BEEF; transform: scale(1.4); }
+    .modal-dot:hover:not(.active) { background: rgba(49,190,239,0.4); }
+
+    @media (max-width: 768px) {
+      .modal-slide-content { padding: 0 3.5rem; }
+      .modal-side-nav { font-size: 1.5rem; padding: 0.5rem; }
+      .slide-title-block h2 { font-size: 1.5rem; }
+      .slide-item-text { font-size: 0.95rem; }
+      .modal-topbar { padding: 0.75rem 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .slide-grid { grid-template-columns: 1fr; }
+      .modal-slide-content { padding: 0 2.5rem; }
+      .modal-side-nav { font-size: 1.25rem; }
+      .modal-bottombar { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1><i class="ph ph-heartbeat" style="color:#31BEEF"></i> Enfermero — Flujo Operativo (as-is)</h1>
+      <p>Entrevistado: Óscar González — Entrevista completa (10 fragmentos)</p>
+    </header>
+
+    <div class="breadcrumb">
+      <a href="../index.html"><i class="ph ph-arrow-left"></i> Volver al Índice</a>
+    </div>
+
+    <div class="status-badge"><i class="ph ph-check-circle"></i> ENTREVISTA COMPLETA — 10 fragmentos</div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 1: DATOS CONFIRMADOS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-check-square"></i> Datos confirmados</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">109 datos organizados por flujo operativo. Fuente: Óscar González (Enfermero), 1 sesión de entrevista.<br>Haz clic en cualquier tarjeta para explorar los datos.</p>
+
+      <div class="slide-grid">
+        <div class="slide-card" onclick="openSlide(0)"><span class="card-number">1</span><h3>Óscar: Perfil y evolución</h3><span class="card-count">10 datos</span></div>
+        <div class="slide-card" onclick="openSlide(1)"><span class="card-number">2</span><h3>Jornada y estructura</h3><span class="card-count">13 datos</span></div>
+        <div class="slide-card" onclick="openSlide(2)"><span class="card-number">3</span><h3>Preparación pre-procedimiento</h3><span class="card-count">9 datos</span></div>
+        <div class="slide-card" onclick="openSlide(3)"><span class="card-number">4</span><h3>Durante el procedimiento</h3><span class="card-count">11 datos</span></div>
+        <div class="slide-card" onclick="openSlide(4)"><span class="card-number">5</span><h3>Post-procedimiento y seguimiento</h3><span class="card-count">9 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(5)"><span class="card-number">6</span><h3>Expedientes y documentación</h3><span class="card-count">10 datos</span></div>
+        <div class="slide-card" onclick="openSlide(6)"><span class="card-number">7</span><h3>Bitácoras operativas</h3><span class="card-count">9 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(7)"><span class="card-number">8</span><h3>Inventario y material</h3><span class="card-count">8 datos</span></div>
+        <div class="slide-card" onclick="openSlide(8)"><span class="card-number">9</span><h3>Comunicación y canales</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card" onclick="openSlide(9)"><span class="card-number">10</span><h3>Tecnología y registro fotográfico</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card card-sentiment" onclick="openSlide(10)"><span class="card-number">11</span><h3>Lo que Óscar siente</h3><span class="card-count">8 expresiones</span></div>
+      </div>
+
+      <!-- SLIDES HIDDEN DATA -->
+      <div id="slides-data" style="display:none;">
+
+      <!-- SLIDE 0: PERFIL Y EVOLUCIÓN -->
+      <div class="slide" data-title="Óscar: Perfil y evolución del rol" data-count="10 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Puesto:</strong> Enfermero general. Sin especialización en estética. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Antigüedad:</strong> ~4 años con Gabriel. Primer empleado de la clínica: "cuando yo entré a trabajar con él, prácticamente éramos él y yo solitos." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Relación personal:</strong> Amistad con Gabriel. "Le digo Gabo porque hemos entablado a lo largo de estos 4 años una amistad." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Formación por Gabriel:</strong> Gabriel lo capacitó personalmente en botox, rellenos, bioestimuladores. "Él me capacitó y me enseñó, me dio mucho conocimiento." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Rol inicial:</strong> Más asistente médico que enfermero. "Los primeros años no hacía tanto mi labor de enfermería, sino era más como de asistente médico." <span class="source-tag">— Óscar</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Cambio con la llegada de Divani (~1 año)</h4>
+          <div class="dato-box"><strong>Transferencia progresiva:</strong> Responsabilidades de procedimientos se le fueron quitando progresivamente. Ya no hace botox, rinomodelaciones, diseño de labios, láser endolifting. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Rol actual:</strong> Asiste a Divani y a Gabriel. Función principal = anestesiar. "Lo que mayoritariamente haces es anestesiar" — confirma. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Especialidad — rapidez:</strong> Lo solicitan en quirófano por velocidad. "Soy muy rápido anestesiando, preparando, limpiando." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Año pasado intenso:</strong> Cirugías constantes. "Cirugía tras cirugía tras cirugía." Lo pedían permanentemente en quirófano. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Lo que más le gusta:</strong> "Me siento muy cómodo con Gabo, con mis compañeros." La relación con el equipo. <span class="source-tag">— Óscar</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 1: JORNADA Y ESTRUCTURA -->
+      <div class="slide" data-title="Jornada y estructura operativa" data-count="13 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Horario y rutina</h4>
+          <div class="dato-box"><strong>Horario:</strong> Entra a las 10 AM. Primera cirugía a las 11 AM (1 hora de preparación). <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Rutina al llegar:</strong> Checa la agenda de procedimientos para ver qué cirugías hay ese día. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Siempre en quirófano:</strong> "Lo que yo normalmente, yo siempre me la paso en el quirófano adentro." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Ratos libres:</strong> Normalmente de 5 a 7 de la tarde-noche. Ahí hacen bitácoras y expedientes atrasados. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Interacciones principales:</strong> Primero Gabriel, luego Divani. Toda comunicación interna es face to face. <span class="source-tag">— Óscar</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Infraestructura</h4>
+          <div class="dato-box"><strong>5 consultorios:</strong> A veces todos llenos. "Había veces que se llenaban completamente los cinco." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>3 agendas físicas separadas:</strong> Valoraciones, revisiones, procedimientos. Todas compartidas, ninguna personal. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Volumen:</strong> ~10-12 pacientes/día (procedimientos, consultas y revisiones combinados). <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Carga variable:</strong> "Hay veces que tenemos mucho tiempo libre o hay veces que los pacientes cancelan las cirugías." Irregular día a día. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Cancelaciones:</strong> Pacientes cancelan cirugías a última hora. Penalización de $2,000 pesos. Deja espacios vacíos en agenda. <span class="source-tag">— Óscar</span></div>
+          <h4 style="color: #ff4444; margin-top: 1rem;">Problemas de agenda</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Sin bloques horarios:</strong> No hay separación (procedimientos mañana, seguimiento tarde). Todo mezclado. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Valoraciones→procedimiento sin planificación:</strong> Pacientes llegan a valoración y terminan en procedimiento el mismo día. "Ahí es cuando se entorpecen mucho las cosas." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Sin reuniones regulares:</strong> "Solamente cuando pasa algo malo es cuando se hacen como juntas." Solo reactivas. <span class="source-tag">— Óscar</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: PREPARACIÓN PRE-PROCEDIMIENTO -->
+      <div class="slide" data-title="Preparación pre-procedimiento" data-count="9 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Folder del expediente</h4>
+          <div class="dato-box"><strong>Óscar prepara el folder vacío:</strong> Formas en blanco: historia clínica, aviso de privacidad, 2 consentimientos informados genéricos + 1 consentimiento específico del procedimiento. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Completamente vacío:</strong> "No hay nada. Está todo completamente vacío." Se llena desde cero por paciente. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Divani llena el expediente:</strong> "Los expedientes lo hace el doctor Divani. Él es el que los hace." Óscar solo prepara, Divani completa con el paciente. <span class="source-tag">— Óscar</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Preparación de material</h4>
+          <div class="dato-box"><strong>Ejemplo blefaroplastia:</strong> Primero papeleo → luego material (verifica limpieza) → arma mesa con campo estéril: gasas, jeringas, agujas, hoja de bisturí. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Preparación secuencial:</strong> No prepara todo por la mañana. "Yo lo voy preparando conforme van terminando las cirugías." Un procedimiento a la vez. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Tiempo:</strong> ~10 minutos por procedimiento. "No me tardo tanto." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Material de memoria:</strong> "Ya me sé el material que debo alistar de memoria." No consulta documentos ni listas. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Sin verificación del médico:</strong> Gabriel no revisa el material preparado. "No, no lo revisa." Confianza total. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Preparación por experiencia:</strong> "Por mi propia experiencia, siempre hacemos la limpieza antes de cualquier procedimiento." No consulta historia clínica ni recibe instrucción para la limpieza. <span class="source-tag">— Óscar</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: DURANTE EL PROCEDIMIENTO -->
+      <div class="slide" data-title="Durante el procedimiento" data-count="11 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Flujo pre-procedimiento completo</h4>
+          <div class="dato-box"><strong>Secuencia:</strong> Divani hace expediente + explica cuidados/receta → cobro → doctor marca al paciente → pasan paciente a Óscar → Óscar prepara (gorro, bata, limpia, anestesia) → reposo anestesia → avisa al doctor → procedimiento. <span class="source-tag">— Óscar</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Funciones en quirófano</h4>
+          <div class="dato-box"><strong>Funciones actuales:</strong> Seguimiento al paciente, asistencia médica, preparar medicamento, pasar material, preparar pacientes. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Presencia constante:</strong> "Prácticamente yo soy el que siempre está en quirófano." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Entre cirugías ayuda afuera:</strong> "Si hay muchos pacientes salgo a ayudar a anestesiar o a preparar en cuestión de inyectables o aparatología." <span class="source-tag">— Óscar</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Anestesia</h4>
+          <div class="dato-box"><strong>Anestesia infiltrada generalizada:</strong> Lidocaína con epinefrina. Misma para todos los pacientes. La variable es la cantidad según molestia. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Sedación por orden de Gabriel:</strong> Solo en cirugías largas/complejas. "Ahí sí es por orden de Gabriel. Yo le pregunto cuánto le ponemos de sedante y ya él me da la dosis." Único momento donde consulta al médico. <span class="source-tag">— Óscar</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Distribución de roles</h4>
+          <div class="dato-box"><strong>Preparación de piel:</strong> Cirugías → Óscar. Inyectables (botox, armonización facial, ácido hialurónico) → Brisa. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Solapamiento Óscar/Brisa:</strong> En algunos casos las responsabilidades se solapan. Óscar confirma: "Justo." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Solapamiento Óscar/Divani:</strong> Ambos roles solapan en muchas responsabilidades. Óscar no lo contradice. <span class="source-tag">— Armando</span></div>
+          <div class="dato-box"><strong>Diagnóstico estético cutáneo:</strong> Exclusivo de Gabriel. Óscar no participa en evaluación de piel, fototipo, acné, manchas. "No, eso lo ve directamente él." <span class="source-tag">— Óscar</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: POST-PROCEDIMIENTO Y SEGUIMIENTO -->
+      <div class="slide" data-title="Post-procedimiento y seguimiento" data-count="9 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Inmediato post-procedimiento</h4>
+          <div class="dato-box"><strong>Post-procedimiento:</strong> "Lo que hago es prepararla, limpiarla, ponerle vendoletes, gasas, mentonera, venda o micropores dependiendo la cirugía." Regresa paciente a consultorio. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Repaso final antes de salida:</strong> Verifica: cita de revisión agendada, receta entregada, dudas resueltas. "Si les queda alguna duda, les vuelvo a dar un repasón a toda la información." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Cross-selling presencial:</strong> Durante la plática post-procedimiento recomienda otros tratamientos. "Empiezo como a hacerles más recomendaciones." Solo face to face. <span class="source-tag">— Óscar</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Seguimiento</h4>
+          <div class="dato-box"><strong>Revisión al tercer día:</strong> Regla universal sin excepción. "A todos los pacientes de cualquier procedimiento se les da una revisión al tercer día." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Seguimiento compartido:</strong> Responsabilidad de Óscar + Divani en revisiones, masajes, dudas. "Yo también como el doctor Divani tenemos la responsabilidad." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Masajes ultrasonido post-lipo → Brisa:</strong> "Los masajes de ultrasonido ahí los ve mi compañera Brisa, que es la cosmiatra." Handoff claro enfermería → cosmiatría. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Mayor contacto con paciente que Gabriel:</strong> "Nosotros somos los que tenemos más contacto con el paciente que el doctor." Óscar y Divani son la cara operativa. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Tasa de conversión valoración→procedimiento:</strong> ~80%. Dato estimado por Óscar. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Sin seguimiento remoto:</strong> Óscar solo hace seguimiento presencial. No participa en atención remota al paciente. <span class="source-tag">— Óscar</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: EXPEDIENTES Y DOCUMENTACIÓN -->
+      <div class="slide" data-title="Expedientes y documentación" data-count="10 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Estructura del expediente</h4>
+          <div class="dato-box"><strong>Dos partes:</strong> 1) Historia clínica — datos del paciente (fecha nacimiento, alergias, correo, enfermedades, familiares, en mujeres última regla y número de hijos). Se llena al inicio. 2) Nota médica — desglose del procedimiento. Se deja para después. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Notas médicas — colaboración:</strong> "Entre los dos nos ponemos a completar." Óscar y Divani las hacen juntos al final del día. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Carlos ayuda solo en desbordamiento:</strong> "Carlitos no tiene la responsabilidad de hacer un expediente, pero tenía que ayudarnos porque no podíamos." Solo cuando los 5 consultorios estaban llenos. <span class="source-tag">— Óscar</span></div>
+          <h4 style="color: #ff4444; margin-top: 1rem;">Problemas con expedientes</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Dificultades crónicas:</strong> "Últimamente hemos tenido muchas dificultades con los expedientes clínicos." Por falta de tiempo, no por incapacidad. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Prisa por pacientes esperando:</strong> "Ya llevan mucho tiempo esperando, ya están molestos, tenemos que apurarnos y no nos alcanza." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Nota médica diferida:</strong> "Esa es la nota que dejamos como al último." No se hace en tiempo real. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">En valoración NO se recogen datos:</strong> "Nada más se le pone el nombre y ya. No tenemos los datos primeros o los más importantes." Solo nombre en agenda. No hay ficha técnica previa. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Consentimientos sin firma:</strong> "Hay veces que no los firman, no nos damos cuenta." Falla recurrente. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Preguntas incómodas:</strong> Parejas sexuales, religión, nivel socioeconómico, si casa es propia o rentada. "Hay muchos pacientes muy especiales que les causa como mucho disgusto." A veces omiten preguntar. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Manejo de incomodidad:</strong> "Siempre les digo que son preguntas confidenciales, pero que forzosamente se necesitan realizar." Protocolo verbal, sin mecanismo formal. <span class="source-tag">— Óscar</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6: BITÁCORAS OPERATIVAS -->
+      <div class="slide" data-title="Bitácoras operativas" data-count="9 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Las tres bitácoras</h4>
+          <div class="dato-box"><strong>Bitácora de limpieza:</strong> Fecha, cuándo se hizo la limpieza, firma de la persona. Una por consultorio. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Bitácora de refrigeración:</strong> Temperatura del refrigerador (donde guardan botox), fecha del registro, firma. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Bitácora de asistencia:</strong> Libreta. Hora, día, nombre de todo el personal: Óscar, Brisa, Divani, Carlos, Maricela, Gabriel. <span class="source-tag">— Óscar</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Gestión</h4>
+          <div class="dato-box"><strong>Requisito regulatorio:</strong> "Justo piden estas bitácoras." Obligatorias en inspecciones/controles. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Frecuencia:</strong> ~2 veces por semana, ~30 min cada vez. "Cada quien agarra una bitácora y empezamos a llenar." En ratos libres de 5 a 7 PM. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Atrasadas por carga de trabajo:</strong> "Hay veces por lo mismo que tenemos trabajo y no nos da tiempo." La semana pasada organizaron expedientes y bitácoras atrasadas. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Formato impreso, preferirían digital:</strong> "Yo creo que sí sería mejor tenerlo digital porque luego hay muchas hojas." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Sin alertas ni automatización:</strong> No hay recordatorios ni avisos. Todo depende de que el equipo recuerde hacerlo. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Riesgo de compliance:</strong> Son obligatorias en inspecciones regulatorias pero están crónicamente atrasadas. <span class="source-tag">— Óscar</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7: INVENTARIO Y MATERIAL -->
+      <div class="slide" data-title="Inventario y material" data-count="8 datos">
+        <div class="details-content">
+          <h4 style="color: #31BEEF;">Sistema de inventario</h4>
+          <div class="dato-box"><strong>Inventario físico cada 15 días:</strong> Óscar checa el almacén, anota faltante en su teléfono personal. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Lista → Maricela:</strong> "Esa lista me la pide la doctora Maricela, que ella es la que hace el pedido." Maricela pide ácido hialurónico, materiales, desechables, botox. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Grupo de WhatsApp contable:</strong> Todos reportan consumo de productos costosos (ácido hialurónico, bioestimuladores, botox). Sin formato ni estructura. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Sin Excel ni sistema:</strong> "No se pone en ningún Excel. En WhatsApp." El grupo es el único registro de consumo. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Material desechable sin tracking:</strong> Jeringas, gasas, etc. Solo se pide cuando se acaba. Sin inventario ni registro de uso. <span class="source-tag">— Óscar</span></div>
+          <h4 style="color: #ff4444; margin-top: 1rem;">Problemas de inventario</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Desabasto de botox:</strong> Valoraciones→procedimiento mismo día sin planificación. "Se acaba el botox. Ya no se contempló." Sin control predictivo. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Insumos caducados:</strong> Ha ocurrido. Problemas no solo de cantidad sino de caducidad. La bitácora de refrigeración registra temperatura pero no vencimientos. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Óscar solo reporta:</strong> "Sí, y ellos lo piden." Gabriel/Divani gestionan la reposición. Óscar solo informa faltante. <span class="source-tag">— Óscar</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8: COMUNICACIÓN Y CANALES -->
+      <div class="slide" data-title="Comunicación y canales" data-count="6 datos">
+        <div class="details-content">
+          <div class="dato-box"><strong>Comunicación con paciente solo oral:</strong> No hay comunicación escrita formal de Óscar hacia pacientes. Todo es face to face, presencial. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Pacientes contactan por Instagram personal:</strong> "Los pacientes me escriben por Instagram porque me dicen 'no me contestan en el WhatsApp de la empresa.'" Óscar responde sobre citas, inflamación, cancelaciones. Canal informal, sin trazabilidad. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">WhatsApp empresa no responde a tiempo:</strong> Pacientes se quejan. Buscan canales personales como alternativa. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Carlos consulta a Óscar:</strong> "Nos dice 'oye, está pasando esto con esta paciente.'" Carlos es front-line de comunicación, Óscar/Divani son back-line clínico. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Intervención clínica por WhatsApp:</strong> Carlos pregunta ("está muy inflamada, qué le mandamos?"), Óscar o Divani responden con criterio clínico. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>WhatsApp práctico para Óscar:</strong> "Para mí es más práctico." Escribe rápido, prefiere texto. <span class="source-tag">— Óscar</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 9: TECNOLOGÍA Y REGISTRO FOTOGRÁFICO -->
+      <div class="slide" data-title="Tecnología y registro fotográfico" data-count="6 datos">
+        <div class="details-content">
+          <h4 style="color: #ff4444;">Tecnología</h4>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">CERO software:</strong> "No, ninguno." No utiliza ningún sistema digital en su día a día. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Todo papel + WhatsApp:</strong> Bitácoras en papel, inventario en WhatsApp, fotos en celulares personales, lista de faltante en teléfono. Sin ningún sistema digital formal. <span class="source-tag">— Óscar</span></div>
+          <h4 style="color: #31BEEF; margin-top: 1rem;">Registro fotográfico</h4>
+          <div class="dato-box"><strong>No es su responsabilidad principal:</strong> "Normalmente ellos son los que lo toman." Pero si Gabriel o Divani no pueden, Óscar las toma. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Celular personal + WhatsApp:</strong> "Con mi celular. Se las mando a ellos por WhatsApp." Sin repositorio central. Tercer celular con fotos de pacientes. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>Consentimiento de fotos:</strong> Aviso de privacidad + explicación verbal: "Se les tiene que tomar fotos antes del procedimiento y no serán publicadas en redes sociales, a menos que sea con su consentimiento." <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box"><strong>No venden productos:</strong> La clínica no vende productos propios ni recomendados. <span class="source-tag">— Óscar</span></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 10: LO QUE ÓSCAR SIENTE -->
+      <div class="slide" data-title="Lo que Óscar siente" data-count="8 expresiones">
+        <div class="details-content">
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Siento que todos hacen de todo"</strong> — frustración principal. Pide más organización en funciones. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Ya lo hemos platicado, lo hemos hecho, pero no ha habido ningún cambio"</strong> — han identificado problemas pero no logran resolverlos. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Llega a procedimientos sin toda la información.</strong> Confirmado explícitamente. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Trabajo duplicado con Divani y Carlos:</strong> Específicamente en conteo de material, ácido, botox. Cada uno cuenta por separado. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Reemplazo imposible:</strong> Si Óscar se fuera, su reemplazo no tendría nada documentado. "No." Todo en la cabeza de las personas. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">Tarea más agobiante:</strong> "Justamente es el conteo del material." Segunda: historia clínica, por falta de tiempo. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Creo que hay que mejorarla aún más"</strong> — reconoce que el registro de medicamentos es insuficiente. <span class="source-tag">— Óscar</span></div>
+          <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Día ideal:</strong> "Que se establezcan bien los horarios y las horas para la atención de cada paciente y el tiempo que se le debe brindar." <span class="source-tag">— Óscar</span></div>
+        </div>
+      </div>
+
+      </div><!-- /slides-data -->
+    </section>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="slideModal">
+      <div class="modal-progress"><div class="modal-progress-fill" id="progressFill"></div></div>
+      <div class="modal-topbar">
+        <div class="modal-topbar-left">
+          <span class="modal-slide-num" id="slideNum"></span>
+          <span class="modal-slide-title" id="slideTitle"></span>
+        </div>
+        <button class="modal-close" onclick="closeModal()" title="Cerrar (Esc)">&times;</button>
+      </div>
+      <div class="modal-slide-area">
+        <button class="modal-side-nav nav-left" id="btnPrev" onclick="prevSlide()"><i class="ph ph-caret-left"></i></button>
+        <div class="modal-slide-content" id="modalBody"></div>
+        <div class="scroll-hint" id="scrollHint"><span class="scroll-hint-arrow"><i class="ph ph-caret-down"></i> scroll</span></div>
+        <button class="modal-side-nav nav-right" id="btnNext" onclick="nextSlide()"><i class="ph ph-caret-right"></i></button>
+      </div>
+      <div class="modal-bottombar" id="modalDots"></div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 2: DIAGRAMA -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-flow-arrow"></i> Diagrama de Flujo — Rol de Enfermero (solo datos confirmados)</h2>
+      <p style="color: #A1B8F2;">109 datos de entrevista. Flujo completo del rol de Enfermero — desde inicio del día hasta documentación y soporte.</p>
+      <div class="mermaid-container">
+        <div class="mermaid">
+flowchart TD
+    classDef default fill:#1a2535,stroke:#31BEEF,stroke-width:1.5px,color:#FAF9F6
+    classDef friction fill:#2a1015,stroke:#ff4444,stroke-width:2px,color:#ff4444
+    classDef auto fill:#0f2015,stroke:#4CAF50,stroke-width:1.5px,color:#4CAF50
+    classDef decision fill:#1f1525,stroke:#994E95,stroke-width:1.5px,color:#FAF9F6
+    classDef entry fill:#0f1f2f,stroke:#31BEEF,stroke-width:1.5px,color:#31BEEF
+
+    subgraph INICIO["INICIO DÍA — llega 10 AM, primera cirugía 11 AM"]
+        E1["Óscar llega, checa agenda de procedimientos"]:::entry
+        E1 --> E2["3 agendas físicas sin bloques horarios"]:::friction
+        E2 --> E3["Prepara folder vacío:<br/>HC + consentimientos + aviso privacidad"]
+        E3 --> E4["Prepara material de memoria ~10 min"]
+    end
+
+    subgraph PREPROC["PRE-PROCEDIMIENTO — sin datos previos del paciente"]
+        E4 --> PP1["Divani completa expediente con paciente"]
+        PP1 --> PP2["En valoración: solo nombre, sin ficha técnica"]:::friction
+        PP2 --> PP3["Cobro + doctor marca al paciente"]
+        PP3 --> PP4["Paciente pasa a Óscar"]
+    end
+
+    subgraph PROC["PROCEDIMIENTO — ~10-12 pac/día, 5 consultorios"]
+        PP4 --> PR1["Prepara paciente: gorro, bata, asepsia"]
+        PR1 --> PR2["Anestesia infiltrada — siempre Óscar"]
+        PR2 --> PR3{"Tipo de<br/>procedimiento"}:::decision
+        PR3 -->|"Cirugía"| PR4["Óscar asiste a Gabriel en quirófano"]
+        PR3 -->|"Lipo facial"| PR5["Óscar anestesia + Divani opera"]
+        PR3 -->|"Inyectable"| PR6["Brisa prep piel + Divani opera"]
+        PR4 --> PR7["PROCEDIMIENTO"]:::entry
+        PR5 --> PR7
+        PR6 --> PR7
+    end
+
+    subgraph POST["POST-PROCEDIMIENTO — revisión 3er día para todos"]
+        PR7 --> PO1["Limpieza, vendoletes, gasas,<br/>mentonera, venda o micropores"]
+        PO1 --> PO2["Regresa paciente a consultorio"]
+        PO2 --> PO3["Repaso final: cita 3er día + receta + dudas"]
+        PO3 --> PO4["Cross-selling presencial"]
+    end
+
+    subgraph DOC["DOCUMENTACIÓN — todo manual, todo diferido"]
+        PO4 --> D1["Nota médica al final del día"]:::friction
+        D1 --> D2["Óscar + Divani completan juntos"]
+        D2 --> D3{"Tiempo<br/>disponible"}:::decision
+        D3 -->|"Días cargados"| D4["Backlog de expedientes"]:::friction
+        D3 -->|"Disponible"| D5["Completan notas del día"]
+        D4 --> D5
+        D5 --> D6["Consentimientos sin firma — falla recurrente"]:::friction
+    end
+
+    subgraph INV["INVENTARIO — cada 15 días, CERO software"]
+        E4 -.->|"checa faltante"| IN1["Lista en teléfono personal"]
+        IN1 -.-> IN2["Pasa lista a Maricela"]
+        IN2 -.-> IN3["WhatsApp = único registro contable"]:::friction
+        IN3 -.-> IN4["Desabasto + caducidad ha ocurrido"]:::friction
+    end
+
+    subgraph COM["COMUNICACIÓN — fuga de canales"]
+        PO3 -.->|"dudas post"| C1["WhatsApp empresa — respuesta lenta"]:::friction
+        C1 -.-> C2["Paciente escribe a Instagram personal"]:::friction
+        C2 -.-> C3["Carlos consulta a Óscar/Divani"]
+    end
+
+    subgraph BIT["BITÁCORAS — requisito regulatorio"]
+        D5 -.-> B1["Limpieza + Refrigeración + Asistencia"]
+        B1 -.-> B2["Atrasadas por carga — sin alertas"]:::friction
+        B2 -.-> B3["Se completan en ratos libres 5-7 PM"]
+    end
+        </div>
+      </div>
+
+      <!-- Leyenda -->
+      <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.5rem; font-size: 0.85rem; padding: 0.75rem 1rem; background: rgba(26,37,53,0.5); border-radius: 6px;">
+        <span style="color: #4CAF50;">● Automatizado</span>
+        <span style="color: #994E95;">● Decisión</span>
+        <span style="color: #ff4444;">● Fricción</span>
+        <span style="color: #31BEEF;">● Entrada/Salida</span>
+        <span style="color: #A1B8F2;">┈┈ Flujo secundario</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- VACÍOS DE INFORMACIÓN -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-question"></i> Vacíos de información</h2>
+
+      <details>
+        <summary style="border-left-color: #4CAF50; color: #4CAF50;">Vacíos resueltos durante la entrevista (4)</summary>
+        <div class="details-content">
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Día típico de Óscar</strong> — Flujo completo documentado: prepara folder → Divani hace expediente → cobro → doctor marca → Óscar prepara paciente → anestesia → procedimiento → post → regresa a consultorio → agenda revisión 3er día → repaso final. Entre cirugías ayuda con inyectables/aparatología. <span class="source-tag">— Óscar</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Solapamiento con Divani</strong> — Divani hace expedientes + explica cuidados/receta. Óscar prepara folder vacío + prepara paciente + anestesia + post-procedimiento. Solapamiento solo en emergencias (cuando los 5 consultorios están llenos). <span class="source-tag">— Óscar</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Trazabilidad parcial</strong> — Bitácora de temperatura para botox. Grupo de WhatsApp para tracking de productos costosos. Pero NO hay trazabilidad de lotes por procedimiento (qué lote se usó en qué paciente). <span class="source-tag">— Óscar</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Protocolo post-operatorio</strong> — La nota médica (desglose del procedimiento) se hace al final del día entre Óscar y Divani. No es ad-hoc, pero sí diferido. El post físico (vendoletes, gasas, etc.) sí es por experiencia según cirugía. <span class="source-tag">— Óscar</span></div>
+        </div>
+      </details>
+
+      <h3 style="color: #FFC107;">Vacíos pendientes (1)</h3>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Las tres agendas — formato y gestión</strong> — Confirmó que son compartidas y que no hay bloques horarios. Formato físico no descrito en detalle. Sin agenda personal de ningún rol. <span class="source-tag" style="color: #4CAF50;">AMPLIADO por Brisa Nazario (Cosmiatra): confirma 3 agendas físicas (valoraciones, procedimientos, revisiones). No tiene agenda propia — usa revisiones. Agenda digital "apenas implementada", apenas funcional (~10 emails recopilados). "No hay nada más que la física."</span> <span class="source-tag" style="color: #4CAF50;">AMPLIADO por Dra. Marisela Narváez (CEO): confirma 3 agendas (procedimientos, valoraciones, revisiones). Agenda es referencia rápida del día; HC es registro detallado: "Lo anotan en la historia clínica pero lo ven en la agenda." Equipo no necesita consultar HC para atender al paciente que regresa — agenda es suficiente. Formato detallado sigue sin describirse.</span></div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- PUNTOS DE HANDOFF -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-arrows-left-right"></i> Puntos de Handoff</h2>
+
+      <div class="dato-box"><strong>Óscar ↔ Divani:</strong> Óscar prepara folder vacío, Divani completa expediente con el paciente. Al final del día, ambos completan notas médicas juntos.</div>
+      <div class="dato-box"><strong>Óscar → Gabriel:</strong> Asistencia en cirugía. Gabriel da instrucciones de sedación. Gabriel no verifica material preparado por Óscar (relación de confianza).</div>
+      <div class="dato-box"><strong>Óscar → Brisa:</strong> Post-lipo, masajes de ultrasonido transferidos a Brisa. En inyectables: Óscar anestesia, Brisa prepara piel.</div>
+      <div class="dato-box"><strong>Óscar → Maricela:</strong> Lista de inventario cada 15 días. Óscar checa almacén, anota faltante en teléfono personal, pasa lista a Maricela para pedido.</div>
+      <div class="dato-box"><strong>Carlos → Óscar/Divani:</strong> Consultas clínicas por WhatsApp sobre pacientes post-procedimiento (inflamación, dudas, cancelaciones). Óscar o Divani responden qué indicar.</div>
+      <div class="dato-box"><strong>Óscar → Grupo WhatsApp contable:</strong> Reporte de consumo de insumos costosos (ácido hialurónico, bioestimuladores, botox). Sin formato estandarizado.</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FRICCIONES EXPRESADAS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-fire"></i> Fricciones expresadas por Óscar</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Citas literales — lo que Óscar siente y expresa sobre su trabajo.</p>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Siento que todos hacen de todo"</strong> — frustración principal por falta de delimitación de funciones</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Tenemos que apurarnos y no nos alcanza"</strong> — pacientes esperando generan prisa y errores</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Últimamente hemos tenido muchas dificultades con los expedientes clínicos"</strong> — por falta de tiempo, no de capacidad</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Hay veces que no los firman, no nos damos cuenta"</strong> — consentimientos sin firma recurrente</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se entorpecen mucho las cosas"</strong> — valoraciones convertidas en procedimiento sin planificación</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Ya lo hemos platicado, lo hemos hecho, pero no ha habido ningún cambio"</strong> — intentos de mejora fallidos</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Hay veces por lo mismo que tenemos trabajo y no nos da tiempo"</strong> — bitácoras regulatorias atrasadas</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"No me contestan en el WhatsApp de la empresa"</strong> — pacientes buscan canales personales alternativos</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Hay veces que se acaba el botox"</strong> — desabasto por valoraciones→procedimiento mismo día</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Justamente es el conteo del material"</strong> — tarea más agobiante, se duplica con Divani y Carlos</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Creo que hay que mejorarla aún más"</strong> — reconoce que el registro de medicamentos es insuficiente</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Solamente cuando pasa algo malo es cuando se hacen juntas"</strong> — sin coordinación proactiva ni planificación</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FRICCIONES IDENTIFICADAS POR ANÁLISIS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-magnifying-glass"></i> Fricciones identificadas por análisis</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Fricciones operativas derivadas de los datos confirmados.</p>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">3 agendas físicas sin bloques horarios — epicentro del caos</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Valoraciones, revisiones y procedimientos en 3 agendas separadas sin separación por bloques. Valoraciones se convierten en procedimiento el mismo día sin planificación. Tres roles coinciden en que la agenda es el problema principal. El día ideal de Óscar: "que se establezcan bien los horarios."</p>
+        <span class="source-tag">— Óscar + Divani, Primer Ayudante + Carlos, Atención al Paciente</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Material de memoria sin verificación — riesgo operativo</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Óscar prepara todo el material de memoria. Gabriel no lo revisa. No hay lista ni protocolo documentado. Si Óscar se fuera, su reemplazo no tendría nada documentado. Todo el conocimiento operativo (material por procedimiento, dosis, preparación) está en su cabeza.</p>
+        <span class="source-tag">— Óscar</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">CERO software en toda la operación — confirmado por 4 roles</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Bitácoras en papel, inventario en WhatsApp, fotos en celulares personales, lista de faltante en teléfono. "No, ninguno." Ni Excel, ni sistema. Cuarto rol que lo confirma. Es sistémico, no una perspectiva individual.</p>
+        <span class="source-tag">— Óscar + Carlos, Atención al Paciente + Divani, Primer Ayudante</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Nota médica diferida al final del día — pérdida de detalle</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">"Esa es la nota que dejamos como al último." Óscar y Divani la completan juntos al cierre. Con días cargados se acumula backlog. La distancia temporal entre procedimiento y documentación genera riesgo de pérdida de detalle clínico.</p>
+        <span class="source-tag">— Óscar + Divani, Primer Ayudante</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Consentimientos sin firma — falla recurrente, riesgo legal</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">"Hay veces que no los firman, no nos damos cuenta." Tercer rol que confirma este problema (Carlos, Divani, Óscar). Dejan consentimientos al paciente para que firmen/lean durante el procedimiento, pero a veces no lo hacen. Riesgo legal y regulatorio.</p>
+        <span class="source-tag">— Óscar + Divani, Primer Ayudante + Carlos, Atención al Paciente</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Paciente llega sin datos — expediente desde cero</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">En valoración solo se registra el nombre. "No tenemos los datos primeros o los más importantes." Todo se llena desde cero cuando el paciente ya decidió hacerse el procedimiento. No hay ficha técnica previa, ni recogida de datos anticipada.</p>
+        <span class="source-tag">— Óscar</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Inventario sin sistema — desabasto y caducidad</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Lista de faltante en teléfono personal → Maricela. Grupo WhatsApp como único registro contable (sin formato ni estructura). Material desechable sin tracking. Botox se acaba por valoraciones same-day. Insumos han caducado. La bitácora de refrigeración registra temperatura pero no vencimientos.</p>
+        <span class="source-tag">— Óscar</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Trabajo duplicado en conteo de material — triple esfuerzo</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Óscar, Divani y Carlos cuentan material por separado sin coordinación. Es la tarea más agobiante de Óscar. No hay un solo responsable ni formato unificado. Triple duplicación que consume tiempo sin agregar valor.</p>
+        <span class="source-tag">— Óscar</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Fuga de comunicación clínica por canales personales</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Pacientes escriben a Instagram personal de Óscar porque WhatsApp empresa no responde a tiempo. Consultas clínicas (inflamación, citas, cancelaciones) sin trazabilidad. Un tercer celular con fotos de pacientes. Información clínica distribuida sin control.</p>
+        <span class="source-tag">— Óscar</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Bitácoras regulatorias crónicamente atrasadas</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">3 bitácoras obligatorias para inspecciones (limpieza, refrigeración, asistencia). Se atrasan por carga de trabajo. Sin alertas ni automatización. Se completan en ratos libres de 5 a 7 PM. Riesgo de compliance en inspecciones regulatorias.</p>
+        <span class="source-tag">— Óscar</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Preguntas incómodas del expediente — omisión de datos clínicos</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Parejas sexuales, religión, nivel socioeconómico, tipo de vivienda generan disgusto en pacientes. A veces el equipo omite preguntar por la incomodidad. Expedientes incompletos no por falta de tiempo sino por diseño inadecuado del formato de recolección.</p>
+        <span class="source-tag">— Óscar</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Reemplazo imposible por falta de documentación</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Si Óscar dejara la clínica, su reemplazo no tendría nada documentado para hacer el trabajo. Material por procedimiento, dosis, preparación de quirófano — todo en la cabeza de las personas. Riesgo de continuidad operativa.</p>
+        <span class="source-tag">— Óscar</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- MAPEO D1-D4 -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-target"></i> Mapeo a los 4 Dolores APEX</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Análisis completado. Dolor dominante: <strong style="color: #ff4444;">D1 (Procesos Internos)</strong>. Óscar es el rol que más sufre la ausencia total de sistemas.</p>
+
+      <!-- D1 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #ff4444; border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444; font-size: 1.1rem;">D1 — Procesos Internos Ineficientes → DOLOR DOMINANTE</strong>
+        <span style="display: inline-block; background: #ff4444; color: #fff; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.75rem; margin-left: 0.5rem; vertical-align: middle;">DOLOR DOMINANTE</span>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Plataforma Centralizada de Gestión Clínica</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>CERO software en toda la operación — cuarto rol que lo confirma, es sistémico</li>
+          <li>Material por procedimiento preparado de memoria, sin lista ni protocolo documentado</li>
+          <li>3 agendas físicas sin bloques horarios — epicentro del caos operativo según 3 roles</li>
+          <li>Nota médica diferida al final del día — riesgo de pérdida de detalle clínico</li>
+          <li>Consentimientos sin firma — falla recurrente confirmada por 3 roles, riesgo legal</li>
+          <li>Conteo de material triplicado (Óscar + Divani + Carlos) sin coordinación ni formato único</li>
+          <li>Bitácoras regulatorias crónicamente atrasadas por carga de trabajo</li>
+          <li>Inventario en WhatsApp personal + lista de faltante en teléfono — sin sistema</li>
+          <li>Fotos clínicas en celulares personales sin centralización ni trazabilidad</li>
+          <li>Expedientes incompletos por diseño inadecuado del formulario (preguntas incómodas)</li>
+          <li>Reemplazo imposible — si Óscar se fuera, no hay nada documentado para su sucesor</li>
+        </ul>
+      </div>
+
+      <!-- D2 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D2 — Seguimiento y Clasificación de Pacientes → CONSECUENCIA DIRECTA</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Seguimiento y Clasificación Automática</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Revisión al 3er día agendada de memoria — sin sistema que rastree citas de seguimiento</li>
+          <li>Sin trazabilidad de lotes por procedimiento — no se sabe qué lote se usó en qué paciente</li>
+          <li>Fotos pre/post casi inexistentes — sin evidencia documentada de evolución clínica</li>
+          <li>Registro de medicamentos administrados insuficiente — Óscar lo reconoce: "hay que mejorarla"</li>
+          <li>Sin clasificación de pacientes por tipo de procedimiento, estado o protocolo de seguimiento</li>
+        </ul>
+      </div>
+
+      <!-- D3 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #994E95; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #994E95; font-size: 1.1rem;">D3 — Comunicación Personalizada con Pacientes → IMPACTADO</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Comunicación Segmentada e Inteligente</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Pacientes escriben al Instagram personal de Óscar porque WhatsApp empresa no responde</li>
+          <li>Consultas clínicas post (inflamación, citas, cancelaciones) sin canal formal ni trazabilidad</li>
+          <li>Indicaciones post-operatorias verbales + WhatsApp — sin documento estandarizado</li>
+          <li>Información clínica distribuida en 3 dispositivos sin control ni consolidación</li>
+        </ul>
+      </div>
+
+      <!-- D4 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D4 — Conversión de Leads Publicitarios a Pacientes → INDIRECTAMENTE AFECTADO</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Pipeline de Conversión de Leads</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Valoraciones convertidas en procedimiento el mismo día generan caos en la preparación</li>
+          <li>Paciente llega sin datos — expediente se llena desde cero cuando ya decidió operarse</li>
+          <li>Desabasto de material (botox) por procedimientos same-day no planificados</li>
+        </ul>
+      </div>
+
+      <!-- Retención -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #4CAF50; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #4CAF50; font-size: 1.1rem;">Retención = Ecosistema Integrado (D1+D2+D3+D4)</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0; line-height: 1.7;">Desde la perspectiva de Óscar, la retención depende de la calidad de la experiencia clínica: preparación correcta, procedimiento sin prisa, seguimiento post puntual. Todo eso se rompe cuando D1 falla — si la agenda no tiene bloques, los procedimientos se acumulan, el material no alcanza, la documentación se atrasa y el paciente percibe desorganización.</p>
+      </div>
+
+      <!-- Conclusión -->
+      <div style="background: rgba(255, 68, 68, 0.08); padding: 1rem; border: 1px solid rgba(255, 68, 68, 0.2); border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444;">Conclusión desde este rol</strong>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li><strong style="color: #ff4444;">D1 es abrumadoramente el dolor dominante</strong> — Óscar vive las 11 fricciones identificadas y todas nacen de la ausencia total de sistemas y procesos documentados</li>
+          <li><strong style="color: #31BEEF;">D2 es consecuencia directa</strong> — sin sistema base, el seguimiento post depende de la memoria y las fotos se quedan en celulares personales</li>
+          <li><strong style="color: #994E95;">D3 es impactado</strong> — la comunicación con pacientes se fuga a canales personales por la ineficiencia del canal oficial</li>
+          <li>D4 es tangencial desde este rol — Óscar no participa en conversión, pero sufre su consecuencia operativa (valoración→procedimiento mismo día)</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="nav-links">
+      <a href="flujo-cirujano.html"><i class="ph ph-arrow-left"></i> Anterior: Cirujano</a>
+      <a href="flujo-cosmiatra.html">Siguiente: Cosmiatra <i class="ph ph-arrow-right"></i></a>
+    </div>
+
+    <footer class="footer">
+      <p>ARMC — Aesthetic Rejuvenation Medical Center — Análisis Operativo — Abril 2026 — PRISMA Consulting</p>
+    </footer>
+  </div>
+
+  <!-- Slide Presentation JS -->
+  <script>
+    (function() {
+      var slides = document.querySelectorAll('#slides-data .slide');
+      var modal = document.getElementById('slideModal');
+      var slideNum = document.getElementById('slideNum');
+      var slideTitle = document.getElementById('slideTitle');
+      var progressFill = document.getElementById('progressFill');
+      var modalBody = document.getElementById('modalBody');
+      var modalDots = document.getElementById('modalDots');
+      var btnPrev = document.getElementById('btnPrev');
+      var btnNext = document.getElementById('btnNext');
+      var scrollHint = document.getElementById('scrollHint');
+      var current = 0;
+      var total = slides.length;
+
+      for (var i = 0; i < total; i++) {
+        var dot = document.createElement('span');
+        dot.className = 'modal-dot';
+        dot.addEventListener('click', (function(idx) {
+          return function() { goToSlide(idx); };
+        })(i));
+        modalDots.appendChild(dot);
+      }
+
+      function transformContent(slide) {
+        var title = slide.getAttribute('data-title');
+        var count = slide.getAttribute('data-count');
+        var source = slide.querySelector('.details-content');
+        var html = '<div class="slide-title-block"><h2>' + title + '</h2><span class="slide-subtitle">' + count + '</span></div>';
+
+        var children = source.children;
+        for (var i = 0; i < children.length; i++) {
+          var el = children[i];
+          if (el.tagName === 'H4') {
+            var cls = 'slide-section-heading';
+            if (el.style.color && el.style.color.indexOf('4444') !== -1) cls += ' critical';
+            html += '<div class="' + cls + '">' + el.textContent + '</div>';
+          } else if (el.classList.contains('dato-box')) {
+            var dotCls = 'slide-item-dot';
+            var style = el.getAttribute('style') || '';
+            if (style.indexOf('ff4444') !== -1) dotCls += ' critical';
+            else if (style.indexOf('4CAF50') !== -1) dotCls += ' positive';
+            else if (style.indexOf('994E95') !== -1) dotCls += ' sentiment';
+
+            var clone = el.cloneNode(true);
+            var tags = clone.querySelectorAll('.source-tag, .new-tag');
+            for (var t = 0; t < tags.length; t++) tags[t].remove();
+
+            var strongs = clone.querySelectorAll('strong');
+            for (var s = 0; s < strongs.length; s++) {
+              var sStyle = strongs[s].getAttribute('style') || '';
+              if (sStyle.indexOf('ff4444') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'critical-text';
+              } else if (sStyle.indexOf('4CAF50') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'positive-text';
+              } else if (sStyle.indexOf('994E95') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'sentiment-text';
+              }
+            }
+
+            var text = clone.innerHTML.replace(/<span class="source-tag">.*?<\/span>/g, '').trim();
+            html += '<div class="slide-item"><span class="' + dotCls + '"></span><span class="slide-item-text">' + text + '</span></div>';
+          }
+        }
+        return html;
+      }
+
+      function updateDots() {
+        var dots = modalDots.querySelectorAll('.modal-dot');
+        for (var i = 0; i < dots.length; i++) {
+          dots[i].classList.toggle('active', i === current);
+        }
+      }
+
+      function goToSlide(idx) {
+        current = idx;
+        var slide = slides[current];
+        slideNum.textContent = (current + 1) + ' / ' + total;
+        slideTitle.textContent = slide.getAttribute('data-count');
+        progressFill.style.width = ((current + 1) / total * 100) + '%';
+        modalBody.innerHTML = transformContent(slide);
+        modalBody.scrollTop = 0;
+        updateDots();
+        setTimeout(checkScrollHint, 50);
+        btnPrev.disabled = current === 0;
+        btnNext.disabled = current === total - 1;
+      }
+
+      window.openSlide = function(idx) {
+        goToSlide(idx);
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      };
+
+      window.closeModal = function() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+      };
+
+      window.prevSlide = function() {
+        if (current > 0) goToSlide(current - 1);
+      };
+
+      window.nextSlide = function() {
+        if (current < total - 1) goToSlide(current + 1);
+      };
+
+      function checkScrollHint() {
+        var el = modalBody;
+        var canScroll = el.scrollHeight > el.clientHeight + 10;
+        var nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 30;
+        if (!canScroll || nearBottom) {
+          scrollHint.classList.add('hidden');
+        } else {
+          scrollHint.classList.remove('hidden');
+        }
+      }
+      modalBody.addEventListener('scroll', checkScrollHint);
+
+      document.addEventListener('keydown', function(e) {
+        if (!modal.classList.contains('active')) return;
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'ArrowRight') nextSlide();
+      });
+
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal || e.target.classList.contains('modal-slide-area')) closeModal();
+      });
+    })();
+  </script>
+
+  <script>mermaid.contentLoaded();</script>
+</body>
+</html>

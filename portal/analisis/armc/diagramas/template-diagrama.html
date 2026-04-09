@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[ROL] — ARMC Análisis Operativo</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Mermaid -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: 'transparent',
+        primaryColor: '#1a2535',
+        primaryTextColor: '#FAF9F6',
+        primaryBorderColor: '#31BEEF',
+        lineColor: '#31BEEF',
+        textColor: '#FAF9F6',
+        clusterBkg: '#162033',
+        clusterBorder: '#253545',
+        edgeLabelBackground: '#1a2535',
+        fontFamily: '"Source Sans 3", sans-serif',
+        fontSize: '14px'
+      },
+      flowchart: { htmlLabels: true, curve: 'basis', padding: 15, nodeSpacing: 50, rankSpacing: 55 }
+    });
+  </script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="../css/estilos-prisma.css">
+  <style>
+    .breadcrumb {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: rgba(49, 190, 239, 0.05);
+      border-radius: 4px;
+    }
+
+    .breadcrumb a {
+      color: #31BEEF;
+    }
+
+    .breadcrumb a:hover {
+      color: #994E95;
+    }
+
+    .diagram-section {
+      background: #1a2535;
+      border: 1px solid #31BEEF;
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .diagram-section h2 {
+      margin-top: 0;
+    }
+
+    .mermaid-container {
+      background: #101B2C;
+      padding: 2rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      min-height: 400px;
+    }
+
+    /* Estándar visual Mermaid PRISMA */
+    .mermaid .node rect, .mermaid .node polygon { rx: 8 !important; ry: 8 !important; stroke-width: 1.5px !important; }
+    .mermaid .nodeLabel { font-family: 'Source Sans 3', sans-serif !important; font-size: 14px !important; font-weight: 600 !important; }
+    .mermaid .edgePath path.path { stroke-width: 1.5px !important; opacity: 0.6; }
+    .mermaid .edgeLabel { font-size: 12px !important; font-weight: 600 !important; }
+    .mermaid .edgeLabel rect { fill: #1a2535 !important; stroke: none !important; }
+    .mermaid .edgeLabel span { color: #FAF9F6 !important; }
+    .mermaid .cluster rect { rx: 8 !important; ry: 8 !important; stroke-dasharray: 5 3; }
+    .mermaid .cluster-label .nodeLabel { font-family: 'Quicksand', sans-serif !important; font-weight: 700 !important; font-size: 14px !important; text-transform: uppercase; fill: #FAF9F6 !important; }
+
+    .responsibilities {
+      display: grid;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .responsibility {
+      background: #101B2C;
+      padding: 1rem;
+      border-left: 4px solid #31BEEF;
+      border-radius: 4px;
+    }
+
+    .responsibility strong {
+      color: #31BEEF;
+    }
+
+    .handoff-table {
+      width: 100%;
+      margin: 1rem 0;
+    }
+
+    .handoff-table th {
+      background: #1a2535;
+      color: #31BEEF;
+    }
+
+    .handoff-table td {
+      color: #FAF9F6;
+    }
+
+    .friction-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .friction-list li {
+      padding: 1rem;
+      margin: 0.5rem 0;
+      background: rgba(153, 78, 149, 0.1);
+      border-left: 4px solid #994E95;
+      border-radius: 4px;
+    }
+
+    .friction-list li strong {
+      color: #994E95;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      justify-content: space-between;
+    }
+
+    .nav-links a {
+      flex: 1;
+      padding: 1rem;
+      text-align: center;
+      background: #1a2535;
+      border: 1px solid #31BEEF;
+      border-radius: 4px 25px 25px 4px;
+      transition: all 400ms ease;
+      color: #FAF9F6;
+      text-decoration: none;
+    }
+
+    .nav-links a:hover {
+      background: #31BEEF;
+      color: #101B2C;
+      border-color: #31BEEF;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: #994E95;
+      color: #FAF9F6;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>[ROL_EMOJI] [ROL] — Flujo Operativo (as-is)</h1>
+      <p>Mapeo basado en entrevista operativa • Estado: Análisis</p>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="../index.html">← Volver al Índice</a>
+    </div>
+
+    <!-- Status -->
+    <div class="status-badge">Status: En Análisis</div>
+
+    <!-- Section 1: Resumen de Responsabilidades -->
+    <section class="diagram-section">
+      <h2>Resumen de Responsabilidades</h2>
+      <div class="responsibilities">
+        <div class="responsibility">
+          <strong>Área 1:</strong> Descripción de responsabilidades
+        </div>
+        <div class="responsibility">
+          <strong>Área 2:</strong> Descripción de responsabilidades
+        </div>
+        <div class="responsibility">
+          <strong>Área 3:</strong> Descripción de responsabilidades
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Diagrama Principal -->
+    <section class="diagram-section">
+      <h2>Diagrama de Flujo Principal</h2>
+      <p style="color: #A1B8F2; font-size: 0.95rem;">
+        Flujo actual (as-is) basado en entrevista operativa
+      </p>
+      <div class="mermaid-container">
+        <div class="mermaid">
+flowchart TD
+    classDef default fill:#1a2535,stroke:#31BEEF,stroke-width:1.5px,color:#FAF9F6
+    classDef friction fill:#2a1015,stroke:#ff4444,stroke-width:2px,color:#ff4444
+    classDef auto fill:#0f2015,stroke:#4CAF50,stroke-width:1.5px,color:#4CAF50
+    classDef decision fill:#1f1525,stroke:#994E95,stroke-width:1.5px,color:#FAF9F6
+    classDef entry fill:#0f1f2f,stroke:#31BEEF,stroke-width:1.5px,color:#31BEEF
+
+    subgraph FASE1["FASE 1 — Descripción"]
+        A["Paso inicial"]:::entry --> B["Paso 2"]
+        B --> C{"Decisión"}:::decision
+    end
+
+    subgraph FASE2["FASE 2 — Descripción"]
+        C -->|"Opción A"| D["Paso automático"]:::auto
+        C -->|"Opción B"| E["Punto de fricción"]:::friction
+    end
+        </div>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.5rem; font-size: 0.85rem; padding: 0.75rem 1rem; background: rgba(26,37,53,0.5); border-radius: 6px;">
+        <span style="color: #4CAF50;">● Automatizado</span>
+        <span style="color: #994E95;">● Decisión</span>
+        <span style="color: #ff4444;">● Fricción</span>
+        <span style="color: #31BEEF;">● Entrada/Salida</span>
+        <span style="color: #A1B8F2;">┈┈ Flujo secundario</span>
+      </div>
+    </section>
+
+    <!-- Section 3: Fases del Proceso -->
+    <section class="diagram-section">
+      <h2>Fases del Proceso</h2>
+
+      <div style="margin: 1.5rem 0; padding: 1rem; background: rgba(49, 190, 239, 0.05); border-radius: 4px;">
+        <h3 style="margin-top: 0; color: #31BEEF;">Fase 1: [Nombre]</h3>
+        <p><strong>Descripción:</strong> Qué sucede en esta fase</p>
+        <p><strong>Pasos clave:</strong> Acciones principales</p>
+        <p><strong>Tiempo estimado:</strong> Duración</p>
+        <p><strong>Fricciones identificadas:</strong> Problemas en esta fase</p>
+      </div>
+
+      <div style="margin: 1.5rem 0; padding: 1rem; background: rgba(49, 190, 239, 0.05); border-radius: 4px;">
+        <h3 style="margin-top: 0; color: #31BEEF;">Fase 2: [Nombre]</h3>
+        <p><strong>Descripción:</strong> Qué sucede en esta fase</p>
+        <p><strong>Pasos clave:</strong> Acciones principales</p>
+        <p><strong>Tiempo estimado:</strong> Duración</p>
+        <p><strong>Fricciones identificadas:</strong> Problemas en esta fase</p>
+      </div>
+
+      <div style="margin: 1.5rem 0; padding: 1rem; background: rgba(49, 190, 239, 0.05); border-radius: 4px;">
+        <h3 style="margin-top: 0; color: #31BEEF;">Fase 3: [Nombre]</h3>
+        <p><strong>Descripción:</strong> Qué sucede en esta fase</p>
+        <p><strong>Pasos clave:</strong> Acciones principales</p>
+        <p><strong>Tiempo estimado:</strong> Duración</p>
+        <p><strong>Fricciones identificadas:</strong> Problemas en esta fase</p>
+      </div>
+    </section>
+
+    <!-- Section 4: Puntos de Handoff -->
+    <section class="diagram-section">
+      <h2>Puntos de Handoff (Transferencias)</h2>
+      <p style="color: #A1B8F2; font-size: 0.95rem;">
+        Lugares donde se transfiere información a otros roles
+      </p>
+      <table class="handoff-table">
+        <thead>
+          <tr>
+            <th>De</th>
+            <th>Hacia</th>
+            <th>Qué Información</th>
+            <th>¿Fluye Bien?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>[Rol]</td>
+            <td>[Rol]</td>
+            <td>Tipo de información</td>
+            <td>☐ Sí  ☐ No</td>
+          </tr>
+          <tr>
+            <td>[Rol]</td>
+            <td>[Rol]</td>
+            <td>Tipo de información</td>
+            <td>☐ Sí  ☐ No</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 5: Cuellos de Botella -->
+    <section class="diagram-section">
+      <h2>Cuellos de Botella (Fricciones)</h2>
+      <p style="color: #A1B8F2; font-size: 0.95rem;">
+        Puntos donde el proceso se ralentiza o se genera información incompleta
+      </p>
+      <ul class="friction-list">
+        <li>
+          <strong>Fricción #1: [Nombre]</strong><br>
+          <span style="color: #A1B8F2;">Descripción del problema, impacto, causa raíz</span>
+        </li>
+        <li>
+          <strong>Fricción #2: [Nombre]</strong><br>
+          <span style="color: #A1B8F2;">Descripción del problema, impacto, causa raíz</span>
+        </li>
+        <li>
+          <strong>Fricción #3: [Nombre]</strong><br>
+          <span style="color: #A1B8F2;">Descripción del problema, impacto, causa raíz</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Section 6: Herramientas Actuales -->
+    <section class="diagram-section">
+      <h2>Herramientas Actuales</h2>
+      <p style="color: #A1B8F2; font-size: 0.95rem;">
+        Sistemas y herramientas usadas para cada proceso
+      </p>
+      <table class="handoff-table">
+        <thead>
+          <tr>
+            <th>Proceso</th>
+            <th>Herramienta</th>
+            <th>¿Digital?</th>
+            <th>Notas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>[Descripción]</td>
+            <td>[Excel/WhatsApp/Papel/etc]</td>
+            <td>✓ / ✗</td>
+            <td>Observaciones</td>
+          </tr>
+          <tr>
+            <td>[Descripción]</td>
+            <td>[Excel/WhatsApp/Papel/etc]</td>
+            <td>✓ / ✗</td>
+            <td>Observaciones</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 7: Mapeo a Dolores (D1-D4) -->
+    <section class="diagram-section">
+      <h2>Mapeo a Dolores Empresariales (D1-D4)</h2>
+      <p style="color: #A1B8F2; font-size: 0.95rem;">
+        Cómo las fricciones de este rol se conectan con los 4 dolores empresariales
+      </p>
+
+      <div style="margin: 1rem 0; padding: 1rem; background: rgba(49, 190, 239, 0.1); border-left: 4px solid #31BEEF; border-radius: 4px;">
+        <strong style="color: #31BEEF;">D1 — Procesos Internos</strong>
+        <p style="margin: 0.5rem 0 0 0; color: #A1B8F2;">Qué fricciones impactan en estandarización/duplicación</p>
+      </div>
+
+      <div style="margin: 1rem 0; padding: 1rem; background: rgba(49, 190, 239, 0.1); border-left: 4px solid #31BEEF; border-radius: 4px;">
+        <strong style="color: #31BEEF;">D2 — Seguimiento y Clasificación</strong>
+        <p style="margin: 0.5rem 0 0 0; color: #A1B8F2;">Qué fricciones impactan en trazabilidad/información</p>
+      </div>
+
+      <div style="margin: 1rem 0; padding: 1rem; background: rgba(153, 78, 149, 0.1); border-left: 4px solid #994E95; border-radius: 4px;">
+        <strong style="color: #994E95;">D3 — Comunicación Personalizada</strong>
+        <p style="margin: 0.5rem 0 0 0; color: #A1B8F2;">Qué fricciones impactan en contexto/handoffs</p>
+      </div>
+
+      <div style="margin: 1rem 0; padding: 1rem; background: rgba(153, 78, 149, 0.1); border-left: 4px solid #994E95; border-radius: 4px;">
+        <strong style="color: #994E95;">D4 — Conversión de Leads</strong>
+        <p style="margin: 0.5rem 0 0 0; color: #A1B8F2;">Qué fricciones impactan en velocidad/conversión/recurrencia</p>
+      </div>
+    </section>
+
+    <!-- Footer Navigation -->
+    <div class="nav-links">
+      <a href="../index.html">← Índice Principal</a>
+      <a href="../index.html#diagramas">Otros Diagramas →</a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>
+        ARMC — Aesthetic Rejuvenation Medical Center<br>
+        Análisis Operativo • Marzo 2026 • PRISMA Consulting
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    mermaid.contentLoaded();
+  </script>
+</body>
+</html>

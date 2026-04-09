@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tricología y Microinjerto — Flujo Operativo (as-is) — ARMC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: 'transparent',
+        primaryColor: '#1a2535',
+        primaryTextColor: '#FAF9F6',
+        primaryBorderColor: '#31BEEF',
+        secondaryColor: '#1a2535',
+        secondaryBorderColor: '#994E95',
+        lineColor: '#31BEEF',
+        textColor: '#FAF9F6',
+        clusterBkg: '#162033',
+        clusterBorder: '#253545',
+        edgeLabelBackground: '#1a2535',
+        fontFamily: '"Source Sans 3", sans-serif',
+        fontSize: '14px'
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        padding: 15,
+        nodeSpacing: 50,
+        rankSpacing: 55,
+      }
+    });
+  </script>
+  <link rel="stylesheet" href="../css/estilos-prisma.css">
+  <style>
+    .breadcrumb { margin-bottom: 2rem; padding: 1rem; background: rgba(49, 190, 239, 0.05); border-radius: 4px; }
+    .breadcrumb a { color: #31BEEF; }
+    .diagram-section { background: #1a2535; border: 1px solid #31BEEF; border-radius: 8px; padding: 2rem; margin: 2rem 0; }
+    .diagram-section h2 { margin-top: 0; }
+    .mermaid-container { background: #101B2C; padding: 2rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; }
+    .mermaid { display: flex; justify-content: center; min-height: 300px; }
+    .mermaid .node rect, .mermaid .node polygon { rx: 8 !important; ry: 8 !important; stroke-width: 1.5px !important; }
+    .mermaid .nodeLabel, .mermaid .node .label { font-family: 'Source Sans 3', sans-serif !important; font-size: 14px !important; font-weight: 600 !important; }
+    .mermaid .edgePath path.path { stroke-width: 1.5px !important; opacity: 0.6; }
+    .mermaid .edgeLabel { font-size: 12px !important; font-family: 'Source Sans 3', sans-serif !important; font-weight: 600 !important; }
+    .mermaid .edgeLabel rect { rx: 4 !important; ry: 4 !important; fill: #1a2535 !important; stroke: none !important; }
+    .mermaid .edgeLabel span { color: #FAF9F6 !important; }
+    .mermaid .cluster rect { rx: 8 !important; ry: 8 !important; stroke-dasharray: 5 3; }
+    .mermaid .cluster-label .nodeLabel, .mermaid .cluster-label span { font-family: 'Quicksand', sans-serif !important; font-weight: 700 !important; font-size: 14px !important; letter-spacing: 0.5px; text-transform: uppercase; fill: #FAF9F6 !important; color: #FAF9F6 !important; }
+    .nav-links { display: flex; gap: 1rem; margin-top: 2rem; justify-content: space-between; }
+    .nav-links a { flex: 1; padding: 1rem; text-align: center; background: #1a2535; border: 1px solid #31BEEF; border-radius: 4px 25px 25px 4px; transition: all 400ms ease; color: #FAF9F6; text-decoration: none; }
+    .nav-links a:hover { background: #31BEEF; color: #101B2C; }
+    .status-badge { display: inline-block; padding: 0.5rem 1rem; background: #4CAF50; color: #FAF9F6; border-radius: 4px; font-size: 0.85rem; margin-bottom: 1rem; font-weight: 600; }
+    .counter-bar { display: flex; gap: 2rem; padding: 1rem; background: #101B2C; border-radius: 4px; margin: 1rem 0; font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.9rem; }
+    .counter-bar span { color: #A1B8F2; }
+    .counter-bar .count { color: #31BEEF; font-size: 1.1rem; }
+    .counter-bar .count-warn { color: #FFC107; font-size: 1.1rem; }
+    .quote { background: #101B2C; padding: 1rem 1.5rem; border-left: 4px solid #994E95; border-radius: 4px; margin: 1rem 0; font-style: italic; color: #A1B8F2; }
+    .quote strong { color: #994E95; font-style: normal; }
+    .gap-box { background: rgba(255, 193, 7, 0.08); border: 1px dashed #FFC107; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .gap-box strong { color: #FFC107; }
+    .resolved-box { background: rgba(76, 175, 80, 0.08); border: 1px solid #4CAF50; border-radius: 4px; padding: 1rem; margin: 0.5rem 0; }
+    .resolved-box strong { color: #4CAF50; }
+    .dato-box { background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin: 0.5rem 0; }
+    .dato-box strong { color: #31BEEF; }
+    .source-tag { font-size: 0.75rem; color: #994E95; font-weight: 600; }
+    .tag-new { display: inline-block; background: #31BEEF; color: #101B2C; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; margin-left: 0.5rem; vertical-align: middle; }
+    .handoff-box { background: #101B2C; padding: 1rem; border-left: 4px solid #A1B8F2; border-radius: 4px; margin: 0.5rem 0; }
+    .handoff-box strong { color: #A1B8F2; }
+    .friction-box { background: rgba(255, 68, 68, 0.05); padding: 1rem; border-left: 4px solid #ff4444; border-radius: 4px; margin: 0.5rem 0; }
+    .friction-box strong { color: #ff4444; }
+    .blocked-section { background: rgba(255, 193, 7, 0.05); border: 1px dashed #FFC107; border-radius: 8px; padding: 2rem; margin: 2rem 0; text-align: center; }
+    .blocked-section h2 { color: #FFC107; margin-top: 0; }
+    .fragment-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .fragment-table th, .fragment-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid rgba(49, 190, 239, 0.1); }
+    .fragment-table th { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .fragment-table td { color: #A1B8F2; font-size: 0.9rem; }
+
+    /* Slide grid */
+    .slide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.25rem; margin-top: 1.5rem; }
+    .slide-card { background: #101B2C; border: 1px solid rgba(49,190,239,0.3); border-radius: 12px; padding: 1.5rem; cursor: pointer; transition: all 300ms ease; position: relative; overflow: hidden; }
+    .slide-card:hover { border-color: #31BEEF; transform: translateY(-4px); box-shadow: 0 12px 32px rgba(49,190,239,0.15); }
+    .slide-card .card-number { font-size: 3.5rem; font-weight: 700; color: rgba(49,190,239,0.08); position: absolute; top: -0.25rem; right: 0.75rem; font-family: 'Quicksand', sans-serif; line-height: 1; }
+    .slide-card h3 { color: #FAF9F6; font-size: 1rem; margin: 0 0 0.5rem 0; font-family: 'Quicksand', sans-serif; font-weight: 600; }
+    .slide-card .card-count { color: #A1B8F2; font-size: 0.8rem; }
+    .slide-card.card-critical { border-color: rgba(255,68,68,0.4); }
+    .slide-card.card-critical:hover { border-color: #ff4444; box-shadow: 0 12px 32px rgba(255,68,68,0.15); }
+    .slide-card.card-critical .card-number { color: rgba(255,68,68,0.08); }
+    .slide-card.card-sentiment { border-color: rgba(153,78,149,0.4); }
+    .slide-card.card-sentiment:hover { border-color: #994E95; box-shadow: 0 12px 32px rgba(153,78,149,0.15); }
+    .slide-card.card-sentiment .card-number { color: rgba(153,78,149,0.08); }
+
+    /* Modal overlay */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: #0a1420; z-index: 1000; flex-direction: column; }
+    .modal-overlay.active { display: flex; }
+    .modal-progress { height: 3px; background: rgba(49,190,239,0.1); flex-shrink: 0; }
+    .modal-progress-fill { height: 100%; background: linear-gradient(90deg, #31BEEF, #994E95); transition: width 400ms ease; border-radius: 0 2px 2px 0; }
+    .modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 1rem 2.5rem; flex-shrink: 0; }
+    .modal-topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .modal-slide-num { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.85rem; background: rgba(49,190,239,0.1); padding: 0.3rem 0.8rem; border-radius: 20px; }
+    .modal-slide-title { color: #A1B8F2; font-family: 'Quicksand', sans-serif; font-size: 0.85rem; font-weight: 500; }
+    .modal-close { background: none; border: none; color: #A1B8F2; font-size: 1.25rem; cursor: pointer; padding: 0.4rem 0.6rem; border-radius: 6px; transition: all 200ms; line-height: 1; }
+    .modal-close:hover { color: #ff4444; background: rgba(255,68,68,0.1); }
+    .modal-slide-area { flex: 1; display: flex; align-items: stretch; overflow: hidden; position: relative; }
+    .modal-side-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; background: none; border: none; color: rgba(161,184,242,0.4); font-size: 2.5rem; cursor: pointer; padding: 1rem; transition: all 200ms; }
+    .modal-side-nav:hover:not(:disabled) { color: #31BEEF; }
+    .modal-side-nav:disabled { opacity: 0; cursor: default; }
+    .modal-side-nav.nav-left { left: 0.5rem; }
+    .modal-side-nav.nav-right { right: 0.5rem; }
+    .modal-slide-content { width: 100%; max-width: 900px; margin: 0 auto; padding: 0 5rem; overflow-y: auto; max-height: 100%; scrollbar-width: none; -ms-overflow-style: none; position: relative; }
+    .modal-slide-content::-webkit-scrollbar { width: 0; display: none; }
+    .scroll-hint { position: absolute; bottom: 0; left: 5rem; right: 5rem; height: 70px; background: linear-gradient(to bottom, transparent 0%, #0a1420 80%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 0.75rem; pointer-events: none; opacity: 1; transition: opacity 400ms ease; z-index: 5; }
+    .scroll-hint.hidden { opacity: 0; }
+    .scroll-hint-arrow { color: rgba(49,190,239,0.4); font-size: 1rem; animation: scrollBounce 2s ease-in-out infinite; display: flex; align-items: center; gap: 0.4rem; font-family: 'Quicksand', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; }
+    @keyframes scrollBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+    .slide-title-block { margin-bottom: 2.5rem; }
+    .slide-title-block h2 { color: #FAF9F6; font-family: 'Quicksand', sans-serif; font-size: 2rem; font-weight: 700; margin: 0 0 0.25rem 0; line-height: 1.2; }
+    .slide-title-block .slide-subtitle { color: #A1B8F2; font-size: 0.95rem; }
+    .slide-item { padding: 0.85rem 0; border-bottom: 1px solid rgba(49,190,239,0.06); display: flex; gap: 0.75rem; align-items: baseline; line-height: 1.55; }
+    .slide-item:last-child { border-bottom: none; }
+    .slide-item-dot { width: 6px; height: 6px; border-radius: 50%; background: #31BEEF; flex-shrink: 0; margin-top: 0.55rem; }
+    .slide-item-dot.critical { background: #ff4444; }
+    .slide-item-dot.positive { background: #4CAF50; }
+    .slide-item-dot.sentiment { background: #994E95; }
+    .slide-item-text { color: #FAF9F6; font-size: 1.05rem; font-family: 'Source Sans 3', sans-serif; font-weight: 300; }
+    .slide-item-text strong { color: #31BEEF; font-weight: 600; }
+    .slide-item-text .critical-text { color: #ff4444; font-weight: 600; }
+    .slide-item-text .positive-text { color: #4CAF50; font-weight: 600; }
+    .slide-item-text .sentiment-text { color: #994E95; font-weight: 600; }
+    .slide-section-heading { color: #31BEEF; font-family: 'Quicksand', sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin: 2rem 0 0.75rem 0; padding-bottom: 0.4rem; border-bottom: 1px solid rgba(49,190,239,0.15); }
+    .slide-section-heading:first-child { margin-top: 0; }
+    .slide-section-heading.critical { color: #ff4444; border-bottom-color: rgba(255,68,68,0.15); }
+    .modal-bottombar { display: flex; align-items: center; justify-content: center; padding: 1.25rem; gap: 8px; flex-shrink: 0; }
+    .modal-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(49,190,239,0.15); transition: all 300ms ease; cursor: pointer; }
+    .modal-dot.active { background: #31BEEF; transform: scale(1.4); }
+    .modal-dot:hover:not(.active) { background: rgba(49,190,239,0.4); }
+
+    @media (max-width: 768px) {
+      .modal-slide-content { padding: 0 3.5rem; }
+      .modal-side-nav { font-size: 1.5rem; padding: 0.5rem; }
+      .slide-title-block h2 { font-size: 1.5rem; }
+      .slide-item-text { font-size: 0.95rem; }
+      .modal-topbar { padding: 0.75rem 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .slide-grid { grid-template-columns: 1fr; }
+      .modal-slide-content { padding: 0 2.5rem; }
+      .modal-side-nav { font-size: 1.25rem; }
+      .modal-bottombar { display: none; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1><i class="ph ph-eyedropper" style="color:#31BEEF"></i> Tricología y Microinjerto — Flujo Operativo (as-is)</h1>
+      <p>Entrevistado: Dra. Elián Cabrera Narváez — Entrevista completa (7 fragmentos)</p>
+    </header>
+
+    <div class="breadcrumb">
+      <a href="../index.html"><i class="ph ph-arrow-left"></i> Volver al Índice</a>
+    </div>
+
+    <div class="status-badge"><i class="ph ph-check-circle"></i> ENTREVISTA COMPLETA — 7 fragmentos</div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 1: DATOS CONFIRMADOS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-check-square"></i> Datos confirmados</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">92 datos organizados por flujo operativo. Fuente: Dra. Elián Cabrera Narváez (Tricología), 1 sesión de entrevista.<br>Haz clic en cualquier tarjeta para explorar los datos.</p>
+
+      <div class="slide-grid">
+        <div class="slide-card" onclick="openSlide(0)"><span class="card-number">1</span><h3>Elián: Perfil y rol</h3><span class="card-count">9 datos</span></div>
+        <div class="slide-card" onclick="openSlide(1)"><span class="card-number">2</span><h3>Captación y primer contacto</h3><span class="card-count">5 datos</span></div>
+        <div class="slide-card" onclick="openSlide(2)"><span class="card-number">3</span><h3>Consulta capilar</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(3)"><span class="card-number">4</span><h3>Expediente y documentación</h3><span class="card-count">8 datos</span></div>
+        <div class="slide-card" onclick="openSlide(4)"><span class="card-number">5</span><h3>Tratamientos capilares</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(5)"><span class="card-number">6</span><h3>Seguimiento y agendamiento</h3><span class="card-count">10 datos</span></div>
+        <div class="slide-card" onclick="openSlide(6)"><span class="card-number">7</span><h3>Consulta de seguimiento</h3><span class="card-count">6 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(7)"><span class="card-number">8</span><h3>Registro fotográfico</h3><span class="card-count">7 datos</span></div>
+        <div class="slide-card" onclick="openSlide(8)"><span class="card-number">9</span><h3>Herramientas, cobro e insumos</h3><span class="card-count">5 datos</span></div>
+        <div class="slide-card" onclick="openSlide(9)"><span class="card-number">10</span><h3>Control de peso: consulta</h3><span class="card-count">10 datos</span></div>
+        <div class="slide-card card-critical" onclick="openSlide(10)"><span class="card-number">11</span><h3>Control de peso: bitácora</h3><span class="card-count">8 datos</span></div>
+        <div class="slide-card card-sentiment" onclick="openSlide(11)"><span class="card-number">12</span><h3>Lo que Elián siente y sugiere</h3><span class="card-count">8 expresiones</span></div>
+      </div>
+
+      <div id="slides-data" style="display:none;">
+
+        <div class="slide" data-title="Elián: Perfil y rol" data-count="9 datos">
+          <div class="details-content">
+            <div class="dato-box"><strong>Antigüedad:</strong> 8 meses en la clínica. "Apenas yo me acabo de incorporar, no tiene mucho que sea 8 meses." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Área capilar opera de forma separada al resto de la clínica.</strong> "Yo llevo el área capilar que va de la mano, pero no está como tan relacionada. Es un poquito más aparte." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Todos los procesos del área capilar son independientes.</strong> "Estoy dentro de la clínica, pero todos los procesos son aparte." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Es la ÚNICA persona que maneja toda el área capilar — sin apoyo.</strong> "Yo soy la que llevo toda esa área." No hay nadie más. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Horario:</strong> lunes a viernes 10:30–18:30 (a veces hasta 19:00), sábados 10:00–14:00. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Volumen:</strong> 40-50 pacientes activos actualmente. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Distribución irregular:</strong> L-Mi pocos (ej. 2 pacientes), J-V-S pico (10-15 pacientes). <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Mayoría de pacientes son hombres.</strong> <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Hace excepciones de horario:</strong> atiende hasta las 7-8pm o sábados a las 9:30 para pacientes que no pueden en horario normal. <span class="source-tag">— Elián</span></div>
+          </div>
+        </div>
+
+        <div class="slide" data-title="Captación y primer contacto" data-count="5 datos">
+          <div class="details-content">
+            <div class="dato-box"><strong>Ella maneja el contacto directo con pacientes y hace la mayoría de las citas.</strong> "Yo llevo el contacto con los pacientes, yo hago la mayoría de las citas." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Captación de pacientes nuevos:</strong> llegan vía Instagram de ARMC → le pasan su contacto o le preguntan disponibilidad. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Guarda contacto de todos sus pacientes.</strong> "Les pido su contacto y ya siempre yo los tengo guardados." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Notificación de llegada:</strong> grupo WhatsApp interno. "Lo vocean por WhatsApp en el grupo que tenemos y ya les digo que es mi paciente." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Delegación de mensajes a Carlos/encargados genera caos.</strong> "Si yo dejo a Carlitos o a mis encargados más todos los mensajes, se vuelve todo un caos." Ella asume toda la comunicación. <span class="source-tag">— Elián</span></div>
+          </div>
+        </div>
+
+        <div class="slide" data-title="Consulta capilar" data-count="6 datos">
+          <div class="details-content">
+            <div class="dato-box"><strong>HC estándar + preguntas adicionales específicas capilares.</strong> "Evaluamos al paciente, hacemos la historia clínica, hago otras preguntas extra más encaminadas a la parte capilar." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Tiene formatos/formularios propios para la consulta capilar.</strong> "Yo tengo aquí como todos mis formatitos." Adicionales a la HC general. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Tiempo por consulta: ~1 hora.</strong> "Lo que yo doy de tiempo de paciente es una hora." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Componente emocional importante:</strong> la pérdida de cabello afecta emocionalmente, trato más cercano. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Alopecia androgenética = enfermedad crónica.</strong> Tratamiento mejora pero no cura. Si dejan tratamiento, vuelve a estado inicial. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>No hay fin de tratamiento.</strong> Seguimiento se espacía pero nunca termina. "No existe como un término, solamente irlo checando cada vez más espaciado." <span class="source-tag">— Elián</span></div>
+          </div>
+        </div>
+
+        <div class="slide" data-title="Expediente y documentación" data-count="8 datos">
+          <div class="details-content">
+            <div class="dato-box"><strong>Expediente Cofepris = historia clínica completa.</strong> Funciona como bitácora regulatoria. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Expediente = HC + consentimiento</strong> (si hay procedimiento), o solo HC si es consulta general. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">HC general: en papel (a mano) Y en electrónico — duplicada en ambos formatos.</strong> <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Expediente electrónico en iPad, en archivos Pages.</strong> "Los tengo como en archivos de page. Ahí lo tengo todo estructurado." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Aviso de privacidad:</strong> usa el mismo de la clínica (incluye consentimiento fotográfico). <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Consentimiento específico de mesoterapia capilar</strong> — no sabe si ya lo enviaron al equipo consultor. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Receta digital (PDF):</strong> medicamentos no controlados, no requiere receta física. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Documentos comprometidos:</strong> ejemplo seguimiento Pages, preguntas adicionales capilares, ejemplo PDF receta, bitácora control de peso, plan alimenticio. <span class="source-tag">— Elián</span></div>
+          </div>
+        </div>
+
+        <div class="slide" data-title="Tratamientos capilares" data-count="6 datos">
+          <div class="details-content">
+            <div class="dato-box"><strong>Mesoterapia capilar:</strong> microinyecciones en el cuero cabelludo + medicamento oral o tópico según el caso. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Microinjerto y prótesis capilares:</strong> aún NO activos, en preparación. "Todavía no lo estoy llevando a cabo porque sigo en preparación." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Post-mesoterapia:</strong> indicaciones mínimas (no lavar cabello 4h, no tocar, no gimnasio, no alberca). Técnica mínimamente invasiva. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>PDF de receta incluye:</strong> indicaciones de tratamiento tópico + contraindicaciones + modo de aplicación. Enviada por WhatsApp. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Venta de medicamentos en la clínica.</strong> "Por lo regular se llevan el medicamento aquí con nosotros." Principales: dutasterida, minoxidil. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Recetas vía PDF por WhatsApp</strong> — papel "se les pierde" a los pacientes. <span class="source-tag">— Elián</span></div>
+          </div>
+        </div>
+
+        <div class="slide" data-title="Seguimiento y agendamiento" data-count="10 datos">
+          <div class="details-content">
+            <div class="dato-box"><strong>Seguimiento frecuente:</strong> cada mes o cada dos meses por paciente. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Debe enviar recordatorios personalmente</strong> por la frecuencia del seguimiento. Todo manual. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Proceso de recordatorio:</strong> revisa qué pacientes cumplen 1-2 meses y les manda mensaje. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Pacientes clasificados por frecuencia</strong> de seguimiento (mensual o bimensual). <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Conoce preferencias de horario de pacientes frecuentes — de memoria.</strong> "Ya tengo identificados qué días se les facilita, en qué horarios." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Dos modos de agendamiento:</strong> desde primera consulta (para el mes) o con recordatorio posterior (la mayoría). <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Tiene mensaje predeterminado para recordatorios</strong> — lo copia y pega. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Sistema de tracking:</strong> anota fecha al lado de cada receta guardada como control de seguimiento. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Citas agendadas a un mes se cancelan frecuentemente.</strong> "Como es un mes completo luego es medio complicado porque te agendan y a la mera hora ya no." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Contacto cercano necesario</strong> para que paciente no pierda avances ganados. <span class="source-tag">— Elián</span></div>
+          </div>
+        </div>
+
+        <div class="slide" data-title="Consulta de seguimiento" data-count="6 datos">
+          <div class="details-content">
+            <div class="dato-box"><strong>Consulta de seguimiento más rápida:</strong> ya tiene expediente completo en tableta. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Revisa:</strong> receta enviada, tratamientos previos, efectos adversos + exploración con cámara especializada. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Efectos adversos son raros</strong> pero se verifican en cada consulta. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Seguimiento de adherencia:</strong> pregunta si tomó medicamento, si lo suspendió, cómo se ha sentido. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Seguimiento post-sesión:</strong> mensaje WhatsApp al día siguiente preguntando cómo se sintieron. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Pacientes hacen 1-2 preguntas</strong> durante la semana post-sesión, ella las responde por WhatsApp. <span class="source-tag">— Elián</span></div>
+          </div>
+        </div>
+
+        <div class="slide" data-title="Registro fotográfico" data-count="7 datos">
+          <div class="details-content">
+            <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Fotografías de avance en celular personal</strong> — fotos "de lejos" cada mes o dos meses. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Fotografías de cámara especializada:</strong> guardadas en iPad con medidas por zona. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Cámara especializada transfiere fotos al iPad automáticamente</strong> (app Fotos). <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Transfiere fotos de iPad a celular</strong> para hacer comparaciones. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Comparativo fotográfico mensual:</strong> primera foto vs siguiente para medir mejoría. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Muestra comparativos al paciente en iPad</strong> o graba video de avance. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Búsqueda manual de fotos por paciente:</strong> dispersas entre celular e iPad sin organización. "Estar buscando la foto inicial y luego la de dos meses, eso me quita tiempo." <span class="source-tag">— Elián</span></div>
+          </div>
+        </div>
+
+        <div class="slide" data-title="Herramientas, cobro e insumos" data-count="5 datos">
+          <div class="details-content">
+            <div class="dato-box"><strong>Herramientas confirmadas:</strong> WhatsApp, celular, iPad (Pages), cámara especializada. No hay más. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Gestiona insumos y proveedores de forma independiente a ARMC.</strong> "Yo lo gestiono aparte con los proveedores." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Control de inventario mental:</strong> sabe cuánto falta según pacientes atendidos. "Ya vinieron tantos pacientes, ya me deben de faltar tantos." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Cobro:</strong> Carlos es el único punto de apoyo regular. Ella avisa que terminó, él cobra. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Brisa u otro desocupado</strong> ayuda ocasionalmente a limpiar cuando hay muchos pacientes seguidos. <span class="source-tag">— Elián</span></div>
+          </div>
+        </div>
+
+        <div class="slide" data-title="Control de peso: consulta y tratamiento" data-count="10 datos">
+          <div class="details-content">
+            <div class="dato-box"><strong>ÁREA ADICIONAL:</strong> también lleva control de peso dentro de la clínica. No es exclusiva de ella — "estamos más involucrados todos", pero ella lleva la consulta. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>HC general + aviso privacidad + consentimiento específico</strong> del medicamento inyectable. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Énfasis en alimentación</strong> y hábitos del paciente. Consulta más enfocada en alimentación general. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Toma de medidas:</strong> peso, % grasa, % músculo, grasa visceral + decisión de dosis. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Tratamiento con inyecciones semanales</strong> para bajar de peso. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Ciclo mensual:</strong> 4 inyecciones semanales + medición en semana 5 para evaluar. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Plan de alimentación personalizado uno a uno,</strong> NO usa plantillas. Diseña cada plan desde cero. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Plan enviado por WhatsApp al día siguiente,</strong> calculado con peso y porcentajes. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Evaluación mensual de resultados + adherencia al plan.</strong> Se revisa cambio, cómo se sintió, si siguió el plan. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Menos seguimiento que capilar:</strong> pacientes vienen cada semana (no requiere recordatorio). <span class="source-tag">— Elián</span></div>
+          </div>
+        </div>
+
+        <div class="slide" data-title="Control de peso: bitácora y equipo" data-count="8 datos">
+          <div class="details-content">
+            <div class="dato-box"><strong>Bitácora de control de peso:</strong> registro compartido con todo el equipo, por paciente. Ella la creó. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Bitácora permite que otros pongan la inyección</strong> sin que Elián esté presente. Contiene dosis y número de aplicación. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Divani puede poner la inyección</strong> si Elián no está o está ocupada. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Inyección muy rápida,</strong> sin seguimiento detallado en cada visita semanal. Solo se pregunta efectos adversos. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Protocolo:</strong> en 4ta dosis → equipo avisa a Elián → ella agenda evaluación. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #ff4444;"><strong style="color: #ff4444;">Bitácora escrita a mano.</strong> "Lo anotamos a manita, de que tal dosis y la fecha." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Control de peso no tiene los mismos problemas que capilar.</strong> El seguimiento no es tan cercano. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box"><strong>Consentimiento del medicamento inyectable:</strong> pendiente confirmar si fue compartido. <span class="source-tag">— Elián</span></div>
+          </div>
+        </div>
+
+        <div class="slide" data-title="Lo que Elián siente y sugiere" data-count="8 expresiones">
+          <div class="details-content">
+            <h4 style="color: #994E95;">Fricciones expresadas</h4>
+            <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se vuelve todo un caos"</strong> — delegación de mensajes a Carlos/encargados. Prefiere hacer todo ella. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Luego es medio complicado porque te agendan y a la mera hora ya no"</strong> — cancelaciones frecuentes en citas a un mes. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Eso creo que me sería lo que más me quita tiempo"</strong> — buscar pacientes, ver fechas, mandar recordatorios. Pain point principal. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"La historia clínica, las preguntas específicas, eso sí lo tengo que hacer yo"</strong> — HC larga, pain point secundario. <span class="source-tag">— Elián</span></div>
+            <h4 style="color: #4CAF50; margin-top: 1rem;">Sugerencias espontáneas</h4>
+            <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Clasificar pacientes por fechas para envío automático de recordatorio.</strong> "A lo mejor podríamos clasificar como por fechas para que se mande inmediatamente el mensaje." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Formulario pre-consulta:</strong> vio que un ginecólogo manda mini-HC antes de la cita. Pacientes llenan datos básicos previamente. <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Organizar fotos por paciente</strong> para facilitar comparativos. "Si yo pudiera cargar las imágenes por paciente..." <span class="source-tag">— Elián</span></div>
+            <div class="dato-box" style="border-left-color: #4CAF50;"><strong style="color: #4CAF50;">Digitalizar bitácora de control de peso.</strong> "Si se puede ser algo que quede guardado, más sencillo para no estarlo anotando." <span class="source-tag">— Elián</span></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="slideModal">
+      <div class="modal-progress"><div class="modal-progress-fill" id="progressFill"></div></div>
+      <div class="modal-topbar">
+        <div class="modal-topbar-left">
+          <span class="modal-slide-num" id="slideNum"></span>
+          <span class="modal-slide-title" id="slideTitle"></span>
+        </div>
+        <button class="modal-close" onclick="closeModal()" title="Cerrar (Esc)">&times;</button>
+      </div>
+      <div class="modal-slide-area">
+        <button class="modal-side-nav nav-left" id="btnPrev" onclick="prevSlide()"><i class="ph ph-caret-left"></i></button>
+        <div class="modal-slide-content" id="modalBody"></div>
+        <div class="scroll-hint" id="scrollHint"><span class="scroll-hint-arrow"><i class="ph ph-caret-down"></i> scroll</span></div>
+        <button class="modal-side-nav nav-right" id="btnNext" onclick="nextSlide()"><i class="ph ph-caret-right"></i></button>
+      </div>
+      <div class="modal-bottombar" id="modalDots"></div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 2: DIAGRAMA -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-flow-arrow"></i> Diagrama de Flujo — Rol de Tricología (solo datos confirmados)</h2>
+      <p style="color: #A1B8F2;">92 datos de entrevista. Flujo completo del rol de Tricología y Microinjerto — desde captación hasta seguimiento capilar y control de peso.</p>
+      <div class="mermaid-container">
+        <div class="mermaid">
+flowchart TD
+    classDef default fill:#1a2535,stroke:#31BEEF,stroke-width:1.5px,color:#FAF9F6
+    classDef friction fill:#2a1015,stroke:#ff4444,stroke-width:2px,color:#ff4444
+    classDef auto fill:#0f2015,stroke:#4CAF50,stroke-width:1.5px,color:#4CAF50
+    classDef decision fill:#1f1525,stroke:#994E95,stroke-width:1.5px,color:#FAF9F6
+    classDef entry fill:#0f1f2f,stroke:#31BEEF,stroke-width:1.5px,color:#31BEEF
+
+    subgraph CAP["CAPTACIÓN — Instagram ARMC"]
+        C1["Instagram ARMC → equipo pasa contacto"]:::entry
+        C1 --> C2["Elián agenda por WhatsApp"]
+        C2 --> C3["Delegación a Carlos genera caos"]:::friction
+    end
+
+    subgraph CONSULTA["CONSULTA — ~1h, 40-50 pac activos"]
+        C2 --> Q1["Grupo WhatsApp anuncia llegada"]
+        Q1 --> Q2{"Paciente<br/>nuevo"}:::decision
+        Q2 -->|"Sí"| Q3["HC + preguntas capilares propias"]
+        Q2 -->|"Seguimiento"| Q4["Revisa adherencia y efectos"]
+        Q3 --> Q5["Exploración + componente emocional"]
+        Q4 --> Q5
+    end
+
+    subgraph TRAT["TRATAMIENTO — mesoterapia + medicamento"]
+        Q5 --> T1["Mesoterapia: microinyecciones"]
+        T1 --> T2["Indicaciones post + venta medicamento"]
+        T2 --> T3["Elián avisa a Carlos → cobro"]
+    end
+
+    subgraph DOC["DOCUMENTACIÓN — duplicada papel + iPad"]
+        T3 --> D1["HC papel + electrónica Pages iPad"]:::friction
+        D1 --> D2["Consentimiento + receta PDF por WhatsApp"]
+        D2 --> D3["Todo en dispositivos personales"]:::friction
+    end
+
+    subgraph SEG["SEGUIMIENTO — mensual/bimensual, 100% manual"]
+        D3 --> S1["Fecha anotada en receta como tracking"]
+        S1 --> S2["Revisa quién cumple ciclo"]
+        S2 --> S3["Mensaje predeterminado: copia y pega"]
+        S3 --> S4["Cancelaciones frecuentes a un mes"]:::friction
+        S4 --> S5["Recordatorios manuales — principal carga"]:::friction
+    end
+
+    subgraph FOTO["REGISTRO FOTOGRÁFICO — disperso"]
+        Q5 -.-> F1["Fotos celular + cámara iPad"]
+        F1 -.-> F2["Cámara transfiere a iPad"]:::auto
+        F2 -.-> F3["Comparativo mensual"]
+        F3 -.-> F4["Búsqueda manual entre dispositivos"]:::friction
+    end
+
+    subgraph PESO["CONTROL DE PESO — área adicional"]
+        T3 -.->|"área adicional"| P1["HC + consentimiento inyectable"]:::entry
+        P1 -.-> P2["Medidas + inyección semanal x4"]
+        P2 -.-> P3["Bitácora a mano: dosis + fecha"]:::friction
+        P3 -.-> P4{"4ta<br/>dosis"}:::decision
+        P4 -.->|"Sí"| P5["Evaluación + plan alimenticio x WhatsApp"]
+        P4 -.->|"No"| P6["Divani puede inyectar"]
+    end
+        </div>
+      </div>
+
+      <!-- Leyenda -->
+      <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.5rem; font-size: 0.85rem; padding: 0.75rem 1rem; background: rgba(26,37,53,0.5); border-radius: 6px;">
+        <span style="color: #4CAF50;">● Automatizado</span>
+        <span style="color: #994E95;">● Decisión</span>
+        <span style="color: #ff4444;">● Fricción</span>
+        <span style="color: #31BEEF;">● Entrada/Salida</span>
+        <span style="color: #A1B8F2;">┈┈ Flujo secundario</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 3: VACÍOS DE INFORMACIÓN -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-question"></i> Vacíos de información</h2>
+
+      <details>
+        <summary style="border-left-color: #4CAF50; color: #4CAF50;">Vacíos resueltos durante la entrevista (6)</summary>
+        <div class="details-content">
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Volumen de pacientes capilares</strong> — 40-50 pacientes activos. Distribución irregular: L-Mi pocos (~2), J-V-S pico (10-15). Consulta ~1 hora. Mayoría hombres. <span class="source-tag">— Dra. Elián</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Formato de registro de HC capilar</strong> — HC general: papel (a mano) + electrónica. Seguimiento capilar: archivos Pages en iPad con estructura propia de preguntas capilares. <span class="source-tag">— Dra. Elián</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Rol de Carlos en área capilar</strong> — Solo cobro. Elián le avisa que terminó, él cobra tratamiento + cápsulas + mesoterapia. Delegación de comunicación WhatsApp genera caos — ella asume todo. <span class="source-tag">— Dra. Elián</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Canal de captación de pacientes capilares</strong> — Instagram de ARMC → le pasan contacto o consultan disponibilidad. <span class="source-tag">— Dra. Elián</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Herramienta de clasificación de pacientes</strong> — Recetas guardadas con fecha anotada como sistema de tracking manual. Revisa fechas para saber a quién le toca. Mensaje predeterminado que copia y pega. <span class="source-tag">— Dra. Elián</span></div>
+          <div class="resolved-box"><strong><i class="ph ph-check-circle"></i> Generación y envío del plan de alimentación</strong> — Personalizado uno a uno (no plantillas). Calculado con peso y porcentajes. Enviado por WhatsApp al día siguiente de la consulta. <span class="source-tag">— Dra. Elián</span></div>
+        </div>
+      </details>
+
+      <h3 style="color: #FFC107;">Vacíos pendientes (10)</h3>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Herramienta de agendamiento</strong> — Gestiona citas "de memoria" y por WhatsApp. No se mencionó herramienta específica (agenda física, digital, Excel, app). Parcialmente resuelto: otros roles confirman cero software y 3 agendas físicas compartidas en ARMC, pero no se sabe si Elián usa alguna de ellas.</div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Pacientes que no responden a recordatorios</strong> — No se abordó qué pasa cuando un paciente no responde o no asiste a su cita de seguimiento. Vacío sistémico: ningún rol en ARMC tiene protocolo de no-show. <span class="source-tag" style="color: #4CAF50;">AMPLIADO por Dra. Marisela Narváez (CEO): confirma que no hay mecanismo de reactivación en toda la clínica. "No." Carlos no manda mensajes de seguimiento ("he notado que no los manda"). Marisela tiene que supervisar personalmente. Retención ~10%. Gap sistémico confirmado desde dirección.</span></div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Coordinación con Dr. Gabriel para casos compartidos</strong> — No se detalló cómo se coordina con el cirujano para pacientes que requieren ambos servicios (capilar + cirugía).</div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Autonomía en precios y decisiones comerciales</strong> — No se abordó si ella fija precios de sus servicios capilares o si los define la dirección.</div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Almacenamiento de contactos de pacientes</strong> — "Los tengo guardados" — no se especificó si es en teléfono personal, agenda, Excel u otro medio. Patrón sistémico: todos los roles usan dispositivos personales sin directorio centralizado.</div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Herramienta para generar PDFs de recetas</strong> — Envía recetas en PDF con indicaciones, contraindicaciones y tratamientos. No se mencionó con qué herramienta las genera.</div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Sistema de control de inventario</strong> — Gestiona proveedores aparte de ARMC con control mental ("ya vinieron tantos pacientes, ya me deben de faltar tantos"). Operación paralela no integrada al sistema general de inventario de la clínica. <span class="source-tag" style="color: #4CAF50;">AMPLIADO por Dra. Marisela Narváez (CEO): en toda la entrevista de dirección NUNCA se menciona el inventario capilar — solo se habla de Bob para inventario general (hojitas verdes, captura digital). Confirma el aislamiento total del área capilar. Marisela quiere integrar a Bob "al 100% en inventario" pero sin mención de tricología.</span></div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Respaldo de fotografías de pacientes</strong> — Fotos en celular personal e iPad. No se mencionó respaldo (iCloud, drive, servidor). Patrón sistémico: todos los roles usan dispositivos personales sin respaldo centralizado.</div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Propiedad del iPad</strong> — Todo el expediente electrónico vive en "mi tableta" / "mi iPad". No se aclaró si es equipo personal o propiedad de ARMC.</div>
+      <div class="gap-box"><strong><i class="ph ph-warning"></i> Volumen de pacientes de control de peso</strong> — Área nueva revelada en la entrevista pero no se mencionó cuántos pacientes atiende en esta área.</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 4: HANDOFFS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-arrows-left-right"></i> Puntos de Handoff</h2>
+
+      <div class="dato-box"><strong>Elián ↔ Carlos:</strong> Comunicación WhatsApp con pacientes. Carlos participa pero la delegación genera caos — Elián asume toda la comunicación para evitar errores.</div>
+      <div class="dato-box"><strong>Elián ↔ Brisa:</strong> Brisa ayuda en procedimientos cuando no tiene pacientes propios. También apoya limpiando consultorio entre pacientes seguidos.</div>
+      <div class="dato-box"><strong>Elián → Gabriel/Maricela:</strong> Línea de reporte implícita. No se detalló coordinación operativa para casos compartidos (capilar + cirugía).</div>
+      <div class="dato-box"><strong>ARMC (Instagram) → Elián:</strong> Equipo pasa contacto de pacientes capilares nuevos o consulta disponibilidad. Sin protocolo estandarizado.</div>
+      <div class="dato-box"><strong>Grupo WhatsApp → Elián:</strong> Notificación de llegada de pacientes. Ella responde que es su paciente y lo pasa a consultorio.</div>
+      <div class="dato-box"><strong>Elián → Carlos:</strong> Cobro al finalizar atención. Único punto de apoyo regular de Carlos en el área capilar.</div>
+      <div class="dato-box"><strong>Equipo → Elián (control de peso):</strong> Al llegar a 4ta dosis, el equipo avisa a Elián para que agende evaluación. Divani puede poner inyecciones si ella no está.</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FRICCIONES EXPRESADAS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-fire"></i> Fricciones expresadas por Elián</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Citas literales — lo que Elián siente y expresa sobre su trabajo.</p>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Se vuelve todo un caos"</strong> — delegación de mensajes a Carlos/encargados. Prefiere hacer todo ella para evitar errores</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Tengo que estarles mandando o recordando la cita a los pacientes"</strong> — recordatorios manuales, carga operativa principal</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Luego es medio complicado porque te agendan y a la mera hora ya no"</strong> — cancelaciones frecuentes en citas agendadas a un mes</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Eso creo que me sería lo que más me quita tiempo"</strong> — buscar pacientes, ver fechas, mandar recordatorios. Pain point principal</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"La historia clínica, las preguntas específicas, eso sí lo tengo que hacer yo"</strong> — HC larga sin posibilidad de delegar</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Estar buscando la foto inicial y luego la de dos meses... eso me quita un poquito de tiempo"</strong> — búsqueda manual de fotos para comparativos entre dispositivos</div>
+      <div class="dato-box" style="border-left-color: #994E95;"><strong style="color: #994E95;">"Lo anotamos a manita" / "Si se puede ser algo que quede guardado, más sencillo"</strong> — bitácora de control de peso manual, pide digitalización espontáneamente</div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FRICCIONES IDENTIFICADAS POR ANÁLISIS -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-magnifying-glass"></i> Fricciones identificadas por análisis</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Fricciones operativas derivadas de los datos confirmados.</p>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Operación unipersonal sin respaldo — punto único de falla</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Toda el área capilar depende de una sola persona: consultas, citas, seguimiento, comunicación, documentación, insumos. 40-50 pacientes activos sin contingencia. Si Elián se ausenta, no hay nadie que pueda continuar la operación. Además hace excepciones de horario (hasta 8pm, sábados 9:30am) para acomodar pacientes.</p>
+        <span class="source-tag">— Dra. Elián</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Seguimiento 100% manual sin herramienta — principal carga operativa</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Tracking por fecha anotada en recetas, recordatorios copy-paste por WhatsApp, horarios de memoria. Es lo que más tiempo le consume. Sin automatización, sin alertas, sin CRM. Patrón sistémico: ningún rol en ARMC tiene sistema de seguimiento activo.</p>
+        <span class="source-tag">— Dra. Elián + Carlos, Atención al Paciente + Brisa, Cosmiatra</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Información clínica en dispositivos personales sin respaldo centralizado</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Expediente en iPad personal (Pages), fotos de avance en celular personal, fotos de cámara especializada en iPad. HC duplicada en papel + digital. Si pierde o cambia dispositivos, se pierde el historial de 40-50 pacientes. Patrón sistémico: todos los roles almacenan en dispositivos personales.</p>
+        <span class="source-tag">— Dra. Elián + Divani, Primer Ayudante + Brisa, Cosmiatra</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Registro fotográfico disperso sin organización por paciente</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Fotos de celular (de lejos) + fotos de cámara especializada en iPad. Para comparativos mensuales debe buscar manualmente entre ambos dispositivos sin forma de filtrar por paciente. Tiempo perdido en cada consulta de seguimiento.</p>
+        <span class="source-tag">— Dra. Elián</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">HC duplicada sin justificación operativa</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Historia clínica llenada a mano en papel Y en electrónico (Pages iPad). Doble trabajo sin beneficio claro. El expediente electrónico no alimenta ningún sistema — es solo una copia digital manual.</p>
+        <span class="source-tag">— Dra. Elián</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Área capilar aislada del resto de la clínica</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Procesos independientes, proveedores independientes, inventario mental separado, sin coordinación operativa estandarizada con Gabriel. Opera como clínica dentro de clínica. Cualquier integración futura requiere incorporar un área que hoy funciona en paralelo.</p>
+        <span class="source-tag">— Dra. Elián</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Bitácora de control de peso funcional pero frágil</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Único protocolo de handoff documentado que funciona en toda la clínica: equipo registra dosis + fecha, al llegar a 4ta avisan a Elián. Permite que Divani inyecte sin ella. Pero está escrito a mano — vulnerable a pérdida, ilegibilidad y errores. Ella misma pide digitalización.</p>
+        <span class="source-tag">— Dra. Elián</span>
+      </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- MAPEO D1-D4 -->
+    <!-- ============================================ -->
+
+    <section class="diagram-section">
+      <h2><i class="ph ph-target"></i> Mapeo a los 4 Dolores APEX</h2>
+      <p style="color: #A1B8F2; font-size: 0.9rem;">Análisis completado. Dolor dominante: <strong style="color: #ff4444;">D1 (Procesos Internos)</strong>. Elián opera un área completa sin herramientas, sin respaldo y sin integración con el resto de la clínica.</p>
+
+      <!-- D1 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #ff4444; border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444; font-size: 1.1rem;">D1 — Procesos Internos Ineficientes → DOLOR DOMINANTE</strong>
+        <span style="display: inline-block; background: #ff4444; color: #fff; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.75rem; margin-left: 0.5rem; vertical-align: middle;">DOLOR DOMINANTE</span>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Plataforma Centralizada de Gestión Clínica</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Operación unipersonal sin respaldo — punto único de falla para 40-50 pacientes activos</li>
+          <li>HC duplicada en papel + iPad Pages — doble trabajo sin beneficio operativo</li>
+          <li>Área capilar aislada del resto de la clínica — procesos, proveedores e inventario independientes</li>
+          <li>Sin herramienta de agendamiento — gestión de memoria + WhatsApp</li>
+          <li>Control de inventario mental — sin herramienta ni integración con sistema general de ARMC</li>
+          <li>Toda la información clínica en dispositivos personales sin respaldo centralizado</li>
+          <li>Bitácora de control de peso a mano — único protocolo funcional pero frágil</li>
+        </ul>
+      </div>
+
+      <!-- D2 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D2 — Seguimiento y Clasificación de Pacientes → CONSECUENCIA DIRECTA</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Seguimiento y Clasificación Automática</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Seguimiento 100% manual — tracking por fecha anotada en recetas, recordatorios copy-paste</li>
+          <li>Sin protocolo de no-show — vacío sistémico confirmado por todos los roles</li>
+          <li>Cancelaciones frecuentes en citas a un mes sin sistema de recuperación</li>
+          <li>Registro fotográfico disperso entre celular e iPad — búsqueda manual sin organización por paciente</li>
+          <li>Clasificación por frecuencia (mensual/bimensual) existe solo en memoria de Elián</li>
+          <li>Principal carga operativa: buscar pacientes, ver fechas, mandar recordatorios — sin automatización</li>
+        </ul>
+      </div>
+
+      <!-- D3 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #994E95; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #994E95; font-size: 1.1rem;">D3 — Comunicación Personalizada con Pacientes → IMPACTADO</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Motor de Comunicación Segmentada e Inteligente</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Delegación de comunicación WhatsApp a Carlos genera caos — ella asume todo para evitar errores</li>
+          <li>Recetas PDF por WhatsApp — canal único sin segmentación ni personalización automatizada</li>
+          <li>Recordatorios manuales copy-paste — mismo mensaje genérico para todos los pacientes</li>
+          <li>Sin formulario pre-consulta — ella misma lo sugiere basándose en práctica de otro médico</li>
+        </ul>
+      </div>
+
+      <!-- D4 -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #31BEEF; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #31BEEF; font-size: 1.1rem;">D4 — Conversión de Leads Publicitarios a Pacientes → TANGENCIALMENTE AFECTADO</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0.3rem; font-size: 0.85rem;">Solución: Pipeline de Conversión de Leads</p>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li>Captación vía Instagram ARMC sin protocolo estandarizado — a veces le pasan contacto, a veces le preguntan</li>
+          <li>Sin CRM ni registro de leads capilares — no se sabe cuántos contactos se convierten en pacientes</li>
+          <li>Venta de medicamento en clínica como cross-selling natural pero sin tracking</li>
+        </ul>
+      </div>
+
+      <!-- Retención -->
+      <div style="background: #101B2C; padding: 1rem; border-left: 4px solid #4CAF50; border-radius: 4px; margin-top: 0.75rem;">
+        <strong style="color: #4CAF50; font-size: 1.1rem;">Retención = Ecosistema Integrado (D1+D2+D3+D4)</strong>
+        <p style="color: #A1B8F2; margin: 0.5rem 0 0; line-height: 1.7;">El área capilar tiene un perfil de retención único: la alopecia androgenética es crónica, el tratamiento nunca termina, solo se espacía. La retención depende 100% de que Elián haga seguimiento manual. Si ella no recuerda o no envía recordatorio, el paciente abandona y pierde avances ganados. El control de peso tiene ciclos de 4 semanas con protocolo funcional (bitácora + handoff), pero sin digitalización. Elián sugiere espontáneamente: clasificar por fechas para envío automático, formulario pre-consulta, fotos organizadas por paciente, bitácora digital.</p>
+      </div>
+
+      <!-- Conclusión -->
+      <div style="background: rgba(255, 68, 68, 0.08); padding: 1rem; border: 1px solid rgba(255, 68, 68, 0.2); border-radius: 4px; margin-top: 1rem;">
+        <strong style="color: #ff4444;">Conclusión desde este rol</strong>
+        <ul style="color: #FAF9F6; margin: 0.5rem 0 0 1.2rem; line-height: 1.7;">
+          <li><strong style="color: #ff4444;">D1 es el dolor dominante</strong> — Elián opera un área completa sin herramientas, sin respaldo, sin integración. Es una clínica dentro de la clínica que depende de una sola persona y sus dispositivos personales.</li>
+          <li><strong style="color: #31BEEF;">D2 es consecuencia directa</strong> — sin plataforma base, el seguimiento de 40-50 pacientes crónicos depende exclusivamente de su memoria y esfuerzo manual. Es lo que más tiempo le consume.</li>
+          <li><strong style="color: #994E95;">D3 es impactado</strong> — la comunicación se centraliza en WhatsApp sin segmentación, y la delegación a Carlos genera caos que ella resuelve asumiendo toda la carga.</li>
+          <li>D4 es tangencial desde este rol — la captación existe (Instagram ARMC) pero no hay pipeline ni tracking de conversión para el área capilar.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="nav-links">
+      <a href="flujo-cosmiatra.html"><i class="ph ph-arrow-left"></i> Anterior: Cosmiatra</a>
+      <a href="flujo-cirujano.html">Siguiente: Cirujano <i class="ph ph-arrow-right"></i></a>
+    </div>
+
+    <footer class="footer">
+      <p>ARMC — Aesthetic Rejuvenation Medical Center — Análisis Operativo — Abril 2026 — PRISMA Consulting</p>
+    </footer>
+  </div>
+
+
+  <!-- Slide Presentation JS -->
+  <script>
+    (function() {
+      var slides = document.querySelectorAll('#slides-data .slide');
+      var modal = document.getElementById('slideModal');
+      var slideNum = document.getElementById('slideNum');
+      var slideTitle = document.getElementById('slideTitle');
+      var progressFill = document.getElementById('progressFill');
+      var modalBody = document.getElementById('modalBody');
+      var modalDots = document.getElementById('modalDots');
+      var btnPrev = document.getElementById('btnPrev');
+      var btnNext = document.getElementById('btnNext');
+      var scrollHint = document.getElementById('scrollHint');
+      var current = 0;
+      var total = slides.length;
+
+      for (var i = 0; i < total; i++) {
+        var dot = document.createElement('span');
+        dot.className = 'modal-dot';
+        dot.addEventListener('click', (function(idx) {
+          return function() { goToSlide(idx); };
+        })(i));
+        modalDots.appendChild(dot);
+      }
+
+      function transformContent(slide) {
+        var title = slide.getAttribute('data-title');
+        var count = slide.getAttribute('data-count');
+        var source = slide.querySelector('.details-content');
+        var html = '<div class="slide-title-block"><h2>' + title + '</h2><span class="slide-subtitle">' + count + '</span></div>';
+
+        var children = source.children;
+        for (var i = 0; i < children.length; i++) {
+          var el = children[i];
+          if (el.tagName === 'H4') {
+            var cls = 'slide-section-heading';
+            if (el.style.color && el.style.color.indexOf('4444') !== -1) cls += ' critical';
+            html += '<div class="' + cls + '">' + el.textContent + '</div>';
+          } else if (el.classList.contains('dato-box')) {
+            var dotCls = 'slide-item-dot';
+            var style = el.getAttribute('style') || '';
+            if (style.indexOf('ff4444') !== -1) dotCls += ' critical';
+            else if (style.indexOf('4CAF50') !== -1) dotCls += ' positive';
+            else if (style.indexOf('994E95') !== -1) dotCls += ' sentiment';
+
+            var clone = el.cloneNode(true);
+            var tags = clone.querySelectorAll('.source-tag, .new-tag');
+            for (var t = 0; t < tags.length; t++) tags[t].remove();
+
+            var strongs = clone.querySelectorAll('strong');
+            for (var s = 0; s < strongs.length; s++) {
+              var sStyle = strongs[s].getAttribute('style') || '';
+              if (sStyle.indexOf('ff4444') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'critical-text';
+              } else if (sStyle.indexOf('4CAF50') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'positive-text';
+              } else if (sStyle.indexOf('994E95') !== -1) {
+                strongs[s].removeAttribute('style');
+                strongs[s].className = 'sentiment-text';
+              }
+            }
+
+            var text = clone.innerHTML.replace(/<span class="source-tag">.*?<\/span>/g, '').trim();
+            html += '<div class="slide-item"><span class="' + dotCls + '"></span><span class="slide-item-text">' + text + '</span></div>';
+          }
+        }
+        return html;
+      }
+
+      function updateDots() {
+        var dots = modalDots.querySelectorAll('.modal-dot');
+        for (var i = 0; i < dots.length; i++) {
+          dots[i].classList.toggle('active', i === current);
+        }
+      }
+
+      function goToSlide(idx) {
+        current = idx;
+        var slide = slides[current];
+        slideNum.textContent = (current + 1) + ' / ' + total;
+        slideTitle.textContent = slide.getAttribute('data-count');
+        progressFill.style.width = ((current + 1) / total * 100) + '%';
+        modalBody.innerHTML = transformContent(slide);
+        modalBody.scrollTop = 0;
+        updateDots();
+        setTimeout(checkScrollHint, 50);
+        btnPrev.disabled = current === 0;
+        btnNext.disabled = current === total - 1;
+      }
+
+      window.openSlide = function(idx) {
+        goToSlide(idx);
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      };
+
+      window.closeModal = function() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+      };
+
+      window.prevSlide = function() {
+        if (current > 0) goToSlide(current - 1);
+      };
+
+      window.nextSlide = function() {
+        if (current < total - 1) goToSlide(current + 1);
+      };
+
+      function checkScrollHint() {
+        var el = modalBody;
+        var canScroll = el.scrollHeight > el.clientHeight + 10;
+        var nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 30;
+        if (!canScroll || nearBottom) {
+          scrollHint.classList.add('hidden');
+        } else {
+          scrollHint.classList.remove('hidden');
+        }
+      }
+      modalBody.addEventListener('scroll', checkScrollHint);
+
+      document.addEventListener('keydown', function(e) {
+        if (!modal.classList.contains('active')) return;
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'ArrowRight') nextSlide();
+      });
+
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal || e.target.classList.contains('modal-slide-area')) closeModal();
+      });
+    })();
+  </script>
+</body>
+</html>
