@@ -604,6 +604,8 @@
     .entrevistas-empty svg { width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.4; }
 
     /* ── Análisis Tab ── */
+    .analisis-layer { overflow-y: auto; flex: 1; }
+    .analisis-layer-flex { display: flex; flex-direction: column; flex: 1; min-height: 0; }
     .analisis-container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
     .analisis-sections-grid, .analisis-roles-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
     .analisis-section-card, .analisis-role-card {
@@ -901,15 +903,15 @@
     </div>
 
     <!-- TAB: Análisis de flujos y procesos (user) -->
-    <div id="tab-analisis" style="display:none;flex-direction:column;flex:1;min-height:0;">
+    <div id="tab-analisis" class="analisis-layer-flex" style="display:none;">
       <!-- Capa 1: Secciones temáticas -->
-      <div id="analisis-sections" class="analisis-container" style="overflow-y:auto;flex:1;">
+      <div id="analisis-sections" class="analisis-container analisis-layer">
         <h2 style="font-family:var(--font-heading);font-size:1.2rem;color:var(--clinical-white);margin-bottom:0.3rem;">Análisis de flujos y procesos</h2>
         <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1.5rem;">Selecciona una sección para explorar</p>
         <div class="analisis-sections-grid" id="analisisSectionsGrid"></div>
       </div>
       <!-- Capa 2: Roles (dentro de sección) -->
-      <div id="analisis-roles" class="analisis-container" style="display:none;overflow-y:auto;flex:1;">
+      <div id="analisis-roles" class="analisis-container analisis-layer" style="display:none;">
         <div class="analisis-viewer-topbar" style="padding:0;border:none;margin-bottom:1rem;">
           <button class="analisis-back-btn" onclick="analisisShowSections()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -920,7 +922,7 @@
         <div class="analisis-roles-grid" id="analisisRolesGrid"></div>
       </div>
       <!-- Capa 3: Visor iframe -->
-      <div id="analisis-viewer" style="display:none;flex-direction:column;flex:1;min-height:0;">
+      <div id="analisis-viewer" class="analisis-layer-flex" style="display:none;">
         <div class="analisis-viewer-topbar">
           <button class="analisis-back-btn" onclick="analisisShowRoles()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -1476,12 +1478,12 @@
         </div>
 
         <!-- Análisis -->
-        <div id="ud-analisis" class="ud-content" style="display:none;flex-direction:column;min-height:400px;">
-          <div id="ud-analisis-sections" class="analisis-container" style="overflow-y:auto;flex:1;">
+        <div id="ud-analisis" class="ud-content analisis-layer-flex" style="display:none;min-height:400px;">
+          <div id="ud-analisis-sections" class="analisis-container analisis-layer">
             <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">Selecciona una sección para explorar</p>
             <div class="analisis-sections-grid" id="udAnalisisSectionsGrid"></div>
           </div>
-          <div id="ud-analisis-roles" class="analisis-container" style="display:none;overflow-y:auto;flex:1;">
+          <div id="ud-analisis-roles" class="analisis-container analisis-layer" style="display:none;">
             <div class="analisis-viewer-topbar" style="padding:0;border:none;margin-bottom:1rem;">
               <button class="analisis-back-btn" onclick="udAnalisisShowSections()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -1491,7 +1493,7 @@
             </div>
             <div class="analisis-roles-grid" id="udAnalisisRolesGrid"></div>
           </div>
-          <div id="ud-analisis-viewer" style="display:none;flex-direction:column;flex:1;min-height:0;">
+          <div id="ud-analisis-viewer" class="analisis-layer-flex" style="display:none;">
             <div class="analisis-viewer-topbar">
               <button class="analisis-back-btn" onclick="udAnalisisShowRoles()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -2334,20 +2336,20 @@
         `).join('');
         document.getElementById('analisisSectionTitle').textContent = 'Análisis por roles';
         document.getElementById('analisis-sections').style.display = 'none';
-        document.getElementById('analisis-roles').style.display = '';
+        document.getElementById('analisis-roles').style.cssText = '';
       }
     }
 
     function analisisShowSections() {
       document.getElementById('analisis-viewer').style.display = 'none';
       document.getElementById('analisis-roles').style.display = 'none';
-      document.getElementById('analisis-sections').style.display = '';
+      document.getElementById('analisis-sections').style.cssText = '';
       document.getElementById('analisisIframe').src = 'about:blank';
     }
 
     function analisisShowRoles() {
       document.getElementById('analisis-viewer').style.display = 'none';
-      document.getElementById('analisis-roles').style.display = '';
+      document.getElementById('analisis-roles').style.cssText = '';
       document.getElementById('analisisIframe').src = 'about:blank';
     }
 
@@ -2357,7 +2359,7 @@
       document.getElementById('analisisIframe').src = ANALISIS_BASE_PATH + role.file;
       document.getElementById('analisisViewerTitle').textContent = role.title;
       document.getElementById('analisis-roles').style.display = 'none';
-      document.getElementById('analisis-viewer').style.display = 'flex';
+      document.getElementById('analisis-viewer').style.cssText = '';
     }
 
     // ── Admin: User Detail Análisis (3 capas) ──
@@ -2385,20 +2387,20 @@
         `).join('');
         document.getElementById('udAnalisisSectionTitle').textContent = 'Análisis por roles';
         document.getElementById('ud-analisis-sections').style.display = 'none';
-        document.getElementById('ud-analisis-roles').style.display = '';
+        document.getElementById('ud-analisis-roles').style.cssText = '';
       }
     }
 
     function udAnalisisShowSections() {
       document.getElementById('ud-analisis-viewer').style.display = 'none';
       document.getElementById('ud-analisis-roles').style.display = 'none';
-      document.getElementById('ud-analisis-sections').style.display = '';
+      document.getElementById('ud-analisis-sections').style.cssText = '';
       document.getElementById('udAnalisisIframe').src = 'about:blank';
     }
 
     function udAnalisisShowRoles() {
       document.getElementById('ud-analisis-viewer').style.display = 'none';
-      document.getElementById('ud-analisis-roles').style.display = '';
+      document.getElementById('ud-analisis-roles').style.cssText = '';
       document.getElementById('udAnalisisIframe').src = 'about:blank';
     }
 
@@ -2408,7 +2410,7 @@
       document.getElementById('udAnalisisIframe').src = ANALISIS_BASE_PATH + role.file;
       document.getElementById('udAnalisisViewerTitle').textContent = role.title;
       document.getElementById('ud-analisis-roles').style.display = 'none';
-      document.getElementById('ud-analisis-viewer').style.display = 'flex';
+      document.getElementById('ud-analisis-viewer').style.cssText = '';
     }
 
     // ── Helpers ──
