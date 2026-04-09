@@ -2298,7 +2298,8 @@
     // ── ANÁLISIS TAB ──
     const ANALISIS_SECTIONS = [
       { id: 'roles', title: 'Análisis por roles', icon: 'ph ph-users-three', desc: '7 flujos operativos analizados por rol' },
-      { id: 'diagnostico', title: 'Diagnóstico integrado', icon: 'ph ph-heartbeat', desc: 'Hallazgos, matriz D1-D4, fricciones, embudo y cadena causal' }
+      { id: 'diagnostico', title: 'Diagnóstico integrado', icon: 'ph ph-heartbeat', desc: 'Hallazgos, matriz D1-D4, fricciones, embudo y cadena causal' },
+      { id: 'blueprint', title: 'Blueprint de Sistema', icon: 'ph ph-blueprint', desc: 'Modelo de datos, flujos to-be, automatizaciones, fases y KPIs' }
     ];
 
     const ANALISIS_ROLES = [
@@ -2321,6 +2322,15 @@
     ];
     const ANALISIS_DIAGNOSTICO_PATH = '/portal/analisis/armc/diagnostico/';
 
+    const ANALISIS_BLUEPRINT = [
+      { id: 'modelo-datos', file: 'modelo-datos.html', title: 'Modelo de Datos', icon: 'ph ph-database', desc: '7 entidades con campos, relaciones y mapeo D1-D4' },
+      { id: 'flujos-to-be', file: 'flujos-to-be.html', title: 'Flujos To-Be', icon: 'ph ph-flow-arrow', desc: 'Cómo trabaja cada rol con APEX — antes vs después' },
+      { id: 'automatizaciones', file: 'automatizaciones.html', title: 'Automatizaciones', icon: 'ph ph-lightning', desc: '12 automatizaciones que eliminan fricciones documentadas' },
+      { id: 'fases-implementacion', file: 'fases-implementacion.html', title: 'Fases de Implementación', icon: 'ph ph-steps', desc: '4 fases D1→D2→D3→D4 con resultados medibles' },
+      { id: 'kpis-objetivo', file: 'kpis-objetivo.html', title: 'KPIs y Objetivos', icon: 'ph ph-chart-line-up', desc: '13 métricas actuales vs objetivos a 6 y 12 meses' }
+    ];
+    const ANALISIS_BLUEPRINT_PATH = '/portal/analisis/armc/blueprint/';
+
     // ── Client: Análisis Tab (3 capas) ──
     function loadAnalisis() {
       const grid = document.getElementById('analisisSectionsGrid');
@@ -2336,7 +2346,8 @@
 
     const ANALISIS_SECTION_MAP = {
       roles: { items: () => ANALISIS_ROLES, path: ANALISIS_BASE_PATH, title: 'Análisis por roles' },
-      diagnostico: { items: () => ANALISIS_DIAGNOSTICO, path: ANALISIS_DIAGNOSTICO_PATH, title: 'Diagnóstico integrado' }
+      diagnostico: { items: () => ANALISIS_DIAGNOSTICO, path: ANALISIS_DIAGNOSTICO_PATH, title: 'Diagnóstico integrado' },
+      blueprint: { items: () => ANALISIS_BLUEPRINT, path: ANALISIS_BLUEPRINT_PATH, title: 'Blueprint de Sistema' }
     };
 
     function analisisOpenSection(sectionId) {

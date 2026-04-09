@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fases de Implementación — ARMC Blueprint</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}body{background:#101B2C;color:#FAF9F6;font-family:'Source Sans 3',sans-serif;font-weight:300;line-height:1.6}.container{max-width:960px;margin:0 auto;padding:2.5rem 2rem 4rem}h1{font-family:'Quicksand',sans-serif;font-weight:700;font-size:2rem;color:#FAF9F6;margin-bottom:.25rem}h2{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1.35rem;color:#31BEEF;margin:2.5rem 0 1rem}p{margin-bottom:.75rem}.subtitle{color:#A1B8F2;font-size:1rem;margin-bottom:2rem}.badge{display:inline-block;padding:.35rem .85rem;background:rgba(153,78,149,.15);border:1px solid #994E95;color:#994E95;border-radius:20px;font-size:.8rem;font-weight:600;font-family:'Quicksand',sans-serif;margin-bottom:1.5rem}
+    .timeline{position:relative;margin:2rem 0;padding-left:2.5rem}.timeline::before{content:'';position:absolute;left:1rem;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,#ff4444,#31BEEF,#994E95,#FFC107)}
+    .phase{position:relative;margin-bottom:2.5rem}.phase-marker{position:absolute;left:-2.5rem;top:0;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Quicksand',sans-serif;font-weight:700;font-size:.75rem;z-index:1}.phase-marker.p1{background:#ff4444;color:#fff}.phase-marker.p2{background:#31BEEF;color:#101B2C}.phase-marker.p3{background:#994E95;color:#fff}.phase-marker.p4{background:#FFC107;color:#101B2C}
+    .phase-card{background:#1a2535;border-radius:12px;padding:1.5rem;border:1px solid rgba(49,190,239,.15)}.phase-card:hover{border-color:rgba(49,190,239,.4)}
+    .phase-title{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:.25rem}.phase-card.p1 .phase-title{color:#ff4444}.phase-card.p2 .phase-title{color:#31BEEF}.phase-card.p3 .phase-title{color:#994E95}.phase-card.p4 .phase-title{color:#FFC107}
+    .phase-meta{display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}.pm{display:flex;align-items:center;gap:.35rem;font-size:.8rem;color:#A1B8F2}.pm i{font-size:1rem}
+    .phase-section{margin-top:1rem}.phase-section-title{font-family:'Quicksand',sans-serif;font-weight:600;font-size:.8rem;color:#31BEEF;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+    .items{display:grid;gap:.35rem}.item{font-size:.88rem;color:#FAF9F6;padding:.4rem .75rem;background:rgba(16,27,44,.5);border-radius:6px;border-left:2px solid rgba(49,190,239,.3)}.item.auto{border-left-color:#4CAF50}.item.auto::before{content:'⚡ ';color:#4CAF50}
+    .prereqs{margin-top:.75rem;padding:.75rem;background:rgba(255,193,7,.05);border:1px solid rgba(255,193,7,.15);border-radius:8px}.prereqs-title{font-family:'Quicksand',sans-serif;font-weight:600;font-size:.75rem;color:#FFC107;text-transform:uppercase;margin-bottom:.35rem}.prereq-item{font-size:.82rem;color:#A1B8F2;margin-bottom:.2rem}
+    .roles-list{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.5rem}.rl{padding:.15rem .5rem;border-radius:6px;font-size:.7rem;font-weight:600;background:rgba(161,184,242,.08);color:#A1B8F2;border:1px solid rgba(161,184,242,.15)}
+    .ss{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:2rem 0}.sc{background:#1a2535;border:1px solid rgba(49,190,239,.2);border-radius:12px;padding:1.25rem;text-align:center}.sn{font-family:'Quicksand',sans-serif;font-weight:700;font-size:2rem;color:#31BEEF;line-height:1}.sl{color:#A1B8F2;font-size:.75rem;font-weight:600;font-family:'Quicksand',sans-serif;text-transform:uppercase;letter-spacing:.05em;margin-top:.5rem}
+    .note{background:rgba(49,190,239,.05);border:1px solid rgba(49,190,239,.15);border-radius:12px;padding:1.25rem;margin-top:2rem}.note-title{font-family:'Quicksand',sans-serif;font-weight:700;color:#31BEEF;font-size:.95rem;margin-bottom:.5rem}.note p{color:#A1B8F2;font-size:.9rem;margin:0}
+    .zt{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;gap:.4rem;z-index:100;align-items:center}.zt button{width:36px;height:36px;border-radius:8px;border:1px solid rgba(49,190,239,.3);background:rgba(26,37,53,.95);color:#31BEEF;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}.zt button:hover{background:#31BEEF;color:#101B2C}.zl{color:#A1B8F2;font-size:.72rem;font-family:'Quicksand',sans-serif;font-weight:700;min-width:38px;text-align:center}
+    @media(max-width:768px){.ss{grid-template-columns:repeat(2,1fr)}h1{font-size:1.5rem}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge"><i class="ph ph-rocket-launch"></i> Blueprint de Sistema</div>
+    <h1>Fases de Implementaci&oacute;n</h1>
+    <p class="subtitle">4 fases secuenciales D1 &rarr; D2 &rarr; D3 &rarr; D4 &mdash; cada fase construye sobre la anterior</p>
+    <div class="ss"><div class="sc"><div class="sn">4</div><div class="sl">Fases</div></div><div class="sc"><div class="sn">~12</div><div class="sl">Meses estimados</div></div><div class="sc"><div class="sn">7</div><div class="sl">Roles impactados</div></div><div class="sc"><div class="sn">12</div><div class="sl">Automatizaciones</div></div></div>
+
+    <div class="timeline">
+
+      <!-- FASE 1: D1 -->
+      <div class="phase"><div class="phase-marker p1">F1</div>
+        <div class="phase-card p1">
+          <div class="phase-title">Fase 1 &mdash; Sistema Base (D1: Procesos Internos)</div>
+          <div class="phase-meta"><div class="pm"><i class="ph ph-clock"></i> Semanas 1&ndash;10</div><div class="pm"><i class="ph ph-target"></i> Fundamento digital</div><div class="pm"><i class="ph ph-users"></i> Todos los roles</div></div>
+          <div class="phase-section"><div class="phase-section-title">Qu&eacute; se construye</div>
+            <div class="items">
+              <div class="item">Entidades: Paciente, Cita, Procedimiento, Inventario, Documento</div>
+              <div class="item">Agenda digital con disponibilidad en tiempo real por profesional</div>
+              <div class="item">Expediente cl&iacute;nico digital (HC, consentimientos, fotos)</div>
+              <div class="item">Interfaces por rol: cada persona ve lo que necesita</div>
+              <div class="item auto">Confirmaci&oacute;n autom&aacute;tica de citas (WhatsApp 24h/2h)</div>
+              <div class="item auto">Checklist de preparaci&oacute;n quir&uacute;rgica autom&aacute;tico</div>
+              <div class="item auto">Alertas de inventario bajo</div>
+              <div class="item auto">Alerta de documentaci&oacute;n incompleta</div>
+            </div>
+          </div>
+          <div class="phase-section"><div class="phase-section-title">Roles beneficiados</div>
+            <div class="roles-list"><span class="rl">Atenci&oacute;n al Paciente</span><span class="rl">Primer Ayudante</span><span class="rl">Cirujano</span><span class="rl">Cosmiatra</span><span class="rl">Tric&oacute;loga</span><span class="rl">Director</span></div>
+          </div>
+          <div class="prereqs"><div class="prereqs-title">Prerrequisitos</div>
+            <div class="prereq-item">Migraci&oacute;n de datos de pacientes existentes (libretas, Excel, memorias)</div>
+            <div class="prereq-item">Capacitaci&oacute;n b&aacute;sica al equipo (2&ndash;3 sesiones)</div>
+            <div class="prereq-item">Definici&oacute;n de protocolos por tipo de procedimiento</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FASE 2: D2 -->
+      <div class="phase"><div class="phase-marker p2">F2</div>
+        <div class="phase-card p2">
+          <div class="phase-title">Fase 2 &mdash; Clasificaci&oacute;n y Seguimiento (D2)</div>
+          <div class="phase-meta"><div class="pm"><i class="ph ph-clock"></i> Semanas 8&ndash;16</div><div class="pm"><i class="ph ph-target"></i> Visibilidad + retenci&oacute;n</div><div class="pm"><i class="ph ph-warning"></i> Requiere F1 estable</div></div>
+          <div class="phase-section"><div class="phase-section-title">Qu&eacute; se construye</div>
+            <div class="items">
+              <div class="item">Motor de clasificaci&oacute;n A/B/C por frecuencia, gasto y antig&uuml;edad</div>
+              <div class="item">Cadenas de seguimiento post-procedimiento (+3d, +7d, +30d)</div>
+              <div class="item">Dashboard de retenci&oacute;n: pacientes activos vs inactivos vs perdidos</div>
+              <div class="item">Timeline de evoluci&oacute;n por paciente con fotos comparativas</div>
+              <div class="item auto">Clasificaci&oacute;n autom&aacute;tica de pacientes</div>
+              <div class="item auto">Seguimiento post-procedimiento autom&aacute;tico</div>
+              <div class="item auto">Alerta de paciente inactivo (A/B sin actividad &ge; 60d)</div>
+            </div>
+          </div>
+          <div class="phase-section"><div class="phase-section-title">Roles beneficiados</div>
+            <div class="roles-list"><span class="rl">Cirujano</span><span class="rl">Cosmiatra</span><span class="rl">Tric&oacute;loga</span><span class="rl">Director</span></div>
+          </div>
+          <div class="prereqs"><div class="prereqs-title">Prerrequisitos</div>
+            <div class="prereq-item">Fase 1 en operaci&oacute;n (&ge; 30 d&iacute;as de datos reales)</div>
+            <div class="prereq-item">Criterios de clasificaci&oacute;n validados con el director</div>
+            <div class="prereq-item">Protocolos de seguimiento definidos por tipo de procedimiento</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FASE 3: D3 -->
+      <div class="phase"><div class="phase-marker p3">F3</div>
+        <div class="phase-card p3">
+          <div class="phase-title">Fase 3 &mdash; Comunicaci&oacute;n Inteligente (D3)</div>
+          <div class="phase-meta"><div class="pm"><i class="ph ph-clock"></i> Semanas 14&ndash;20</div><div class="pm"><i class="ph ph-target"></i> Comunicaci&oacute;n personalizada</div><div class="pm"><i class="ph ph-warning"></i> Requiere F2 (segmentos)</div></div>
+          <div class="phase-section"><div class="phase-section-title">Qu&eacute; se construye</div>
+            <div class="items">
+              <div class="item">Plantillas de comunicaci&oacute;n por contexto (post-op, seguimiento, promoci&oacute;n)</div>
+              <div class="item">Segmentaci&oacute;n autom&aacute;tica: comunicaci&oacute;n diferente seg&uacute;n clasificaci&oacute;n</div>
+              <div class="item">Flujos de reactivaci&oacute;n para pacientes inactivos</div>
+              <div class="item auto">Indicaciones post-procedimiento autom&aacute;ticas</div>
+              <div class="item auto">Comunicaci&oacute;n de cumplea&ntilde;os/fechas especiales</div>
+              <div class="item auto">Campa&ntilde;as de reactivaci&oacute;n segmentadas</div>
+            </div>
+          </div>
+          <div class="phase-section"><div class="phase-section-title">Roles beneficiados</div>
+            <div class="roles-list"><span class="rl">Community Manager</span><span class="rl">Atenci&oacute;n al Paciente</span><span class="rl">Director</span></div>
+          </div>
+          <div class="prereqs"><div class="prereqs-title">Prerrequisitos</div>
+            <div class="prereq-item">Fase 2 activa (clasificaci&oacute;n A/B/C funcionando)</div>
+            <div class="prereq-item">Aprobaci&oacute;n legal de plantillas de comunicaci&oacute;n</div>
+            <div class="prereq-item">Integraci&oacute;n WhatsApp Business API configurada</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FASE 4: D4 -->
+      <div class="phase"><div class="phase-marker p4">F4</div>
+        <div class="phase-card p4">
+          <div class="phase-title">Fase 4 &mdash; Conversi&oacute;n de Leads (D4)</div>
+          <div class="phase-meta"><div class="pm"><i class="ph ph-clock"></i> Semanas 18&ndash;24</div><div class="pm"><i class="ph ph-target"></i> Crecimiento + ROI</div><div class="pm"><i class="ph ph-warning"></i> Requiere F1+F3</div></div>
+          <div class="phase-section"><div class="phase-section-title">Qu&eacute; se construye</div>
+            <div class="items">
+              <div class="item">Pipeline visual de leads: nuevo &rarr; contactado &rarr; agend&oacute; &rarr; convertido</div>
+              <div class="item">Captura multicanal: Instagram, WhatsApp, web, tel&eacute;fono, referidos</div>
+              <div class="item">Dashboard ROI: inversi&oacute;n publicitaria vs pacientes convertidos</div>
+              <div class="item">Trazabilidad completa: lead &rarr; cita &rarr; paciente &rarr; procedimiento</div>
+              <div class="item auto">Captura autom&aacute;tica de leads</div>
+              <div class="item auto">Alerta de lead sin respuesta (&ge; 2h)</div>
+            </div>
+          </div>
+          <div class="phase-section"><div class="phase-section-title">Roles beneficiados</div>
+            <div class="roles-list"><span class="rl">Community Manager</span><span class="rl">Atenci&oacute;n al Paciente</span><span class="rl">Director</span></div>
+          </div>
+          <div class="prereqs"><div class="prereqs-title">Prerrequisitos</div>
+            <div class="prereq-item">Fase 1 operativa (sistema de citas funcional para agendar leads)</div>
+            <div class="prereq-item">Fase 3 activa (plantillas de respuesta r&aacute;pida)</div>
+            <div class="prereq-item">Cuentas de Instagram Business y WhatsApp Business vinculadas</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="note">
+      <div class="note-title"><i class="ph ph-info" style="color:#31BEEF"></i> Solapamiento intencional</div>
+      <p>Las fases se solapan ~2 semanas. F2 arranca cuando F1 ya tiene datos reales. F3 necesita los segmentos de F2. F4 necesita la infraestructura de F1 y las plantillas de F3. El resultado: un ecosistema integrado donde Captaci&oacute;n &rarr; Conversi&oacute;n &rarr; Atenci&oacute;n &rarr; Seguimiento &rarr; Retenci&oacute;n fluye sin fricci&oacute;n.</p>
+    </div>
+
+  </div>
+  <div class="zt"><button onclick="zoomOut()" title="Alejar"><i class="ph ph-minus"></i></button><span id="zl" class="zl">100%</span><button onclick="zoomIn()" title="Acercar"><i class="ph ph-plus"></i></button><button onclick="toggleFs()" title="Pantalla completa"><i class="ph ph-arrows-out"></i></button></div>
+  <script>let z=100;function zoomIn(){z=Math.min(z+20,200);az()}function zoomOut(){z=Math.max(z-20,60);az()}function az(){document.body.style.zoom=z/100;document.getElementById('zl').textContent=z+'%'}function toggleFs(){if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{})}</script>
+</body>
+</html>

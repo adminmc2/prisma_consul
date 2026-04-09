@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPIs y Objetivos — ARMC Blueprint</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}body{background:#101B2C;color:#FAF9F6;font-family:'Source Sans 3',sans-serif;font-weight:300;line-height:1.6}.container{max-width:960px;margin:0 auto;padding:2.5rem 2rem 4rem}h1{font-family:'Quicksand',sans-serif;font-weight:700;font-size:2rem;color:#FAF9F6;margin-bottom:.25rem}h2{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1.35rem;color:#31BEEF;margin:2.5rem 0 1rem}p{margin-bottom:.75rem}.subtitle{color:#A1B8F2;font-size:1rem;margin-bottom:2rem}.badge{display:inline-block;padding:.35rem .85rem;background:rgba(153,78,149,.15);border:1px solid #994E95;color:#994E95;border-radius:20px;font-size:.8rem;font-weight:600;font-family:'Quicksand',sans-serif;margin-bottom:1.5rem}
+    .ss{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0}.sc{background:#1a2535;border:1px solid rgba(49,190,239,.2);border-radius:12px;padding:1.25rem;text-align:center}.sn{font-family:'Quicksand',sans-serif;font-weight:700;font-size:2.5rem;color:#31BEEF;line-height:1}.sl{color:#A1B8F2;font-size:.8rem;font-weight:600;font-family:'Quicksand',sans-serif;text-transform:uppercase;letter-spacing:.05em;margin-top:.5rem}
+    .dolor-section{margin:2rem 0}.dolor-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;padding-bottom:.5rem;border-bottom:2px solid}.dolor-header.d1{border-color:#ff4444}.dolor-header.d2{border-color:#31BEEF}.dolor-header.d3{border-color:#994E95}.dolor-header.d4{border-color:#FFC107}.dolor-header h2{margin:0;font-size:1.15rem}.dolor-header.d1 h2{color:#ff4444}.dolor-header.d2 h2{color:#31BEEF}.dolor-header.d3 h2{color:#994E95}.dolor-header.d4 h2{color:#FFC107}
+    .kc{background:#1a2535;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:.85rem;border:1px solid rgba(49,190,239,.1)}.kc:hover{border-color:rgba(49,190,239,.35)}.kc-name{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1rem;color:#FAF9F6;margin-bottom:.15rem}.kc-desc{font-size:.82rem;color:#A1B8F2;margin-bottom:.75rem}
+    .kc-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}.km{background:rgba(16,27,44,.5);border-radius:8px;padding:.65rem .5rem;text-align:center}.km-label{font-size:.65rem;font-weight:700;font-family:'Quicksand',sans-serif;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.2rem}.km-value{font-family:'Quicksand',sans-serif;font-weight:700;font-size:1.2rem;line-height:1}
+    .km.actual .km-label{color:#ff4444}.km.actual .km-value{color:#ff4444}.km.m6 .km-label{color:#FFC107}.km.m6 .km-value{color:#FFC107}.km.m12 .km-label{color:#4CAF50}.km.m12 .km-value{color:#4CAF50}
+    .legend{display:flex;gap:1.5rem;margin:1.5rem 0;flex-wrap:wrap}.leg-item{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:#A1B8F2}.leg-dot{width:10px;height:10px;border-radius:50%}.leg-dot.red{background:#ff4444}.leg-dot.yellow{background:#FFC107}.leg-dot.green{background:#4CAF50}
+    .note{background:rgba(49,190,239,.05);border:1px solid rgba(49,190,239,.15);border-radius:12px;padding:1.25rem;margin-top:2rem}.note strong{color:#31BEEF}.note p{color:#A1B8F2;font-size:.9rem;margin:0}
+    .zt{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;gap:.4rem;z-index:100;align-items:center}.zt button{width:36px;height:36px;border-radius:8px;border:1px solid rgba(49,190,239,.3);background:rgba(26,37,53,.95);color:#31BEEF;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}.zt button:hover{background:#31BEEF;color:#101B2C}.zl{color:#A1B8F2;font-size:.72rem;font-family:'Quicksand',sans-serif;font-weight:700;min-width:38px;text-align:center}
+    @media(max-width:768px){.ss{grid-template-columns:1fr}.kc-metrics{grid-template-columns:repeat(3,1fr)}h1{font-size:1.5rem}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge"><i class="ph ph-chart-line-up"></i> Blueprint de Sistema</div>
+    <h1>KPIs y Objetivos</h1>
+    <p class="subtitle">13 m&eacute;tricas con l&iacute;nea base actual (diagn&oacute;stico) vs objetivos a 6 y 12 meses con APEX</p>
+    <div class="ss"><div class="sc"><div class="sn">13</div><div class="sl">M&eacute;tricas definidas</div></div><div class="sc"><div class="sn">4</div><div class="sl">Capas D1-D4</div></div><div class="sc"><div class="sn">12</div><div class="sl">Meses horizonte</div></div></div>
+
+    <div class="legend"><div class="leg-item"><div class="leg-dot red"></div>Actual (diagn&oacute;stico)</div><div class="leg-item"><div class="leg-dot yellow"></div>Objetivo 6 meses</div><div class="leg-item"><div class="leg-dot green"></div>Objetivo 12 meses</div></div>
+
+    <!-- D1 -->
+    <div class="dolor-section"><div class="dolor-header d1"><i class="ph ph-gear" style="color:#ff4444;font-size:1.3rem"></i><h2>D1 &mdash; Procesos Internos</h2></div>
+
+    <div class="kc"><div class="kc-name">Digitalizaci&oacute;n de procesos</div><div class="kc-desc">Porcentaje de procesos cr&iacute;ticos operando en APEX vs papel/memoria</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">0%</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">80%</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">100%</div></div></div></div>
+
+    <div class="kc"><div class="kc-name">Citas con confirmaci&oacute;n autom&aacute;tica</div><div class="kc-desc">Porcentaje de citas con recordatorio autom&aacute;tico enviado (24h + 2h)</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">0%</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">90%</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">98%</div></div></div></div>
+
+    <div class="kc"><div class="kc-name">Tasa de no-show</div><div class="kc-desc">Pacientes que no se presentan a cita confirmada</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">~20%</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">10%</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">&lt;5%</div></div></div></div>
+
+    <div class="kc"><div class="kc-name">Expedientes digitales completos</div><div class="kc-desc">Pacientes con HC, fotos y documentos en sistema vs papel/celular</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">0%</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">70%</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">95%</div></div></div></div>
+
+    </div>
+
+    <!-- D2 -->
+    <div class="dolor-section"><div class="dolor-header d2"><i class="ph ph-chart-line" style="color:#31BEEF;font-size:1.3rem"></i><h2>D2 &mdash; Seguimiento y Clasificaci&oacute;n</h2></div>
+
+    <div class="kc"><div class="kc-name">Seguimiento post-operatorio sistem&aacute;tico</div><div class="kc-desc">Cirug&iacute;as con cadena completa de seguimiento (+3d, +7d, +30d)</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">~0%</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">85%</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">98%</div></div></div></div>
+
+    <div class="kc"><div class="kc-name">Pacientes clasificados</div><div class="kc-desc">Base de pacientes con clasificaci&oacute;n activa (tipo + A/B/C)</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">0%</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">80%</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">100%</div></div></div></div>
+
+    <div class="kc"><div class="kc-name">Tasa de retenci&oacute;n</div><div class="kc-desc">Pacientes que regresan para segundo procedimiento o mantenimiento</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">~10%</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">30%</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">50%</div></div></div></div>
+
+    </div>
+
+    <!-- D3 -->
+    <div class="dolor-section"><div class="dolor-header d3"><i class="ph ph-chat-circle-text" style="color:#994E95;font-size:1.3rem"></i><h2>D3 &mdash; Comunicaci&oacute;n Personalizada</h2></div>
+
+    <div class="kc"><div class="kc-name">Comunicaciones autom&aacute;ticas activas</div><div class="kc-desc">Flujos autom&aacute;ticos operando (post-op, seguimiento, reactivaci&oacute;n)</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">0</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">5</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">10+</div></div></div></div>
+
+    <div class="kc"><div class="kc-name">Pacientes reactivados</div><div class="kc-desc">Pacientes inactivos (&gt;60 d&iacute;as) que regresan tras campa&ntilde;a de reactivaci&oacute;n</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">0</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">15%</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">25%</div></div></div></div>
+
+    <div class="kc"><div class="kc-name">Satisfacci&oacute;n del paciente</div><div class="kc-desc">Medida por encuesta post-procedimiento (hoy solo percepci&oacute;n subjetiva)</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">~80%</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">85%</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">92%</div></div></div></div>
+
+    </div>
+
+    <!-- D4 -->
+    <div class="dolor-section"><div class="dolor-header d4"><i class="ph ph-funnel" style="color:#FFC107;font-size:1.3rem"></i><h2>D4 &mdash; Conversi&oacute;n de Leads</h2></div>
+
+    <div class="kc"><div class="kc-name">Tasa de conversi&oacute;n lead &rarr; paciente</div><div class="kc-desc">Porcentaje de leads que se convierten en pacientes con cita agendada</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">~10%</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">25%</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">40%</div></div></div></div>
+
+    <div class="kc"><div class="kc-name">Tiempo de primera respuesta a lead</div><div class="kc-desc">Tiempo promedio desde que llega un lead hasta el primer contacto</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">sin dato</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">&lt;30 min</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">&lt;5 min</div></div></div></div>
+
+    <div class="kc"><div class="kc-name">ROI publicitario medible</div><div class="kc-desc">Capacidad de rastrear inversi&oacute;n por canal hasta paciente convertido</div><div class="kc-metrics"><div class="km actual"><div class="km-label">Actual</div><div class="km-value">0%</div></div><div class="km m6"><div class="km-label">6 meses</div><div class="km-value">70%</div></div><div class="km m12"><div class="km-label">12 meses</div><div class="km-value">95%</div></div></div></div>
+
+    </div>
+
+    <div class="note"><p><strong>Nota:</strong> Todos los valores &ldquo;Actual&rdquo; provienen del diagn&oacute;stico basado en 7 entrevistas. Los objetivos a 6 y 12 meses son metas realistas considerando la adopci&oacute;n progresiva de APEX en las 4 fases de implementaci&oacute;n. Las m&eacute;tricas se medir&aacute;n autom&aacute;ticamente desde el sistema una vez operativo.</p></div>
+
+  </div>
+  <div class="zt"><button onclick="zoomOut()" title="Alejar"><i class="ph ph-minus"></i></button><span id="zl" class="zl">100%</span><button onclick="zoomIn()" title="Acercar"><i class="ph ph-plus"></i></button><button onclick="toggleFs()" title="Pantalla completa"><i class="ph ph-arrows-out"></i></button></div>
+  <script>let z=100;function zoomIn(){z=Math.min(z+20,200);az()}function zoomOut(){z=Math.max(z-20,60);az()}function az(){document.body.style.zoom=z/100;document.getElementById('zl').textContent=z+'%'}function toggleFs(){if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{})}</script>
+</body>
+</html>
