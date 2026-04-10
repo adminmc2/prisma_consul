@@ -688,6 +688,23 @@
       .user-card { padding: 1rem; }
       .file-card { padding: 0.75rem; }
       .section-divider { margin: 1.25rem 0; }
+      /* Pipeline rows: stack vertically */
+      .pipeline-row { flex-wrap: wrap; gap: 0.75rem; padding: 0.75rem 1rem; }
+      .pipeline-user-info { flex: 1 1 calc(100% - 60px); }
+      .pipeline-phases { order: 3; flex: 1 1 100%; }
+      .pipeline-phase-label { order: 4; flex: 1 1 100%; margin-left: 0; font-size: 0.65rem; }
+      .phase-connector { width: 16px; }
+      .phase-dot { width: 12px; height: 12px; }
+      /* Activity items: wrap on mobile */
+      .recent-activity-item { flex-wrap: wrap; gap: 0.5rem; padding: 0.6rem 0.75rem; font-size: 0.8rem; }
+      .recent-activity-time { min-width: auto; font-size: 0.7rem; }
+      .recent-activity-user { min-width: auto; font-size: 0.8rem; }
+      .recent-activity-desc { flex-basis: 100%; font-size: 0.75rem; }
+      /* User card admin on mobile */
+      .user-card-admin-header { gap: 0.75rem; }
+      .user-card-admin-stats { gap: 0.75rem; font-size: 0.7rem; flex-wrap: wrap; }
+      .user-card-phases { flex-wrap: wrap; gap: 0.25rem; }
+      .user-card-phase-name { flex-basis: 100%; margin-left: 0; margin-top: 0.25rem; }
     }
     @media (max-width: 480px) {
       .welcome-logo { width: 180px; }
@@ -706,6 +723,13 @@
       .user-card-avatar { width: 44px; height: 44px; font-size: 0.75rem; }
       .user-card-name { font-size: 0.9rem; }
       .modal-content { max-width: 100%; margin: 0.5rem; border-radius: 12px; }
+      /* Pipeline tighter at 480 */
+      .pipeline-row { padding: 0.6rem 0.75rem; }
+      .pipeline-user-name { font-size: 0.85rem; }
+      .pipeline-user-company { font-size: 0.7rem; }
+      .recent-activity-item { padding: 0.5rem 0.6rem; }
+      .recent-activity-time { font-size: 0.65rem; }
+      .dashboard-metrics { padding: 1rem 0.75rem; }
     }
   </style>
 </head>
@@ -719,7 +743,7 @@
       </a>
       <h1 class="welcome-title">PRISMA Hub</h1>
       <p class="welcome-subtitle">Tu espacio seguro</p>
-      <p class="welcome-version">v3.2.6</p>
+      <p class="welcome-version">v3.2.7</p>
       <form class="portal-form" id="loginForm">
         <input type="email" class="portal-input" id="loginEmail" placeholder="Email" autocomplete="email" required>
         <input type="password" class="portal-input" id="loginPassword" placeholder="Contraseña" autocomplete="current-password" required>
