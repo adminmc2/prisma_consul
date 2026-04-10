@@ -52,14 +52,22 @@
 
     html, body { min-height: 100vh; min-height: 100dvh; }
 
+    html, body {
+      margin: 0; padding: 0;
+      height: 100%; overflow: hidden;
+    }
     body {
       font-family: var(--font-body);
       color: var(--clinical-white);
       background: var(--prisma-navy);
-      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
+    * { scrollbar-width: thin; scrollbar-color: var(--tech-cyan) transparent; }
+    *::-webkit-scrollbar { width: 6px; height: 6px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb { background: var(--tech-cyan); border-radius: 3px; }
+    *::-webkit-scrollbar-thumb:hover { background: #28a8d4; }
 
     /* ── Screens (APEX pattern) ── */
     .portal-screen {
@@ -118,7 +126,7 @@
     /* ════════════════════════════════════════
        PANEL SCREEN
        ════════════════════════════════════════ */
-    #screen-panel { padding: 0; display: flex; flex-direction: column; align-items: stretch; }
+    #screen-panel { padding: 0; display: flex; flex-direction: column; align-items: stretch; overflow: hidden; }
     #screen-panel.active { display: flex; }
 
     /* ── Header ── */
@@ -314,7 +322,6 @@
       display: none; position: absolute; top: 100%; left: 0; right: 0;
       background: var(--bg-primary); border: 1px solid var(--tech-cyan); border-top: none;
       border-radius: 0 0 8px 8px; max-height: 240px; overflow-y: auto; z-index: 50;
-      scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent;
     }
     .custom-dropdown-menu.open { display: block; }
     .custom-dropdown-option {
@@ -598,7 +605,7 @@
     .profile-status.error { color: #ff6b6b; }
 
     /* ── Entrevistas Tab ── */
-    .entrevistas-container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+    .entrevistas-container { padding: 2rem; }
     .entrevistas-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
     .entrevistas-empty { text-align: center; padding: 3rem; color: var(--text-muted); }
     .entrevistas-empty svg { width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.4; }
