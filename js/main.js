@@ -893,7 +893,7 @@ function initTransitionStatic() {
     const viewportHeight = window.innerHeight;
 
     // El título solo debe aparecer cuando la sección está visible
-    const sectionInViewport = rect.top < viewportHeight && rect.bottom > 0;
+    const sectionInViewport = rect.top < viewportHeight && rect.bottom > viewportHeight * 0.3;
     const showTitle = sectionInViewport && rect.top < viewportHeight * 0.5;
 
     if (!showTitle) {
@@ -999,8 +999,8 @@ function initTransitionStatic() {
       const person2Threshold = viewportHeight * 2.3;   // 230% = persona 2 (1vh de espacio)
       // Persona 1 = todo lo demás (> 230%)
 
-      if (distanceToBottom < closingThreshold && rect.bottom > viewportHeight * 0.5) {
-        // CLOSING QUOTE SECTION (solo mientras el fondo de nosotros esté en la mitad inferior)
+      if (distanceToBottom < closingThreshold) {
+        // CLOSING QUOTE SECTION
         if (bg1) bg1.classList.remove('active');
         if (bg2) bg2.classList.remove('active');
         if (bg3) bg3.classList.remove('active');
