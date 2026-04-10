@@ -2,6 +2,11 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-10] — v3.2.10
+
+### Frontend — PRISMA Hub
+- **Tabs como cajas en móvil** — las pestañas ahora se muestran como botones/cajas con fondo, borde y fondo cyan semitransparente en la activa, dentro de un contenedor con fondo oscuro y bordes redondeados. Mucho más claro visualmente que las tabs planas anteriores
+
 ## [2026-04-10] — v3.2.9
 
 ### Frontend — PRISMA Hub
