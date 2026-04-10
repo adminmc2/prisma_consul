@@ -52,11 +52,14 @@
 
     html, body { min-height: 100vh; min-height: 100dvh; }
 
+    html, body {
+      margin: 0; padding: 0;
+      height: 100%; overflow: hidden;
+    }
     body {
       font-family: var(--font-body);
       color: var(--clinical-white);
       background: var(--prisma-navy);
-      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
