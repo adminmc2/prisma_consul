@@ -41,44 +41,26 @@
 
 /* Custom Scrollbar — PRISMA Dark Theme */
 * {
-  scrollbar-width: none;
-  scrollbar-color: rgba(49, 190, 239, 0.15) transparent;
-}
-
-html {
   scrollbar-width: thin;
+  scrollbar-color: #31BEEF transparent;
 }
 
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-  margin: 2px 0;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(49, 190, 239, 0.12);
-  border-radius: 100px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(49, 190, 239, 0.3);
-}
-
-::-webkit-scrollbar-corner {
+*::-webkit-scrollbar-track {
   background: transparent;
 }
 
-/* Only show scrollbar on html/body (page scroll) */
-html::-webkit-scrollbar {
-  width: 4px;
+*::-webkit-scrollbar-thumb {
+  background: #31BEEF;
+  border-radius: 3px;
 }
 
-html::-webkit-scrollbar-thumb {
-  background: rgba(49, 190, 239, 0.15);
+*::-webkit-scrollbar-thumb:hover {
+  background: #28a8d4;
 }
 
 /* Global */
