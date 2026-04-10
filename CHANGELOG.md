@@ -2,6 +2,21 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-10] — v3.2.13
+
+### Frontend — PRISMA Hub
+- **Fix padding lateral en contenedores** — restaurado padding 1rem con width:100% y box-sizing:border-box. Los tabs de usuario no tienen panel-main, así que los contenedores necesitan su propio padding. Inputs ahora llenan todo el ancho con margen lateral correcto
+
+## [2026-04-10] — v3.2.12
+
+### Frontend — PRISMA Hub
+- **Fix containers width** — todos los contenedores internos (profile, apex, entrevistas, análisis) ahora tienen `width: 100%` explícito para que se expandan correctamente dentro de los flex tabs. Corrige los inputs de Datos personales que no ocupaban el ancho completo
+
+## [2026-04-10] — v3.2.11
+
+### Frontend — PRISMA Hub
+- **Perfil usuario responsive** — inputs de datos personales ahora ocupan 100% del ancho en móvil, contenido visible sin truncar (empresa, email, dirección, etc.)
+
 ## [2026-04-10] — v3.2.10
 
 ### Frontend — PRISMA Hub
