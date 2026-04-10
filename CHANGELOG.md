@@ -2,6 +2,11 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-10] — v3.2.3
+
+### Frontend — Análisis de flujos (ARMC)
+- **Primer Ayudante** — eliminados 3 vacíos pendientes: proporción valoraciones Divani vs Maricela, proporción procedimientos Divani vs Gabriel, aceptación del paciente
+
 ## [2026-04-10] — v3.2.2
 
 ### Frontend — Análisis de flujos (ARMC)
