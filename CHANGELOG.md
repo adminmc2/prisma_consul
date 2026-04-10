@@ -2,6 +2,11 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-10] — v3.2.12
+
+### Frontend — PRISMA Hub
+- **Fix containers width** — todos los contenedores internos (profile, apex, entrevistas, análisis) ahora tienen `width: 100%` explícito para que se expandan correctamente dentro de los flex tabs. Corrige los inputs de Datos personales que no ocupaban el ancho completo
+
 ## [2026-04-10] — v3.2.11
 
 ### Frontend — PRISMA Hub
