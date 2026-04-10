@@ -1662,7 +1662,7 @@
         filesList.innerHTML = files.map(f => {
           const displayName = f.name || '';
           const code = f.driveName || '';
-          const ext = getFileExt(code || displayName);
+          const ext = getFileExt(code || displayName) || getMimeLabel(f.mimeType);
           const iconClass = getIconClass(ext);
           const docType = f.docType || 'general';
           return `<div class="file-card" data-file-id="${f.id}">
@@ -1969,7 +1969,7 @@
       filesList.innerHTML = files.map(f => {
         const displayName = f.name || '';
         const code = f.driveName || '';
-        const ext = getFileExt(code || displayName);
+        const ext = getFileExt(code || displayName) || getMimeLabel(f.mimeType);
         const iconClass = getIconClass(ext);
         const docType = f.docType || guessDocType(f.mimeType, ext);
         return `
@@ -2275,7 +2275,7 @@
         list.innerHTML = entrevistas.map(f => {
           const code = f.driveName || '';
           const displayName = f.name || '';
-          const ext = getFileExt(code || displayName);
+          const ext = getFileExt(code || displayName) || getMimeLabel(f.mimeType);
           const iconClass = getIconClass(ext);
           return `<div class="file-card">
             <div class="file-icon ${iconClass}">${ext || '?'}</div>
@@ -2449,11 +2449,20 @@
     function formatDateShort(iso) { if (!iso) return ''; const d = new Date(iso); const now = new Date(); const diff = now - d; if (diff < 3600000) return `hace ${Math.floor(diff/60000)}m`; if (diff < 86400000) return `hace ${Math.floor(diff/3600000)}h`; return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }); }
     function formatSize(bytes) { if (!bytes || bytes === 0) return ''; const units = ['B','KB','MB','GB']; let i = 0, size = parseInt(bytes); while (size >= 1024 && i < units.length - 1) { size /= 1024; i++; } return `${size.toFixed(i > 0 ? 1 : 0)} ${units[i]}`; }
     function getFileExt(name) { if (!name) return ''; const parts = name.split('.'); return parts.length > 1 ? parts.pop().toLowerCase() : ''; }
+    function getMimeLabel(mimeType) {
+      if (!mimeType) return '';
+      if (mimeType.includes('google-apps.document')) return 'DOC';
+      if (mimeType.includes('google-apps.spreadsheet')) return 'XLS';
+      if (mimeType.includes('google-apps.presentation')) return 'PPT';
+      if (mimeType.includes('google-apps.form')) return 'FORM';
+      return '';
+    }
     function getIconClass(ext) {
       if (['pdf'].includes(ext)) return 'pdf';
-      if (['doc','docx','odt','rtf'].includes(ext)) return 'doc';
-      if (['xls','xlsx','csv','ods'].includes(ext)) return 'xls';
+      if (['doc','docx','odt','rtf','DOC'].includes(ext)) return 'doc';
+      if (['xls','xlsx','csv','ods','XLS'].includes(ext)) return 'xls';
       if (['jpg','jpeg','png','gif','svg','webp'].includes(ext)) return 'img';
+      if (['PPT','FORM'].includes(ext)) return 'other';
       return 'other';
     }
     function guessDocType(mimeType, ext) {
