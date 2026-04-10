@@ -571,7 +571,7 @@
     .btn-secondary:hover { border-color: var(--border-hover); color: var(--clinical-white); }
 
     /* ── APEX Results Tab ── */
-    .apex-container { max-width: 800px; margin: 0 auto; padding: 2rem; }
+    .apex-container { padding: 0; }
     .apex-section { margin-bottom: 2rem; }
     .apex-section-title { font-family: var(--font-heading); font-size: 1rem; font-weight: 600; color: var(--tech-cyan); margin-bottom: 1rem; letter-spacing: 0.5px; }
     .apex-company-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 2rem; }
@@ -592,7 +592,7 @@
     .apex-empty svg { width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.4; }
 
     /* ── Profile Tab ── */
-    .profile-container { max-width: 700px; margin: 0 auto; padding: 2rem; }
+    .profile-container { padding: 0; }
     .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
     .profile-field { display: flex; flex-direction: column; gap: 0.3rem; }
     .profile-field.full-width { grid-column: 1 / -1; }
@@ -606,7 +606,7 @@
     .profile-status.error { color: #ff6b6b; }
 
     /* ── Entrevistas Tab ── */
-    .entrevistas-container { padding: 2rem; }
+    .entrevistas-container { padding: 0; }
     .entrevistas-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
     .entrevistas-empty { text-align: center; padding: 3rem; color: var(--text-muted); }
     .entrevistas-empty svg { width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.4; }
@@ -614,7 +614,7 @@
     /* ── Análisis Tab ── */
     .analisis-layer { overflow-y: auto; flex: 1; }
     .analisis-layer-flex { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-    .analisis-container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+    .analisis-container { padding: 0; }
     .analisis-sections-grid, .analisis-roles-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
     .analisis-section-card, .analisis-role-card {
       background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px;
@@ -651,7 +651,6 @@
       .panel-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
       .panel-tab { white-space: nowrap; }
       .analisis-sections-grid { grid-template-columns: repeat(2, 1fr); }
-      .profile-container, .apex-container, .entrevistas-container, .analisis-container { padding: 1rem 0; max-width: 100%; }
       .profile-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 640px) {
@@ -679,7 +678,6 @@
       .dashboard-metrics { grid-template-columns: 1fr; }
       .dashboard-section { padding: 0 1rem 1rem; }
       .user-detail-container { padding: 1rem; }
-      .apex-container, .profile-container, .entrevistas-container, .analisis-container { padding: 0.5rem 0; }
       .apex-company-card { grid-template-columns: 1fr; }
       .profile-grid { grid-template-columns: 1fr; }
       .profile-input { width: 100%; box-sizing: border-box; }
@@ -767,7 +765,7 @@
       .user-detail-name { font-size: 1rem; }
       .user-detail-container { padding: 0.75rem; }
       .user-detail-section { margin-bottom: 1rem; }
-      .apex-container, .profile-container, .entrevistas-container { padding: 0.25rem 0; }
+      /* containers already padding:0 in base */
       .staging-actions { flex-wrap: wrap; }
       .btn-upload { padding: 8px 16px; font-size: 0.75rem; }
       .btn-clear-staging { padding: 8px 14px; font-size: 0.7rem; }
