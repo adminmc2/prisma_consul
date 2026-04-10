@@ -2,6 +2,11 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-10] — v3.2.5
+
+### Frontend — Análisis de flujos (ARMC)
+- **CEO/Dirección** — eliminado vacío pendiente "Volumen real de ventas y métricas de productos"
+
 ## [2026-04-10] — v3.2.4
 
 ### Frontend — Análisis de flujos (ARMC)
