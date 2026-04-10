@@ -999,8 +999,8 @@ function initTransitionStatic() {
       const person2Threshold = viewportHeight * 2.3;   // 230% = persona 2 (1vh de espacio)
       // Persona 1 = todo lo demás (> 230%)
 
-      if (distanceToBottom < closingThreshold) {
-        // CLOSING QUOTE SECTION
+      if (distanceToBottom < closingThreshold && distanceToBottom > -closingThreshold) {
+        // CLOSING QUOTE SECTION (solo activo cerca del fondo, no más allá)
         if (bg1) bg1.classList.remove('active');
         if (bg2) bg2.classList.remove('active');
         if (bg3) bg3.classList.remove('active');
