@@ -232,8 +232,9 @@ La versión actual se muestra en el footer de `index.html`. Se usa **Versionado 
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)
-2. La cabecera del `CHANGELOG.md` (nueva entrada con la versión)
-3. Este campo "Versión actual" en CLAUDE.md
+2. La pantalla de login de `portal/index.html` (elemento `.welcome-version`)
+3. La cabecera del `CHANGELOG.md` (nueva entrada con la versión)
+4. Este campo "Versión actual" en CLAUDE.md
 
 ## Changelog
 

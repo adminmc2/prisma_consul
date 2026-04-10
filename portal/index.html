@@ -98,7 +98,8 @@
       background: linear-gradient(135deg, var(--clinical-white), var(--soft-blue));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    .welcome-subtitle { font-size: 1.125rem; text-align: center; color: var(--text-secondary); margin-bottom: 2.5rem; line-height: 1.7; }
+    .welcome-subtitle { font-size: 1.125rem; text-align: center; color: var(--text-secondary); margin-bottom: 0.5rem; line-height: 1.7; }
+    .welcome-version { font-size: 0.75rem; text-align: center; color: var(--tech-cyan); opacity: 0.5; margin-bottom: 2rem; letter-spacing: 1px; }
     .portal-form { display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; }
     .portal-input {
       width: 100%; max-width: 320px; padding: 14px 20px;
@@ -690,6 +691,7 @@
       </a>
       <h1 class="welcome-title">PRISMA Hub</h1>
       <p class="welcome-subtitle">Tu espacio seguro</p>
+      <p class="welcome-version">v3.2.1</p>
       <form class="portal-form" id="loginForm">
         <input type="email" class="portal-input" id="loginEmail" placeholder="Email" autocomplete="email" required>
         <input type="password" class="portal-input" id="loginPassword" placeholder="Contraseña" autocomplete="current-password" required>
