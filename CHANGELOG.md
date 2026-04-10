@@ -2,6 +2,11 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-10] — v3.2.8
+
+### Frontend — PRISMA Hub
+- **Responsive completo** — corregido detalle de usuario para móviles: header con "Ver como cliente" a ancho completo, campos de perfil apilados verticalmente (label arriba, valor abajo), inputs al 100%, avatar reducido. También: staging items adaptables, dropzone compacta, users grid 1 columna, viewer de análisis compacto, botones wrap en 480px
+
 ## [2026-04-10] — v3.2.7
 
 ### Frontend — PRISMA Hub
