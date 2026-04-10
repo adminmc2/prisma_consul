@@ -2,6 +2,51 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-10] — v3.2.10
+
+### Frontend — PRISMA Hub
+- **Tabs como cajas en móvil** — las pestañas ahora se muestran como botones/cajas con fondo, borde y fondo cyan semitransparente en la activa, dentro de un contenedor con fondo oscuro y bordes redondeados. Mucho más claro visualmente que las tabs planas anteriores
+
+## [2026-04-10] — v3.2.9
+
+### Frontend — PRISMA Hub
+- **Tabs responsive grid 2x2** — en móvil las pestañas (Dashboard/Usuarios y Perfil y proceso/Documentos/Formulario APEX/Análisis) pasan de scroll horizontal a cuadrícula 2x2 para que todas sean visibles sin deslizar. Nombres de archivo ahora hacen word-break en lugar de truncarse
+
+## [2026-04-10] — v3.2.8
+
+### Frontend — PRISMA Hub
+- **Responsive completo** — corregido detalle de usuario para móviles: header con "Ver como cliente" a ancho completo, campos de perfil apilados verticalmente (label arriba, valor abajo), inputs al 100%, avatar reducido. También: staging items adaptables, dropzone compacta, users grid 1 columna, viewer de análisis compacto, botones wrap en 480px
+
+## [2026-04-10] — v3.2.7
+
+### Frontend — PRISMA Hub
+- **Dashboard responsive** — corregido el dashboard admin para móviles: pipeline de clientes apila avatar+nombre arriba y dots de fases abajo, filas de actividad reciente se ajustan sin desbordamiento, stats y user cards admin compactos en pantallas pequeñas
+
+## [2026-04-10] — v3.2.6
+
+### Frontend — PRISMA Hub
+- **Responsive/móvil** — reescritura completa de media queries para que PRISMA Hub sea usable en móviles: header reducido (60px→50px), logo escalado, botón logout más compacto, paddings reducidos, grid de análisis adaptativo (4→2→1 columna), tabs con scroll horizontal, tarjetas de usuario y archivos compactas, modales a pantalla completa en 480px, inputs al 100% de ancho
+
+## [2026-04-10] — v3.2.5
+
+### Frontend — Análisis de flujos (ARMC)
+- **CEO/Dirección** — eliminado vacío pendiente "Volumen real de ventas y métricas de productos"
+
+## [2026-04-10] — v3.2.4
+
+### Frontend — Análisis de flujos (ARMC)
+- **Tricología** — eliminados 10 vacíos pendientes (herramienta de agendamiento, pacientes no-show, coordinación con Gabriel, autonomía en precios, almacenamiento de contactos, herramienta PDFs, control de inventario, respaldo de fotos, propiedad del iPad, volumen control de peso)
+
+## [2026-04-10] — v3.2.3
+
+### Frontend — Análisis de flujos (ARMC)
+- **Primer Ayudante** — eliminados 3 vacíos pendientes: proporción valoraciones Divani vs Maricela, proporción procedimientos Divani vs Gabriel, aceptación del paciente
+
+## [2026-04-10] — v3.2.2
+
+### Frontend — Análisis de flujos (ARMC)
+- **Cosmiatra** — eliminado vacío pendiente "Historia estética separada" (confirmado: HC única para todos, no existe historia estética separada)
+
 ## [2026-04-10] — v3.2.1
 
 ### Frontend — Landing page
