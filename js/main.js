@@ -1155,21 +1155,28 @@ function initContactoReveal() {
   let hasRevealed = false;
 
   const updateContactoReveal = () => {
-    if (hasRevealed) return;
-
     const rect = contactoSection.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
 
-    // Revelar cuando la sección es visible en el viewport
+    // Cuando la sección contacto es visible, forzar desactivación del closing overlay
     if (rect.top < viewportHeight && rect.bottom > 0) {
-      invitation.classList.add('revealed');
-      formWrapper.classList.add('revealed');
-      hasRevealed = true;
+      const closingOverlay = document.getElementById('transitionClosing');
+      if (closingOverlay) {
+        closingOverlay.classList.remove('active');
+        closingOverlay.style.display = 'none';
+      }
+      const header = document.getElementById('header');
+      if (header) header.classList.remove('header--quote-active');
+
+      if (!hasRevealed) {
+        invitation.classList.add('revealed');
+        formWrapper.classList.add('revealed');
+        hasRevealed = true;
+      }
     }
   };
 
   window.addEventListener('scroll', updateContactoReveal, { passive: true });
-  // Check inicial por si la sección ya está visible al cargar
   updateContactoReveal();
 }
 
