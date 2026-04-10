@@ -2,6 +2,11 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-10] — v3.2.11
+
+### Frontend — PRISMA Hub
+- **Perfil usuario responsive** — inputs de datos personales ahora ocupan 100% del ancho en móvil, contenido visible sin truncar (empresa, email, dirección, etc.)
+
 ## [2026-04-10] — v3.2.10
 
 ### Frontend — PRISMA Hub
