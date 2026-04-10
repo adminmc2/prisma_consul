@@ -2,6 +2,11 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-10] — v3.2.2
+
+### Frontend — Análisis de flujos (ARMC)
+- **Cosmiatra** — eliminado vacío pendiente "Historia estética separada" (confirmado: HC única para todos, no existe historia estética separada)
+
 ## [2026-04-10] — v3.2.1
 
 ### Frontend — Landing page
