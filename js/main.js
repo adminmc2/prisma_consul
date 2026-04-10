@@ -999,8 +999,8 @@ function initTransitionStatic() {
       const person2Threshold = viewportHeight * 2.3;   // 230% = persona 2 (1vh de espacio)
       // Persona 1 = todo lo demás (> 230%)
 
-      if (distanceToBottom < closingThreshold && distanceToBottom > -closingThreshold) {
-        // CLOSING QUOTE SECTION (solo activo cerca del fondo, no más allá)
+      if (distanceToBottom < closingThreshold && rect.bottom > viewportHeight * 0.5) {
+        // CLOSING QUOTE SECTION (solo mientras el fondo de nosotros esté en la mitad inferior)
         if (bg1) bg1.classList.remove('active');
         if (bg2) bg2.classList.remove('active');
         if (bg3) bg3.classList.remove('active');
@@ -1155,29 +1155,25 @@ function initContactoReveal() {
   let hasRevealed = false;
 
   const updateContactoReveal = () => {
+    if (hasRevealed) return;
+
     const rect = contactoSection.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
+    const headerHeight = 80; // Altura del header fijo
 
-    // Cuando la sección contacto es visible, forzar desactivación del closing overlay
+    // Solo revelar cuando el TOP de la sección esté por debajo del header
+    // Es decir, cuando rect.top sea menor que headerHeight + un margen
+    // Esto significa que la sección ya pasó el header y está visible
+    // Revelar cuando la sección sea visible en el viewport
     if (rect.top < viewportHeight && rect.bottom > 0) {
-      const closingOverlay = document.getElementById('transitionClosing');
-      if (closingOverlay) {
-        closingOverlay.classList.remove('active');
-        closingOverlay.style.display = 'none';
-      }
-      const header = document.getElementById('header');
-      if (header) header.classList.remove('header--quote-active');
-
-      if (!hasRevealed) {
-        invitation.classList.add('revealed');
-        formWrapper.classList.add('revealed');
-        hasRevealed = true;
-      }
+      invitation.classList.add('revealed');
+      formWrapper.classList.add('revealed');
+      hasRevealed = true;
     }
   };
 
   window.addEventListener('scroll', updateContactoReveal, { passive: true });
-  updateContactoReveal();
+  // NO hacer check inicial - solo activar con scroll
 }
 
 // Inicializar cuando el DOM esté listo
