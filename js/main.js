@@ -1159,14 +1159,9 @@ function initContactoReveal() {
 
     const rect = contactoSection.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
-    const headerHeight = 80; // Altura del header fijo
 
-    // Solo revelar cuando el TOP de la sección esté por debajo del header
-    // Es decir, cuando rect.top sea menor que headerHeight + un margen
-    // Esto significa que la sección ya pasó el header y está visible
-    const triggerPoint = headerHeight + 150; // 150px después del header
-
-    if (rect.top < triggerPoint && rect.top > -rect.height) {
+    // Revelar cuando la sección es visible en el viewport
+    if (rect.top < viewportHeight && rect.bottom > 0) {
       invitation.classList.add('revealed');
       formWrapper.classList.add('revealed');
       hasRevealed = true;
@@ -1174,7 +1169,8 @@ function initContactoReveal() {
   };
 
   window.addEventListener('scroll', updateContactoReveal, { passive: true });
-  // NO hacer check inicial - solo activar con scroll
+  // Check inicial por si la sección ya está visible al cargar
+  updateContactoReveal();
 }
 
 // Inicializar cuando el DOM esté listo
