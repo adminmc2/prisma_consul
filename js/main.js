@@ -893,7 +893,7 @@ function initTransitionStatic() {
     const viewportHeight = window.innerHeight;
 
     // El título solo debe aparecer cuando la sección está visible
-    const sectionInViewport = rect.top < viewportHeight && rect.bottom > 0;
+    const sectionInViewport = rect.top < viewportHeight && rect.bottom > viewportHeight * 0.3;
     const showTitle = sectionInViewport && rect.top < viewportHeight * 0.5;
 
     if (!showTitle) {
@@ -1164,9 +1164,8 @@ function initContactoReveal() {
     // Solo revelar cuando el TOP de la sección esté por debajo del header
     // Es decir, cuando rect.top sea menor que headerHeight + un margen
     // Esto significa que la sección ya pasó el header y está visible
-    const triggerPoint = headerHeight + 150; // 150px después del header
-
-    if (rect.top < triggerPoint && rect.top > -rect.height) {
+    // Revelar cuando la sección sea visible en el viewport
+    if (rect.top < viewportHeight && rect.bottom > 0) {
       invitation.classList.add('revealed');
       formWrapper.classList.add('revealed');
       hasRevealed = true;
