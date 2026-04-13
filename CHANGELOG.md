@@ -2,6 +2,11 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-13] — v3.2.14
+
+### Frontend — PRISMA Hub (Blueprint)
+- **Reescritura completa modelo-datos.html** — Entidad Paciente con ciclo de vida de 4 etapas (Lead → Usuario → Evaluación agendada → Paciente), 168 campos organizados por 6 fases, 8 nuevas secciones regulatorias/técnicas (RBAC, firmas digitales, inmutabilidad, COFEPRIS, NOM-024, retención de datos), eliminación de entidad Lead (integrada en Paciente)
+
 ## [2026-04-10] — v3.2.13
 
 ### Frontend — PRISMA Hub
