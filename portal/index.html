@@ -2484,7 +2484,7 @@
       if (!section) return;
       const item = section.items().find(r => r.id === itemId);
       if (!item) return;
-      document.getElementById('analisisIframe').src = section.path + item.file;
+      document.getElementById('analisisIframe').src = section.path + item.file + '?v=' + Date.now();
       document.getElementById('analisisViewerTitle').textContent = item.title;
       document.getElementById('analisis-roles').style.display = 'none';
       document.getElementById('analisis-viewer').style.cssText = '';
@@ -2537,7 +2537,7 @@
       if (!section) return;
       const item = section.items().find(r => r.id === itemId);
       if (!item) return;
-      document.getElementById('udAnalisisIframe').src = section.path + item.file;
+      document.getElementById('udAnalisisIframe').src = section.path + item.file + '?v=' + Date.now();
       document.getElementById('udAnalisisViewerTitle').textContent = item.title;
       document.getElementById('ud-analisis-roles').style.display = 'none';
       document.getElementById('ud-analisis-viewer').style.cssText = '';
