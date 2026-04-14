@@ -43,7 +43,7 @@
     <div class="badge"><i class="ph ph-database"></i> Blueprint de Sistema</div>
     <h1>Modelo de Datos</h1>
     <p class="subtitle">Entidades, campos y relaciones que APEX construir&aacute; para ARMC &mdash; basado en el diagn&oacute;stico de 7 roles</p>
-    <div class="ss"><div class="sc"><div class="sn">9</div><div class="sl">Entidades</div></div><div class="sc"><div class="sn">200</div><div class="sl">Campos definidos</div></div><div class="sc"><div class="sn">4</div><div class="sl">Dolores cubiertos</div></div></div>
+    <div class="ss"><div class="sc"><div class="sn">10</div><div class="sl">Entidades</div></div><div class="sc"><div class="sn">210</div><div class="sl">Campos definidos</div></div><div class="sc"><div class="sn">4</div><div class="sl">Dolores cubiertos</div></div></div>
 
     <!-- ═══════════════════════════════════════ PACIENTE ═══════════════════════════════════════ -->
     <div class="ec open" onclick="this.classList.toggle('open')">
@@ -286,6 +286,7 @@
             <tr><td>Tiene muchas Comunicaciones</td><td>FK en tabla Comunicaciones</td><td>Registro de WhatsApp, newsletters, notificaciones</td></tr>
             <tr><td>Puede ser un Lead convertido</td><td>Campo lead_id nullable</td><td>De d&oacute;nde vino: fuente, fecha, canal</td></tr>
             <tr><td>Tiene muchas Se&ntilde;ales de Inacci&oacute;n</td><td>Tabla Se&ntilde;ales de Inacci&oacute;n con FK a Paciente</td><td>Se&ntilde;ales activas, historial de se&ntilde;ales resueltas, intervenciones realizadas</td></tr>
+            <tr><td>Tiene muchas Evaluaciones Cl&iacute;nicas</td><td>FK en tabla Evaluaciones</td><td>Scores pre/post por escala, evoluci&oacute;n medible</td></tr>
           </table>
         </div>
 
@@ -333,7 +334,7 @@
     <div class="ec" onclick="this.classList.toggle('open')">
       <div class="eh"><i class="ph ph-clipboard-text ei"></i><span class="en">Protocolo de Revisi&oacute;n</span><div class="dbw"><span class="db d2">D2</span></div><i class="ph ph-caret-down xp"></i></div>
       <div class="eb">
-        <div class="ft">Campos (8)</div>
+        <div class="ft">Campos (9)</div>
         <div class="fl">
           <div class="f"><span class="fn">ID Protocolo</span><span class="fy">auto (PK)</span><span class="fo">&mdash; Identificador &uacute;nico</span></div>
           <div class="f"><span class="fn">L&iacute;nea de servicio</span><span class="fy">enum: cirug&iacute;a / cosmiatr&iacute;a / tricolog&iacute;a</span><span class="fo">&mdash; Clasificaci&oacute;n general</span></div>
@@ -343,6 +344,7 @@
           <div class="f"><span class="fn">Umbral inactivo</span><span class="fy">n&uacute;mero (d&iacute;as)</span><span class="fo">&mdash; ~1.5x ciclo &rarr; Fase 1</span></div>
           <div class="f"><span class="fn">Umbral pre-perdido</span><span class="fy">n&uacute;mero (d&iacute;as)</span><span class="fo">&mdash; ~2.5x ciclo &rarr; Fase 3</span></div>
           <div class="f"><span class="fn">Umbral perdido</span><span class="fy">n&uacute;mero (d&iacute;as)</span><span class="fo">&mdash; ~3x ciclo &rarr; Fase 4</span></div>
+          <div class="f"><span class="fn">Escalas cl&iacute;nicas aplicables</span><span class="fy">array de enums</span><span class="fo">&mdash; Qu&eacute; escalas estandarizadas aplican para este procedimiento. Ej: rinoplastia &rarr; [GAIS, FACE-Q, VSS, BDD-YBOCS]</span></div>
         </div>
         <div class="rl">
           <div class="r"><i class="ph ph-arrow-left"></i> Referenciado por <strong>Procedimiento</strong> (FK protocolo_revision_id)</div>
@@ -371,6 +373,37 @@
           <div class="r"><i class="ph ph-arrow-left"></i> Cada operaci&oacute;n en cualquier entidad genera un <strong>log</strong></div>
         </div>
         <div class="note warn">Requisito obligatorio NOM-024-SSA3. Registro inalterable (append-only) &mdash; los logs no se editan ni eliminan. Se conservan el mismo per&iacute;odo que el expediente (5 a&ntilde;os m&iacute;nimo). Soporta las correcciones COFEPRIS (&sect;Correcciones) y la trazabilidad del sistema.</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ EVALUACIÓN CLÍNICA ═══════════════════════════════════════ -->
+    <div class="ec" onclick="this.classList.toggle('open')">
+      <div class="eh"><i class="ph ph-chart-line-up ei"></i><span class="en">Evaluaci&oacute;n Cl&iacute;nica</span><div class="dbw"><span class="db d2">D2</span></div><i class="ph ph-caret-down xp"></i></div>
+      <div class="eb">
+        <div class="ft">Campos (9)</div>
+        <div class="fl">
+          <div class="f"><span class="fn">ID Evaluaci&oacute;n</span><span class="fy">auto (PK)</span><span class="fo">&mdash; Identificador &uacute;nico</span></div>
+          <div class="f"><span class="fn">Paciente</span><span class="fy">FK &rarr; Paciente</span><span class="fo">&mdash; A qui&eacute;n se evalu&oacute;</span></div>
+          <div class="f"><span class="fn">Procedimiento</span><span class="fy">FK &rarr; Procedimiento</span><span class="fo">&mdash; Nullable &mdash; null en baseline pre-procedimiento</span></div>
+          <div class="f"><span class="fn">Escala</span><span class="fy">enum (17 escalas)</span><span class="fo">&mdash; GAIS, FACE-Q, DLQI, MAS, Glogau, Fitzpatrick W&amp;E, MVDS, Fitzpatrick Skin Type, Alexiades-Armenakas, Hair Removal Efficacy, VSS, POSAS, MASI/mMASI, GAGS, HDSS, Norwood-Hamilton, Ludwig, BDD-YBOCS</span></div>
+          <div class="f"><span class="fn">Momento</span><span class="fy">enum: baseline / pre-procedimiento / post-seguimiento</span><span class="fo">&mdash; Cu&aacute;ndo en el flujo cl&iacute;nico</span></div>
+          <div class="f"><span class="fn">Score</span><span class="fy">JSON</span><span class="fo">&mdash; Valor(es) &mdash; JSON porque algunas escalas son multidimensionales (ej: POSAS = score m&eacute;dico + score paciente)</span></div>
+          <div class="f"><span class="fn">Fecha evaluaci&oacute;n</span><span class="fy">fecha auto</span><span class="fo">&mdash; Cu&aacute;ndo se aplic&oacute;</span></div>
+          <div class="f"><span class="fn">Evaluador</span><span class="fy">FK &rarr; Usuario del sistema</span><span class="fo">&mdash; Qui&eacute;n aplic&oacute; la escala</span></div>
+          <div class="f"><span class="fn">Notas</span><span class="fy">texto</span><span class="fo">&mdash; Observaciones del evaluador</span></div>
+        </div>
+        <div class="rl">
+          <div class="r"><i class="ph ph-arrow-left"></i> Pertenece a <strong>Paciente</strong> (tiene muchas)</div>
+          <div class="r"><i class="ph ph-arrow-left"></i> Vinculada a <strong>Procedimiento</strong> (nullable)</div>
+        </div>
+        <div class="note">17 escalas estandarizadas en 7 categor&iacute;as:<br>
+<strong>Valoraci&oacute;n Global (3):</strong> GAIS, FACE-Q, DLQI<br>
+<strong>Envejecimiento Facial y Rellenos (4):</strong> MAS, Glogau, Fitzpatrick W&amp;E, MVDS<br>
+<strong>Aparatolog&iacute;a y L&aacute;ser (3):</strong> Fitzpatrick Skin Type (ya campo 2.4), Alexiades-Armenakas, Hair Removal Efficacy<br>
+<strong>Cicatrices (2):</strong> VSS, POSAS<br>
+<strong>Condiciones Espec&iacute;ficas (3):</strong> MASI/mMASI, GAGS, HDSS<br>
+<strong>Capilar (2):</strong> Norwood-Hamilton, Ludwig<br>
+<strong>Screening Psicol&oacute;gico (1):</strong> BDD-YBOCS</div>
       </div>
     </div>
 
@@ -457,12 +490,12 @@
     <p style="color:#A1B8F2;margin-bottom:1rem">Cada entidad resuelve uno o m&aacute;s dolores diagnosticados</p>
     <div class="cv">
       <div class="cc cd1"><h3>D1 &mdash; Procesos Internos</h3><div class="ce">Paciente (lifecycle, campos, firmas, RBAC, PDF), Cita, Procedimiento, Inventario, Documento, Log de Auditor&iacute;a (trazabilidad NOM-024)</div><div class="cd">Digitaliza + norma + control de acceso + auditor&iacute;a</div></div>
-      <div class="cc cd2"><h3>D2 &mdash; Seguimiento</h3><div class="ce">Paciente (clasificaci&oacute;n, se&ntilde;ales, historial), Procedimiento (seguimiento), Se&ntilde;al de Inacci&oacute;n (detecci&oacute;n autom&aacute;tica), Protocolo de Revisi&oacute;n (umbrales por procedimiento)</div><div class="cd">Clasifica + detecta riesgo + act&uacute;a + umbrales</div></div>
+      <div class="cc cd2"><h3>D2 &mdash; Seguimiento</h3><div class="ce">Paciente (clasificaci&oacute;n, se&ntilde;ales, historial), Procedimiento (seguimiento), Se&ntilde;al de Inacci&oacute;n (detecci&oacute;n autom&aacute;tica), Protocolo de Revisi&oacute;n (umbrales por procedimiento), Evaluaci&oacute;n Cl&iacute;nica (escalas pre/post)</div><div class="cd">Clasifica + detecta riesgo + act&uacute;a + umbrales</div></div>
       <div class="cc cd3"><h3>D3 &mdash; Comunicaci&oacute;n</h3><div class="ce">Comunicaci&oacute;n, Paciente (engagement, segmentaci&oacute;n), Se&ntilde;al de Inacci&oacute;n &rarr; respuestas autom&aacute;ticas D3</div><div class="cd">Personaliza por categor&iacute;a + engagement + se&ntilde;ales</div></div>
       <div class="cc cd4"><h3>D4 &mdash; Conversi&oacute;n</h3><div class="ce">Paciente (lifecycle Lead&rarr;Paciente, fuente captaci&oacute;n)</div><div class="cd">Captura + traza + mide ROI</div></div>
     </div>
 
-    <div class="note" style="margin-top:2rem">Documento de referencia &mdash; 200 campos en 9 entidades. Las 3 entidades nuevas (Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a) soportan el ecosistema de se&ntilde;ales &sect;5B, proceso graduado Inactivo &rarr; Perdido &sect;5B-2 y trazabilidad NOM-024. Este modelo alimenta los 25 KPIs, 21 automatizaciones, flujos to-be y fases de implementaci&oacute;n.</div>
+    <div class="note" style="margin-top:2rem">Documento de referencia &mdash; 210 campos en 10 entidades. Las 4 entidades nuevas (Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) soportan el ecosistema de se&ntilde;ales &sect;5B, proceso graduado Inactivo &rarr; Perdido &sect;5B-2, trazabilidad NOM-024 y medici&oacute;n de resultados cl&iacute;nicos (17 escalas). Este modelo alimenta los 25 KPIs, 21 automatizaciones, flujos to-be y fases de implementaci&oacute;n.</div>
   </div>
   <div class="zt"><button onclick="zoomOut()" title="Alejar"><i class="ph ph-minus"></i></button><span id="zl" class="zl">100%</span><button onclick="zoomIn()" title="Acercar"><i class="ph ph-plus"></i></button><button onclick="toggleFs()" title="Pantalla completa"><i class="ph ph-arrows-out"></i></button></div>
   <script>let z=100;function zoomIn(){z=Math.min(z+20,200);az()}function zoomOut(){z=Math.max(z-20,60);az()}function az(){document.body.style.zoom=z/100;document.getElementById('zl').textContent=z+'%'}function toggleFs(){if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{})}</script>
