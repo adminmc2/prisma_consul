@@ -2,6 +2,12 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-14] — v3.2.21
+
+### Blueprint ARMC
+- **modelo-datos.html:** Corrección Continuo 21→20 campos (conteo verificado: 4 clasificación + 7 fechas + 3 contadores + 4 proceso graduado + 1 historial + 1 notas)
+- **fases-implementacion.html:** F1: +3 ítems (cifrado TLS/AES-256, autenticación/MFA, backups/DRP), modelo de datos con 9 nombres de entidades, Log Auditoría NOM-004/NOM-024, retención con 5 años general, prereq protocolos con umbrales/Protocolo de Revisión. F3: confirmación respondida movida de F1 a F3. Purga con detalle leads + usuarios
+
 ## [2026-04-14] — v3.2.20
 
 ### Frontend — PRISMA Hub (Blueprint)

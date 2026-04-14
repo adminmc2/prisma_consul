@@ -45,7 +45,7 @@
           <div class="phase-section"><div class="phase-section-title">Qu&eacute; se construye</div>
             <div class="items">
               <div class="item">Ciclo de vida completo: Lead &rarr; Usuario &rarr; Evaluaci&oacute;n agendada &rarr; Paciente (transiciones autom&aacute;ticas + manuales)</div>
-              <div class="item">Modelo de datos: 200 campos en 9 entidades de HC organizados por etapa del ciclo de vida</div>
+              <div class="item">Modelo de datos: 200 campos en 9 entidades (Paciente, Cita, Procedimiento, Inventario, Comunicaci&oacute;n, Documento, Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a) &mdash; HC organizada por etapa del ciclo de vida</div>
               <div class="item">Dos IDs separados: ID Sistema (interno, invisible) + ID Historia Cl&iacute;nica (expediente, inmutable, impreso)</div>
               <div class="item">Agenda digital con disponibilidad en tiempo real por profesional</div>
               <div class="item">Expediente cl&iacute;nico digital: HC, consentimientos, fotos estandarizadas</div>
@@ -56,18 +56,20 @@
               <div class="item">Cumplimiento NOM-004 (expedientes) + NOM-024 (sistemas electr&oacute;nicos): cifrado, logs de auditor&iacute;a, backups, trazabilidad</div>
               <div class="item">Aviso de privacidad digital con firma electr&oacute;nica (LFPDPPP)</div>
               <div class="item">Interfaces por rol: cada persona ve lo que necesita seg&uacute;n su funci&oacute;n</div>
-              <div class="item">Entidad Log de Auditor&iacute;a: registro inalterable (append-only) de todos los accesos y operaciones &mdash; 9 campos. Requisito obligatorio NOM-024</div>
+              <div class="item">Entidad Log de Auditor&iacute;a: registro inalterable (append-only) de todos los accesos y operaciones &mdash; 9 campos. Requisito obligatorio NOM-004/NOM-024</div>
               <div class="item">Inmutabilidad: datos de perfil editables con historial COFEPRIS vs notas m&eacute;dicas firmadas solo lectura + addendum</div>
-              <div class="item">Retenci&oacute;n diferenciada: menores de edad (HC protegida hasta los 23 a&ntilde;os), pacientes fallecidos (5 a&ntilde;os desde defunci&oacute;n)</div>
-              <div class="item">Campo Cita: confirmaci&oacute;n respondida (boolean) &mdash; alimenta se&ntilde;al S2 de confirmaci&oacute;n autom&aacute;tica</div>
+              <div class="item">Retenci&oacute;n de datos: expedientes cl&iacute;nicos 5 a&ntilde;os m&iacute;nimo, menores de edad hasta los 23 a&ntilde;os, pacientes fallecidos 5 a&ntilde;os desde defunci&oacute;n</div>
               <div class="item">Cat&aacute;logos estandarizados: CIE-10 (diagn&oacute;stico, recomendado) + CBCM (medicamentos, pendiente)</div>
+              <div class="item">Cifrado: TLS 1.2+ en tr&aacute;nsito + AES-256 en reposo para datos sensibles (NOM-024)</div>
+              <div class="item">Autenticaci&oacute;n: usuario + contrase&ntilde;a robusta, MFA recomendado para m&eacute;dicos</div>
+              <div class="item">Backups peri&oacute;dicos documentados + Plan de Recuperaci&oacute;n ante Desastres (DRP)</div>
               <div class="item auto">Confirmaci&oacute;n autom&aacute;tica de citas (WhatsApp 24h/2h) + se&ntilde;al S2 si no responde</div>
               <div class="item auto">Transici&oacute;n autom&aacute;tica del ciclo de vida (Lead&rarr;Usuario&rarr;Evaluaci&oacute;n&rarr;Paciente)</div>
               <div class="item auto">Verificaci&oacute;n pre-consulta: recordatorio formulario HC 48h antes (se&ntilde;al S3)</div>
               <div class="item auto">Checklist de preparaci&oacute;n quir&uacute;rgica autom&aacute;tico</div>
               <div class="item auto">Alertas de inventario bajo</div>
               <div class="item auto">Alerta de documentaci&oacute;n incompleta</div>
-              <div class="item auto">Purga autom&aacute;tica de datos sin primera consulta (LFPDPPP: 6-12 meses)</div>
+              <div class="item auto">Purga autom&aacute;tica: leads 6-12 meses, usuarios pre-llenado sin primera consulta 6-12 meses (LFPDPPP)</div>
             </div>
           </div>
           <div class="phase-section"><div class="phase-section-title">Roles beneficiados</div>
@@ -76,7 +78,7 @@
           <div class="prereqs"><div class="prereqs-title">Prerrequisitos</div>
             <div class="prereq-item">Migraci&oacute;n de datos de pacientes existentes (libretas, Excel, memorias)</div>
             <div class="prereq-item">Capacitaci&oacute;n b&aacute;sica al equipo (2&ndash;3 sesiones)</div>
-            <div class="prereq-item">Definici&oacute;n de protocolos por tipo de procedimiento</div>
+            <div class="prereq-item">ARMC: protocolos por tipo de procedimiento (umbrales, ciclos de retorno) &mdash; alimentan Protocolo de Revisi&oacute;n</div>
             <div class="prereq-item">ARMC elige formato de ID Historia Cl&iacute;nica (4 opciones propuestas)</div>
             <div class="prereq-item">ARMC revisa y valida los 200 campos de HC en 9 entidades</div>
             <div class="prereq-item">Publicaci&oacute;n del aviso de privacidad en URL accesible</div>
@@ -134,6 +136,7 @@
               <div class="item">Segmentaci&oacute;n autom&aacute;tica: comunicaci&oacute;n diferente seg&uacute;n categor&iacute;a conductual + engagement</div>
               <div class="item">Flujos de reactivaci&oacute;n: Fase 3 del proceso graduado (oferta/encuesta personalizada por l&iacute;nea de servicio)</div>
               <div class="item">Canal switching: si no responde por un canal, intentar por otro autom&aacute;ticamente</div>
+              <div class="item">Campo Cita: confirmaci&oacute;n respondida (boolean) &mdash; alimenta se&ntilde;al S2 de confirmaci&oacute;n autom&aacute;tica</div>
               <div class="item">Campos Comunicaci&oacute;n: es newsletter (boolean &mdash; distingue masivos de directos) + secuencia sin abrir (computed &mdash; 3 consecutivos sin abrir activa se&ntilde;al S6)</div>
               <div class="item auto">Indicaciones post-procedimiento autom&aacute;ticas</div>
               <div class="item auto">Comunicaci&oacute;n de cumplea&ntilde;os/fechas especiales</div>
