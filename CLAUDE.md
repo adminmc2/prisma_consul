@@ -150,27 +150,40 @@ Actions: `login`, `upload`, `delete`, `rename`, `user_created`
 
 ## Git Workflow
 
-- **`main`** → Producción. El VPS despliega desde aquí. **NO trabajar directamente en main.**
-- **`dev`** → Desarrollo. Todos los cambios se hacen aquí primero.
+- **`main`** → Producción (`prismaconsul.com`). El VPS despliega desde aquí. **NO trabajar directamente en main.**
+- **`dev`** → Desarrollo (`dev.prismaconsul.com`). Todos los cambios se hacen aquí primero.
 - **GitHub se mantiene** como repositorio central, backup del código e historial de cambios.
 
 ### Flujo de trabajo
 
 1. Trabajar siempre en `dev`
-2. Probar los cambios (local o en servidor de prueba)
-3. Cuando esté verificado, fusionar a `main`: `git checkout main && git merge dev && git push`
-4. Volver a `dev` para seguir: `git checkout dev`
-5. Actualizar el servidor: `ssh prisma@212.227.251.125 "cd ~/web-de-prisma && git pull origin main"`
+2. Commit en `dev` → push a GitHub → **desplegar en `dev.prismaconsul.com`** para probar visualmente
+3. Verificar los cambios en `https://dev.prismaconsul.com`
+4. Cuando esté verificado, fusionar a `main`: `git checkout main && git merge dev && git push`
+5. Volver a `dev` para seguir: `git checkout dev`
+6. Actualizar el servidor de producción: `ssh prisma@212.227.251.125 "cd ~/web-de-prisma && git pull origin main && pm2 restart prisma-consul"`
+
+### Despliegue a dev.prismaconsul.com
+
+```bash
+# Tras hacer commit + push a rama dev:
+git push origin dev
+ssh prisma@212.227.251.125 "cd ~/web-de-prisma-dev && git pull origin dev && pm2 restart prisma-dev"
+```
 
 ### Reglas
 
-- Nunca hacer push directo a `main` sin haber probado en `dev`
-- Antes de fusionar a `main`, verificar que todo funciona
+- Nunca hacer push directo a `main` sin haber probado en `dev.prismaconsul.com`
+- Antes de fusionar a `main`, verificar que todo funciona en dev.prismaconsul.com
 - Los commits en `dev` pueden ser frecuentes y granulares
 - Los merges a `main` deben representar cambios completos y funcionales
 - Nunca editar código directamente en el servidor — siempre desde local
 
 ## Development
+
+Hay dos formas de probar cambios antes de desplegar a producción:
+
+### Opción A — Servidor local (rápido para cambios aislados)
 
 ```bash
 # Start local dev server (Express)
@@ -179,17 +192,41 @@ cd server && node server.js
 # Access apps locally
 http://localhost:3000          # Landing page
 http://localhost:3000/apex     # APEX form
-http://localhost:3000/documentacion  # Portal
+http://localhost:3000/hub      # Hub
 ```
 
-## IONOS VPS (Producción)
+### Opción B — Entorno remoto `dev.prismaconsul.com` (recomendado)
+
+Es un entorno real que sirve la rama `dev` desde el VPS, con SSL, nginx, BD y Drive **idénticos a producción**. Es el único entorno donde probar visualmente cambios del Hub antes del merge a `main`. Detalles y flujo de despliegue: ver sección "IONOS VPS (Producción y Desarrollo)".
+
+## IONOS VPS (Producción y Desarrollo)
 
 **VPS:** IONOS, Ubuntu 24.04, IP `212.227.251.125`
 **Acceso:** `ssh prisma@212.227.251.125` (clave SSH, sin contraseña)
 **Credenciales locales:** `.server-credentials` (en .gitignore)
 **Stack:** nginx + Express.js + PM2 + Let's Encrypt SSL
-**Código en servidor:** `/home/prisma/web-de-prisma/` (rama `main`)
 **Backup:** Acronis Cyber Protect (agente instalado, backup semanal completo + diario incremental)
+
+El mismo VPS sirve **dos entornos**:
+
+### Producción — `prismaconsul.com` + `prismaconsul.com/hub`
+
+- **Código:** `/home/prisma/web-de-prisma/` (rama `main`)
+- **Proceso PM2:** `prisma-consul` (id 0) — Express en puerto 3000
+- **Nginx:** bloque `server_name prismaconsul.com www.prismaconsul.com`
+- **Despliegue:** `ssh prisma@212.227.251.125 "cd ~/web-de-prisma && git pull origin main && pm2 restart prisma-consul"`
+- **SSL:** Let's Encrypt (certbot, renovación automática)
+
+### Desarrollo — `dev.prismaconsul.com` + `dev.prismaconsul.com/hub`
+
+- **Código:** `/home/prisma/web-de-prisma-dev/` (rama `dev`)
+- **Proceso PM2:** `prisma-dev` (id 3) — Express en puerto 3001
+- **Config PM2:** `/home/prisma/ecosystem-dev.config.js` (apps → prisma-dev, script → /home/prisma/web-de-prisma-dev/server/server.js, cwd → /home/prisma/web-de-prisma-dev, env.PORT → 3001)
+- **Nginx:** bloque dedicado en `/etc/nginx/sites-enabled/prisma-dev` con `server_name dev.prismaconsul.com`
+- **Despliegue:** `ssh prisma@212.227.251.125 "cd ~/web-de-prisma-dev && git pull origin dev && pm2 restart prisma-dev"`
+- **SSL:** Let's Encrypt independiente para `dev.prismaconsul.com` (certbot, renovación automática)
+- **BD y Drive:** **comparte los de producción** (Neon + Google Drive). Cualquier cambio en dev toca datos reales de clientes — ten cuidado al subir/borrar archivos en dev.
+- **Uso:** ver cambios en el Hub antes de desplegar a producción. Única URL donde verificar visualmente cambios del frontend en rama `dev`.
 
 ### Securización (COMPLETADO)
 
