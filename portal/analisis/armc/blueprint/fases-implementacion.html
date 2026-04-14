@@ -45,7 +45,7 @@
           <div class="phase-section"><div class="phase-section-title">Qu&eacute; se construye</div>
             <div class="items">
               <div class="item">Ciclo de vida completo: Lead &rarr; Usuario &rarr; Evaluaci&oacute;n agendada &rarr; Paciente (transiciones autom&aacute;ticas + manuales)</div>
-              <div class="item">Entidad Paciente con 168 campos de HC organizados por etapa del ciclo de vida</div>
+              <div class="item">Modelo de datos: 200 campos en 9 entidades de HC organizados por etapa del ciclo de vida</div>
               <div class="item">Dos IDs separados: ID Sistema (interno, invisible) + ID Historia Cl&iacute;nica (expediente, inmutable, impreso)</div>
               <div class="item">Agenda digital con disponibilidad en tiempo real por profesional</div>
               <div class="item">Expediente cl&iacute;nico digital: HC, consentimientos, fotos estandarizadas</div>
@@ -56,6 +56,11 @@
               <div class="item">Cumplimiento NOM-004 (expedientes) + NOM-024 (sistemas electr&oacute;nicos): cifrado, logs de auditor&iacute;a, backups, trazabilidad</div>
               <div class="item">Aviso de privacidad digital con firma electr&oacute;nica (LFPDPPP)</div>
               <div class="item">Interfaces por rol: cada persona ve lo que necesita seg&uacute;n su funci&oacute;n</div>
+              <div class="item">Entidad Log de Auditor&iacute;a: registro inalterable (append-only) de todos los accesos y operaciones &mdash; 9 campos. Requisito obligatorio NOM-024</div>
+              <div class="item">Inmutabilidad: datos de perfil editables con historial COFEPRIS vs notas m&eacute;dicas firmadas solo lectura + addendum</div>
+              <div class="item">Retenci&oacute;n diferenciada: menores de edad (HC protegida hasta los 23 a&ntilde;os), pacientes fallecidos (5 a&ntilde;os desde defunci&oacute;n)</div>
+              <div class="item">Campo Cita: confirmaci&oacute;n respondida (boolean) &mdash; alimenta se&ntilde;al S2 de confirmaci&oacute;n autom&aacute;tica</div>
+              <div class="item">Cat&aacute;logos estandarizados: CIE-10 (diagn&oacute;stico, recomendado) + CBCM (medicamentos, pendiente)</div>
               <div class="item auto">Confirmaci&oacute;n autom&aacute;tica de citas (WhatsApp 24h/2h) + se&ntilde;al S2 si no responde</div>
               <div class="item auto">Transici&oacute;n autom&aacute;tica del ciclo de vida (Lead&rarr;Usuario&rarr;Evaluaci&oacute;n&rarr;Paciente)</div>
               <div class="item auto">Verificaci&oacute;n pre-consulta: recordatorio formulario HC 48h antes (se&ntilde;al S3)</div>
@@ -73,8 +78,9 @@
             <div class="prereq-item">Capacitaci&oacute;n b&aacute;sica al equipo (2&ndash;3 sesiones)</div>
             <div class="prereq-item">Definici&oacute;n de protocolos por tipo de procedimiento</div>
             <div class="prereq-item">ARMC elige formato de ID Historia Cl&iacute;nica (4 opciones propuestas)</div>
-            <div class="prereq-item">ARMC revisa y valida los 168 campos de HC</div>
+            <div class="prereq-item">ARMC revisa y valida los 200 campos de HC en 9 entidades</div>
             <div class="prereq-item">Publicaci&oacute;n del aviso de privacidad en URL accesible</div>
+            <div class="prereq-item">PRISMA entrega Matriz de Cumplimiento APEX-NOM024 antes de producci&oacute;n</div>
           </div>
         </div>
       </div>
@@ -94,6 +100,9 @@
               <div class="item">Cadenas de seguimiento post-procedimiento (+3d, +7d, +30d seg&uacute;n tipo)</div>
               <div class="item">Dashboard de engagement: pacientes por categor&iacute;a, se&ntilde;ales activas, proceso graduado</div>
               <div class="item">Timeline de evoluci&oacute;n por paciente con fotos comparativas</div>
+              <div class="item">Entidad Se&ntilde;al de Inacci&oacute;n: registro individual de cada se&ntilde;al S1-S8 activada por paciente &mdash; 8 campos (tipo, fecha, estado, respuesta, canal)</div>
+              <div class="item">Entidad Protocolo de Revisi&oacute;n: tabla de referencia con umbrales por procedimiento &mdash; 8 campos (revisiones esperadas, ciclo retorno, umbral inactivo/pre-perdido/perdido)</div>
+              <div class="item">Campos Paciente para proceso graduado: fase actual (Activo/F1-F4), fecha inicio fase, se&ntilde;ales activas (count), &uacute;ltimo tipo procedimiento (FK &rarr; Protocolo de Revisi&oacute;n)</div>
               <div class="item auto">Clasificaci&oacute;n autom&aacute;tica de pacientes (categor&iacute;a + engagement basado en se&ntilde;ales)</div>
               <div class="item auto">Seguimiento post-procedimiento autom&aacute;tico</div>
               <div class="item auto">Motor de detecci&oacute;n de se&ntilde;ales de inacci&oacute;n (evaluaci&oacute;n diaria, 8 se&ntilde;ales)</div>
@@ -125,6 +134,7 @@
               <div class="item">Segmentaci&oacute;n autom&aacute;tica: comunicaci&oacute;n diferente seg&uacute;n categor&iacute;a conductual + engagement</div>
               <div class="item">Flujos de reactivaci&oacute;n: Fase 3 del proceso graduado (oferta/encuesta personalizada por l&iacute;nea de servicio)</div>
               <div class="item">Canal switching: si no responde por un canal, intentar por otro autom&aacute;ticamente</div>
+              <div class="item">Campos Comunicaci&oacute;n: es newsletter (boolean &mdash; distingue masivos de directos) + secuencia sin abrir (computed &mdash; 3 consecutivos sin abrir activa se&ntilde;al S6)</div>
               <div class="item auto">Indicaciones post-procedimiento autom&aacute;ticas</div>
               <div class="item auto">Comunicaci&oacute;n de cumplea&ntilde;os/fechas especiales</div>
               <div class="item auto">Campa&ntilde;a de reactivaci&oacute;n segmentada (Fase 3 del proceso graduado)</div>
