@@ -2,6 +2,11 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-14] — v3.2.22
+
+### Blueprint ARMC
+- **modelo-datos.html:** Añadido campo 1.14 Tipo de interrogatorio (auto: Directo/Indirecto) en evaluación médica. Default "Directo", el médico cambia a "Indirecto" solo si tercero proporcionó info. Buena práctica clínica, no exigido NOM-004
+
 ## [2026-04-14] — v3.2.21
 
 ### Blueprint ARMC
