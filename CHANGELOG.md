@@ -2,6 +2,11 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-14] — v3.2.23
+
+### Blueprint ARMC
+- **modelo-datos.html:** Diferenciados 3 niveles de firma en APEX. Campo 1.27 (Aviso de privacidad) cambiado de "firma" a "aceptación digital con auditoría" (2 checkboxes separados no pre-marcados + log: timestamp, IP/dispositivo, versión del aviso). Sección Firmas digitales reemplazada: tabla de 4 firmas HC → tabla de 3 niveles (aceptación digital, autógrafa digitalizada, FEA). Tabla "3 documentos del paciente" renombrada a "3 consentimientos" con nueva columna Mecanismo que diferencia aceptación digital vs firma autógrafa. Sin cambios en firmas HC (9.7-9.10) ni consentimiento informado (10.1)
+
 ## [2026-04-14] — v3.2.22
 
 ### Blueprint ARMC

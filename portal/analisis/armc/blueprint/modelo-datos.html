@@ -111,7 +111,7 @@
           <div class="f"><span class="fn">Tel&eacute;fono principal</span><span class="fy">tel&eacute;fono</span></div>
           <div class="f"><span class="fn">Email</span><span class="fy">email</span></div>
           <div class="f"><span class="fn">Fuente de captaci&oacute;n</span><span class="fy">selecci&oacute;n</span><span class="fo">&mdash; 13 opciones en 6 categor&iacute;as: redes org&aacute;nico, redes pagado, directo, referido, digital, otro</span></div>
-          <div class="f"><span class="fn">Aceptaci&oacute;n aviso de privacidad</span><span class="fy">firma</span><span class="fo">&mdash; obligatorio LFPDPPP, con firma</span></div>
+          <div class="f"><span class="fn">Aceptaci&oacute;n aviso de privacidad</span><span class="fy">2 checkboxes + auditor&iacute;a</span><span class="fo">&mdash; Aceptaci&oacute;n digital (NO requiere firma aut&oacute;grafa). Requisitos: (1)&nbsp;texto completo del aviso visible antes de aceptar, no solo link; (2)&nbsp;2 checkboxes separados y no pre-marcados: uno para datos ordinarios, otro espec&iacute;fico para datos sensibles de salud; (3)&nbsp;log interno: timestamp, IP/dispositivo, versi&oacute;n del aviso aceptado. Obligatorio LFPDPPP</span></div>
           <div class="f"><span class="fn">Consentimiento comunicaci&oacute;n digital</span><span class="fy">check</span><span class="fo">&mdash; autoriza WhatsApp/email</span></div>
         </div>
 
@@ -386,15 +386,13 @@
       <tr><td>Administraci&oacute;n / CEO</td><td>Solo KPIs agregados</td><td>Facturaci&oacute;n, reportes, dashboards</td></tr>
     </table>
 
-    <h2><i class="ph ph-pen-nib" style="color:#31BEEF"></i> Firmas digitales</h2>
+    <h2><i class="ph ph-pen-nib" style="color:#31BEEF"></i> Firmas digitales &mdash; 3 niveles</h2>
     <table>
-      <tr><th>Firma</th><th>Obligatoria</th><th>Cu&aacute;ndo</th><th>Efecto</th></tr>
-      <tr><td>M&eacute;dico (9.7)</td><td>S&iacute;</td><td>Al completar evaluaci&oacute;n</td><td>Inmoviliza la nota &mdash; solo lectura</td></tr>
-      <tr><td>Paciente (9.8)</td><td>S&iacute;</td><td>Tras evaluaci&oacute;n</td><td>Confirma informaci&oacute;n correcta</td></tr>
-      <tr><td>Testigo 1 (9.9)</td><td>NOM-004 (no bloqueante)</td><td>Recomendado para quir&uacute;rgicos</td><td>Alerta visual si falta</td></tr>
-      <tr><td>Testigo 2 (9.10)</td><td>NOM-004 (no bloqueante)</td><td>Recomendado para quir&uacute;rgicos</td><td>Alerta visual si falta</td></tr>
+      <tr><th>Tipo de firma</th><th>Validez</th><th>Cu&aacute;ndo aplica</th></tr>
+      <tr><td>Aceptaci&oacute;n digital con auditor&iacute;a (checkboxes&nbsp;+&nbsp;log)</td><td>&#x2705; V&aacute;lida para aviso de privacidad</td><td>Aviso de privacidad (1.27). Requiere: texto visible, 2&nbsp;checkboxes separados no pre-marcados (ordinarios&nbsp;+&nbsp;sensibles), log interno (timestamp, IP/dispositivo, versi&oacute;n del aviso)</td></tr>
+      <tr><td>Firma aut&oacute;grafa digitalizada (tableta&nbsp;+&nbsp;stylus)</td><td>&#x2705; V&aacute;lida para uso cl&iacute;nico interno</td><td>HC (9.7, 9.8), consentimientos informados (10.1), notas de evoluci&oacute;n, veracidad de antecedentes</td></tr>
+      <tr><td>Firma Electr&oacute;nica Avanzada (FEA)</td><td>Solo inter-institucional</td><td>No aplica en alcance actual de APEX</td></tr>
     </table>
-    <div class="note">Tipo: aut&oacute;grafa digitalizada (tableta + stylus). V&aacute;lida para todo uso interno.</div>
 
     <h2><i class="ph ph-lock-key" style="color:#31BEEF"></i> Inmutabilidad</h2>
     <table>
@@ -432,12 +430,12 @@
     </table>
     <div class="note warn">Casos especiales: Menores de edad (HC protegida hasta los 23 a&ntilde;os). Fallecidos (5 a&ntilde;os desde defunci&oacute;n).</div>
 
-    <h2><i class="ph ph-signature" style="color:#31BEEF"></i> 3 documentos que firma el paciente</h2>
+    <h2><i class="ph ph-signature" style="color:#31BEEF"></i> 3 consentimientos del paciente</h2>
     <table>
-      <tr><th>Documento</th><th>Base legal</th><th>Cu&aacute;ndo</th><th>Frecuencia</th></tr>
-      <tr><td>Aviso de privacidad</td><td>LFPDPPP 2025</td><td>Al registrarse</td><td>Una vez</td></tr>
-      <tr><td>Consentimiento informado</td><td>NOM-004</td><td>Pre-procedimiento</td><td>Por procedimiento</td></tr>
-      <tr><td>Firma de veracidad de antecedentes</td><td>Recomendado</td><td>Primera evaluaci&oacute;n</td><td>Una vez</td></tr>
+      <tr><th>Documento</th><th>Mecanismo</th><th>Base legal</th><th>Cu&aacute;ndo</th><th>Frecuencia</th></tr>
+      <tr><td>Aviso de privacidad</td><td>Aceptaci&oacute;n digital (2&nbsp;checkboxes&nbsp;+&nbsp;auditor&iacute;a)</td><td>LFPDPPP 2025</td><td>Al registrarse</td><td>Una vez</td></tr>
+      <tr><td>Consentimiento informado</td><td>Firma aut&oacute;grafa digitalizada</td><td>NOM-004</td><td>Pre-procedimiento</td><td>Por procedimiento</td></tr>
+      <tr><td>Veracidad de antecedentes</td><td>Firma aut&oacute;grafa digitalizada</td><td>Recomendado</td><td>Primera evaluaci&oacute;n</td><td>Una vez</td></tr>
     </table>
 
     <h2><i class="ph ph-cpu" style="color:#31BEEF"></i> Requisitos t&eacute;cnicos (NOM-024)</h2>
