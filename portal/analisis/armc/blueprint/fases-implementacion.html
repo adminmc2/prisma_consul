@@ -33,7 +33,7 @@
     <div class="badge"><i class="ph ph-rocket-launch"></i> Blueprint de Sistema</div>
     <h1>Fases de Implementaci&oacute;n</h1>
     <p class="subtitle">4 fases secuenciales D1 &rarr; D2 &rarr; D3 &rarr; D4 &mdash; cada fase construye sobre la anterior</p>
-    <div class="ss"><div class="sc"><div class="sn">4</div><div class="sl">Fases</div></div><div class="sc"><div class="sn">~12</div><div class="sl">Meses estimados</div></div><div class="sc"><div class="sn">7</div><div class="sl">Roles impactados</div></div><div class="sc"><div class="sn">21</div><div class="sl">Automatizaciones</div></div></div>
+    <div class="ss"><div class="sc"><div class="sn">4</div><div class="sl">Fases</div></div><div class="sc"><div class="sn">~12</div><div class="sl">Meses estimados</div></div><div class="sc"><div class="sn">7</div><div class="sl">Roles impactados</div></div><div class="sc"><div class="sn">22</div><div class="sl">Automatizaciones</div></div></div>
 
     <div class="timeline">
 
@@ -45,7 +45,7 @@
           <div class="phase-section"><div class="phase-section-title">Qu&eacute; se construye</div>
             <div class="items">
               <div class="item">Ciclo de vida completo: Lead &rarr; Usuario &rarr; Evaluaci&oacute;n agendada &rarr; Paciente (transiciones autom&aacute;ticas + manuales)</div>
-              <div class="item">Modelo de datos: 200 campos en 9 entidades (Paciente, Cita, Procedimiento, Inventario, Comunicaci&oacute;n, Documento, Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a) &mdash; HC organizada por etapa del ciclo de vida</div>
+              <div class="item">Modelo de datos: 210 campos en 10 entidades (Paciente, Cita, Procedimiento, Inventario, Comunicaci&oacute;n, Documento, Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) &mdash; HC organizada por etapa del ciclo de vida</div>
               <div class="item">Dos IDs separados: ID Sistema (interno, invisible) + ID Historia Cl&iacute;nica (expediente, inmutable, impreso)</div>
               <div class="item">Agenda digital con disponibilidad en tiempo real por profesional</div>
               <div class="item">Expediente cl&iacute;nico digital: HC, consentimientos, fotos estandarizadas</div>
@@ -65,6 +65,7 @@
               <div class="item">Backups peri&oacute;dicos documentados + Plan de Recuperaci&oacute;n ante Desastres (DRP)</div>
               <div class="item auto">Confirmaci&oacute;n autom&aacute;tica de citas (WhatsApp 24h/2h) + se&ntilde;al S2 si no responde</div>
               <div class="item auto">Transici&oacute;n autom&aacute;tica del ciclo de vida (Lead&rarr;Usuario&rarr;Evaluaci&oacute;n&rarr;Paciente)</div>
+              <div class="item auto">Invitaci&oacute;n autom&aacute;tica a crear cuenta: al agendar evaluaci&oacute;n para un lead sin cuenta, env&iacute;o de email/WhatsApp con link de registro. El lead acepta aviso de privacidad (1.27) online y pre-llena secciones 3-6 antes de llegar. Si no crea cuenta &rarr; registro presencial el d&iacute;a de la cita (D1+D3)</div>
               <div class="item auto">Verificaci&oacute;n pre-consulta: recordatorio formulario HC 48h antes (se&ntilde;al S3)</div>
               <div class="item auto">Checklist de preparaci&oacute;n quir&uacute;rgica autom&aacute;tico</div>
               <div class="item auto">Alertas de inventario bajo</div>
@@ -80,7 +81,7 @@
             <div class="prereq-item">Capacitaci&oacute;n b&aacute;sica al equipo (2&ndash;3 sesiones)</div>
             <div class="prereq-item">ARMC: protocolos por tipo de procedimiento (umbrales, ciclos de retorno) &mdash; alimentan Protocolo de Revisi&oacute;n</div>
             <div class="prereq-item">ARMC elige formato de ID Historia Cl&iacute;nica (4 opciones propuestas)</div>
-            <div class="prereq-item">ARMC revisa y valida los 200 campos de HC en 9 entidades</div>
+            <div class="prereq-item">ARMC revisa y valida los 210 campos de HC en 10 entidades</div>
             <div class="prereq-item">Publicaci&oacute;n del aviso de privacidad en URL accesible</div>
             <div class="prereq-item">PRISMA entrega Matriz de Cumplimiento APEX-NOM024 antes de producci&oacute;n</div>
           </div>
@@ -103,7 +104,7 @@
               <div class="item">Dashboard de engagement: pacientes por categor&iacute;a, se&ntilde;ales activas, proceso graduado</div>
               <div class="item">Timeline de evoluci&oacute;n por paciente con fotos comparativas</div>
               <div class="item">Entidad Se&ntilde;al de Inacci&oacute;n: registro individual de cada se&ntilde;al S1-S8 activada por paciente &mdash; 8 campos (tipo, fecha, estado, respuesta, canal)</div>
-              <div class="item">Entidad Protocolo de Revisi&oacute;n: tabla de referencia con umbrales por procedimiento &mdash; 8 campos (revisiones esperadas, ciclo retorno, umbral inactivo/pre-perdido/perdido)</div>
+              <div class="item">Entidad Protocolo de Revisi&oacute;n: tabla de referencia con umbrales por procedimiento &mdash; 9 campos (revisiones esperadas, ciclo retorno, umbral inactivo/pre-perdido/perdido, escalas cl&iacute;nicas aplicables)</div>
               <div class="item">Campos Paciente para proceso graduado: fase actual (Activo/F1-F4), fecha inicio fase, se&ntilde;ales activas (count), &uacute;ltimo tipo procedimiento (FK &rarr; Protocolo de Revisi&oacute;n)</div>
               <div class="item auto">Clasificaci&oacute;n autom&aacute;tica de pacientes (categor&iacute;a + engagement basado en se&ntilde;ales)</div>
               <div class="item auto">Seguimiento post-procedimiento autom&aacute;tico</div>

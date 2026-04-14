@@ -2,6 +2,12 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-14] — v3.2.25
+
+### Blueprint ARMC
+- **fases-implementacion.html / automatizaciones.html:** Invitación automática a crear cuenta cuando lead agenda evaluación (D1+D3). Automatizaciones 21→22, D1 7→8. Sync conteos con modelo-datos v3.2.24: 210 campos, 10 entidades, PR 9 campos
+- **modelo-datos.html:** Nota informativa en sección Evaluación agendada sobre invitación automática a crear cuenta
+
 ## [2026-04-14] — v3.2.24
 
 ### Blueprint ARMC
