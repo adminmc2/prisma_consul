@@ -43,7 +43,7 @@
     <div class="badge"><i class="ph ph-database"></i> Blueprint de Sistema</div>
     <h1>Modelo de Datos</h1>
     <p class="subtitle">Entidades, campos y relaciones que APEX construir&aacute; para ARMC &mdash; basado en el diagn&oacute;stico de 7 roles</p>
-    <div class="ss"><div class="sc"><div class="sn">10</div><div class="sl">Entidades</div></div><div class="sc"><div class="sn">258</div><div class="sl">Campos definidos</div></div><div class="sc"><div class="sn">4</div><div class="sl">Dolores cubiertos</div></div></div>
+    <div class="ss"><div class="sc"><div class="sn">10</div><div class="sl">Entidades</div></div><div class="sc"><div class="sn">261</div><div class="sl">Campos definidos</div></div><div class="sc"><div class="sn">4</div><div class="sl">Dolores cubiertos</div></div></div>
 
     <!-- ═══════════════════════════════════════ PACIENTE ═══════════════════════════════════════ -->
     <div class="ec open" onclick="this.classList.toggle('open')">
@@ -302,26 +302,28 @@
         <div class="lc">
           <span class="lc-step lc-user">Pendiente</span><span class="lc-arr">&rarr;</span>
           <span class="lc-step lc-eval">Confirmada</span><span class="lc-arr">&rarr;</span>
+          <span class="lc-step lc-pac">En consulta</span><span class="lc-arr">&rarr;</span>
           <span class="lc-step" style="background:rgba(49,190,239,.15);color:#31BEEF;border:1px solid rgba(49,190,239,.3)">Completada</span>
         </div>
         <table>
           <tr><th>Transici&oacute;n</th><th>Trigger</th><th>Notas</th></tr>
           <tr><td>Creada &rarr; Pendiente</td><td>Inmediato al agendar</td><td>Estado por defecto</td></tr>
           <tr><td>Pendiente &rarr; Confirmada</td><td>Paciente responde confirmaci&oacute;n</td><td>Confirmaci&oacute;n respondida = true</td></tr>
-          <tr><td>Confirmada &rarr; Completada</td><td>Profesional marca como realizada</td><td>Actualiza Paciente.fecha &uacute;ltima visita</td></tr>
+          <tr><td>Confirmada &rarr; En consulta</td><td>M&eacute;dico pulsa &ldquo;Iniciar consulta&rdquo;</td><td>Registra Hora inicio real. Tiempo de espera = inicio real &minus; hora agendada</td></tr>
+          <tr><td>En consulta &rarr; Completada</td><td>M&eacute;dico pulsa &ldquo;Completar consulta&rdquo;</td><td>Registra Hora fin real. Duraci&oacute;n real = fin &minus; inicio. Actualiza Paciente.fecha &uacute;ltima visita</td></tr>
           <tr><td>Confirmada &rarr; No-show</td><td>Auto si pasan X horas sin check-in</td><td>Registra motivo + eval&uacute;a se&ntilde;ales</td></tr>
           <tr><td>Pendiente/Confirmada &rarr; Cancelada</td><td>Atenci&oacute;n o paciente cancelan</td><td>Motivo obligatorio</td></tr>
           <tr><td>Cualquier estado &rarr; Reagendada</td><td>Cambio de Fecha/Hora</td><td>Reagendamientos +1, vuelve a Pendiente</td></tr>
         </table>
 
-        <div class="ft">Campos (17)</div>
+        <div class="ft">Campos (19)</div>
         <div class="fl">
           <div class="f"><span class="fn">ID</span><span class="fy">auto</span></div>
           <div class="f"><span class="fn">Paciente</span><span class="fy">FK &rarr; Paciente</span></div>
           <div class="f"><span class="fn">Tipo</span><span class="fy">valoraci&oacute;n / procedimiento / seguimiento / cosmiatr&iacute;a / tricolog&iacute;a</span></div>
           <div class="f"><span class="fn">Fecha / Hora</span><span class="fy">datetime</span></div>
-          <div class="f"><span class="fn">Duraci&oacute;n estimada</span><span class="fy">minutos</span></div>
-          <div class="f"><span class="fn">Estado</span><span class="fy">pendiente / confirmada / completada / cancelada / no-show</span></div>
+          <div class="f"><span class="fn">Duraci&oacute;n estimada</span><span class="fy">minutos</span><span class="fo">&mdash; Auto-sugerida desde PR.10 cuando se selecciona procedimiento planificado. Para evaluaciones: valor por defecto configurable</span></div>
+          <div class="f"><span class="fn">Estado</span><span class="fy">pendiente / confirmada / en-consulta / completada / cancelada / no-show</span></div>
           <div class="f"><span class="fn">Profesional asignado</span><span class="fy">FK &rarr; Usuario</span></div>
           <div class="f"><span class="fn">Notas pre-consulta</span><span class="fy">texto</span></div>
           <div class="f"><span class="fn">Confirmaci&oacute;n</span><span class="fy">autom&aacute;tica / manual</span></div>
@@ -333,6 +335,8 @@
           <div class="f"><span class="fn">Motivo cancelaci&oacute;n</span><span class="fy">enum + texto</span><span class="fo">&mdash; Solo si cancelada/no-show. Enum: Reagend&oacute; / No disponible / Ya no le interesa / Emergencia / No contest&oacute; / Otro. &ldquo;Ya no le interesa&rdquo; &rarr; se&ntilde;al D4</span></div>
           <div class="f"><span class="fn">Procedimiento planificado</span><span class="fy">FK &rarr; Protocolo de Revisi&oacute;n (nullable)</span><span class="fo">&mdash; Qu&eacute; se va a hacer. Prepara consentimiento, escalas cl&iacute;nicas (PR.9), duraci&oacute;n. Nullable para evaluaciones</span></div>
           <div class="f"><span class="fn">Cita origen</span><span class="fy">FK &rarr; Cita (nullable, self-reference)</span><span class="fo">&mdash; Cadena: Evaluaci&oacute;n &rarr; Procedimiento &rarr; Revisi&oacute;n 1 &rarr; Revisi&oacute;n 2. Alimenta S4 y KPI compliance revisiones</span></div>
+          <div class="f"><span class="fn">Hora inicio real</span><span class="fy">datetime (nullable)</span><span class="fo">&mdash; Se registra cuando el m&eacute;dico inicia la consulta. Marca transici&oacute;n Confirmada &rarr; En consulta. Duraci&oacute;n real = fin &minus; inicio. Tiempo de espera = inicio real &minus; hora agendada</span></div>
+          <div class="f"><span class="fn">Hora fin real</span><span class="fy">datetime (nullable)</span><span class="fo">&mdash; Se registra cuando el m&eacute;dico completa la consulta. Marca transici&oacute;n En consulta &rarr; Completada. Alimenta KPIs de eficiencia operativa</span></div>
         </div>
 
         <div class="ft">Tipos de cita</div>
@@ -460,7 +464,7 @@
     <div class="ec" onclick="this.classList.toggle('open')">
       <div class="eh"><i class="ph ph-clipboard-text ei"></i><span class="en">Protocolo de Revisi&oacute;n</span><div class="dbw"><span class="db d2">D2</span></div><i class="ph ph-caret-down xp"></i></div>
       <div class="eb">
-        <div class="ft">Campos (9)</div>
+        <div class="ft">Campos (10)</div>
         <div class="fl">
           <div class="f"><span class="fn">ID Protocolo</span><span class="fy">auto (PK)</span><span class="fo">&mdash; Identificador &uacute;nico</span></div>
           <div class="f"><span class="fn">L&iacute;nea de servicio</span><span class="fy">enum: cirug&iacute;a / cosmiatr&iacute;a / tricolog&iacute;a</span><span class="fo">&mdash; Clasificaci&oacute;n general</span></div>
@@ -471,6 +475,7 @@
           <div class="f"><span class="fn">Umbral pre-perdido</span><span class="fy">n&uacute;mero (d&iacute;as)</span><span class="fo">&mdash; ~2.5x ciclo &rarr; Fase 3</span></div>
           <div class="f"><span class="fn">Umbral perdido</span><span class="fy">n&uacute;mero (d&iacute;as)</span><span class="fo">&mdash; ~3x ciclo &rarr; Fase 4</span></div>
           <div class="f"><span class="fn">Escalas cl&iacute;nicas aplicables</span><span class="fy">array de enums</span><span class="fo">&mdash; Qu&eacute; escalas estandarizadas aplican para este procedimiento. Ej: rinoplastia &rarr; [GAIS, FACE-Q, VSS, BDD-YBOCS]</span></div>
+          <div class="f"><span class="fn">Duraci&oacute;n estimada</span><span class="fy">minutos</span><span class="fo">&mdash; Duraci&oacute;n t&iacute;pica del procedimiento. Auto-sugiere Cita.Duraci&oacute;n estimada al seleccionar este protocolo. Ej: Limpieza facial &rarr; 60 min, Rinoplastia &rarr; 180 min</span></div>
         </div>
         <div class="rl">
           <div class="r"><i class="ph ph-arrow-left"></i> Referenciado por <strong>Procedimiento</strong> (FK protocolo_revision_id)</div>
@@ -615,13 +620,13 @@
     <h2><i class="ph ph-squares-four" style="color:#31BEEF"></i> Cobertura D1-D4</h2>
     <p style="color:#A1B8F2;margin-bottom:1rem">Cada entidad resuelve uno o m&aacute;s dolores diagnosticados</p>
     <div class="cv">
-      <div class="cc cd1"><h3>D1 &mdash; Procesos Internos</h3><div class="ce">Paciente (lifecycle, campos, firmas, RBAC, PDF), Cita (ciclo de vida, 17 campos, tipos), Procedimiento (lifecycle, 13 campos), Inventario, Documento, Log de Auditor&iacute;a (trazabilidad NOM-024)</div><div class="cd">Digitaliza + norma + control de acceso + auditor&iacute;a</div></div>
+      <div class="cc cd1"><h3>D1 &mdash; Procesos Internos</h3><div class="ce">Paciente (lifecycle, campos, firmas, RBAC, PDF), Cita (ciclo de vida, 19 campos, tipos), Procedimiento (lifecycle, 13 campos), Inventario, Documento, Log de Auditor&iacute;a (trazabilidad NOM-024)</div><div class="cd">Digitaliza + norma + control de acceso + auditor&iacute;a</div></div>
       <div class="cc cd2"><h3>D2 &mdash; Seguimiento</h3><div class="ce">Paciente (clasificaci&oacute;n, se&ntilde;ales, historial), Procedimiento (seguimiento), Se&ntilde;al de Inacci&oacute;n (detecci&oacute;n autom&aacute;tica), Protocolo de Revisi&oacute;n (umbrales por procedimiento), Evaluaci&oacute;n Cl&iacute;nica (escalas pre/post)</div><div class="cd">Clasifica + detecta riesgo + act&uacute;a + umbrales</div></div>
       <div class="cc cd3"><h3>D3 &mdash; Comunicaci&oacute;n</h3><div class="ce">Comunicaci&oacute;n, Paciente (engagement, segmentaci&oacute;n), Se&ntilde;al de Inacci&oacute;n &rarr; respuestas autom&aacute;ticas D3</div><div class="cd">Personaliza por categor&iacute;a + engagement + se&ntilde;ales</div></div>
       <div class="cc cd4"><h3>D4 &mdash; Conversi&oacute;n</h3><div class="ce">Paciente (lifecycle Lead&rarr;Paciente, fuente captaci&oacute;n)</div><div class="cd">Captura + traza + mide ROI</div></div>
     </div>
 
-    <div class="note" style="margin-top:2rem">Documento de referencia &mdash; 258 campos en 10 entidades. Las 4 entidades nuevas (Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) soportan el ecosistema de se&ntilde;ales &sect;5B, proceso graduado Inactivo &rarr; Perdido &sect;5B-2, trazabilidad NOM-024 y medici&oacute;n de resultados cl&iacute;nicos (17 escalas). Este modelo alimenta los 25 KPIs, 25 automatizaciones, flujos to-be y fases de implementaci&oacute;n.</div>
+    <div class="note" style="margin-top:2rem">Documento de referencia &mdash; 261 campos en 10 entidades. Las 4 entidades nuevas (Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) soportan el ecosistema de se&ntilde;ales &sect;5B, proceso graduado Inactivo &rarr; Perdido &sect;5B-2, trazabilidad NOM-024 y medici&oacute;n de resultados cl&iacute;nicos (17 escalas). Este modelo alimenta los 25 KPIs, 25 automatizaciones, flujos to-be y fases de implementaci&oacute;n.</div>
   </div>
   <div class="zt"><button onclick="zoomOut()" title="Alejar"><i class="ph ph-minus"></i></button><span id="zl" class="zl">100%</span><button onclick="zoomIn()" title="Acercar"><i class="ph ph-plus"></i></button><button onclick="toggleFs()" title="Pantalla completa"><i class="ph ph-arrows-out"></i></button></div>
   <script>let z=100;function zoomIn(){z=Math.min(z+20,200);az()}function zoomOut(){z=Math.max(z-20,60);az()}function az(){document.body.style.zoom=z/100;document.getElementById('zl').textContent=z+'%'}function toggleFs(){if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{})}</script>

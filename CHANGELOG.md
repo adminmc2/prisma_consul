@@ -2,6 +2,14 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-15] — v3.2.30
+
+### Blueprint ARMC
+- **modelo-datos.html:** Cita: +2 campos (Hora inicio real, Hora fin real), +1 estado (en-consulta). Lifecycle: Confirmada → En consulta → Completada. Duración estimada auto-sugerida desde PR.10. Cita 17→19 campos
+- **modelo-datos.html:** Protocolo de Revisión: +1 campo PR.10 (Duración estimada por procedimiento). PR 9→10 campos
+- **fases-implementacion.html:** Sync total 258→261 campos (2 refs)
+- Total modelo: 258→261 campos
+
 ## [2026-04-15] — v3.2.29
 
 ### Blueprint ARMC
