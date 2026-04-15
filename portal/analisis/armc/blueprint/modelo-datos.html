@@ -326,7 +326,7 @@
           <div class="f"><span class="fn">Estado</span><span class="fy">pendiente / confirmada / en-consulta / completada / cancelada / no-show</span></div>
           <div class="f"><span class="fn">Profesional asignado</span><span class="fy">FK &rarr; Usuario</span></div>
           <div class="f"><span class="fn">Notas pre-consulta</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Canal agendamiento</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">Canal agendamiento</span><span class="fy">enum (auto): portal-paciente / equipo-interno / presencial</span><span class="fo">&mdash; Auto-detectado por el sistema seg&uacute;n qui&eacute;n crea la cita y desde d&oacute;nde. No se llena manualmente</span></div>
           <div class="f"><span class="fn">Confirmaci&oacute;n respondida</span><span class="fy">boolean</span><span class="fo">&mdash; &iquest;Respondi&oacute; a la confirmaci&oacute;n autom&aacute;tica? Alimenta se&ntilde;al S2</span></div>
           <div class="f"><span class="fn">Formulario pre-consulta completado</span><span class="fy">boolean (default: false)</span><span class="fo">&mdash; &iquest;Complet&oacute; secciones 3-6 antes de la cita? Alimenta S3. Si false a 48h &rarr; recordatorio D3. KPI &gt;85%</span></div>
           <div class="f"><span class="fn">Recordatorio enviado</span><span class="fy">boolean (default: false)</span><span class="fo">&mdash; &iquest;Se envi&oacute; recordatorio autom&aacute;tico? KPI tasa confirmaci&oacute;n = confirmadas / con recordatorio</span></div>

@@ -2,6 +2,11 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-15] — v3.2.32
+
+### Blueprint ARMC
+- **modelo-datos.html:** Cita.Canal agendamiento: texto → enum (auto) portal-paciente/equipo-interno/presencial. Auto-detectado por el sistema. Sin cambio en conteos (260/18)
+
 ## [2026-04-15] — v3.2.31
 
 ### Blueprint ARMC
