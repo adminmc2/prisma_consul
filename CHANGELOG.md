@@ -2,6 +2,12 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-15] — v3.2.31
+
+### Blueprint ARMC
+- **modelo-datos.html:** Eliminar campo redundante "Confirmación: automática/manual" de Cita (cubierto por Confirmación respondida + Recordatorio enviado). Cita 19→18 campos, modelo 261→260
+- **fases-implementacion.html:** Sync Cita 19→18 campos, total 261→260 (2 refs)
+
 ## [2026-04-15] — v3.2.30
 
 ### Blueprint ARMC

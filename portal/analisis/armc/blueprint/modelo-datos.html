@@ -43,7 +43,7 @@
     <div class="badge"><i class="ph ph-database"></i> Blueprint de Sistema</div>
     <h1>Modelo de Datos</h1>
     <p class="subtitle">Entidades, campos y relaciones que APEX construir&aacute; para ARMC &mdash; basado en el diagn&oacute;stico de 7 roles</p>
-    <div class="ss"><div class="sc"><div class="sn">10</div><div class="sl">Entidades</div></div><div class="sc"><div class="sn">261</div><div class="sl">Campos definidos</div></div><div class="sc"><div class="sn">4</div><div class="sl">Dolores cubiertos</div></div></div>
+    <div class="ss"><div class="sc"><div class="sn">10</div><div class="sl">Entidades</div></div><div class="sc"><div class="sn">260</div><div class="sl">Campos definidos</div></div><div class="sc"><div class="sn">4</div><div class="sl">Dolores cubiertos</div></div></div>
 
     <!-- ═══════════════════════════════════════ PACIENTE ═══════════════════════════════════════ -->
     <div class="ec open" onclick="this.classList.toggle('open')">
@@ -316,7 +316,7 @@
           <tr><td>Cualquier estado &rarr; Reagendada</td><td>Cambio de Fecha/Hora</td><td>Reagendamientos +1, vuelve a Pendiente</td></tr>
         </table>
 
-        <div class="ft">Campos (19)</div>
+        <div class="ft">Campos (18)</div>
         <div class="fl">
           <div class="f"><span class="fn">ID</span><span class="fy">auto</span></div>
           <div class="f"><span class="fn">Paciente</span><span class="fy">FK &rarr; Paciente</span></div>
@@ -326,7 +326,6 @@
           <div class="f"><span class="fn">Estado</span><span class="fy">pendiente / confirmada / en-consulta / completada / cancelada / no-show</span></div>
           <div class="f"><span class="fn">Profesional asignado</span><span class="fy">FK &rarr; Usuario</span></div>
           <div class="f"><span class="fn">Notas pre-consulta</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Confirmaci&oacute;n</span><span class="fy">autom&aacute;tica / manual</span></div>
           <div class="f"><span class="fn">Canal agendamiento</span><span class="fy">texto</span></div>
           <div class="f"><span class="fn">Confirmaci&oacute;n respondida</span><span class="fy">boolean</span><span class="fo">&mdash; &iquest;Respondi&oacute; a la confirmaci&oacute;n autom&aacute;tica? Alimenta se&ntilde;al S2</span></div>
           <div class="f"><span class="fn">Formulario pre-consulta completado</span><span class="fy">boolean (default: false)</span><span class="fo">&mdash; &iquest;Complet&oacute; secciones 3-6 antes de la cita? Alimenta S3. Si false a 48h &rarr; recordatorio D3. KPI &gt;85%</span></div>
@@ -620,13 +619,13 @@
     <h2><i class="ph ph-squares-four" style="color:#31BEEF"></i> Cobertura D1-D4</h2>
     <p style="color:#A1B8F2;margin-bottom:1rem">Cada entidad resuelve uno o m&aacute;s dolores diagnosticados</p>
     <div class="cv">
-      <div class="cc cd1"><h3>D1 &mdash; Procesos Internos</h3><div class="ce">Paciente (lifecycle, campos, firmas, RBAC, PDF), Cita (ciclo de vida, 19 campos, tipos), Procedimiento (lifecycle, 13 campos), Inventario, Documento, Log de Auditor&iacute;a (trazabilidad NOM-024)</div><div class="cd">Digitaliza + norma + control de acceso + auditor&iacute;a</div></div>
+      <div class="cc cd1"><h3>D1 &mdash; Procesos Internos</h3><div class="ce">Paciente (lifecycle, campos, firmas, RBAC, PDF), Cita (ciclo de vida, 18 campos, tipos), Procedimiento (lifecycle, 13 campos), Inventario, Documento, Log de Auditor&iacute;a (trazabilidad NOM-024)</div><div class="cd">Digitaliza + norma + control de acceso + auditor&iacute;a</div></div>
       <div class="cc cd2"><h3>D2 &mdash; Seguimiento</h3><div class="ce">Paciente (clasificaci&oacute;n, se&ntilde;ales, historial), Procedimiento (seguimiento), Se&ntilde;al de Inacci&oacute;n (detecci&oacute;n autom&aacute;tica), Protocolo de Revisi&oacute;n (umbrales por procedimiento), Evaluaci&oacute;n Cl&iacute;nica (escalas pre/post)</div><div class="cd">Clasifica + detecta riesgo + act&uacute;a + umbrales</div></div>
       <div class="cc cd3"><h3>D3 &mdash; Comunicaci&oacute;n</h3><div class="ce">Comunicaci&oacute;n, Paciente (engagement, segmentaci&oacute;n), Se&ntilde;al de Inacci&oacute;n &rarr; respuestas autom&aacute;ticas D3</div><div class="cd">Personaliza por categor&iacute;a + engagement + se&ntilde;ales</div></div>
       <div class="cc cd4"><h3>D4 &mdash; Conversi&oacute;n</h3><div class="ce">Paciente (lifecycle Lead&rarr;Paciente, fuente captaci&oacute;n)</div><div class="cd">Captura + traza + mide ROI</div></div>
     </div>
 
-    <div class="note" style="margin-top:2rem">Documento de referencia &mdash; 261 campos en 10 entidades. Las 4 entidades nuevas (Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) soportan el ecosistema de se&ntilde;ales &sect;5B, proceso graduado Inactivo &rarr; Perdido &sect;5B-2, trazabilidad NOM-024 y medici&oacute;n de resultados cl&iacute;nicos (17 escalas). Este modelo alimenta los 25 KPIs, 25 automatizaciones, flujos to-be y fases de implementaci&oacute;n.</div>
+    <div class="note" style="margin-top:2rem">Documento de referencia &mdash; 260 campos en 10 entidades. Las 4 entidades nuevas (Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) soportan el ecosistema de se&ntilde;ales &sect;5B, proceso graduado Inactivo &rarr; Perdido &sect;5B-2, trazabilidad NOM-024 y medici&oacute;n de resultados cl&iacute;nicos (17 escalas). Este modelo alimenta los 25 KPIs, 25 automatizaciones, flujos to-be y fases de implementaci&oacute;n.</div>
   </div>
   <div class="zt"><button onclick="zoomOut()" title="Alejar"><i class="ph ph-minus"></i></button><span id="zl" class="zl">100%</span><button onclick="zoomIn()" title="Acercar"><i class="ph ph-plus"></i></button><button onclick="toggleFs()" title="Pantalla completa"><i class="ph ph-arrows-out"></i></button></div>
   <script>let z=100;function zoomIn(){z=Math.min(z+20,200);az()}function zoomOut(){z=Math.max(z-20,60);az()}function az(){document.body.style.zoom=z/100;document.getElementById('zl').textContent=z+'%'}function toggleFs(){if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{})}</script>
