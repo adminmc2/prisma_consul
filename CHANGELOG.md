@@ -2,6 +2,12 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-15] — v3.2.29
+
+### Blueprint ARMC
+- **modelo-datos.html:** Corregir total de campos 210→258. El 210 contaba secciones agrupadas como 1 campo; el 258 cuenta campos individuales reales (Paciente=164, resto=94). Referencia: historia-clinica-campos.md
+- **fases-implementacion.html:** Sync total 210→258 (2 refs)
+
 ## [2026-04-14] — v3.2.28
 
 ### Blueprint ARMC
