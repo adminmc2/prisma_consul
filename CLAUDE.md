@@ -215,7 +215,7 @@ El mismo VPS sirve **dos entornos**:
 - **Proceso PM2:** `prisma-consul` (id 0) — Express en puerto 3000
 - **Nginx:** bloque `server_name prismaconsul.com www.prismaconsul.com`
 - **Despliegue:** `ssh prisma@212.227.251.125 "cd ~/web-de-prisma && git pull origin main && pm2 restart prisma-consul"`
-- **SSL:** Let's Encrypt (certbot, renovación automática)
+- **SSL:** Let's Encrypt (certbot, renovación automática) + Cloudflare SSL Full (Strict)
 
 ### Desarrollo — `dev.prismaconsul.com` + `dev.prismaconsul.com/hub`
 
@@ -227,6 +227,24 @@ El mismo VPS sirve **dos entornos**:
 - **SSL:** Let's Encrypt independiente para `dev.prismaconsul.com` (certbot, renovación automática)
 - **BD y Drive:** **comparte los de producción** (Neon + Google Drive). Cualquier cambio en dev toca datos reales de clientes — ten cuidado al subir/borrar archivos en dev.
 - **Uso:** ver cambios en el Hub antes de desplegar a producción. Única URL donde verificar visualmente cambios del frontend en rama `dev`.
+
+### DNS y Cloudflare
+
+Los nameservers del dominio están en **Cloudflare** (migrados desde IONOS para soportar subdominios custom como `abbe.prismaconsul.com`).
+
+- **Nameservers:** `bruce.ns.cloudflare.com`, `cass.ns.cloudflare.com`
+- **SSL/TLS mode:** Full (Strict) — obligatorio porque nginx ya tiene Let's Encrypt. Si se pone "Flexible" se produce un redirect loop 301
+- **Proxy:** Todos los registros A/CNAME con proxy activado (nube naranja)
+- **Registros DNS:**
+  - A `prismaconsul.com` → `212.227.251.125` (Proxied)
+  - A `www` → `212.227.251.125` (Proxied)
+  - A `dev` → `212.227.251.125` (Proxied)
+  - CNAME `abbe` → `mandocc2-abbe.hf.space` (Proxied) — proyecto ABBE en HF Spaces
+  - CNAME `_domainconnect` → `_domainconnect.ionos.com` (técnico IONOS)
+  - MX → Google Workspace (`aspmx.l.google.com` + alternativas)
+  - TXT → SPF (`v=spf1 include:_spf.google.com`) + Google site verification
+
+**Importante:** Cualquier nuevo subdominio debe crearse en Cloudflare, no en IONOS. El panel DNS de IONOS ya no gestiona este dominio.
 
 ### Securización (COMPLETADO)
 
@@ -265,7 +283,7 @@ La versión actual se muestra en el footer de `index.html`. Se usa **Versionado 
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.2.33`
+**Versión actual:** `v3.2.34`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)
