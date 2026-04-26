@@ -33,7 +33,7 @@
     <div class="badge"><i class="ph ph-rocket-launch"></i> Blueprint de Sistema</div>
     <h1>Fases de Implementaci&oacute;n</h1>
     <p class="subtitle">4 fases secuenciales D1 &rarr; D2 &rarr; D3 &rarr; D4 &mdash; cada fase construye sobre la anterior</p>
-    <div class="ss"><div class="sc"><div class="sn">4</div><div class="sl">Fases</div></div><div class="sc"><div class="sn">~12</div><div class="sl">Meses estimados</div></div><div class="sc"><div class="sn">7</div><div class="sl">Roles impactados</div></div><div class="sc"><div class="sn">12</div><div class="sl">Automatizaciones</div></div></div>
+    <div class="ss"><div class="sc"><div class="sn">4</div><div class="sl">Fases</div></div><div class="sc"><div class="sn">~12</div><div class="sl">Meses estimados</div></div><div class="sc"><div class="sn">7</div><div class="sl">Roles impactados</div></div><div class="sc"><div class="sn">25</div><div class="sl">Automatizaciones</div></div></div>
 
     <div class="timeline">
 
@@ -44,14 +44,37 @@
           <div class="phase-meta"><div class="pm"><i class="ph ph-clock"></i> Semanas 1&ndash;10</div><div class="pm"><i class="ph ph-target"></i> Fundamento digital</div><div class="pm"><i class="ph ph-users"></i> Todos los roles</div></div>
           <div class="phase-section"><div class="phase-section-title">Qu&eacute; se construye</div>
             <div class="items">
-              <div class="item">Entidades: Paciente, Cita, Procedimiento, Inventario, Documento</div>
+              <div class="item">Ciclo de vida completo: Lead &rarr; Usuario &rarr; Evaluaci&oacute;n agendada &rarr; Paciente (transiciones autom&aacute;ticas + manuales)</div>
+              <div class="item">Modelo de datos: 260 campos en 10 entidades (Paciente, Cita, Procedimiento, Inventario, Comunicaci&oacute;n, Documento, Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) &mdash; HC organizada por etapa del ciclo de vida</div>
+              <div class="item">Dos IDs separados: ID Sistema (interno, invisible) + ID Historia Cl&iacute;nica (expediente, inmutable, impreso)</div>
               <div class="item">Agenda digital con disponibilidad en tiempo real por profesional</div>
-              <div class="item">Expediente cl&iacute;nico digital (HC, consentimientos, fotos)</div>
-              <div class="item">Interfaces por rol: cada persona ve lo que necesita</div>
-              <div class="item auto">Confirmaci&oacute;n autom&aacute;tica de citas (WhatsApp 24h/2h)</div>
+              <div class="item">Cita ampliada (18 campos): ciclo de vida con 6 estados y transiciones autom&aacute;ticas, tipos de cita diferenciados, cadena de citas (self-reference evaluaci&oacute;n &rarr; procedimiento &rarr; revisiones), vinculaci&oacute;n a Protocolo de Revisi&oacute;n, motivo cancelaci&oacute;n/no-show</div>
+              <div class="item">Expediente cl&iacute;nico digital: HC, consentimientos, fotos estandarizadas</div>
+              <div class="item">Firma digital aut&oacute;grafa digitalizada (tableta + stylus) &mdash; paciente + m&eacute;dico</div>
+              <div class="item">Sistema de correcciones por addendum: preserva original + registra correcci&oacute;n con fecha y autor (COFEPRIS)</div>
+              <div class="item">RBAC: control de acceso por rol &mdash; solo m&eacute;dicos acceden a HC completa (NOM-004)</div>
+              <div class="item">Generaci&oacute;n de PDF de HC para impresi&oacute;n (APEX = fuente de verdad, papel = copia)</div>
+              <div class="item">Cumplimiento NOM-004 (expedientes) + NOM-024 (sistemas electr&oacute;nicos): cifrado, logs de auditor&iacute;a, backups, trazabilidad</div>
+              <div class="item">Aviso de privacidad digital con firma electr&oacute;nica (LFPDPPP)</div>
+              <div class="item">Interfaces por rol: cada persona ve lo que necesita seg&uacute;n su funci&oacute;n</div>
+              <div class="item">Entidad Log de Auditor&iacute;a: registro inalterable (append-only) de todos los accesos y operaciones &mdash; 9 campos. Requisito obligatorio NOM-004/NOM-024</div>
+              <div class="item">Inmutabilidad: datos de perfil editables con historial COFEPRIS vs notas m&eacute;dicas firmadas solo lectura + addendum</div>
+              <div class="item">Retenci&oacute;n de datos: expedientes cl&iacute;nicos 5 a&ntilde;os m&iacute;nimo, menores de edad hasta los 23 a&ntilde;os, pacientes fallecidos 5 a&ntilde;os desde defunci&oacute;n</div>
+              <div class="item">Cat&aacute;logos estandarizados: CIE-10 (diagn&oacute;stico, recomendado) + CBCM (medicamentos, pendiente)</div>
+              <div class="item">Cifrado: TLS 1.2+ en tr&aacute;nsito + AES-256 en reposo para datos sensibles (NOM-024)</div>
+              <div class="item">Autenticaci&oacute;n: usuario + contrase&ntilde;a robusta, MFA recomendado para m&eacute;dicos</div>
+              <div class="item">Backups peri&oacute;dicos documentados + Plan de Recuperaci&oacute;n ante Desastres (DRP)</div>
+              <div class="item auto">Confirmaci&oacute;n autom&aacute;tica de citas (WhatsApp 24h/2h) + se&ntilde;al S2 si no responde</div>
+              <div class="item auto">Transici&oacute;n autom&aacute;tica del ciclo de vida (Lead&rarr;Usuario&rarr;Evaluaci&oacute;n&rarr;Paciente)</div>
+              <div class="item auto">Invitaci&oacute;n autom&aacute;tica a crear cuenta: al agendar evaluaci&oacute;n para un lead sin cuenta, env&iacute;o de email/WhatsApp con link de registro. El lead acepta aviso de privacidad (1.27) online y pre-llena secciones 3-6 antes de llegar. Si no crea cuenta &rarr; registro presencial el d&iacute;a de la cita (D1+D3)</div>
+              <div class="item auto">Verificaci&oacute;n pre-consulta: recordatorio formulario HC 48h antes (se&ntilde;al S3)</div>
               <div class="item auto">Checklist de preparaci&oacute;n quir&uacute;rgica autom&aacute;tico</div>
               <div class="item auto">Alertas de inventario bajo</div>
               <div class="item auto">Alerta de documentaci&oacute;n incompleta</div>
+              <div class="item auto">Purga autom&aacute;tica: leads 6-12 meses, usuarios pre-llenado sin primera consulta 6-12 meses (LFPDPPP)</div>
+              <div class="item auto">Contador de reagendamientos autom&aacute;tico al cambiar Fecha/Hora + alerta si 3+ (engagement d&eacute;bil)</div>
+              <div class="item auto">Actualizaci&oacute;n autom&aacute;tica post-cita completada: fecha &uacute;ltima visita + recalcula engagement y categor&iacute;a</div>
+              <div class="item auto">Gesti&oacute;n de no-show y cancelaciones: motivo obligatorio + se&ntilde;ales D4 (&ldquo;ya no le interesa&rdquo;) y S5 (&ldquo;no contest&oacute;&rdquo;)</div>
             </div>
           </div>
           <div class="phase-section"><div class="phase-section-title">Roles beneficiados</div>
@@ -60,7 +83,11 @@
           <div class="prereqs"><div class="prereqs-title">Prerrequisitos</div>
             <div class="prereq-item">Migraci&oacute;n de datos de pacientes existentes (libretas, Excel, memorias)</div>
             <div class="prereq-item">Capacitaci&oacute;n b&aacute;sica al equipo (2&ndash;3 sesiones)</div>
-            <div class="prereq-item">Definici&oacute;n de protocolos por tipo de procedimiento</div>
+            <div class="prereq-item">ARMC: protocolos por tipo de procedimiento (umbrales, ciclos de retorno) &mdash; alimentan Protocolo de Revisi&oacute;n</div>
+            <div class="prereq-item">ARMC elige formato de ID Historia Cl&iacute;nica (4 opciones propuestas)</div>
+            <div class="prereq-item">ARMC revisa y valida los 260 campos de HC en 10 entidades</div>
+            <div class="prereq-item">Publicaci&oacute;n del aviso de privacidad en URL accesible</div>
+            <div class="prereq-item">PRISMA entrega Matriz de Cumplimiento APEX-NOM024 antes de producci&oacute;n</div>
           </div>
         </div>
       </div>
@@ -69,16 +96,25 @@
       <div class="phase"><div class="phase-marker p2">F2</div>
         <div class="phase-card p2">
           <div class="phase-title">Fase 2 &mdash; Clasificaci&oacute;n y Seguimiento (D2)</div>
-          <div class="phase-meta"><div class="pm"><i class="ph ph-clock"></i> Semanas 8&ndash;16</div><div class="pm"><i class="ph ph-target"></i> Visibilidad + retenci&oacute;n</div><div class="pm"><i class="ph ph-warning"></i> Requiere F1 estable</div></div>
+          <div class="phase-meta"><div class="pm"><i class="ph ph-clock"></i> Semanas 8&ndash;16</div><div class="pm"><i class="ph ph-target"></i> Clasificaci&oacute;n + se&ntilde;ales + retenci&oacute;n</div><div class="pm"><i class="ph ph-warning"></i> Requiere F1 estable</div></div>
           <div class="phase-section"><div class="phase-section-title">Qu&eacute; se construye</div>
             <div class="items">
-              <div class="item">Motor de clasificaci&oacute;n A/B/C por frecuencia, gasto y antig&uuml;edad</div>
-              <div class="item">Cadenas de seguimiento post-procedimiento (+3d, +7d, +30d)</div>
-              <div class="item">Dashboard de retenci&oacute;n: pacientes activos vs inactivos vs perdidos</div>
+              <div class="item">Motor de clasificaci&oacute;n: categor&iacute;a conductual (Nuevo/En tratamiento/Recurrente/VIP) + estado de engagement (Activo/En riesgo N1/N2/Inactivo/Perdido)</div>
+              <div class="item">3 propuestas de clasificaci&oacute;n: A (1 campo &mdash; b&aacute;sica), B (2 campos &mdash; intermedia), C (4 campos &mdash; completa con l&iacute;neas de servicio + score). ARMC elige</div>
+              <div class="item">8 se&ntilde;ales de inacci&oacute;n (S1-S8): acciones esperadas que no se realizaron, detectadas autom&aacute;ticamente</div>
+              <div class="item">Niveles de riesgo: N1 (1-2 se&ntilde;ales &rarr; D3 autom&aacute;tico) y N2 (3+ se&ntilde;ales o S4 &rarr; alerta D2 + llamada)</div>
+              <div class="item">Proceso graduado Inactivo &rarr; Perdido en 4 fases con umbrales por tipo de tratamiento (cosmiatr&iacute;a: 60d, tricolog&iacute;a: 90d, b&oacute;tox: 7m, cirug&iacute;a: 14m)</div>
+              <div class="item">Cadenas de seguimiento post-procedimiento (+3d, +7d, +30d seg&uacute;n tipo)</div>
+              <div class="item">Dashboard de engagement: pacientes por categor&iacute;a, se&ntilde;ales activas, proceso graduado</div>
               <div class="item">Timeline de evoluci&oacute;n por paciente con fotos comparativas</div>
-              <div class="item auto">Clasificaci&oacute;n autom&aacute;tica de pacientes</div>
+              <div class="item">Entidad Se&ntilde;al de Inacci&oacute;n: registro individual de cada se&ntilde;al S1-S8 activada por paciente &mdash; 8 campos (tipo, fecha, estado, respuesta, canal)</div>
+              <div class="item">Entidad Protocolo de Revisi&oacute;n: tabla de referencia con umbrales por procedimiento &mdash; 10 campos (revisiones esperadas, ciclo retorno, umbral inactivo/pre-perdido/perdido, escalas cl&iacute;nicas aplicables)</div>
+              <div class="item">Campos Paciente para proceso graduado: fase actual (Activo/F1-F4), fecha inicio fase, se&ntilde;ales activas (count), &uacute;ltimo tipo procedimiento (FK &rarr; Protocolo de Revisi&oacute;n)</div>
+              <div class="item auto">Clasificaci&oacute;n autom&aacute;tica de pacientes (categor&iacute;a + engagement basado en se&ntilde;ales)</div>
               <div class="item auto">Seguimiento post-procedimiento autom&aacute;tico</div>
-              <div class="item auto">Alerta de paciente inactivo (A/B sin actividad &ge; 60d)</div>
+              <div class="item auto">Motor de detecci&oacute;n de se&ntilde;ales de inacci&oacute;n (evaluaci&oacute;n diaria, 8 se&ntilde;ales)</div>
+              <div class="item auto">Alertas por nivel de riesgo (N1: D3 autom&aacute;tico, N2: alerta + llamada)</div>
+              <div class="item auto">Proceso graduado: F1 mensaje &rarr; F2 llamada &rarr; F3 oferta &rarr; F4 pasivo</div>
             </div>
           </div>
           <div class="phase-section"><div class="phase-section-title">Roles beneficiados</div>
@@ -86,8 +122,10 @@
           </div>
           <div class="prereqs"><div class="prereqs-title">Prerrequisitos</div>
             <div class="prereq-item">Fase 1 en operaci&oacute;n (&ge; 30 d&iacute;as de datos reales)</div>
-            <div class="prereq-item">Criterios de clasificaci&oacute;n validados con el director</div>
-            <div class="prereq-item">Protocolos de seguimiento definidos por tipo de procedimiento</div>
+            <div class="prereq-item">ARMC decide propuesta de clasificaci&oacute;n: A, B o C (si elige C: servicio adicional)</div>
+            <div class="prereq-item">ARMC proporciona protocolos de revisi&oacute;n por procedimiento (umbrales S4/S7)</div>
+            <div class="prereq-item">ARMC valida umbrales por tipo de tratamiento (multiplicadores 1.5x/2.5x/3x)</div>
+            <div class="prereq-item">ARMC valida las 8 se&ntilde;ales de inacci&oacute;n y sus respuestas autom&aacute;ticas</div>
           </div>
         </div>
       </div>
@@ -96,24 +134,29 @@
       <div class="phase"><div class="phase-marker p3">F3</div>
         <div class="phase-card p3">
           <div class="phase-title">Fase 3 &mdash; Comunicaci&oacute;n Inteligente (D3)</div>
-          <div class="phase-meta"><div class="pm"><i class="ph ph-clock"></i> Semanas 14&ndash;20</div><div class="pm"><i class="ph ph-target"></i> Comunicaci&oacute;n personalizada</div><div class="pm"><i class="ph ph-warning"></i> Requiere F2 (segmentos)</div></div>
+          <div class="phase-meta"><div class="pm"><i class="ph ph-clock"></i> Semanas 14&ndash;20</div><div class="pm"><i class="ph ph-target"></i> Comunicaci&oacute;n personalizada</div><div class="pm"><i class="ph ph-warning"></i> Requiere F2 (segmentos + se&ntilde;ales)</div></div>
           <div class="phase-section"><div class="phase-section-title">Qu&eacute; se construye</div>
             <div class="items">
-              <div class="item">Plantillas de comunicaci&oacute;n por contexto (post-op, seguimiento, promoci&oacute;n)</div>
-              <div class="item">Segmentaci&oacute;n autom&aacute;tica: comunicaci&oacute;n diferente seg&uacute;n clasificaci&oacute;n</div>
-              <div class="item">Flujos de reactivaci&oacute;n para pacientes inactivos</div>
+              <div class="item">Plantillas de comunicaci&oacute;n por contexto (post-op, seguimiento, promoci&oacute;n, reactivaci&oacute;n)</div>
+              <div class="item">Segmentaci&oacute;n autom&aacute;tica: comunicaci&oacute;n diferente seg&uacute;n categor&iacute;a conductual + engagement</div>
+              <div class="item">Flujos de reactivaci&oacute;n: Fase 3 del proceso graduado (oferta/encuesta personalizada por l&iacute;nea de servicio)</div>
+              <div class="item">Canal switching: si no responde por un canal, intentar por otro autom&aacute;ticamente</div>
+              <div class="item">Campo Cita: confirmaci&oacute;n respondida (boolean) &mdash; alimenta se&ntilde;al S2 de confirmaci&oacute;n autom&aacute;tica</div>
+              <div class="item">Campos Comunicaci&oacute;n: es newsletter (boolean &mdash; distingue masivos de directos) + secuencia sin abrir (computed &mdash; 3 consecutivos sin abrir activa se&ntilde;al S6)</div>
               <div class="item auto">Indicaciones post-procedimiento autom&aacute;ticas</div>
               <div class="item auto">Comunicaci&oacute;n de cumplea&ntilde;os/fechas especiales</div>
-              <div class="item auto">Campa&ntilde;as de reactivaci&oacute;n segmentadas</div>
+              <div class="item auto">Campa&ntilde;a de reactivaci&oacute;n segmentada (Fase 3 del proceso graduado)</div>
+              <div class="item auto">Aviso de privacidad autom&aacute;tico en primer contacto (LFPDPPP)</div>
             </div>
           </div>
           <div class="phase-section"><div class="phase-section-title">Roles beneficiados</div>
             <div class="roles-list"><span class="rl">Community Manager</span><span class="rl">Atenci&oacute;n al Paciente</span><span class="rl">Director</span></div>
           </div>
           <div class="prereqs"><div class="prereqs-title">Prerrequisitos</div>
-            <div class="prereq-item">Fase 2 activa (clasificaci&oacute;n A/B/C funcionando)</div>
+            <div class="prereq-item">Fase 2 activa (clasificaci&oacute;n + se&ntilde;ales funcionando)</div>
             <div class="prereq-item">Aprobaci&oacute;n legal de plantillas de comunicaci&oacute;n</div>
-            <div class="prereq-item">Integraci&oacute;n WhatsApp Business API configurada</div>
+            <div class="prereq-item">ARMC decide sobre API WhatsApp Business (Opci&oacute;n A: manual dentro del presupuesto / Opci&oacute;n B: API como servicio adicional)</div>
+            <div class="prereq-item">Contenido de las comunicaciones de cada fase del proceso graduado aprobado</div>
           </div>
         </div>
       </div>
@@ -125,12 +168,16 @@
           <div class="phase-meta"><div class="pm"><i class="ph ph-clock"></i> Semanas 18&ndash;24</div><div class="pm"><i class="ph ph-target"></i> Crecimiento + ROI</div><div class="pm"><i class="ph ph-warning"></i> Requiere F1+F3</div></div>
           <div class="phase-section"><div class="phase-section-title">Qu&eacute; se construye</div>
             <div class="items">
-              <div class="item">Pipeline visual de leads: nuevo &rarr; contactado &rarr; agend&oacute; &rarr; convertido</div>
-              <div class="item">Captura multicanal: Instagram, WhatsApp, web, tel&eacute;fono, referidos</div>
-              <div class="item">Dashboard ROI: inversi&oacute;n publicitaria vs pacientes convertidos</div>
-              <div class="item">Trazabilidad completa: lead &rarr; cita &rarr; paciente &rarr; procedimiento</div>
-              <div class="item auto">Captura autom&aacute;tica de leads</div>
-              <div class="item auto">Alerta de lead sin respuesta (&ge; 2h)</div>
+              <div class="item">Pipeline visual de leads por etapa del ciclo de vida: Lead &rarr; Usuario &rarr; Evaluaci&oacute;n agendada &rarr; Paciente</div>
+              <div class="item">Captura multicanal: 13 fuentes de captaci&oacute;n en 6 categor&iacute;as (org&aacute;nico/pagado/directo/referido/digital/otro)</div>
+              <div class="item">Dashboard ROI: inversi&oacute;n publicitaria vs pacientes convertidos, desglosado por canal</div>
+              <div class="item">Trazabilidad completa: lead &rarr; usuario &rarr; evaluaci&oacute;n &rarr; procedimiento &rarr; recurrente</div>
+              <div class="item">Conversi&oacute;n granular por etapa: tasa lead&rarr;usuario, usuario&rarr;evaluaci&oacute;n, evaluaci&oacute;n&rarr;procedimiento</div>
+              <div class="item auto">Captura autom&aacute;tica de leads (requiere API WhatsApp Business para captura autom&aacute;tica &mdash; sin API, registro manual)</div>
+              <div class="item auto">Alerta de lead sin respuesta (&ge; 2h, escala a supervisor &ge; 4h)</div>
+              <div class="item auto">Seguimiento post-evaluaci&oacute;n sin agenda (se&ntilde;al S1: 14 d&iacute;as sin agendar procedimiento)</div>
+              <div class="item auto">Canal switching autom&aacute;tico (se&ntilde;al S5: 48h sin respuesta &rarr; canal alternativo)</div>
+              <div class="item auto">Ajuste autom&aacute;tico de segmentaci&oacute;n (se&ntilde;al S6: 3 newsletters sin abrir)</div>
             </div>
           </div>
           <div class="phase-section"><div class="phase-section-title">Roles beneficiados</div>
@@ -140,6 +187,7 @@
             <div class="prereq-item">Fase 1 operativa (sistema de citas funcional para agendar leads)</div>
             <div class="prereq-item">Fase 3 activa (plantillas de respuesta r&aacute;pida)</div>
             <div class="prereq-item">Cuentas de Instagram Business y WhatsApp Business vinculadas</div>
+            <div class="prereq-item">ARMC define contenido del mensaje post-evaluaci&oacute;n (S1)</div>
           </div>
         </div>
       </div>
@@ -148,7 +196,7 @@
 
     <div class="note">
       <div class="note-title"><i class="ph ph-info" style="color:#31BEEF"></i> Solapamiento intencional</div>
-      <p>Las fases se solapan ~2 semanas. F2 arranca cuando F1 ya tiene datos reales. F3 necesita los segmentos de F2. F4 necesita la infraestructura de F1 y las plantillas de F3. El resultado: un ecosistema integrado donde Captaci&oacute;n &rarr; Conversi&oacute;n &rarr; Atenci&oacute;n &rarr; Seguimiento &rarr; Retenci&oacute;n fluye sin fricci&oacute;n.</p>
+      <p>Las fases se solapan ~2 semanas. F1 arranca cuando F2 ya tiene datos reales. F3 necesita los segmentos y se&ntilde;ales de F2. F4 necesita la infraestructura de F1 y las plantillas de F3. El resultado: un ecosistema integrado donde Captaci&oacute;n &rarr; Conversi&oacute;n &rarr; Atenci&oacute;n &rarr; Seguimiento &rarr; Retenci&oacute;n fluye sin fricci&oacute;n. Todas las fases son propuestas de PRISMA basadas en el diagn&oacute;stico. Los tiempos y contenidos se ajustar&aacute;n seg&uacute;n las decisiones pendientes de ARMC (clasificaci&oacute;n A/B/C, protocolos por procedimiento, API WhatsApp).</p>
     </div>
 
   </div>
