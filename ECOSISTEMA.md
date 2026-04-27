@@ -128,7 +128,7 @@ README.md
 ```
 
 **Conexiones con otros repos.**
-- Cuando un draft termina → se **publica** como entregable a `web-de-prisma` (área de publicados del Hub en el servidor).
+- Cuando un draft termina → el HTML renderizado se commitea en `web-de-prisma/prisma-apex/clientes-publicados/[cliente]/`. Express lo sirve bajo la URL canónica `/publicados/[cliente]/...` (ver `MODELO-DOMINIO.md` sección 9).
 - Las transcripciones se generan a partir de audios que viven en Drive.
 - Las plantillas abstractas que se rellenan en los drafts vienen conceptualmente de `prisma-consulting`.
 

@@ -705,7 +705,6 @@ Y como entregables independientes de fase 1:
 - Plan archivo a archivo de fase 2.
 - Modo revisor permanente en `CLAUDE.md`.
 - Replicación de sección Ecosistema en otros repos.
-- **Actualización de `ECOSISTEMA.md`** para alinearlo con este modelo (deuda pendiente identificada por el revisor).
 
 ---
 

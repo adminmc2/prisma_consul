@@ -43,14 +43,14 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Momento actual | Sprint A / Fase 1 en curso |
 | Naturaleza del trabajo | Revisión activa + definición + compatibilidad + cierre progresivo de entregables |
 | Estado de aprobación | `MODELO-DOMINIO.md` aprobado; Fase 1 en curso; Fase 2 no aprobada todavía |
-| Condición de avance | Cerrar C04 y C09 de la sección 7; completar el inventario contractual real antes de Fase 2 |
+| Condición de avance | Cerrar C09 de la sección 7 (inventario contractual real). C04 ya cerrado en v3.2.37 |
 
 ### Dictamen operativo vigente
 
 - `MODELO-DOMINIO.md` v4 queda aprobado como primer entregable auditable de Fase 1.
 - No se debe ejecutar Fase 2 automáticamente.
 - El siguiente entregable obligatorio del ejecutor es `CONTRATOS.md`.
-- Antes de movimientos físicos o cambios de serving, deben cerrarse C04 y C09 y quedar trazados sus impactos documentales.
+- Antes de movimientos físicos o cambios de serving, debe cerrarse C09 y quedar trazados sus impactos documentales (C04 ya cerrado).
 
 ## 4. Realidad actual del repo y del sistema
 
@@ -120,7 +120,7 @@ Estos puntos no bloquean el arranque de Fase 1, pero sí condicionan el paso a F
 | C01 | Identidad canónica de `Cliente` | Cerrado | Aprobado en `MODELO-DOMINIO.md` v4: entidad `Cliente`, read/write path y no regresión visible definidos | Base canónica cerrada para Sprint A |
 | C02 | Compatibilidad `Engagement` / `Vertical` con modelo legacy | Cerrado | Aprobado en `MODELO-DOMINIO.md` v4: mapping legacy, fases verbatim y sincronización definidos | Compatibilidad de modelo cerrada para Sprint A |
 | C03 | Serving de `clientes-publicados` tras mover la web a `/web` | Cerrado | Aprobado en `MODELO-DOMINIO.md` v4: contrato `/publicados/[cliente]/...`, redirect legacy y serving explícito definidos | Compatibilidad conceptual de rutas cerrada; pendiente absorción en `CONTRATOS.md` |
-| C04 | Alineación de `ECOSISTEMA.md` | Abierto | Corregir contradicciones sobre dónde viven uploads y publicados | Coherencia documental |
+| C04 | Alineación de `ECOSISTEMA.md` | Cerrado | Cerrado en commit v3.2.37: ECOSISTEMA.md alineado con MODELO-DOMINIO.md (runtime IONOS vs storage Drive durante Sprint A; flujo de publicación apuntando al repo en `prisma-apex/clientes-publicados/[cliente]/`) | Coherencia documental cerrada |
 | C05 | Regla de sincronización `client_membership` | Cerrado | Aprobada en `MODELO-DOMINIO.md` v4: sincronización derivada desde `role` legacy y alcance de transición definidos | Seguridad conceptual de transición cerrada |
 | C06 | Diseño detallado de Sprint B | Diferido | Especificar paths, sync IONOS→Drive, fallback y esquema de metadata | Almacén futuro |
 | C07 | Costo de la 2ª valoración pre-cirugía con especialista externo | Abierto | Confirmar con CEO si la 2ª cita con Figueroa / Vargas / Ducón es gratuita o se cobra (variante B del flujo de valoración ARMC) | Modelo de Cita y precio del flujo pre-cirugía |
@@ -130,7 +130,7 @@ Estos puntos no bloquean el arranque de Fase 1, pero sí condicionan el paso a F
 
 ### Gate para pasar a Fase 2
 
-Fase 2 solo puede aprobarse cuando C04 y C09 estén marcados como cerrados en este documento. C10 debe quedar absorbido antes del cierre total de Fase 1.
+Fase 2 solo puede aprobarse cuando **C09** esté marcado como cerrado en este documento. C04 ya está cerrado (v3.2.37). C10 debe quedar absorbido antes del cierre total de Fase 1.
 
 ## 8. Plan de fases vigente
 
@@ -198,7 +198,7 @@ Objetivo:
 | R03 | Modelo nuevo y legacy divergen | Activo | `MODELO-DOMINIO.md` aprobado; falta `CONTRATOS.md` + implementación disciplinada mediante capa única de sincronización |
 | R04 | `Cliente` sigue siendo texto libre demasiado tiempo | Activo | Modelo aprobado; falta materializarlo en migración aditiva de Fase 2 |
 | R05 | `/web` deja fuera a los publicados | Activo | Contrato `/publicados/[cliente]/...` aprobado; falta absorberlo en `CONTRATOS.md` y ejecutarlo en Fase 2 |
-| R06 | Documentación del ecosistema se contradice | Activo | Cerrar C04 en Fase 1 |
+| R06 | Documentación del ecosistema se contradice | Mitigado | C04 cerrado en v3.2.37; ECOSISTEMA.md alineado con MODELO-DOMINIO.md |
 | R07 | Sprint B subestimado | Activo | Tratarlo como sprint separado con diseño propio |
 
 ## 10. Documentación permanente que debe absorber decisiones
@@ -268,6 +268,16 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 - Documentos que deben actualizarse: este review queda actualizado; el siguiente entregable del ejecutor debe ser `CONTRATOS.md`; después deberán revisarse `GLOSARIO.md` y `ECOSISTEMA.md`.
 - Impacto en gates: Fase 2 sigue bloqueada hasta cerrar C04 y C09.
 - Próximo paso: el ejecutor debe producir `CONTRATOS.md` con inventario real de rutas, endpoints, payloads, redirects y hardcodes que deban sobrevivir a la reorganización.
+
+### 2026-04-27 — Cierre de C04 (alineación de ECOSISTEMA.md)
+
+- Qué se revisó: ajustes documentales tras la aprobación de `MODELO-DOMINIO.md` v4 (commit v3.2.37).
+- Hallazgos: el revisor identificó tres ajustes mínimos para dejar el bloque cerrado: cerrar C04, eliminar la deuda residual de la sección 15 de `MODELO-DOMINIO.md`, y normalizar el flujo de publicación de `ECOSISTEMA.md`.
+- Decisiones cerradas afectadas: C04 pasa a Cerrado.
+- Decisiones abiertas afectadas: ninguna nueva. C09 (CONTRATOS.md) y C10 (GLOSARIO.md) siguen abiertas.
+- Documentos actualizados: `ECOSISTEMA.md` (flujo de publicación apunta solo al repo), `MODELO-DOMINIO.md` (eliminada deuda residual de sección 15), este `REVIEW-PRISMA-APEX.md` (cierre formal de C04 + actualización de gate Fase 2).
+- Impacto en gates: Fase 2 ahora bloqueada únicamente por C09. C04 ya no bloquea.
+- Próximo paso: el ejecutor produce `CONTRATOS.md` con inventario real (cierra C09 y abre el avance a Fase 2).
 
 ## 12. Plantilla de actualización para futuras revisiones
 
