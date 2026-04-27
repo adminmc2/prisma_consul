@@ -41,7 +41,7 @@ Las siguientes decisiones han sido confirmadas verbalmente por la CEO (Marisela)
 | 3.4 — Armonización facial | **Oferta personalizable** (no fija). Convive con aplicaciones por zona individual como servicios separados. Variable en volumen (5-15 ml) y zonas según evaluación | ✅ DECIDIDO |
 | 3.5 — Hialuronidasa | **3 escenarios**: externo cobrado, error interno gratis, insatisfacción estética cobrada. Es tanto servicio activo como acto correctivo | ✅ DECIDIDO |
 | 3.6 — Masajes post-quirúrgicos y reductivos | **Se separan**: post-quirúrgicos = incluidos en cirugía (Fase C, no se cobran aparte). Reductivos = **no se ofrecen actualmente**, se quiere implementar a futuro | ✅ DECIDIDO |
-| 3.7 — Consulta médica estética | **3 variantes**: (A) valoración general gratuita con Marisela, (B) valoración pre-cirugía gratuita con Marisela + segunda cita con especialista, (C) valoración directa con Dr. Cabrera = $1,950 (cirugía o procedimiento) | ✅ DECIDIDO |
+| 3.7 — Consulta médica estética | **3 variantes**: (A) valoración general gratuita con Marisela/Divani, (B) valoración pre-cirugía con Marisela/Divani gratuita + 2ª valoración con especialista externo (⚠️ costo de la 2ª por confirmar — REVIEW-PRISMA-APEX C07), (C) vía directa con Dr. Cabrera por demanda del paciente desde el inicio = $1,950 (Marisela/Divani no intervienen) | ✅ DECIDIDO (A y C) · ⚠️ B parcial (costo 2ª pendiente) |
 | 3.8 — Manejo integral de obesidad | **Servicio activo con protocolo real**. Dra. Elián lo lleva (consulta + dieta + seguimiento + tirzepatida). Ubicado **dentro de Medicina estética** (estructura final de 5 líneas). Falta PNO formal — tarea documental | ✅ DECIDIDO |
 | 3.9 — Mesoterapia | **Son 4 procedimientos distintos**: mesoterapia capilar (infiltración, Dra. Elián), mesoterapia facial (Dermapen), peptonas (glúteo), bioestimuladores (cánulas). No son intercambiables | ✅ DECIDIDO |
 | 3.10 — Lipoenzimas | **Servicio activo** que se ejecuta en la práctica. Falta consentimiento informado — CEO lo va a verificar | ✅ DECIDIDO |
@@ -314,8 +314,8 @@ Aparece en el catálogo sin más descripción. Los PNOs de cirugía abren todos 
 | Variante | ¿Quién la da? | ¿Se cobra? | ¿Cuándo aplica? |
 |---|---|---|---|
 | **A. Valoración general** | Marisela (CEO) | Gratuita | Primera visita de cualquier paciente nuevo, cualquier servicio |
-| **B. Valoración pre-cirugía** | Marisela primero → luego especialista (Figueroa / Vargas) | Gratuita en ambas citas — la segunda con el especialista forma parte del proceso pre-cirugía y no se cobra como acto separado | Si el paciente acepta → segunda cita con el cirujano |
-| **C. Valoración directa con Dr. Cabrera** | Dr. Cabrera (Gabush) | **$1,950** | Cuando el paciente pide específicamente al Dr. Cabrera, para cirugía o procedimiento |
+| **B. Valoración pre-cirugía** | Marisela/Divani primero → luego especialista externo (Figueroa / Vargas / Ducón) | Gratuita (Marisela/Divani). ⚠️ Costo de la 2ª cita con especialista externo: por confirmar con CEO — ver **REVIEW-PRISMA-APEX C07** | Si el paciente acepta → 2ª cita con el cirujano externo |
+| **C. Vía directa con Dr. Cabrera (Gabush)** | Dr. Cabrera (Gabush) — única valoración (primera y única) | **$1,950** | Cuando el paciente lo pide desde el inicio. **Se salta** la valoración con Marisela/Divani — ellos no intervienen con este paciente |
 
 **Flujo de valoración confirmado por la CEO:**
 1. Paciente nuevo → consulta gratuita con Marisela
