@@ -2,6 +2,28 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-27] — v3.2.45
+
+### Análisis ARMC — Flujo Atención al Paciente (Carlos) post-entrevista CEO + limpieza VALIDACION-CATALOGO
+
+Publicación a producción del primer pase de revisión del flujo de Atención al Paciente a la luz de la entrevista CEO 2026-04-15, más la limpieza coherente del documento de validación del catálogo. Cambios in-place dentro de secciones existentes — sin secciones nuevas ni cambios estructurales. No incluye trabajo de reorganización Sprint A (CONTRATOS, MODELO-DOMINIO, ECOSISTEMA, REVIEW-PRISMA-APEX) que sigue solo en `dev`.
+
+#### `portal/analisis/armc/diagramas/flujo-atención-paciente.html` (8 ediciones)
+
+- **Slide "Equipo de la clínica"**: entrada "Hermana de Gabo" reidentificada como **Dra. Elián Cabrera** (hermana de Gabo, hija de Marisela) con su rol clínico (tricología + obesidad). Añadido sub-bloque "Personal no mencionado por Carlos" con cirujanos externos Figueroa / Vargas / Ducón.
+- **Slide "Equipo" / entrada Dra. Elián**: añadida nota — hoy los leads de obesidad NO entran por Carlos, los gestiona Elián al 100% (lead intake separado del flujo principal).
+- **Slide "Flujo paciente nuevo", paso 10**: redactado con las 3 variantes de la consulta de valoración confirmadas por la CEO. **A** general gratuita (Marisela/Divani), **B** pre-cirugía con especialista externo (2ª valoración con costo pendiente), **C** vía directa con Dr. Cabrera por demanda del paciente desde el inicio = $1,950 (Marisela/Divani no intervienen).
+- **Slide "Flujo paciente nuevo", paso 11**: la transición a "Carlos cobra anticipo" ahora reconoce explícitamente las 2 rutas — variante A o tras la 2ª valoración con especialista externo (variante B). La 2ª valoración deja de ser solo nota dentro del paso 10 y queda visible en la secuencia.
+- **Sección "Vacíos resueltos por otras entrevistas"**: 10 → 12 entradas. Añadidas 2 resueltas por la CEO: las 3 variantes A/B/C de la consulta de valoración, y el catálogo definitivo de servicios (5 líneas, ~52 procedimientos, hallazgos nuevos: bruxismo, abdominoplastía, lifting facial láser, personal externo Figueroa/Vargas/Ducón).
+- **Sección "Puntos de Handoff"**: añadidos 2 handoffs nuevos al final (sin tocar los 6 existentes) — Carlos → Cirujano externo (Figueroa/Vargas/Ducón) en variante B sin canal formal hoy; Carlos ↔ Dra. Elián para leads de obesidad (handoff hoy inexistente).
+- **Sección "Fricciones identificadas por análisis"**: añadida fricción nueva al final (sin tocar las 9 existentes) — coordinación con cirujanos externos sin sistema (en variante B Carlos asume agendamiento sin canal formal).
+- **Diagrama Mermaid (subgraph VALORACIÓN)**: añadida rama desde el decision "Maricela o Divani dan valoración" para reflejar la variante B — `M --pre-cirugía con externo--> Carlos agenda 2ª valoración --> Figueroa / Vargas / Ducón --acepta--> Carlos cobra anticipo`.
+
+#### `docs/VALIDACION-CATALOGO-ARMC.md` (NUEVO en producción)
+
+- Documento de validación del catálogo de servicios de ARMC, fruto de la entrevista CEO 2026-04-15. 32/32 preguntas resueltas. Incluye registro de decisiones, hallazgos nuevos, estructura definitiva de líneas y catálogo maestro.
+- Ajustes finales pre-publicación: limpieza coherente entre el cuerpo del documento y el resumen final ("Pendientes: 0"). Reabierta como pendiente la fila B del bloque 3.7 — la entrevista CEO no precisa si la 2ª valoración con especialista externo es gratuita o de pago. Clarificada fila C: Gabush hace la única valoración cuando el paciente lo pide desde el inicio, Marisela/Divani no intervienen.
+
 ## [2026-04-26] — v3.2.34
 
 ### Infraestructura / DNS
