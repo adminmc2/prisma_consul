@@ -42,8 +42,8 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Proyecto | Reorganización de Prisma APEX |
 | Momento actual | Sprint A / Fase 1 en curso |
 | Naturaleza del trabajo | Revisión activa + definición + compatibilidad + cierre progresivo de entregables |
-| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; Fase 1 en curso; Fase 2 no aprobada todavía |
-| Condición de avance | Cerrar C09 de la sección 7 (inventario contractual real). C10 debe absorberse antes del cierre total de Fase 1. No hay discrepancia activa sobre C04 |
+| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); Fase 1 en curso; Fase 2 desbloqueada por gate, pendiente entregables internos |
+| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). Cierre total de Fase 1 requiere: capa de registro de rutas (spec + impl), smoke tests runtime, clasificación archivo por archivo, plan archivo a archivo Fase 2, modo revisor permanente en `CLAUDE.md`, replicación Ecosistema en los otros 4 repos. Verificación runtime previa a movimientos físicos pertenece a cada subpaso |
 
 ### Dictamen operativo vigente
 
@@ -126,12 +126,16 @@ Estos puntos no bloquean el arranque de Fase 1, pero sí condicionan el paso a F
 | C06 | Diseño detallado de Sprint B | Diferido | Especificar paths, sync IONOS→Drive, fallback y esquema de metadata | Almacén futuro |
 | C07 | Costo de la 2ª valoración pre-cirugía con especialista externo | Abierto | Confirmar con CEO si la 2ª cita con Figueroa / Vargas / Ducón es gratuita o se cobra (variante B del flujo de valoración ARMC) | Modelo de Cita y precio del flujo pre-cirugía |
 | C08 | Quién agenda variantes B y C de valoración + futuros leads de obesidad | Abierto | Definir en el proceso/sistema APEX si Carlos asume el agendamiento de la 2ª cita pre-cirugía (B), de la cita directa con Gabush (C) y de los leads de obesidad (hoy 100% Dra. Elián), o si la lógica la resuelve el sistema | Diseño de flujo de agendamiento y lead intake |
-| C09 | Inventario contractual real en `CONTRATOS.md` | Abierto | Auditar y documentar rutas públicas, endpoints, payloads, redirects, paths hardcodeados y consumers que deben sobrevivir a la reorganización a la luz de `MODELO-DOMINIO.md` aprobado | Gate funcional antes de Fase 2 |
-| C10 | Absorción del vocabulario canónico en `GLOSARIO.md` | Abierto | Trasladar términos ya aprobados (`Cliente`, `ClientMembership`, `Engagement`, `atributo canónico`, `conveniencia transitoria`) para evitar deriva terminológica | Coherencia documental e implementación futura |
+| C09 | Inventario contractual real en `CONTRATOS.md` | Cerrado | Cerrado en v3.2.43 tras 6 correcciones del revisor: 17 endpoints documentados con shapes exactas, 31 columnas de `apex_submissions` (5 ausentes en `schema.sql`), 3 paths hardcodeados, redirects 301, validación runtime de Fase 2, alineamiento con gate del review | Gate funcional de Fase 2 cumplido |
+| C10 | Absorción del vocabulario canónico en `GLOSARIO.md` | Cerrado | Cerrado en v3.2.44: glosario consolidado con 15 secciones cubriendo producto, modelo de datos, roles, términos arquitectónicos, legacy frozen, ecosistema, servicios externos, proceso, contratos, URLs, Claude Code, convenciones y aclaraciones de qué NO es cada término | Coherencia documental cerrada para Fase 1 |
 
 ### Gate para pasar a Fase 2
 
-Fase 2 solo puede aprobarse cuando **C09** esté marcado como cerrado en este documento. C04 ya está cerrado (v3.2.37). C10 debe quedar absorbido antes del cierre total de Fase 1.
+Gate de Fase 2 **cumplido en v3.2.44**: C01, C02, C03, C04, C05, C09 y C10 cerrados. Fase 2 desbloqueada desde el punto de vista de revisión.
+
+**Cierre total de Fase 1** sigue requiriendo entregables internos: capa de registro de rutas (spec + impl), smoke tests runtime (entregable mixto: checklist + primera ejecución, separado en 3 bloques: locales, externos con credenciales, dev/VPS), clasificación archivo por archivo, plan archivo a archivo de Fase 2, modo revisor permanente en `CLAUDE.md`, replicación de la sección Ecosistema en los otros 4 repos.
+
+**Validación runtime** antes de cada subpaso de Fase 2 que toque contratos reales o sistemas externos (Neon, Drive, Gmail SMTP, Tavily, Groq, Whisper, serving en `dev.prismaconsul.com`, infraestructura nginx/PM2/IONOS) — no es gate global, es prerrequisito de cada subpaso.
 
 ## 8. Plan de fases vigente
 
@@ -296,6 +300,26 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 - Documentos que deben actualizarse: este review queda consolidado como fuente de verdad operativa; el siguiente entregable sigue siendo `CONTRATOS.md`.
 - Impacto en gates: sin cambio funcional; Fase 2 continúa bloqueada únicamente por C09.
 - Próximo paso: producir `CONTRATOS.md` con inventario real de rutas, endpoints, payloads, redirects y hardcodes que deban sobrevivir a la reorganización.
+
+### 2026-04-27 — Cierre de C09 (CONTRATOS.md) y desbloqueo del gate de Fase 2
+
+- Qué se revisó: `CONTRATOS.md` v3.2.43 tras 3 pasadas de correcciones del revisor (apex_submissions exhaustivo, alineación de gate, shapes de research-company y submit-form, error path real, conteo interno).
+- Hallazgos: el inventario contractual ya refleja el código real (17 endpoints, 31 columnas, 3 paths hardcodeados, redirects 301, validación runtime de Fase 2). El error path de `research-company` documentado correctamente como HTTP 200 con fallback (no 500). El conteo de `apex_submissions` desglosado y sumado explícitamente.
+- Decisiones cerradas afectadas: C09 pasa a Cerrado.
+- Decisiones abiertas afectadas: C10 sigue abierto (cierre en próxima iteración).
+- Documentos actualizados: `CONTRATOS.md` v3.2.43, `REVIEW-PRISMA-APEX.md`, `CHANGELOG.md`.
+- Impacto en gates: gate de Fase 2 cumplido. Fase 2 desbloqueada por revisión.
+- Próximo paso: el ejecutor produce `GLOSARIO.md` para cerrar C10 antes del cierre total de Fase 1.
+
+### 2026-04-27 — Cierre de C10 (GLOSARIO.md) y absorción documental del vocabulario canónico
+
+- Qué se revisó: `GLOSARIO.md` v3.2.44 como entregable de absorción documental que consolida todo el vocabulario aprobado en `MODELO-DOMINIO.md`, `CONTRATOS.md`, `ECOSISTEMA.md` y este review.
+- Hallazgos: 15 secciones cubriendo producto y sistema, modelo de datos, roles, términos arquitectónicos, legacy frozen, ecosistema, servicios externos, proceso, contratos, URLs, Claude Code, convenciones, aclaraciones de qué NO es cada término, términos pendientes de definir, y regla de precedencia (canónico > glosario).
+- Decisiones cerradas afectadas: C10 pasa a Cerrado.
+- Decisiones abiertas afectadas: ninguna nueva. Quedan abiertos los entregables internos de Fase 1 (capa de registro, smoke tests, clasificación, plan archivo a archivo, modo revisor permanente, replicación Ecosistema) que no son gates de Fase 2 sino requisitos del cierre total de Fase 1.
+- Documentos actualizados: `GLOSARIO.md` (nuevo), `REVIEW-PRISMA-APEX.md`, `CHANGELOG.md`.
+- Impacto en gates: gate de Fase 2 sigue cumplido. Cierre total de Fase 1 avanza.
+- Próximo paso: el ejecutor produce la especificación de la capa de registro de rutas, prerrequisito técnico del subpaso de Fase 2 que mueve `portal/analisis/armc/`.
 
 ## 12. Plantilla de actualización para futuras revisiones
 

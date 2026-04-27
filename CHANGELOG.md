@@ -2,6 +2,17 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-27] — v3.2.44
+
+### Documentación — GLOSARIO.md (cierre de C10) + actualización formal del review
+
+Quinto entregable canónico de Sprint A fase 1. Cierra C10 y desbloquea formalmente el gate de Fase 2 (C09 + C10 cerrados). No toca código del producto.
+
+- **`GLOSARIO.md`** (NUEVO): vocabulario canónico consolidado del proyecto. 15 secciones cubriendo: producto y sistema; modelo de datos; roles de usuario; términos arquitectónicos; términos legacy frozen Sprint A; ecosistema de 5 repositorios y servicios externos; términos de proceso; términos de contratos; términos de URLs específicas; términos de Claude Code; convenciones de naming; aclaraciones de qué NO es cada término; términos pendientes de definir; y regla de precedencia (el canónico manda sobre el glosario).
+- **`REVIEW-PRISMA-APEX.md`**: C09 marcado Cerrado (formalización). C10 marcado Cerrado. Gate de Fase 2 actualizado: cumplido. Añadidas 2 entradas en bitácora documentando el cierre de C09 y C10. Aclarado que la verificación runtime es prerrequisito de cada subpaso de Fase 2 que toque contratos o sistemas externos, no gate global.
+
+Estado: **Gate de Fase 2 cumplido**. Cierre total de Fase 1 sigue requiriendo entregables internos (capa de registro de rutas, smoke tests runtime, clasificación, plan archivo a archivo, modo revisor permanente, replicación Ecosistema).
+
 ## [2026-04-27] — v3.2.43
 
 ### Documentación — CONTRATOS.md (ajustes finales antes del cierre de C09)
