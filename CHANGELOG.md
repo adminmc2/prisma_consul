@@ -2,6 +2,15 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-27] — v3.2.43
+
+### Documentación — CONTRATOS.md (ajustes finales antes del cierre de C09)
+
+Dos ajustes localizados al inventario de CONTRATOS.md tras la segunda auditoría del revisor. No tocan código del producto.
+
+- **`CONTRATOS.md` sección 4.7 (`POST /api/research-company`)**: corregido el error path. La implementación no devuelve HTTP 500: ante cualquier excepción interna devuelve **HTTP 200 con payload de fallback** (`{ success: false, error, profile: <defaults> }`). La SPA distingue éxito vs fallback por el flag `success`, no por el status HTTP. Único path con código distinto de 200 es el `400` por entrada faltante. Verificado contra `server/routes/apex.js:332-348`.
+- **`CONTRATOS.md` sección 5.4 (`apex_submissions`)**: limpiado el conteo interno. Aclarado que la tabla tiene **31 columnas** (las 30 escritas por el INSERT + `created_at` autoasignada). Rótulo "Pains (4)" corregido a "Pains (3)" — son 3 campos, no 4. Suma explícita al final del bloque para auditabilidad: `2 + 14 + 6 + 3 + 2 + 4 = 31`.
+
 ## [2026-04-27] — v3.2.42
 
 ### Documentación — CONTRATOS.md (correcciones del revisor)

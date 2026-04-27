@@ -237,8 +237,19 @@ Express monta tres routers bajo `/api`: `portal.js`, `apex.js`, `ai.js` (`server
   searchMethod: 'tavily' | 'none'
 }
 ```
-**Response 400:** `{ error: 'Company name or website required' }`.
-**Response 500:** `{ error, ... }`.
+**Response 400:** `{ error: 'Company name or website required' }` — único path de error con código distinto de 200; ocurre cuando faltan ambos `companyName` y `website`.
+**Response 200 (fallback en error):** ante cualquier excepción interna (Tavily caído, Groq error, etc.), el endpoint **devuelve HTTP 200** con payload de fallback:
+```javascript
+{
+  success: false,
+  error: <error.message>,
+  profile: {
+    empresa: { nombre: '', sector: null, descripcion_procesos: '' },
+    detectado: { /* todos los campos en null o defaults conservadores */ }
+  }
+}
+```
+La SPA distingue éxito vs fallback por el flag `success` del payload, no por el status HTTP. Decisión histórica del backend para que el formulario nunca se rompa por un error externo.
 **Side effects:** llamadas a Tavily y Groq; sin escritura en BD.
 **Consumer:** SPA APEX (`apex/form.js`, paso de research).
 **Estado:** Frozen Sprint A.
@@ -392,61 +403,65 @@ INDEX idx_activity_log_created ON portal_activity_log(created_at DESC)
 
 ### 5.4 `apex_submissions`
 
-**Nota crítica:** `server/schema.sql` está **desfasado** respecto al esquema vivo en Neon. El código real (`server/routes/apex.js` función `submit-form`) escribe **30 columnas**, no las 26 que documenta `schema.sql`. Cinco columnas activas faltan en el archivo `.sql`. El esquema autoritativo durante Sprint A es **lo que el código escribe efectivamente** en Neon, no el archivo `.sql`. Sincronizar `schema.sql` con la realidad es tarea de fase 2.
+**Nota crítica:** `server/schema.sql` está **desfasado** respecto al esquema vivo en Neon. El código real (`server/routes/apex.js` función `submit-form`) escribe **30 columnas** vía `INSERT INTO apex_submissions (...)`. La tabla tiene **31 columnas** en total (las 30 del INSERT más `created_at`, autoasignada por `DEFAULT NOW()`). De las 31 columnas reales, **5 no están documentadas en `schema.sql`**. El esquema autoritativo durante Sprint A es lo que el código escribe efectivamente en Neon, no el archivo `.sql`. Sincronizar `schema.sql` con la realidad es tarea de fase 2.
 
-**Esquema completo real (30 columnas):**
+**Esquema completo real (31 columnas en la tabla; 30 escritas por el INSERT):**
 
 ```sql
-id TEXT PRIMARY KEY
-created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- Identidad y timestamp (2 — created_at autoasignada, no escrita por INSERT)
+id                          TEXT PRIMARY KEY                              -- INSERT escribe
+created_at                  TIMESTAMP WITH TIME ZONE DEFAULT NOW()        -- autoasignada
 
--- Datos de empresa (14)
-empresa_nombre TEXT
-empresa_contacto TEXT
-empresa_email TEXT NOT NULL
-empresa_whatsapp TEXT
-empresa_tamano TEXT
-empresa_sector TEXT
-empresa_tiene_campo TEXT
-empresa_tecnologia_actual JSONB
-empresa_motivacion JSONB
-empresa_calidad_datos TEXT
-empresa_pipeline_ventas JSONB
-empresa_vende_credito TEXT
-empresa_tiempo_reportes TEXT
-investigacion_empresa JSONB
+-- Datos de empresa (14 — todas escritas por INSERT)
+empresa_nombre              TEXT
+empresa_contacto            TEXT
+empresa_email               TEXT NOT NULL
+empresa_whatsapp            TEXT
+empresa_tamano              TEXT
+empresa_sector              TEXT
+empresa_tiene_campo         TEXT
+empresa_tecnologia_actual   JSONB
+empresa_motivacion          JSONB
+empresa_calidad_datos       TEXT
+empresa_pipeline_ventas     JSONB
+empresa_vende_credito       TEXT
+empresa_tiempo_reportes     TEXT
+investigacion_empresa       JSONB
 
--- Tipo y respuestas (6 — incluye 4 columnas no documentadas en schema.sql)
-tipo_negocio TEXT                  -- ⚠ activa, ausente en schema.sql
-respuestas_fase1 JSONB
-swipe_situaciones JSONB            -- ⚠ activa, ausente en schema.sql
-rank_order JSONB                   -- ⚠ activa, ausente en schema.sql
-respuestas_fase2 JSONB
-preguntas_adaptativas JSONB        -- ⚠ activa, ausente en schema.sql
+-- Tipo y respuestas (6 — todas escritas por INSERT; 4 ausentes en schema.sql)
+tipo_negocio                TEXT       -- ⚠ activa, ausente en schema.sql
+respuestas_fase1            JSONB
+swipe_situaciones           JSONB      -- ⚠ activa, ausente en schema.sql
+rank_order                  JSONB      -- ⚠ activa, ausente en schema.sql
+respuestas_fase2            JSONB
+preguntas_adaptativas       JSONB      -- ⚠ activa, ausente en schema.sql
 
--- Pains (4)
-pains_detectados_inicial JSONB
-confirmacion_pains TEXT
-pains_finales JSONB
+-- Pains (3 — todas escritas por INSERT)
+pains_detectados_inicial    JSONB
+confirmacion_pains          TEXT
+pains_finales               JSONB
 
--- Audio (2)
-audio_transcripcion TEXT
-audio_duracion_segundos INTEGER
+-- Audio (2 — todas escritas por INSERT)
+audio_transcripcion         TEXT
+audio_duracion_segundos     INTEGER
 
--- Datos de uso y recomendación (4 — incluye 1 columna no documentada en schema.sql)
-datos_uso JSONB                    -- ⚠ activa, ausente en schema.sql
-experiencias_sugeridas JSONB
-plan_recomendado TEXT
-raw_data JSONB
+-- Datos de uso y recomendación (4 — todas escritas por INSERT; 1 ausente en schema.sql)
+datos_uso                   JSONB      -- ⚠ activa, ausente en schema.sql
+experiencias_sugeridas      JSONB
+plan_recomendado            TEXT
+raw_data                    JSONB
 
-INDEX idx_apex_submissions_email ON apex_submissions(empresa_email)
+-- Total: 2 + 14 + 6 + 3 + 2 + 4 = 31 columnas en la tabla.
+--        INSERT escribe 30 (todas excepto created_at).
+
+INDEX idx_apex_submissions_email      ON apex_submissions(empresa_email)
 INDEX idx_apex_submissions_created_at ON apex_submissions(created_at DESC)
-INDEX idx_apex_submissions_sector ON apex_submissions(empresa_sector)
+INDEX idx_apex_submissions_sector     ON apex_submissions(empresa_sector)
 ```
 
 **Frozen Sprint A.** No se modifica el contenido de la tabla en Sprint A. Sí se actualiza `schema.sql` en fase 2 para reflejar la realidad (acción documental, no de BD).
 
-**Verificación:** las columnas marcadas con ⚠ se confirman leyendo `server/routes/apex.js` función `submit-form`, sentencia `INSERT INTO apex_submissions (...)`. Si la tabla en Neon no las tuviera, el INSERT fallaría — el hecho de que el formulario funcione hoy demuestra que existen físicamente.
+**Verificación:** las 5 columnas marcadas con ⚠ se confirman leyendo `server/routes/apex.js` función `submit-form`, sentencia `INSERT INTO apex_submissions (...)`. Si la tabla en Neon no las tuviera, el INSERT fallaría — el hecho de que el formulario funcione hoy demuestra que existen físicamente.
 
 ### 5.5 Tablas nuevas en fase 2 (aditivas)
 
