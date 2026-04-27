@@ -2,6 +2,17 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-27] — v3.2.42
+
+### Documentación — CONTRATOS.md (correcciones del revisor)
+
+Cuatro correcciones al inventario de CONTRATOS.md tras la auditoría del revisor. No tocan código del producto.
+
+- **`CONTRATOS.md` sección 5.4 (`apex_submissions`)**: documentadas las 5 columnas activas que el código real escribe pero `server/schema.sql` no refleja (`tipo_negocio`, `swipe_situaciones`, `rank_order`, `preguntas_adaptativas`, `datos_uso`). Esquema completo elevado de 26 a 30 columnas marcadas con ⚠. Aclarado que `schema.sql` está desfasado y se actualiza en fase 2; el esquema autoritativo durante Sprint A es lo que el código escribe efectivamente en Neon.
+- **`CONTRATOS.md` sección 4.7 (`POST /api/research-company`)**: shape de respuesta documentada exactamente como la sirve el código (`success`, `profile`, `searchedFor`, `hadWebSearch`, `searchMethod`).
+- **`CONTRATOS.md` sección 4.7 (`POST /api/submit-form`)**: shape de respuesta corregida a `{ success: true, message, id }` (no incluye email de confirmación; los 2 emails son side effect, no payload). Request body detallado con campos canónicos del `formData`.
+- **`CONTRATOS.md` sección 14**: alineada con el gate vigente del review. Regla operativa única: el único bloqueante de Fase 2 es C09. C10 y los demás entregables de Fase 1 son requisito del cierre total de Fase 1, no del gate de Fase 2. Aclarado que la capa de registro de rutas es prerrequisito técnico de un sub-paso de Fase 2 (mover `portal/analisis/armc/`), no del gate completo.
+
 ## [2026-04-27] — v3.2.41
 
 ### Documentación — CONTRATOS.md (cierre de C09)

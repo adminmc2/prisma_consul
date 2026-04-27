@@ -215,12 +215,34 @@ Express monta tres routers bajo `/api`: `portal.js`, `apex.js`, `ai.js` (`server
 #### `POST /api/research-company`
 **Auth:** Pública.
 **Request body:** `{ companyName?, website? }` (al menos uno).
-**Response 200:** estructura compleja con investigación de la empresa (Tavily + Groq), incluyendo campo `detectado.es_clinica` que determina la vertical legacy.
+**Response 200:**
+```javascript
+{
+  success: true,
+  profile: {
+    empresa: { nombre, sector, descripcion_procesos, ... },
+    detectado: {
+      es_clinica: <boolean>,
+      sector,
+      tiene_equipo_campo,
+      usa_crm_o_sistema,
+      vende_a_credito,
+      tiene_dashboards_reportes,
+      confianza: <number>,
+      ...
+    }
+  },
+  searchedFor: <string>,        // companyName o website usado para la búsqueda
+  hadWebSearch: <boolean>,       // true si Tavily devolvió resultados
+  searchMethod: 'tavily' | 'none'
+}
+```
 **Response 400:** `{ error: 'Company name or website required' }`.
+**Response 500:** `{ error, ... }`.
 **Side effects:** llamadas a Tavily y Groq; sin escritura en BD.
 **Consumer:** SPA APEX (`apex/form.js`, paso de research).
 **Estado:** Frozen Sprint A.
-**Nota:** este endpoint es lo que clasifica al cliente como `clinica` o `distribuidor`, alimentando `profile_type` legacy.
+**Nota:** el campo `profile.detectado.es_clinica` clasifica al cliente como `clinica` o `distribuidor`, alimentando `profile_type` legacy.
 
 #### `POST /api/generate-questions`
 **Auth:** Pública.
@@ -233,12 +255,28 @@ Express monta tres routers bajo `/api`: `portal.js`, `apex.js`, `ai.js` (`server
 
 #### `POST /api/submit-form`
 **Auth:** Pública.
-**Request body:** `formData` completo del formulario APEX (estructura compleja: `empresa`, `respuestasFase1`, `swipe`, etc.).
-**Response 200:** estructura con `id` del submission creado y email de confirmación.
+**Request body:** `formData` completo (objeto raíz). Campos canónicos consumidos:
+- `id` (PK del submission, generado en cliente)
+- `timestamp`
+- `empresa.{nombre, contacto, email, whatsapp, tamaño, sector, tiene_campo, tecnologia_actual, motivacion, calidad_datos, pipeline_ventas, vende_credito, tiempo_reportes}`
+- `investigacion_empresa`
+- `tipo_negocio`
+- `respuestas_fase1`, `respuestas_fase2`
+- `swipe_situaciones`, `rank_order`, `preguntas_adaptativas`
+- `pains_detectados_inicial`, `confirmacion_pains`, `pains_finales`
+- `audio.{transcripcion, duracion_segundos}`
+- `datos_uso.{team_size, roles, timeline, sistema_actual, ...}`
+- `experiencias_sugeridas`, `plan_recomendado`
+
+**Response 200:** `{ success: true, message: 'Formulario recibido correctamente', id: <formData.id> }`.
 **Response 400:** `{ error: 'Email y nombre de contacto son requeridos' }`.
-**Side effects:** inserta en `apex_submissions`; envía email vía Gmail SMTP.
+**Response 500:** `{ error: <error.message> }`.
+**Side effects:**
+1. Inserta una fila en `apex_submissions` con las 30 columnas (sección 5.4) — solo si `DATABASE_URL` está configurado.
+2. Envía 2 emails vía Gmail SMTP (notificación a PRISMA + confirmación al cliente) — solo si `SMTP_USER`/`SMTP_PASS` están configurados. Errores de email se loggean pero no rompen la respuesta.
+
 **Consumer:** SPA APEX, paso final de envío.
-**Estado:** Frozen Sprint A. La columna `apex_submission_id` en `portal_users` se vincula con el `id` generado aquí.
+**Estado:** Frozen Sprint A. La columna `apex_submission_id` en `portal_users` se vincula manualmente con el `id` generado aquí (asignación posterior por admin).
 
 ### 4.8 AI — Groq proxy (2)
 
@@ -354,9 +392,15 @@ INDEX idx_activity_log_created ON portal_activity_log(created_at DESC)
 
 ### 5.4 `apex_submissions`
 
+**Nota crítica:** `server/schema.sql` está **desfasado** respecto al esquema vivo en Neon. El código real (`server/routes/apex.js` función `submit-form`) escribe **30 columnas**, no las 26 que documenta `schema.sql`. Cinco columnas activas faltan en el archivo `.sql`. El esquema autoritativo durante Sprint A es **lo que el código escribe efectivamente** en Neon, no el archivo `.sql`. Sincronizar `schema.sql` con la realidad es tarea de fase 2.
+
+**Esquema completo real (30 columnas):**
+
 ```sql
 id TEXT PRIMARY KEY
 created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+
+-- Datos de empresa (14)
 empresa_nombre TEXT
 empresa_contacto TEXT
 empresa_email TEXT NOT NULL
@@ -371,13 +415,26 @@ empresa_pipeline_ventas JSONB
 empresa_vende_credito TEXT
 empresa_tiempo_reportes TEXT
 investigacion_empresa JSONB
+
+-- Tipo y respuestas (6 — incluye 4 columnas no documentadas en schema.sql)
+tipo_negocio TEXT                  -- ⚠ activa, ausente en schema.sql
 respuestas_fase1 JSONB
+swipe_situaciones JSONB            -- ⚠ activa, ausente en schema.sql
+rank_order JSONB                   -- ⚠ activa, ausente en schema.sql
 respuestas_fase2 JSONB
+preguntas_adaptativas JSONB        -- ⚠ activa, ausente en schema.sql
+
+-- Pains (4)
 pains_detectados_inicial JSONB
 confirmacion_pains TEXT
 pains_finales JSONB
+
+-- Audio (2)
 audio_transcripcion TEXT
 audio_duracion_segundos INTEGER
+
+-- Datos de uso y recomendación (4 — incluye 1 columna no documentada en schema.sql)
+datos_uso JSONB                    -- ⚠ activa, ausente en schema.sql
 experiencias_sugeridas JSONB
 plan_recomendado TEXT
 raw_data JSONB
@@ -387,7 +444,9 @@ INDEX idx_apex_submissions_created_at ON apex_submissions(created_at DESC)
 INDEX idx_apex_submissions_sector ON apex_submissions(empresa_sector)
 ```
 
-**Frozen.** No se modifica en Sprint A.
+**Frozen Sprint A.** No se modifica el contenido de la tabla en Sprint A. Sí se actualiza `schema.sql` en fase 2 para reflejar la realidad (acción documental, no de BD).
+
+**Verificación:** las columnas marcadas con ⚠ se confirman leyendo `server/routes/apex.js` función `submit-form`, sentencia `INSERT INTO apex_submissions (...)`. Si la tabla en Neon no las tuviera, el INSERT fallaría — el hecho de que el formulario funcione hoy demuestra que existen físicamente.
 
 ### 5.5 Tablas nuevas en fase 2 (aditivas)
 
@@ -655,17 +714,37 @@ Antes de ejecutar movimientos físicos en fase 2, se completan estas auditorías
 
 ---
 
-## 14. Lo que falta antes de pasar a fase 2
+## 14. Estado del gate de Fase 2 y entregables restantes de Fase 1
 
-Este documento cierra **C09** del review (gate funcional de fase 2). Para arrancar fase 2 con seguridad faltan:
+**Regla operativa única (del `REVIEW-PRISMA-APEX.md` sección 7, gate vigente):**
 
-- ✅ Inventario contractual real — este documento.
-- 🔲 Capa de registro de rutas (especificación + implementación) — entregable propio de fase 1.
-- 🔲 `GLOSARIO.md` (cierra C10).
-- 🔲 Clasificación archivo por archivo.
-- 🔲 Plan archivo a archivo de fase 2.
+> Fase 2 solo puede aprobarse cuando **C09** esté marcado como cerrado en el review. C04 ya está cerrado (v3.2.37). C10 debe quedar absorbido antes del **cierre total de Fase 1**.
+
+Es decir: **el único bloqueante de Fase 2 es C09**. C10 y los entregables de la lista inferior no bloquean Fase 2 — bloquean el cierre total de Fase 1, que es un evento posterior a abrir Fase 2.
+
+### 14.1 Gate de Fase 2
+
+- ✅ **C01** (identidad canónica de Cliente) — cerrado en `MODELO-DOMINIO.md` v4.
+- ✅ **C02** (compatibilidad Engagement / Vertical legacy) — cerrado en `MODELO-DOMINIO.md` v4.
+- ✅ **C03** (serving de clientes-publicados) — cerrado en `MODELO-DOMINIO.md` v4.
+- ✅ **C04** (alineación de `ECOSISTEMA.md`) — cerrado en v3.2.37.
+- ✅ **C05** (regla de sincronización `client_membership`) — cerrado en `MODELO-DOMINIO.md` v4.
+- 🟡 **C09** (inventario contractual real) — **propuesto cerrado por este documento**, pendiente validación del revisor.
+
+Cuando el revisor confirme C09 → **Fase 2 desbloqueada**.
+
+### 14.2 Entregables restantes de Fase 1 (para el cierre total, no para abrir Fase 2)
+
+Estos entregables se completan en paralelo a Fase 2 o antes del cierre total de Fase 1; **no son prerrequisito de Fase 2**:
+
+- 🔲 **C10** — `GLOSARIO.md` (absorción del vocabulario canónico).
+- 🔲 Capa de registro de rutas (especificación + implementación) — refactor frontend mínimo que desacopla la SPA de los paths físicos.
+- 🔲 Clasificación archivo por archivo (qué se mueve, qué se queda, qué va a `prisma-consulting`).
+- 🔲 Plan archivo a archivo de Fase 2 — aprobado por usuario antes de movimientos físicos.
 - 🔲 Modo revisor permanente en `CLAUDE.md`.
-- 🔲 Replicación de sección Ecosistema en otros repos.
+- 🔲 Replicación de sección Ecosistema en `CLAUDE.md` de los otros repos del ecosistema.
+
+**Nota operativa:** la capa de registro de rutas, aunque no bloquee el gate formal de Fase 2 según el review, **sí debe estar lista antes de mover físicamente `portal/analisis/armc/` en Fase 2** (si no, la SPA se rompe — sección 6.1 de este documento). Es prerrequisito técnico de un sub-paso de Fase 2, no del gate completo.
 
 ---
 
