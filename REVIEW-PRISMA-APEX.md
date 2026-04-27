@@ -40,16 +40,17 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Campo | Estado actual |
 |---|---|
 | Proyecto | Reorganización de Prisma APEX |
-| Momento actual | Inicio de Sprint A / Fase 1 |
-| Naturaleza del trabajo | Revisión activa + definición + compatibilidad |
-| Estado de aprobación | Fase 1 aprobada; Fase 2 no aprobada todavía |
-| Condición de avance | Cerrar los puntos condicionales de la sección 7 |
+| Momento actual | Sprint A / Fase 1 en curso |
+| Naturaleza del trabajo | Revisión activa + definición + compatibilidad + cierre progresivo de entregables |
+| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; Fase 1 en curso; Fase 2 no aprobada todavía |
+| Condición de avance | Cerrar C04 y C09 de la sección 7; completar el inventario contractual real antes de Fase 2 |
 
 ### Dictamen operativo vigente
 
-- Se puede arrancar Sprint A, Fase 1.
+- `MODELO-DOMINIO.md` v4 queda aprobado como primer entregable auditable de Fase 1.
 - No se debe ejecutar Fase 2 automáticamente.
-- Antes de movimientos físicos o cambios de serving, deben resolverse y aprobarse los puntos condicionales activos.
+- El siguiente entregable obligatorio del ejecutor es `CONTRATOS.md`.
+- Antes de movimientos físicos o cambios de serving, deben cerrarse C04 y C09 y quedar trazados sus impactos documentales.
 
 ## 4. Realidad actual del repo y del sistema
 
@@ -106,6 +107,9 @@ El objetivo no es solo ordenar archivos. El objetivo es alinear el repo y el sis
 | D15 | Claude Code | Se diseña solo para Claude Code; no se abstrae hoy para otras herramientas |
 | D16 | Botón "Descargar mis entregables" | Fuera de alcance actual |
 | D17 | Sprint de almacén | La migración de uploads a IONOS se separa en un Sprint B posterior |
+| D18 | Aprobación del modelo de dominio | `MODELO-DOMINIO.md` v4 queda aprobado como base canónica del modelo y de la compatibilidad de Sprint A |
+| D19 | Punteros transitorios en `portal_users` | `cliente_id` y `active_engagement_id` se aceptan solo como conveniencia transitoria para `cliente_user`; `prisma_admin` queda con ambos en NULL |
+| D20 | Regla de migración de engagement | Cada cliente identificado con contraparte `cliente_user` genera exactamente un engagement en la migración; caso sin `cliente_user` queda como excepción manual |
 
 ## 7. Decisiones condicionales y puntos abiertos
 
@@ -113,18 +117,20 @@ Estos puntos no bloquean el arranque de Fase 1, pero sí condicionan el paso a F
 
 | ID | Tema | Estado | Qué falta cerrar | Impacto |
 |---|---|---|---|---|
-| C01 | Identidad canónica de `Cliente` | Abierto | Definir cómo nace la entidad `Cliente` y cómo se mapea `portal_users.empresa` a un cliente real | Modelo de dominio y sincronización de membresías |
-| C02 | Compatibilidad `Engagement` / `Vertical` con modelo legacy | Abierto | Definir cómo conviven `engagement` y `vertical` con `current_phase`, `profile_type` y `apex_submission_id` durante la transición | Modelo operativo y migración aditiva |
-| C03 | Serving de `clientes-publicados` tras mover la web a `/web` | Abierto | Definir el mecanismo exacto en Express para seguir sirviendo publicados cuando `express.static` deje de apuntar a la raíz | Compatibilidad de rutas y entrega al cliente |
+| C01 | Identidad canónica de `Cliente` | Cerrado | Aprobado en `MODELO-DOMINIO.md` v4: entidad `Cliente`, read/write path y no regresión visible definidos | Base canónica cerrada para Sprint A |
+| C02 | Compatibilidad `Engagement` / `Vertical` con modelo legacy | Cerrado | Aprobado en `MODELO-DOMINIO.md` v4: mapping legacy, fases verbatim y sincronización definidos | Compatibilidad de modelo cerrada para Sprint A |
+| C03 | Serving de `clientes-publicados` tras mover la web a `/web` | Cerrado | Aprobado en `MODELO-DOMINIO.md` v4: contrato `/publicados/[cliente]/...`, redirect legacy y serving explícito definidos | Compatibilidad conceptual de rutas cerrada; pendiente absorción en `CONTRATOS.md` |
 | C04 | Alineación de `ECOSISTEMA.md` | Abierto | Corregir contradicciones sobre dónde viven uploads y publicados | Coherencia documental |
-| C05 | Regla de sincronización `client_membership` | Parcial | Documentar la sincronización exacta desde `role` legacy y el criterio de reconciliación si aparecen excepciones | Seguridad de transición |
+| C05 | Regla de sincronización `client_membership` | Cerrado | Aprobada en `MODELO-DOMINIO.md` v4: sincronización derivada desde `role` legacy y alcance de transición definidos | Seguridad conceptual de transición cerrada |
 | C06 | Diseño detallado de Sprint B | Diferido | Especificar paths, sync IONOS→Drive, fallback y esquema de metadata | Almacén futuro |
 | C07 | Costo de la 2ª valoración pre-cirugía con especialista externo | Abierto | Confirmar con CEO si la 2ª cita con Figueroa / Vargas / Ducón es gratuita o se cobra (variante B del flujo de valoración ARMC) | Modelo de Cita y precio del flujo pre-cirugía |
 | C08 | Quién agenda variantes B y C de valoración + futuros leads de obesidad | Abierto | Definir en el proceso/sistema APEX si Carlos asume el agendamiento de la 2ª cita pre-cirugía (B), de la cita directa con Gabush (C) y de los leads de obesidad (hoy 100% Dra. Elián), o si la lógica la resuelve el sistema | Diseño de flujo de agendamiento y lead intake |
+| C09 | Inventario contractual real en `CONTRATOS.md` | Abierto | Auditar y documentar rutas públicas, endpoints, payloads, redirects, paths hardcodeados y consumers que deben sobrevivir a la reorganización a la luz de `MODELO-DOMINIO.md` aprobado | Gate funcional antes de Fase 2 |
+| C10 | Absorción del vocabulario canónico en `GLOSARIO.md` | Abierto | Trasladar términos ya aprobados (`Cliente`, `ClientMembership`, `Engagement`, `atributo canónico`, `conveniencia transitoria`) para evitar deriva terminológica | Coherencia documental e implementación futura |
 
 ### Gate para pasar a Fase 2
 
-Fase 2 solo puede aprobarse cuando C01, C02, C03 y C04 estén marcados como cerrados en este documento.
+Fase 2 solo puede aprobarse cuando C04 y C09 estén marcados como cerrados en este documento. C10 debe quedar absorbido antes del cierre total de Fase 1.
 
 ## 8. Plan de fases vigente
 
@@ -139,13 +145,17 @@ Objetivo:
 - preparar el terreno sin cambios funcionales visibles.
 
 Entregables esperados:
-- `MODELO-DOMINIO.md`
-- `CONTRATOS.md`
+- `MODELO-DOMINIO.md` — aprobado
+- `CONTRATOS.md` — siguiente entregable obligatorio
 - `GLOSARIO.md`
 - actualización de `CLAUDE.md`
 - actualización de `ECOSISTEMA.md`
 - capa de registro de rutas
 - plan archivo a archivo de Fase 2
+
+Estado actual de la secuencia:
+- `MODELO-DOMINIO.md` queda cerrado como primer entregable auditable.
+- El siguiente paso del ejecutor debe ser `CONTRATOS.md`.
 
 #### Fase 2 — Reorganización física
 
@@ -185,9 +195,9 @@ Objetivo:
 |---|---|---|---|
 | R01 | Paths hardcodeados no inventariados | Activo | Inventario real + capa de registro + test manual al final de Fase 2 |
 | R02 | Reorganización rompe ARMC | Activo | Dev primero + gate antes de Fase 2 + validación completa cliente/admin |
-| R03 | Modelo nuevo y legacy divergen | Activo | Compatibilidad explícita en auth y futura compatibilidad explícita en engagement/vertical |
-| R04 | `Cliente` sigue siendo texto libre demasiado tiempo | Activo | Cerrar C01 dentro de Fase 1 |
-| R05 | `/web` deja fuera a los publicados | Activo | Cerrar C03 antes de movimientos físicos |
+| R03 | Modelo nuevo y legacy divergen | Activo | `MODELO-DOMINIO.md` aprobado; falta `CONTRATOS.md` + implementación disciplinada mediante capa única de sincronización |
+| R04 | `Cliente` sigue siendo texto libre demasiado tiempo | Activo | Modelo aprobado; falta materializarlo en migración aditiva de Fase 2 |
+| R05 | `/web` deja fuera a los publicados | Activo | Contrato `/publicados/[cliente]/...` aprobado; falta absorberlo en `CONTRATOS.md` y ejecutarlo en Fase 2 |
 | R06 | Documentación del ecosistema se contradice | Activo | Cerrar C04 en Fase 1 |
 | R07 | Sprint B subestimado | Activo | Tratarlo como sprint separado con diseño propio |
 
@@ -197,12 +207,19 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 
 | Documento | Qué debe absorber |
 |---|---|
-| `MODELO-DOMINIO.md` | Producto, vertical, engagement, cliente, membresías, compatibilidad de modelo |
-| `CONTRATOS.md` | URLs públicas, endpoints reales, paths, esquema y contratos no rompibles |
-| `GLOSARIO.md` | Naming canónico y vocabulario del sistema |
+| `MODELO-DOMINIO.md` | Ya absorbió producto, vertical, engagement, cliente, membresías y compatibilidad base del modelo |
+| `CONTRATOS.md` | Debe absorber URLs públicas, endpoints reales, redirects legacy, payloads críticos, paths hardcodeados y contratos no rompibles derivados del modelo aprobado |
+| `GLOSARIO.md` | Debe absorber naming canónico, roles y la distinción entre atributo canónico y conveniencia transitoria |
 | `CLAUDE.md` | Modo revisor permanente, convenciones operativas y reglas del workspace |
-| `ECOSISTEMA.md` | Relación entre repos y servicios externos |
+| `ECOSISTEMA.md` | Debe alinearse con la relación entre repos, Drive actual, publicados en repo y separación con `prisma-trabajo-clientes` |
 | `CHANGELOG.md` | Cambios ya ejecutados, no hipótesis |
+
+### 10.1 Impactos posteriores ya detectados
+
+- `CONTRATOS.md` debe revisar expresamente los contratos congelados `/`, `/apex`, `/hub`, `/api/*`, el futuro contrato `/publicados/[cliente]/...`, el redirect desde `/portal/analisis/...`, y los payloads legacy que no pueden romperse durante la transición.
+- `CONTRATOS.md` debe inventariar los hardcodes activos en frontend y backend que hoy atan paths, fases o recursos publicados al estado legacy.
+- `GLOSARIO.md` debe absorber el vocabulario aprobado en `MODELO-DOMINIO.md` para que implementación y documentación usen los mismos términos.
+- `ECOSISTEMA.md` debe revisarse después de `CONTRATOS.md` para no reintroducir contradicciones sobre uploads, publicados y trabajo interno por repo.
 
 ## 11. Bitácora de revisión
 
@@ -241,6 +258,16 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 - Fase 1 puede comenzar.
 - Fase 2 queda condicionada a cerrar C01, C02, C03 y C04.
 - Este documento se crea como fuente viva de revisión para acompañar toda la reorganización.
+
+### 2026-04-27 — Aprobación de MODELO-DOMINIO v4
+
+- Qué se revisó: `MODELO-DOMINIO.md` v4 como primer entregable auditable de Fase 1.
+- Hallazgos: quedaron resueltas las contradicciones sobre `cliente_id`, `active_engagement_id`, la regla engagement-por-cliente y el write path sin regresión visible.
+- Decisiones cerradas afectadas: se añaden D18, D19 y D20; C01, C02, C03 y C05 pasan a cerrados.
+- Decisiones abiertas afectadas: C04 sigue abierta; se abren C09 y C10 como impactos posteriores obligatorios.
+- Documentos que deben actualizarse: este review queda actualizado; el siguiente entregable del ejecutor debe ser `CONTRATOS.md`; después deberán revisarse `GLOSARIO.md` y `ECOSISTEMA.md`.
+- Impacto en gates: Fase 2 sigue bloqueada hasta cerrar C04 y C09.
+- Próximo paso: el ejecutor debe producir `CONTRATOS.md` con inventario real de rutas, endpoints, payloads, redirects y hardcodes que deban sobrevivir a la reorganización.
 
 ## 12. Plantilla de actualización para futuras revisiones
 

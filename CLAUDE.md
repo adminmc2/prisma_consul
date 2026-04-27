@@ -9,6 +9,19 @@ Marketing website + B2B discovery tool + document portal for PRISMA Consul, a ph
 **Database:** Neon PostgreSQL (serverless)
 **File Storage:** Google Drive (via Workspace domain-wide delegation)
 
+## Ecosistema de repositorios
+
+Este repo es uno de varios que conforman el sistema PRISMA:
+
+- **`web-de-prisma`** (este) — Web pública + Prisma APEX (sistema interno).
+- **`prisma-trabajo-clientes`** (privado, NUEVO en fase 1) — Texto colaborativo de PRISMA por cliente: contratos, notas, transcripciones, drafts.
+- **`prisma-consulting`** — Metodología APEX (frameworks, plantillas abstractas, dolores).
+- **`apex-agents`** — Plataforma de agentes IA (CrewAI).
+- **`above-pharma`** (ABBE) — Asistente de ventas Above Pharma (HF Spaces).
+- **`prisma-server-ops`** — Operación del VPS IONOS (no es código de producto).
+
+Mapa completo, flujos cruzados, convenciones y relaciones entre repos: ver [`ECOSISTEMA.md`](./ECOSISTEMA.md).
+
 ## Architecture
 
 This is a monorepo with 3 frontend apps sharing one Express.js backend:
@@ -283,7 +296,7 @@ La versión actual se muestra en el footer de `index.html`. Se usa **Versionado 
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.2.35`
+**Versión actual:** `v3.2.37`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)
