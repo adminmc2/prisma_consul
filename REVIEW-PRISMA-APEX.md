@@ -42,8 +42,8 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Proyecto | Reorganización de Prisma APEX |
 | Momento actual | Sprint A / Fase 1 en curso |
 | Naturaleza del trabajo | Revisión activa + definición + compatibilidad + cierre progresivo de entregables |
-| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; Fase 1 en curso; Fase 2 no aprobada todavía |
-| Condición de avance | Cerrar C09 de la sección 7 (inventario contractual real). C04 ya cerrado en v3.2.37 |
+| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; Fase 1 en curso; Fase 2 no aprobada todavía |
+| Condición de avance | Cerrar C09 de la sección 7 (inventario contractual real). C10 debe absorberse antes del cierre total de Fase 1. No hay discrepancia activa sobre C04 |
 
 ### Dictamen operativo vigente
 
@@ -51,6 +51,7 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 - No se debe ejecutar Fase 2 automáticamente.
 - El siguiente entregable obligatorio del ejecutor es `CONTRATOS.md`.
 - Antes de movimientos físicos o cambios de serving, debe cerrarse C09 y quedar trazados sus impactos documentales (C04 ya cerrado).
+- No hay discrepancia activa entre `MODELO-DOMINIO.md`, `ECOSISTEMA.md`, `REVIEW-PRISMA-APEX.md` y `CHANGELOG.md` respecto al cierre de C04.
 
 ## 4. Realidad actual del repo y del sistema
 
@@ -148,8 +149,8 @@ Entregables esperados:
 - `MODELO-DOMINIO.md` — aprobado
 - `CONTRATOS.md` — siguiente entregable obligatorio
 - `GLOSARIO.md`
-- actualización de `CLAUDE.md`
-- actualización de `ECOSISTEMA.md`
+- actualización de `CLAUDE.md` — realizada
+- actualización de `ECOSISTEMA.md` — realizada
 - capa de registro de rutas
 - plan archivo a archivo de Fase 2
 
@@ -211,7 +212,7 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 | `CONTRATOS.md` | Debe absorber URLs públicas, endpoints reales, redirects legacy, payloads críticos, paths hardcodeados y contratos no rompibles derivados del modelo aprobado |
 | `GLOSARIO.md` | Debe absorber naming canónico, roles y la distinción entre atributo canónico y conveniencia transitoria |
 | `CLAUDE.md` | Modo revisor permanente, convenciones operativas y reglas del workspace |
-| `ECOSISTEMA.md` | Debe alinearse con la relación entre repos, Drive actual, publicados en repo y separación con `prisma-trabajo-clientes` |
+| `ECOSISTEMA.md` | Ya quedó alineado con `MODELO-DOMINIO.md`; debe mantenerse consistente con Drive actual, publicados en repo y separación con `prisma-trabajo-clientes` |
 | `CHANGELOG.md` | Cambios ya ejecutados, no hipótesis |
 
 ### 10.1 Impactos posteriores ya detectados
@@ -219,7 +220,14 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 - `CONTRATOS.md` debe revisar expresamente los contratos congelados `/`, `/apex`, `/hub`, `/api/*`, el futuro contrato `/publicados/[cliente]/...`, el redirect desde `/portal/analisis/...`, y los payloads legacy que no pueden romperse durante la transición.
 - `CONTRATOS.md` debe inventariar los hardcodes activos en frontend y backend que hoy atan paths, fases o recursos publicados al estado legacy.
 - `GLOSARIO.md` debe absorber el vocabulario aprobado en `MODELO-DOMINIO.md` para que implementación y documentación usen los mismos términos.
-- `ECOSISTEMA.md` debe revisarse después de `CONTRATOS.md` para no reintroducir contradicciones sobre uploads, publicados y trabajo interno por repo.
+- `ECOSISTEMA.md` no tiene discrepancia activa tras el cierre de C04; solo debe revalidarse después de `CONTRATOS.md` para asegurar que no se reintroduzcan contradicciones sobre uploads, publicados y trabajo interno por repo.
+
+### 10.2 Criterio del Revisor Sobre Discrepancias
+
+- Las menciones antiguas en bitácora a C04 abierto se consideran **histórico de revisión**, no discrepancia activa.
+- La fuente de verdad operativa para el estado vigente es esta combinación: sección 3 (estado global), sección 7 (puntos abiertos) y el gate de fase correspondiente.
+- La discrepancia activa que queda antes de Fase 2 es **solo C09**.
+- C10 sigue abierto, pero se trata como absorción documental obligatoria antes del cierre total de Fase 1, no como bloqueo inmediato separado de C09 para abrir Fase 2.
 
 ## 11. Bitácora de revisión
 
@@ -278,6 +286,16 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 - Documentos actualizados: `ECOSISTEMA.md` (flujo de publicación apunta solo al repo), `MODELO-DOMINIO.md` (eliminada deuda residual de sección 15), este `REVIEW-PRISMA-APEX.md` (cierre formal de C04 + actualización de gate Fase 2).
 - Impacto en gates: Fase 2 ahora bloqueada únicamente por C09. C04 ya no bloquea.
 - Próximo paso: el ejecutor produce `CONTRATOS.md` con inventario real (cierra C09 y abre el avance a Fase 2).
+
+### 2026-04-27 — Consolidación del criterio del revisor tras cierre de C04
+
+- Qué se revisó: coherencia final entre `REVIEW-PRISMA-APEX.md`, `MODELO-DOMINIO.md`, `ECOSISTEMA.md` y `CHANGELOG.md` después del cierre documental de C04.
+- Hallazgos: no hay discrepancia activa sobre C04. La observación previa sobre referencias antiguas en bitácora se reclasifica como rastro histórico, no como inconsistencia operativa.
+- Decisiones cerradas afectadas: ninguna nueva; se consolida el cierre de C04.
+- Decisiones abiertas afectadas: C09 sigue como único bloqueante de Fase 2. C10 sigue abierto como absorción documental de cierre de Fase 1.
+- Documentos que deben actualizarse: este review queda consolidado como fuente de verdad operativa; el siguiente entregable sigue siendo `CONTRATOS.md`.
+- Impacto en gates: sin cambio funcional; Fase 2 continúa bloqueada únicamente por C09.
+- Próximo paso: producir `CONTRATOS.md` con inventario real de rutas, endpoints, payloads, redirects y hardcodes que deban sobrevivir a la reorganización.
 
 ## 12. Plantilla de actualización para futuras revisiones
 
