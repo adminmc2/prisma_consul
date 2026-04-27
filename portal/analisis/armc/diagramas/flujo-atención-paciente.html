@@ -498,8 +498,11 @@ flowchart TD
         J --> K["Recepcionista anuncia en grupo WhatsApp"]
         K --> L["Quien esté libre recibe"]
         L --> M{"Maricela o Divani dan valoración"}:::decision
-        M -->|"Acepta"| N["Carlos cobra anticipo y envía indicaciones"]
+        M -->|"Acepta procedimiento"| N["Carlos cobra anticipo y envía indicaciones"]
         M -->|"Pequeño"| O["Se realiza al momento"]
+        M -->|"Pre-cirugía con externo"| MB["Carlos agenda 2ª valoración"]:::friction
+        MB --> MC["Figueroa / Vargas / Ducón"]
+        MC -->|"Acepta"| N
     end
 
     subgraph PROC["PROCEDIMIENTO — ~20 se operan/mes"]
