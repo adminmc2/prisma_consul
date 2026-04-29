@@ -2,6 +2,30 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.3.2
+
+### Sprint A fase 1 — Bloque B recategorizado a BLOCKED + dev desplegado al día
+
+Aplicación del dictamen del revisor sobre la entrega v3.3.1: el bloque B no alcanza PASS porque falta sesión humana en navegador real con DevTools. Se recategoriza formalmente y se desbloquea el primer paso del plan de cierre (deploy de dev). No toca código del producto.
+
+- **`docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` recategorizado**:
+  - Matriz de 13 filas: 12 tests visuales pasan a `BLOCKED — visual humana pendiente`. Tests dev/VPS añaden segunda razón (`dev desfasado` al momento de la ejecución inicial — ya resuelto en este commit).
+  - Test 7 (externos con credenciales) se mantiene como `N/A explícito` (aceptado por el revisor).
+  - **Sección 3 (probe técnica `warn + null`) se mantiene como PASS 9/9** — aceptada como evidencia complementaria por el revisor.
+  - Veredicto recategorizado: `Bloque B: BLOCKED — visual humana pendiente`.
+  - Sección 8 nueva: plan de cierre en 3 pasos secuenciales (deploy dev, sesión humana mínima, addendum corto al reporte). No se rehace todo el bloque B.
+- **`REVIEW-PRISMA-APEX.md`**:
+  - Estado global actualizado: bloque B `BLOCKED`, no se arranca bloque C hasta cerrar B con sesión humana.
+  - Bitácora: nueva entrada documentando el dictamen del revisor y el plan de 3 pasos.
+- **Deploy de dev al estado actual** (paso 1 del plan, ejecutado en este commit):
+  - `ssh prisma@212.227.251.125 && git pull origin dev && pm2 restart prisma-dev` ejecutado con éxito.
+  - Verificación post-deploy: `https://dev.prismaconsul.com/hub` ahora sirve `v3.3.1` con el slice completo (registry + función + optional chaining + 2 guardias en viewers presentes y verificadas vía curl).
+
+Pasos pendientes para cerrar bloque B (responsabilidad humana, no del agente):
+1. ✅ Deploy de dev — hecho en este commit.
+2. 🔲 Sesión humana mínima en navegador real con DevTools: 4 sesiones (local cliente, local admin, dev cliente, dev admin) × 3 items (Cirujano, Resumen Ejecutivo, Modelo de Datos) = 12 verificaciones visuales. Cada una verifica iframe carga y consola limpia.
+3. 🔲 Addendum corto al `REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` con resultado de cada verificación. Si todo PASS, bloque B queda cerrado y el agente puede arrancar bloque C.
+
 ## [2026-04-29] — v3.3.1
 
 ### Sprint A fase 1 — Bloque B ejecutado: smoke tests del slice del registro de rutas

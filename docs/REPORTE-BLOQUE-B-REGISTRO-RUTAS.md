@@ -25,23 +25,25 @@ El ejecutor **no dispone de navegador real con DevTools**, por lo que la inspecc
 
 ---
 
-## 2. Matriz de reporte
+## 2. Matriz de reporte (recategorizada por dictamen del revisor)
 
-| # | Bloque | Vista | Comprobación | Resultado | Evidencia |
+**Dictamen del revisor (v3.3.1 → v3.3.2):** los 12 tests visuales (local + dev/VPS, cliente + admin) **no alcanzan PASS** porque falta la sesión humana en navegador real con DevTools. La evidencia HTTP+probe JS es complementaria, no sustituye el umbral acordado. Se recategorizan formalmente a **BLOCKED — visual humana pendiente**. Se conservan como PASS solo la probe técnica (sección 3) y el bloque N/A de externos.
+
+| # | Bloque | Vista | Comprobación | Resultado | Evidencia técnica recogida (no sustituye visual) |
 |---|---|---|---|---|---|
-| 1 | Local | Cliente | Roles → Cirujano | PASS | `curl http://localhost:3099/portal/analisis/armc/diagramas/flujo-cirujano.html` → HTTP 200, 68509 bytes, `<title>Cirujano — Flujo Operativo (as-is) — ARMC</title>` |
-| 2 | Local | Cliente | Diagnóstico → Resumen Ejecutivo | PASS | HTTP 200, 17155 bytes, `<title>Resumen Ejecutivo — ARMC Diagnóstico Integrado</title>` |
-| 3 | Local | Cliente | Blueprint → Modelo de Datos | PASS | HTTP 200, 73727 bytes, `<title>Modelo de Datos — ARMC Blueprint</title>` |
-| 4 | Local | Admin | Roles → Cirujano | PASS | URL del iframe en vista admin = misma que cliente (mismo `ANALISIS_SECTION_MAP`, ambos `analisisOpenItem` y `udAnalisisOpenItem` consultan el mismo registry). HTTP idéntico al test 1 |
-| 5 | Local | Admin | Diagnóstico → Resumen Ejecutivo | PASS | idem test 2 |
-| 6 | Local | Admin | Blueprint → Modelo de Datos | PASS | idem test 3 |
-| 7 | Externos con credenciales | N/A | Slice sin servicios externos | N/A | Justificación: el slice de la capa de registro de rutas opera **únicamente** sobre un objeto JS local en `portal/index.html`, sin invocar Neon, Drive, SMTP, Tavily, Groq, Whisper ni ningún otro servicio externo. La ejecución de los tests no requirió credenciales ni red más allá del propio servidor local |
-| 8 | Dev/VPS | Cliente | Roles → Cirujano | PASS con observación | HTTPS 200 contra `https://dev.prismaconsul.com/portal/analisis/armc/diagramas/flujo-cirujano.html`, 68509 bytes, mismo título. **Observación:** dev sirve `v3.2.47`, no `v3.3.0`. Para ARMC el comportamiento es idéntico (registry presente, optional chaining presente). |
-| 9 | Dev/VPS | Cliente | Diagnóstico → Resumen Ejecutivo | PASS con observación | HTTPS 200, 17155 bytes, mismo título. Misma observación de versión |
-| 10 | Dev/VPS | Cliente | Blueprint → Modelo de Datos | PASS con observación | HTTPS 200, 73727 bytes, mismo título. Misma observación |
-| 11 | Dev/VPS | Admin | Roles → Cirujano | PASS con observación | URL del iframe en vista admin = misma que cliente. HTTP idéntico al test 8 |
-| 12 | Dev/VPS | Admin | Diagnóstico → Resumen Ejecutivo | PASS con observación | idem test 9 |
-| 13 | Dev/VPS | Admin | Blueprint → Modelo de Datos | PASS con observación | idem test 10 |
+| 1 | Local | Cliente | Roles → Cirujano | **BLOCKED — visual humana pendiente** | `curl http://localhost:3099/portal/analisis/armc/diagramas/flujo-cirujano.html` → HTTP 200, 68509 bytes, `<title>Cirujano — Flujo Operativo (as-is) — ARMC</title>` |
+| 2 | Local | Cliente | Diagnóstico → Resumen Ejecutivo | **BLOCKED — visual humana pendiente** | HTTP 200, 17155 bytes, `<title>Resumen Ejecutivo — ARMC Diagnóstico Integrado</title>` |
+| 3 | Local | Cliente | Blueprint → Modelo de Datos | **BLOCKED — visual humana pendiente** | HTTP 200, 73727 bytes, `<title>Modelo de Datos — ARMC Blueprint</title>` |
+| 4 | Local | Admin | Roles → Cirujano | **BLOCKED — visual humana pendiente** | URL del iframe en vista admin = misma que cliente (mismo `ANALISIS_SECTION_MAP`). HTTP idéntico al test 1 |
+| 5 | Local | Admin | Diagnóstico → Resumen Ejecutivo | **BLOCKED — visual humana pendiente** | idem test 2 |
+| 6 | Local | Admin | Blueprint → Modelo de Datos | **BLOCKED — visual humana pendiente** | idem test 3 |
+| 7 | Externos con credenciales | N/A | Slice sin servicios externos | **N/A (aprobado por revisor)** | Justificación: el slice opera únicamente sobre un objeto JS local; sin Neon, Drive, SMTP, Tavily, Groq, Whisper |
+| 8 | Dev/VPS | Cliente | Roles → Cirujano | **BLOCKED — dev desfasado + visual humana pendiente** | HTTPS 200 contra dev, mismo título. **Pero dev sirve `v3.2.47`, no el estado validado.** Falta deploy + sesión visual |
+| 9 | Dev/VPS | Cliente | Diagnóstico → Resumen Ejecutivo | **BLOCKED — dev desfasado + visual humana pendiente** | idem test 8 |
+| 10 | Dev/VPS | Cliente | Blueprint → Modelo de Datos | **BLOCKED — dev desfasado + visual humana pendiente** | idem test 8 |
+| 11 | Dev/VPS | Admin | Roles → Cirujano | **BLOCKED — dev desfasado + visual humana pendiente** | idem test 8 |
+| 12 | Dev/VPS | Admin | Diagnóstico → Resumen Ejecutivo | **BLOCKED — dev desfasado + visual humana pendiente** | idem test 8 |
+| 13 | Dev/VPS | Admin | Blueprint → Modelo de Datos | **BLOCKED — dev desfasado + visual humana pendiente** | idem test 8 |
 
 ---
 
@@ -97,33 +99,85 @@ Ninguno. El slice se comporta como la spec define en todos los entornos probados
 
 ---
 
-## 7. Veredicto
+## 7. Veredicto (recategorizado por dictamen del revisor)
 
-**Bloque B: PASS** con la siguiente observación operativa documentada:
+**Bloque B: BLOCKED — visual humana pendiente** (recategorizado en v3.3.2 tras dictamen del revisor sobre la entrega v3.3.1).
 
-> El despliegue de `dev.prismaconsul.com` está en `v3.2.47`. Para que dev refleje el estado exacto de `ff8036b` (`v3.3.0`) que se validó en local, falta hacer `pull` y reiniciar PM2 en el VPS. La diferencia es solo el commit `4d13851` (guardias en viewers añadidas en v3.2.48) y commits posteriores documentales. **No bloquea la operativa ARMC actual** porque las guardias son defensivas para casos que no ocurren con el cliente actual. Recomendación operativa: actualizar dev cuando se haga el siguiente despliegue normal.
+Razón: 12 de 13 tests requieren navegador real con DevTools, no disponible en el entorno del ejecutor agente. La evidencia HTTP+probe JS es complementaria pero no alcanza el umbral acordado en el checklist (`docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md` § 2: "no aparecen errores en consola durante la navegación del slice", "el iframe carga contenido real"). Esos puntos solo se verifican mirando el navegador.
 
----
-
-## 8. Recomendación al revisor
-
-**El review puede pasar al siguiente entregable interno** del cierre de Fase 1:
-
-> **Bloque C: Clasificación archivo por archivo + Plan archivo a archivo de Fase 2.**
-
-La capa de registro de rutas queda validada en runtime para el caso operativo real (ARMC). El despliegue en dev está suficientemente alineado para no bloquear avance, con observación documentada para futura sincronización.
+**Lo que sí queda PASS y sirve como evidencia complementaria aceptada:**
+- **Probe técnica `warn + null + optional chaining + guardia en viewers`**: 9/9 sub-tests PASS en Node aislado (sección 3 de este reporte).
+- **Bloque externos con credenciales**: N/A explícito y justificado, aceptado por el revisor.
 
 ---
 
-## 9. Limitaciones que el revisor debe tener presentes
+## 8. Plan para cerrar el bloque B (acordado tras dictamen del revisor)
 
-Si el revisor considera que la validación visual humana del iframe rendered en navegador real con DevTools es **requisito imprescindible** para cerrar bloque B, entonces:
-- Los tests 1-6 (local) deben recategorizarse como `BLOCKED — visual humana pendiente`.
-- Los tests 8-13 (dev/VPS) misma recategorización.
-- La probe técnica seguiría como PASS (es ejecutable sin navegador).
+Tres pasos secuenciales, ninguno opcional:
 
-En ese escenario, el bloque B requeriría una sesión humana adicional con sesión en el navegador. El ejecutor agente puede preparar todo el entorno (dev al día, server local listo) y entregar los pasos exactos para que el humano click-navegue, pero la observación visual misma queda fuera de su alcance.
+### Paso 1 — Desplegar dev al estado actual del repo
+
+Antes de cualquier sesión visual, dev debe servir el commit más reciente de `dev` (al cierre de este reporte: `22f36a7` v3.3.1, o el commit de la recategorización si se confirma). Comando estándar del proyecto:
+
+```bash
+ssh prisma@212.227.251.125 "cd ~/web-de-prisma-dev && git pull origin dev && pm2 restart prisma-dev"
+```
+
+**Verificación post-deploy:**
+```bash
+curl -sk https://dev.prismaconsul.com/hub | grep -oE 'welcome-version">v[0-9.]+'
+# debe devolver el último v3.3.x
+```
+
+### Paso 2 — Sesión humana mínima en navegador real
+
+Acotada (como pidió el revisor: "no extensa"). En **dos entornos** y **dos vistas**:
+
+| Entorno | Vista | Acciones |
+|---|---|---|
+| `http://localhost:3000/hub` | Cliente (login con `armc@prismaconsul.com`) | Abrir DevTools (consola limpia) → Análisis → Análisis por roles → Cirujano (verificar iframe carga, consola sin errores) → volver → Diagnóstico integrado → Resumen Ejecutivo (idem) → volver → Blueprint de Sistema → Modelo de Datos (idem) |
+| `http://localhost:3000/hub` | Admin (login con `info@prismaconsul.com`) | Idem en la vista admin del detalle de usuario ARMC: Cirujano + Resumen Ejecutivo + Modelo de Datos |
+| `https://dev.prismaconsul.com/hub` | Cliente | Idem que en local |
+| `https://dev.prismaconsul.com/hub` | Admin | Idem que en local |
+
+**Total:** 4 sesiones × 3 items = **12 verificaciones visuales mínimas**.
+
+**Por cada sesión, registrar:**
+- ✓ iframe carga el HTML correcto (visible).
+- ✓ consola DevTools sin errores (`TypeError`, `404`, errores JS).
+- Captura opcional o nota textual.
+
+**Probe técnica opcional pero recomendada al final** (en consola de DevTools del navegador, con la SPA cargada):
+```javascript
+getAnalysisPaths('cliente-inexistente')
+// esperado: null + console.warn, sin TypeError
+```
+
+### Paso 3 — Addendum corto al reporte
+
+No rehacer todo el bloque B. Crear sección "Addendum — sesión visual humana" al final de este mismo archivo, con:
+
+- Fecha y hora de la sesión.
+- Operador humano que la ejecutó.
+- Para cada uno de los 12 tests recategorizados arriba: PASS / FAIL con nota corta (3-5 palabras).
+- Si todo PASS: veredicto final "Bloque B: PASS".
+- Si algún FAIL: detalle del fallo y commit de fix antes de cerrar.
+
+Tras el addendum, el bloque B queda cerrado. **No se reabre el slice técnico.**
 
 ---
 
-**Fin del reporte.**
+## 9. Estado actual al cierre de v3.3.2
+
+- **Bloque B: BLOCKED** formalmente.
+- **Probe técnica: PASS** complementaria.
+- **Externos: N/A** confirmado.
+- **Pendiente para cerrar:**
+  1. Deploy de dev al último commit (paso 1 arriba).
+  2. Sesión humana mínima de ~12 verificaciones visuales (paso 2).
+  3. Addendum al reporte (paso 3).
+- **No se avanza al bloque C** hasta que los tres pasos anteriores estén ejecutados y el bloque B esté formalmente PASS.
+
+---
+
+**Fin del reporte (versión recategorizada).**

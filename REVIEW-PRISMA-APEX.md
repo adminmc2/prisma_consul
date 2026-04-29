@@ -43,7 +43,7 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Momento actual | Sprint A / Fase 1 en curso |
 | Naturaleza del trabajo | Revisión activa + definición + compatibilidad + cierre progresivo de entregables |
 | Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; Fase 1 en curso; Fase 2 desbloqueada por gate, pendiente entregables internos |
-| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). Cierre total de Fase 1 requiere: smoke tests runtime del slice del registro (bloque B), clasificación archivo por archivo, plan archivo a archivo Fase 2, modo revisor permanente en `CLAUDE.md`, replicación Ecosistema en los otros 4 repos. Verificación runtime previa a movimientos físicos pertenece a cada subpaso |
+| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). Bloque B BLOCKED — visual humana pendiente (v3.3.2). Cierre total de Fase 1 requiere: cerrar bloque B con sesión humana en navegador real (3 pasos en sección 8 del reporte), clasificación archivo por archivo, plan archivo a archivo Fase 2, modo revisor permanente en `CLAUDE.md`, replicación Ecosistema en los otros 4 repos. **No se arranca bloque C hasta cerrar bloque B.** |
 
 ### Dictamen operativo vigente
 
@@ -344,6 +344,25 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 - Documentos actualizados: `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md`, `REVIEW-PRISMA-APEX.md`, `CHANGELOG.md`, versionado visible del proyecto.
 - Impacto en gates: sin cambio. Gate de Fase 2 sigue cumplido; se reduce ambigüedad operativa para el cierre total de Fase 1.
 - Próximo paso: el ejecutor ejecuta el checklist del bloque B y entrega matriz completa con resultado `PASS`, `FAIL` o `BLOCKED`.
+
+### 2026-04-29 — Bloque B ejecutado parcialmente y dictamen del revisor: BLOCKED
+
+- Qué se revisó: ejecución del checklist del bloque B por el ejecutor agente sobre commit `ff8036b` v3.3.0, reportada en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` v3.3.1.
+- Hallazgos:
+  - El ejecutor agente no dispone de navegador real con DevTools. Aportó evidencia HTTP+probe JS sólida y honesta sobre limitaciones.
+  - Probe técnica del contrato `warn + null + optional chaining + guardia en viewers`: 9/9 sub-tests PASS en Node aislado.
+  - Bloque externos con credenciales: N/A explícito y justificado.
+  - 12 tests visuales (local + dev/VPS, cliente + admin) no alcanzan PASS porque falta sesión humana en navegador real.
+  - Dev sirve `v3.2.47`, no el estado validado localmente — no estaba al día.
+- Decisiones cerradas afectadas: ninguna nueva.
+- Decisiones abiertas afectadas: bloque B recategorizado formalmente a **BLOCKED — visual humana pendiente** (v3.3.2). Probe técnica y N/A se mantienen como evidencia complementaria aceptada.
+- Documentos actualizados: `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` (recategorización), este `REVIEW-PRISMA-APEX.md`, `CHANGELOG.md`, versionado visible.
+- Impacto en gates: sin cambio en gate de Fase 2 (sigue cumplido). El cierre total de Fase 1 sigue requiriendo bloque B en estado PASS.
+- Próximo paso (3 pasos secuenciales, ninguno opcional, descritos en sección 8 del reporte):
+  1. Desplegar dev al estado actual del repo (`ssh prisma@... && git pull && pm2 restart`).
+  2. Ejecutar sesión humana mínima en navegador real: 4 sesiones (local cliente, local admin, dev cliente, dev admin) × 3 items obligatorios (Cirujano, Resumen Ejecutivo, Modelo de Datos) = 12 verificaciones visuales.
+  3. Añadir addendum corto al reporte con resultado de cada verificación. Si todo PASS, bloque B queda cerrado.
+- **No se avanza al bloque C** hasta cerrar el bloque B con PASS limpio.
 
 ## 12. Plantilla de actualización para futuras revisiones
 
