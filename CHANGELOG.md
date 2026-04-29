@@ -2,6 +2,30 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.3.5
+
+### Sprint A fase 1 — Bloque C: Plan archivo a archivo de Fase 2
+
+Cierre del bloque C de Fase 1: clasificación archivo por archivo del repo + plan secuencial de movimientos físicos para Fase 2. No toca código del producto.
+
+- **`docs/PLAN-FASE2.md`** (NUEVO): documento único auditable que combina clasificación + plan en 9 secciones:
+  1. Propósito.
+  2. Estructura objetivo (referencia a `MODELO-DOMINIO.md` §5).
+  3. **Clasificación archivo por archivo** de los 97 archivos del repo en 4 categorías (MOVE / STAY / EXPORT / DELETE):
+     - 28 archivos MOVE → `web/` (web pública).
+     - 26 archivos MOVE → `prisma-apex/` (Hub SPA, entregables ARMC, GUIA, discovery engine, fuentes Phosphor).
+     - 4 archivos MOVE → `shared/fonts/phosphor/`.
+     - 32 archivos STAY (backend, docs canónicos, configs).
+     - 7 archivos EXPORT → `prisma-consulting` (6 scripts ARMC + VALIDACION-CATALOGO-ARMC.md).
+  4. **Plan secuencial en 9 subpasos** (2.1 a 2.9), cada uno con: movimientos físicos, cambio de servidor, validación runtime obligatoria y riesgo. Diseñados para que ARMC no se rompa en ningún momento intermedio.
+  5. Cambios consolidados a `server.js` (estado final esperado tras Fase 2).
+  6. Tabla de tests de regresión por subpaso.
+  7. **12 decisiones cerradas** (PF2-1 a PF2-12).
+  8. Lo que NO está en el plan (pendiente de sprints posteriores: plantillas por vertical, migración de uploads Drive→IONOS, centralización auth, EngagementAccess, cierre legacy, operación continua).
+  9. Pendientes antes de ejecutar: aprobación del revisor, confirmación del usuario, backup de Neon, confirmación de acceso a `prisma-consulting`.
+
+Estado: **bloque C completado**. Plan listo para validación del revisor antes de ejecutar Fase 2. Próximo entregable interno autorizado tras aprobación: **bloque D — Modo revisor permanente en `CLAUDE.md` + Replicación Ecosistema en `CLAUDE.md` de los otros 4 repos**.
+
 ## [2026-04-29] — v3.3.4
 
 ### Sprint A fase 1 — sincronización del review vivo tras cierre aceptado del bloque B
