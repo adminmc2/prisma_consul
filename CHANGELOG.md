@@ -2,6 +2,17 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.3.0
+
+### Sprint A fase 1 — bump MINOR (separación de track) + incorporación de docs/scripts
+
+Bump MINOR para separar el track de Sprint A (`v3.3.x`) del versionado lineal de producción (`v3.2.x`). Resuelve la colisión de `v3.2.46` entre `main` (publicación cirujano post-CEO, commit `52d0049`) y `dev` (capa de registro de rutas, commit `7fb12b6`). El cierre final de Sprint A + Sprint B saltará a `v4.0.0` como ya estaba previsto. No toca código del producto.
+
+- **Bump versión:** `v3.2.51` → `v3.3.0` en `index.html`, `portal/index.html`, `CLAUDE.md`. Las entradas históricas `v3.2.46`-`v3.2.51` del CHANGELOG se conservan como registro del trabajo de Sprint A en `dev`.
+- **`docs/NOMENCLATURA.md`** (NUEVO en `dev`): taxonomía oficial de nombres de documentos PRISMA. Garantiza que cada archivo en el Hub tenga nombre único, auto-descriptivo y adecuado para entrenamiento de IA, búsqueda semántica y clasificación automática.
+- **`portal/analisis/GUIA-NUEVAS-SECCIONES.md`** (NUEVO en `dev`): guía operativa para crear nuevas secciones de análisis y registrarlas en el Hub. Mencionada en `CONTRATOS.md` §7.1 como documentación que asume estructura legacy y se actualizará en fase 2 al mover los entregables a `prisma-apex/clientes-publicados/`.
+- **`scripts/`** (NUEVO en `dev`): 6 scripts Node.js de mantenimiento ARMC (`list-armc-files.js`, `delete-armc-duplicates.js`, `rename-armc-files.js`, `update-armc-doctypes.js`, `move-armc-patient-data.js`, `revert-armc-patient-data.js`). Mencionados en `MODELO-DOMINIO.md` y `CONTRATOS.md` como scripts one-off que se clasificarán y eventualmente migrarán a `prisma-consulting` cuando se haga la clasificación archivo por archivo (bloque C de Fase 1).
+
 ## [2026-04-29] — v3.2.51
 
 ### Sprint A fase 1 — saneamiento del repo en `dev` tras divergencia con `main`
