@@ -66,6 +66,7 @@ function getAnalysisPaths(cliente) {
 - `getAnalysisPaths(cliente)` devuelve `null`.
 - Loggea `console.warn(...)` con el nombre solicitado para facilitar diagnóstico durante desarrollo.
 - **No lanza excepción.** No interrumpe la inicialización de la SPA.
+- **Los consumers honran este contrato end-to-end** mediante optional chaining (`_armcPaths?.diagramas`). Si la resolución devolviera `null`, el consumer recibe `undefined` en `path` y la sección queda vacía sin romper la inicialización.
 
 **Sección no existe dentro de un cliente registrado:**
 - Acceso por punto a una propiedad no declarada devuelve `undefined` (comportamiento JS estándar).
@@ -97,11 +98,13 @@ const ANALISIS_SECTION_MAP = {
 // Después:
 const _armcPaths = getAnalysisPaths('armc');
 const ANALISIS_SECTION_MAP = {
-  roles:       { items: () => ANALISIS_ROLES,       path: _armcPaths.diagramas,   title: '...' },
-  diagnostico: { items: () => ANALISIS_DIAGNOSTICO, path: _armcPaths.diagnostico, title: '...' },
-  blueprint:   { items: () => ANALISIS_BLUEPRINT,   path: _armcPaths.blueprint,   title: '...' }
+  roles:       { items: () => ANALISIS_ROLES,       path: _armcPaths?.diagramas,   title: '...' },
+  diagnostico: { items: () => ANALISIS_DIAGNOSTICO, path: _armcPaths?.diagnostico, title: '...' },
+  blueprint:   { items: () => ANALISIS_BLUEPRINT,   path: _armcPaths?.blueprint,   title: '...' }
 };
 ```
+
+**Optional chaining (`?.`) en los consumers:** honra literalmente el contrato "warn + null, sin excepción" de la sección 5. Si el cliente no estuviera registrado, `_armcPaths` sería `null` y la propiedad `?.diagramas` evaluaría a `undefined` sin lanzar `TypeError`.
 
 **Diff esperado:**
 - Añadidas: 1 declaración `ANALISIS_REGISTRY` + 1 función `getAnalysisPaths` + 1 línea `_armcPaths`.
@@ -136,7 +139,7 @@ Para que la implementación de este slice se considere correcta:
    - Los 5 HTMLs de diagnóstico (resumen-ejecutivo, matriz-dolor-proceso, mapa-fricciones, embudo-operativo, cadena-causal).
    - Los 5 HTMLs de blueprint (modelo-datos, flujos-to-be, automatizaciones, fases-implementacion, kpis-objetivo).
 4. ✅ Ningún otro flujo del Hub se ha tocado (login, upload, perfil, panel admin, actividad).
-5. ✅ El diff queda acotado a `portal/index.html` — ningún otro archivo modificado.
+5. ✅ Cambios de producto (lógica del Hub) acotados a un único archivo: `portal/index.html`. Otros archivos modificados como **metadocumentación del slice** son legítimos y esperados: `CHANGELOG.md` (entrada del bump), `CLAUDE.md` (versión actual), `index.html` y `portal/index.html` (string de versión en footer/login), y la propia spec `REGISTRO-RUTAS.md`.
 6. ✅ No hay errores en consola del navegador al cargar la SPA y navegar las 3 secciones.
 
 ---

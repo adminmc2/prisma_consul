@@ -2,6 +2,17 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-28] — v3.2.47
+
+### Sprint A fase 1 — Capa de registro de rutas (2 ajustes del revisor sobre bloque A)
+
+Ajustes localizados al bloque A tras la auditoría del revisor. No tocan código adicional ni amplían el slice.
+
+- **`portal/index.html` (consumer end-to-end)**: añadido optional chaining (`?.`) en los 3 accesos del `ANALISIS_SECTION_MAP` a `_armcPaths.diagramas`/`.diagnostico`/`.blueprint`. Honra literalmente el contrato "warn + null, sin excepción" de la spec: si `getAnalysisPaths('armc')` devolviera `null` (cliente no registrado), las propiedades evaluarían a `undefined` sin lanzar `TypeError`. Cambio mínimo: 3 caracteres añadidos en 3 líneas.
+- **`REGISTRO-RUTAS.md` sección 5 (comportamiento ante cliente no registrado)**: clarificado que los consumers honran el contrato end-to-end mediante optional chaining.
+- **`REGISTRO-RUTAS.md` sección 6 (ejemplo de diff)**: muestra el optional chaining en el código "Después".
+- **`REGISTRO-RUTAS.md` criterio 5 (aceptación)**: refinado para distinguir cambios de producto (un único archivo: `portal/index.html`) de la metadocumentación esperada del slice (`CHANGELOG.md`, `CLAUDE.md`, version strings, la propia spec). El criterio anterior era literalmente falso en su redacción aunque correcto en su intención.
+
 ## [2026-04-28] — v3.2.46
 
 ### Sprint A fase 1 — Capa de registro de rutas (spec + impl mínima)
