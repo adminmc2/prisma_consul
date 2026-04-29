@@ -2,6 +2,17 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.3.8
+
+### Sprint A fase 1 — Bloque C: coherencia interna de PLAN-FASE2.md sobre serving de /apex
+
+Aplicación del último hallazgo del revisor sobre `v3.3.6`. No toca código del producto. La inconsistencia residual era textual: la corrección crítica del subpaso 2.4 (de `sendFile` a `static mount` para preservar assets relativos del discovery) no se había propagado al estado consolidado de la sección 5 ni a la decisión PF2-3.
+
+- **`docs/PLAN-FASE2.md` sección 5 (Cambios al `server.js` consolidados)**: el bloque final de `/apex` reescrito de `app.get('/apex', sendFile)` a `app.use('/apex', express.static(...))` con comentario explícito advirtiendo que NO usar sendFile rompería los 4 assets relativos. Referencia cruzada al subpaso 2.4.
+- **`docs/PLAN-FASE2.md` decisión PF2-3**: reescrita para reflejar que discovery se sirve por **static mount** bajo `/apex`, NO por handler explícito. Razón documentada inline: preservar la resolución de assets relativos (`form.css`, `form.js`, `signal-detector.js`) que el HTML consume.
+
+Estado: bloque C internamente coherente. Espera del PASS final del revisor antes de arrancar bloque D.
+
 ## [2026-04-29] — v3.3.7
 
 ### Análisis ARMC — Flujo Cosmiatra (Brisa) post-entrevista CEO

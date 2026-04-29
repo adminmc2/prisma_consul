@@ -645,10 +645,12 @@ app.get('/hub', (req, res) => {
   res.sendFile(path.join(projectRoot, 'prisma-apex', 'index.html'));
 });
 
-// SPA del discovery
-app.get('/apex', (req, res) => {
-  res.sendFile(path.join(projectRoot, 'prisma-apex', 'core', 'discovery-engine', 'index.html'));
-});
+// SPA del discovery — static mount (preserva assets relativos: form.css, form.js,
+// signal-detector.js). NO usar sendFile — rompería esos 4 assets. Ver subpaso 2.4.
+app.use('/apex', express.static(
+  path.join(projectRoot, 'prisma-apex', 'core', 'discovery-engine'),
+  { index: 'index.html', extensions: ['html'] }
+));
 
 // API routes (sin cambios)
 app.use('/api', portalRoutes);
@@ -688,7 +690,7 @@ Cada subpaso debe terminar con esta verificación mínima antes de pasar al sigu
 |---|---|
 | PF2-1 | Web pública pasa a `web/`; servida por `express.static('web')` |
 | PF2-2 | Hub SPA pasa a `prisma-apex/index.html`; servida por handler `/hub` explícito |
-| PF2-3 | Discovery pasa a `prisma-apex/core/discovery-engine/`; servida por handler `/apex` explícito |
+| PF2-3 | Discovery pasa a `prisma-apex/core/discovery-engine/`; servido por **static mount** bajo `/apex` (`app.use('/apex', express.static(...))`), NO por `sendFile`, para preservar la resolución de assets relativos (`form.css`, `form.js`, `signal-detector.js`) que el HTML usa internamente |
 | PF2-4 | Entregables ARMC pasan a `prisma-apex/clientes-publicados/armc/`; servidos por `express.static('/publicados')` |
 | PF2-5 | URL canónica de entregables es `/publicados/[cliente]/...`; URL legacy `/portal/analisis/[cliente]/...` redirige 301 indefinido |
 | PF2-6 | Fuentes Phosphor centralizadas en `shared/fonts/phosphor/`; servidas por `/shared` |
