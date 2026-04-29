@@ -475,15 +475,17 @@ Rutas físicas que el JavaScript del frontend construye literalmente y que dejan
 
 ### 6.1 Paths a entregables ARMC en `portal/index.html`
 
-Tres constantes JavaScript declaradas como variables `const` en `portal/index.html`:
+**Estado actual (post v3.2.46-48):** ya no hay paths hardcodeados a entregables ARMC en el frontend. La capa de registro de rutas (`ANALISIS_REGISTRY` + `getAnalysisPaths`) es la fuente de verdad. Esta sección documenta el estado **legacy** que existía hasta v3.2.45 incluido para trazabilidad histórica del refactor.
 
-| Variable | Valor | Uso |
+**Estado legacy (v3.2.45 y anterior):** existían tres constantes JavaScript declaradas como `const` en `portal/index.html`:
+
+| Variable legacy | Valor | Uso |
 |---|---|---|
 | `ANALISIS_BASE_PATH` | `'/portal/analisis/armc/diagramas/'` | concatenado con `s.file` (nombre del HTML) para abrir diagramas en iframe |
 | `ANALISIS_DIAGNOSTICO_PATH` | `'/portal/analisis/armc/diagnostico/'` | concatenado con `s.file` para abrir HTMLs de diagnóstico |
 | `ANALISIS_BLUEPRINT_PATH` | `'/portal/analisis/armc/blueprint/'` | concatenado con `s.file` para abrir HTMLs de blueprint |
 
-**Detección:** búsqueda exhaustiva con `grep -rn "portal/analisis/armc"` confirma que estas 3 constantes son las únicas referencias hardcodeadas en el frontend. Otras referencias en `portal/analisis/GUIA-NUEVAS-SECCIONES.md` son documentación (sección 7).
+**Detección original:** búsqueda exhaustiva con `grep -rn "portal/analisis/armc"` confirmó en su día que estas 3 constantes eran las únicas referencias hardcodeadas en el frontend. Otras referencias en `portal/analisis/GUIA-NUEVAS-SECCIONES.md` eran documentación (sección 7).
 
 **Estado:** estas constantes **fueron reemplazadas** por consultas a la **capa de registro de rutas** en v3.2.46-48 (ver `REGISTRO-RUTAS.md`). El refactor desacopló la SPA del path físico antes del movimiento de archivos previsto para fase 2.
 
@@ -755,9 +757,9 @@ Es decir: **el único bloqueante de Fase 2 es C09**. C10 y los entregables de la
 - ✅ **C03** (serving de clientes-publicados) — cerrado en `MODELO-DOMINIO.md` v4.
 - ✅ **C04** (alineación de `ECOSISTEMA.md`) — cerrado en v3.2.37.
 - ✅ **C05** (regla de sincronización `client_membership`) — cerrado en `MODELO-DOMINIO.md` v4.
-- 🟡 **C09** (inventario contractual real) — **propuesto cerrado por este documento**, pendiente validación del revisor.
+- ✅ **C09** (inventario contractual real) — cerrado en v3.2.43 tras 3 pasadas de correcciones del revisor (apex_submissions exhaustivo, alineación de gate, shapes exactas, error path real, conteo interno). Validado por el revisor.
 
-Cuando el revisor confirme C09 → **Fase 2 desbloqueada**.
+**Gate de Fase 2: cumplido (v3.2.44).** Fase 2 técnicamente desbloqueada desde el punto de vista de revisión. El cierre total de Fase 1 sigue requiriendo entregables internos (sección 14.2).
 
 ### 14.2 Entregables restantes de Fase 1 (para el cierre total, no para abrir Fase 2)
 

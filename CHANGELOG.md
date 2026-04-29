@@ -2,6 +2,17 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-28] — v3.2.50
+
+### Sprint A fase 1 — CONTRATOS.md: 2 incoherencias textuales residuales
+
+Cierre de las dos últimas incoherencias textuales señaladas por el revisor sobre v3.2.49: el preámbulo de §6.1 seguía describiendo las constantes legacy en presente y §14.1 mantenía C09 como "propuesto cerrado, pendiente validación". No toca código del producto.
+
+- **`CONTRATOS.md` §6.1 (preámbulo, tabla y "Detección")**: añadida nota inicial "Estado actual (post v3.2.46-48): ya no hay paths hardcodeados". El bloque legacy queda etiquetado explícitamente como "Estado legacy (v3.2.45 y anterior)" para trazabilidad histórica del refactor. Tabla de variables marcada como "legacy". "Detección" reformulada en pasado ("eran" en lugar de "son"). El inventario legacy se conserva como referencia documental, no como descripción del código actual.
+- **`CONTRATOS.md` §14.1**: C09 cambiado de 🟡 ("propuesto cerrado, pendiente validación") a ✅ ("cerrado en v3.2.43, validado por el revisor"). Frase "Cuando el revisor confirme C09 → Fase 2 desbloqueada" reemplazada por estado factual: "Gate de Fase 2: cumplido (v3.2.44). Fase 2 técnicamente desbloqueada desde el punto de vista de revisión".
+
+Estado: bloque A cerrado completamente y sin incoherencias en `CONTRATOS.md`. Pausa antes de bloque B (smoke tests sobre el slice).
+
 ## [2026-04-28] — v3.2.49
 
 ### Sprint A fase 1 — CONTRATOS.md: residual de alineación canónica
