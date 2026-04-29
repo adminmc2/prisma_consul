@@ -782,7 +782,7 @@
       </a>
       <h1 class="welcome-title">PRISMA Hub</h1>
       <p class="welcome-subtitle">Tu espacio seguro</p>
-      <p class="welcome-version">v3.2.44</p>
+      <p class="welcome-version">v3.2.46</p>
       <form class="portal-form" id="loginForm">
         <input type="email" class="portal-input" id="loginEmail" placeholder="Email" autocomplete="email" required>
         <input type="password" class="portal-input" id="loginPassword" placeholder="Contraseña" autocomplete="current-password" required>
@@ -2411,6 +2411,25 @@
       { id: 'blueprint', title: 'Blueprint de Sistema', icon: 'ph ph-blueprint', desc: 'Modelo de datos, flujos to-be, automatizaciones, fases y KPIs' }
     ];
 
+    // ── Capa de registro de rutas (REGISTRO-RUTAS.md) ──
+    // Reemplaza las antiguas constantes ANALISIS_BASE_PATH / DIAGNOSTICO_PATH / BLUEPRINT_PATH.
+    // Fuente de verdad para los paths físicos de los entregables por cliente.
+    const ANALISIS_REGISTRY = {
+      armc: {
+        diagramas:   '/portal/analisis/armc/diagramas/',
+        diagnostico: '/portal/analisis/armc/diagnostico/',
+        blueprint:   '/portal/analisis/armc/blueprint/'
+      }
+    };
+    function getAnalysisPaths(cliente) {
+      const entry = ANALISIS_REGISTRY[cliente];
+      if (!entry) {
+        console.warn(`getAnalysisPaths: cliente "${cliente}" no registrado`);
+        return null;
+      }
+      return entry;
+    }
+
     const ANALISIS_ROLES = [
       { id: 'atencion-paciente', file: 'flujo-atención-paciente.html', title: 'Atención al Paciente', icon: 'ph ph-user', desc: 'Captación, conversión, seguimiento y reportes' },
       { id: 'cirujano', file: 'flujo-cirujano.html', title: 'Cirujano', icon: 'ph ph-stethoscope', desc: 'Evaluación, procedimiento y seguimiento post' },
@@ -2420,7 +2439,6 @@
       { id: 'tricologia', file: 'flujo-tricologia.html', title: 'Tricología y Microinjerto', icon: 'ph ph-eyedropper', desc: 'Diagnóstico capilar, microinjerto y comunicación' },
       { id: 'ceo', file: 'flujo-ceo.html', title: 'CEO/Dirección', icon: 'ph ph-chart-line-up', desc: 'Estrategia, visibilidad, KPIs y decisiones' }
     ];
-    const ANALISIS_BASE_PATH = '/portal/analisis/armc/diagramas/';
 
     const ANALISIS_DIAGNOSTICO = [
       { id: 'resumen-ejecutivo', file: 'resumen-ejecutivo.html', title: 'Resumen Ejecutivo', icon: 'ph ph-target', desc: 'Hallazgos principales, métricas clave y voces del equipo' },
@@ -2429,7 +2447,6 @@
       { id: 'embudo-operativo', file: 'embudo-operativo.html', title: 'Embudo Operativo', icon: 'ph ph-funnel', desc: 'De la captación a la retención con métricas reales' },
       { id: 'cadena-causal', file: 'cadena-causal.html', title: 'Cadena Causal', icon: 'ph ph-tree-structure', desc: 'Diagrama D1→D2→D3→D4→Retención con evidencia' }
     ];
-    const ANALISIS_DIAGNOSTICO_PATH = '/portal/analisis/armc/diagnostico/';
 
     const ANALISIS_BLUEPRINT = [
       { id: 'modelo-datos', file: 'modelo-datos.html', title: 'Modelo de Datos', icon: 'ph ph-database', desc: '7 entidades con campos, relaciones y mapeo D1-D4' },
@@ -2438,7 +2455,6 @@
       { id: 'fases-implementacion', file: 'fases-implementacion.html', title: 'Fases de Implementación', icon: 'ph ph-steps', desc: '4 fases D1→D2→D3→D4 con resultados medibles' },
       { id: 'kpis-objetivo', file: 'kpis-objetivo.html', title: 'KPIs y Objetivos', icon: 'ph ph-chart-line-up', desc: '13 métricas actuales vs objetivos a 6 y 12 meses' }
     ];
-    const ANALISIS_BLUEPRINT_PATH = '/portal/analisis/armc/blueprint/';
 
     // ── Client: Análisis Tab (3 capas) ──
     function loadAnalisis() {
@@ -2453,10 +2469,11 @@
       `).join('');
     }
 
+    const _armcPaths = getAnalysisPaths('armc');
     const ANALISIS_SECTION_MAP = {
-      roles: { items: () => ANALISIS_ROLES, path: ANALISIS_BASE_PATH, title: 'Análisis por roles' },
-      diagnostico: { items: () => ANALISIS_DIAGNOSTICO, path: ANALISIS_DIAGNOSTICO_PATH, title: 'Diagnóstico integrado' },
-      blueprint: { items: () => ANALISIS_BLUEPRINT, path: ANALISIS_BLUEPRINT_PATH, title: 'Blueprint de Sistema' }
+      roles: { items: () => ANALISIS_ROLES, path: _armcPaths.diagramas, title: 'Análisis por roles' },
+      diagnostico: { items: () => ANALISIS_DIAGNOSTICO, path: _armcPaths.diagnostico, title: 'Diagnóstico integrado' },
+      blueprint: { items: () => ANALISIS_BLUEPRINT, path: _armcPaths.blueprint, title: 'Blueprint de Sistema' }
     };
 
     function analisisOpenSection(sectionId) {

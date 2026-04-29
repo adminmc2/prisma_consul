@@ -2,6 +2,34 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-28] — v3.2.46
+
+### Sprint A fase 1 — Capa de registro de rutas (spec + impl mínima)
+
+Bloque A del cierre de Fase 1 según plan aprobado por revisor. Spec breve pegada a la implementación + refactor mínimo y local del slice. Único archivo de producto modificado: `portal/index.html`.
+
+- **`REGISTRO-RUTAS.md`** (NUEVO): especificación canónica de la capa. 10 secciones cubriendo: propósito, fuente de verdad (objeto JS inline), shape mínima, función de resolución, comportamiento ante cliente o sección no registrados, constantes legacy reemplazadas, alcance excluido (sin backend, sin URLs, sin movimientos físicos, sin multi-vertical, sin sistema de plantillas), criterios de aceptación, plan de verificación post-impl (bloque B), y evolución futura fuera de scope.
+- **`portal/index.html`**: implementación mínima.
+  - Eliminadas las 3 constantes hardcodeadas legacy: `ANALISIS_BASE_PATH`, `ANALISIS_DIAGNOSTICO_PATH`, `ANALISIS_BLUEPRINT_PATH`.
+  - Añadido `ANALISIS_REGISTRY` (objeto inline) como fuente de verdad de paths por cliente. Hoy una sola entrada: `armc`.
+  - Añadida función `getAnalysisPaths(cliente)` con `console.warn` si cliente no registrado y retorno `null` (sin lanzar excepción).
+  - Modificados los 3 consumers en `ANALISIS_SECTION_MAP` para resolver paths desde el registro vía un único lookup `_armcPaths = getAnalysisPaths('armc')`.
+  - Paths exactos preservados: `/portal/analisis/armc/diagramas/`, `/portal/analisis/armc/diagnostico/`, `/portal/analisis/armc/blueprint/`. Sin normalización, sin reordenamiento.
+  - Diff: +24 / -7 en un único archivo. Ningún otro flujo del Hub tocado (login, upload, perfil, panel admin, actividad).
+
+Estado: **slice del registro implementado**. Pausa para revisión de spec + impl antes de bloque B (smoke tests sobre este slice).
+
+## [2026-04-28] — v3.2.45
+
+### Documentación — normalización del review vivo tras cierre de C09 y C10
+
+Corrección del review vivo para que vuelva a reflejar sin contradicciones el estado ya aprobado por revisión. No toca código del producto.
+
+- **`REVIEW-PRISMA-APEX.md`**: eliminadas referencias operativas obsoletas que seguían tratando `CONTRATOS.md` como siguiente entregable y C09/C10 como abiertos en varias secciones. Consolidado el estado real: C09 y C10 cerrados, gate de Fase 2 cumplido, Fase 1 todavía abierta por entregables internos.
+- **`REVIEW-PRISMA-APEX.md`**: reintroducido el bloque explícito de comprobaciones runtime pendientes por subpaso (`Neon`, `Google Drive`, `Gmail SMTP`, `Tavily`, `Groq`, `Whisper`, serving en `dev.prismaconsul.com`, infraestructura `nginx`/`PM2`/`IONOS`).
+- **`REVIEW-PRISMA-APEX.md`**: riesgos, absorción documental y bitácora alineados con el estado posterior a `GLOSARIO.md`.
+- **`index.html` / `portal/index.html` / `CLAUDE.md`**: bump de versión a `v3.2.45`.
+
 ## [2026-04-27] — v3.2.44
 
 ### Documentación — GLOSARIO.md (cierre de C10) + actualización formal del review
