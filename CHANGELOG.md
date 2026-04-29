@@ -2,6 +2,20 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.3.6
+
+### Sprint A fase 1 — Bloque C: 5 correcciones del revisor sobre PLAN-FASE2.md
+
+Aplicación de los 5 hallazgos del revisor sobre `v3.3.5`. No toca código del producto.
+
+- **Subpaso 2.4 (Alto)**: rediseñado para usar `app.use('/apex', express.static(...))` en lugar de `app.get('/apex', sendFile)`. El discovery usa rutas relativas a sus assets (`form.css`, `form.js`, `signal-detector.js`, `fonts/phosphor.css`); con `sendFile` el HTML cargaría pero los 4 assets darían 404. El static mount preserva la resolución de paths que tenía antes vía `express.static(projectRoot)`. Razón crítica de diseño documentada explícitamente.
+- **Subpaso 2.6 (Alto)**: convertido de placeholders a **DDL exacto y ejecutable**. 8 sub-bloques (2.6.a-2.6.h) con `CREATE TABLE` completo para las 5 tablas nuevas (`clientes`, `client_memberships`, `engagements`, `entrevistas`, `entregables`), `ALTER TABLE` para columnas transitorias y canónica, migración inicial de datos en SQL ejecutable según regla MD-21 (1 engagement por cliente identificado), y queries de validación post-migración. Mitigación obligatoria: `pg_dump` antes de ejecutar.
+- **Inventario 97→98 (Medio)**: corregido el conteo total. `git ls-files` real devuelve 98 archivos (no 97). Subtotal `images/` corregido a 23 (no 22) — error original venía de una entrada con tilde (`flujo-atención-paciente.html`) que aparecía duplicada en el conteo por escapado de caracteres. Tabla resumen 3.8 actualizada con totales exactos: 29 web/, 20 ARMC, 1 Hub, 1 GUIA (a docs/), 4 discovery, 4 phosphor, 32 STAY, 7 EXPORT = **98**.
+- **GUIA-NUEVAS-SECCIONES.md (Medio)**: destino corregido a `docs/GUIA-NUEVAS-SECCIONES.md` en lugar de `prisma-apex/clientes-publicados/`. Razón: `clientes-publicados/` se sirve públicamente bajo `/publicados/[cliente]/...`; la guía es **documentación interna** (cómo crear nuevas secciones de análisis), no contenido para el cliente. Su lugar correcto es `docs/`. Corregido en sección 3.2.1, en subpaso 2.2 y en la tabla resumen 3.8.
+- **Subpaso 2.5 (Bajo)**: aclarada la realidad del Hub respecto a Phosphor. El Hub carga Phosphor desde **CDN** (`https://unpkg.com/@phosphor-icons/web`); **solo el discovery** usa fuentes locales. La centralización en `/shared/fonts/phosphor/` afecta solo al discovery; el Hub no se toca en este subpaso. Validación post-2.5 actualizada: verificación positiva en discovery + verificación de regresión negativa en el Hub (que NO se rompió).
+
+Estado: bloque C reabierto y corregido. Pausa antes de revalidación del revisor.
+
 ## [2026-04-29] — v3.3.5
 
 ### Sprint A fase 1 — Bloque C: Plan archivo a archivo de Fase 2

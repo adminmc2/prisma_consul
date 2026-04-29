@@ -51,7 +51,7 @@ Definida en `MODELO-DOMINIO.md` §5. Resumen:
 
 ## 3. Clasificación archivo por archivo (tabla maestra)
 
-Las 97 entradas del `git ls-files` clasificadas. Categorías:
+Las **98** entradas del `git ls-files` clasificadas (verificado el 2026-04-29 sobre commit `7fac2c5` y posteriores). Categorías:
 
 - **MOVE** = se mueve a la ubicación nueva durante Fase 2.
 - **STAY** = se queda en su ubicación actual.
@@ -68,9 +68,9 @@ Las 97 entradas del `git ls-files` clasificadas. Categorías:
 | `privacidad.html` | MOVE | `web/privacidad.html` |
 | `css/styles.css` | MOVE | `web/css/styles.css` |
 | `js/main.js` | MOVE | `web/js/main.js` |
-| `images/` (22 archivos: logos, team, videos, hero) | MOVE | `web/images/` |
+| `images/` (23 archivos: logos, team, videos, hero) | MOVE | `web/images/` |
 
-**Total:** 28 archivos a `/web/`.
+**Total:** 29 archivos a `/web/` (4 HTMLs + 1 css + 1 js + 23 images).
 
 ### 3.2 Sistema interno → `/prisma-apex/`
 
@@ -79,7 +79,9 @@ Las 97 entradas del `git ls-files` clasificadas. Categorías:
 | Archivo actual | Categoría | Destino |
 |---|---|---|
 | `portal/index.html` | MOVE | `prisma-apex/index.html` |
-| `portal/analisis/GUIA-NUEVAS-SECCIONES.md` | MOVE | `prisma-apex/clientes-publicados/GUIA-NUEVAS-SECCIONES.md` |
+| `portal/analisis/GUIA-NUEVAS-SECCIONES.md` | MOVE | `docs/GUIA-NUEVAS-SECCIONES.md` (interna, NO bajo `/publicados`) |
+
+**Razón del destino:** `clientes-publicados/` se sirve públicamente bajo `/publicados/[cliente]/...`. La guía es **documentación interna** dirigida a operadores del proyecto (cómo crear nuevas secciones de análisis); no es contenido para el cliente. Su lugar correcto es `docs/`, junto al resto de documentación interna del repo.
 
 #### 3.2.2 Entregables ARMC publicados → `/prisma-apex/clientes-publicados/armc/`
 
@@ -121,7 +123,7 @@ Las 97 entradas del `git ls-files` clasificadas. Categorías:
 | `apex/fonts/Phosphor.woff2` | MOVE | `shared/fonts/phosphor/Phosphor.woff2` |
 | `apex/fonts/phosphor.css` | MOVE | `shared/fonts/phosphor/phosphor.css` |
 
-**Decisión sobre fuentes Phosphor:** se centralizan en `/shared/fonts/phosphor/`. Hoy solo las usa `/apex/`, pero `portal/index.html` también referencia íconos Phosphor (vía clases `ph ph-*`). Centralizar evita duplicación cuando el Hub se reorganice y permite reutilización futura por verticales nuevas. Las referencias `<link rel="stylesheet" href="fonts/phosphor.css">` en `apex/index.html` se actualizarán a la nueva ruta dentro del subpaso correspondiente.
+**Decisión sobre fuentes Phosphor:** hoy **el Hub usa Phosphor por CDN** (`portal/index.html` línea 28: `<script src="https://unpkg.com/@phosphor-icons/web"></script>`); **solo el discovery usa fuentes locales** vía `apex/fonts/phosphor.css`. La centralización en `/shared/fonts/phosphor/` se mantiene porque desacopla el discovery de su carpeta original (necesario para el subpaso 2.4) y deja la base lista para que verticales nuevas las consuman localmente sin depender de CDN externo. **No se cambia el Hub**: sigue usando CDN. El subpaso 2.5 actualiza solo las referencias del discovery.
 
 ### 3.3 Backend Express → `/server/` (sin cambios estructurales)
 
@@ -205,15 +207,15 @@ Las 97 entradas del `git ls-files` clasificadas. Categorías:
 
 | Categoría | Archivos | Destino |
 |---|---|---|
-| MOVE → `web/` | 28 | web pública |
-| MOVE → `prisma-apex/clientes-publicados/armc/` | 20 | entregables ARMC |
+| MOVE → `web/` | 29 | web pública (4 HTMLs + 1 css + 1 js + 23 images) |
+| MOVE → `prisma-apex/clientes-publicados/armc/` | 20 | entregables ARMC (1 index + 1 css + 8 diagramas + 5 diagnostico + 5 blueprint) |
 | MOVE → `prisma-apex/index.html` | 1 | Hub SPA |
-| MOVE → `prisma-apex/clientes-publicados/GUIA-NUEVAS-SECCIONES.md` | 1 | guía operativa |
+| MOVE → `docs/GUIA-NUEVAS-SECCIONES.md` | 1 | guía operativa interna (NO bajo `/publicados`) |
 | MOVE → `prisma-apex/core/discovery-engine/` | 4 | motor APEX |
-| MOVE → `shared/fonts/phosphor/` | 4 | fuentes compartidas |
-| STAY | 32 | backend, docs canónicos, configs |
-| EXPORT → `prisma-consulting` | 7 | scripts ARMC + validación catálogo |
-| **TOTAL** | **97** | |
+| MOVE → `shared/fonts/phosphor/` | 4 | fuentes locales del discovery |
+| STAY | 32 | 14 server + 9 docs canónicos raíz + 4 docs/ operativos + 2 configs + 2 packages + 1 .github |
+| EXPORT → `prisma-consulting` | 7 | 6 scripts ARMC + `VALIDACION-CATALOGO-ARMC.md` |
+| **TOTAL** | **98** | verificado contra `git ls-files | wc -l` |
 
 ---
 
@@ -253,7 +255,7 @@ Las 97 entradas del `git ls-files` clasificadas. Categorías:
 
 **Movimientos:**
 - `portal/analisis/armc/` → `prisma-apex/clientes-publicados/armc/` (20 archivos).
-- `portal/analisis/GUIA-NUEVAS-SECCIONES.md` → `prisma-apex/clientes-publicados/GUIA-NUEVAS-SECCIONES.md`.
+- `portal/analisis/GUIA-NUEVAS-SECCIONES.md` → `docs/GUIA-NUEVAS-SECCIONES.md` (interna, NO bajo `/publicados`).
 
 **Cambio de servidor (`server.js`):**
 - Añadir nuevo `express.static` montado en `/publicados`:
@@ -309,36 +311,61 @@ Las 97 entradas del `git ls-files` clasificadas. Categorías:
 
 ### Subpaso 2.4 — Mover `apex/` → `prisma-apex/core/discovery-engine/`
 
+**Razón crítica de diseño:** el discovery actual (`apex/index.html`) usa **rutas relativas** para sus assets:
+- `<link rel="stylesheet" href="fonts/phosphor.css">` (línea 31)
+- `<link rel="stylesheet" href="form.css">` (línea 34)
+- `<script src="signal-detector.js"></script>` (línea 1112)
+- `<script src="form.js"></script>` (línea 1113)
+
+Hoy funciona porque el repo entero se sirve por `express.static(projectRoot)` y los assets se resuelven relativos al HTML. Si en este subpaso usáramos `app.get('/apex', sendFile)`, el HTML cargaría pero los 4 assets darían 404. Por eso **NO se usa `sendFile` para `/apex`**; se usa **static mount** sobre la carpeta nueva.
+
 **Movimientos:**
 - `apex/index.html` → `prisma-apex/core/discovery-engine/index.html`.
 - `apex/form.css` → idem.
 - `apex/form.js` → idem.
 - `apex/signal-detector.js` → idem.
 
-**Cambio de servidor:**
-- Añadir handler explícito `/apex`:
-  ```javascript
-  app.get('/apex', (req, res) => {
-    res.sendFile(path.join(projectRoot, 'prisma-apex', 'core', 'discovery-engine', 'index.html'));
-  });
-  ```
-- (El antiguo serving por `extensions: ['html']` ya no aplica porque `web/` no contiene `apex.html`.)
+**Cambio de servidor — static mount (NO sendFile):**
+
+```javascript
+// Antes (eliminado):
+//   app.get('/apex', ...) ← NO usar; rompería los assets relativos
+
+// Después:
+app.use('/apex', express.static(
+  path.join(projectRoot, 'prisma-apex', 'core', 'discovery-engine'),
+  { index: 'index.html', extensions: ['html'] }
+));
+```
+
+Con `static` montado en `/apex`:
+- `prismaconsul.com/apex` (sin trailing slash) → resuelve `index.html` por `index: 'index.html'`.
+- `prismaconsul.com/apex/form.css` → resuelve `form.css` dentro de la carpeta.
+- `prismaconsul.com/apex/form.js` → resuelve `form.js`.
+- `prismaconsul.com/apex/signal-detector.js` → resuelve `signal-detector.js`.
+- `prismaconsul.com/apex/fonts/phosphor.css` → seguirá funcionando hasta el subpaso 2.5 (donde fonts se centraliza en `/shared/`).
 
 **Validación runtime obligatoria:**
-- `prismaconsul.com/apex` carga el formulario discovery.
-- El formulario completa el flujo (research-company, generate-questions, submit-form) idéntico.
+- `prismaconsul.com/apex` carga el formulario discovery (HTML + CSS + JS + fonts visibles).
+- En DevTools → Network: confirmar que `form.css`, `form.js`, `signal-detector.js`, `fonts/phosphor.css` responden 200, no 404.
+- El formulario completa el flujo (research-company → generate-questions → submit-form) idéntico.
 - Endpoints API responden con shapes intactas (`/api/research-company`, `/api/generate-questions`, `/api/submit-form`, `/api/groq-chat`, `/api/groq-whisper`).
 
-**Riesgo:** medio. El formulario APEX usa muchas referencias internas. Mitigación: mantener todos los archivos juntos en la carpeta nueva — no romper rutas relativas internas.
+**Riesgo:** medio. Si algún asset relativo no resuelve, el formulario aparece sin estilos o sin lógica. Mitigación: el static mount preserva exactamente la resolución de paths que tenía el `express.static(projectRoot)` original para esa carpeta.
 
-### Subpaso 2.5 — Centralizar fuentes Phosphor en `/shared/`
+### Subpaso 2.5 — Centralizar fuentes Phosphor del discovery en `/shared/`
+
+**Alcance:** afecta **solo al discovery**. El Hub no se toca en este subpaso porque ya usa Phosphor por CDN (`https://unpkg.com/@phosphor-icons/web`) — no depende de las fuentes locales que se mueven.
 
 **Movimientos:**
-- `apex/fonts/` → `shared/fonts/phosphor/` (4 archivos).
+- `apex/fonts/Phosphor.ttf` → `shared/fonts/phosphor/Phosphor.ttf`
+- `apex/fonts/Phosphor.woff` → `shared/fonts/phosphor/Phosphor.woff`
+- `apex/fonts/Phosphor.woff2` → `shared/fonts/phosphor/Phosphor.woff2`
+- `apex/fonts/phosphor.css` → `shared/fonts/phosphor/phosphor.css`
 
 **Cambios en frontend:**
-- `prisma-apex/core/discovery-engine/index.html`: actualizar `<link>` a `/shared/fonts/phosphor/phosphor.css`.
-- `prisma-apex/index.html` (Hub): si referenciaba `apex/fonts/...`, actualizar.
+- `prisma-apex/core/discovery-engine/index.html` línea 31: `<link rel="stylesheet" href="fonts/phosphor.css">` → `<link rel="stylesheet" href="/shared/fonts/phosphor/phosphor.css">`.
+- `prisma-apex/index.html` (Hub) **NO se toca**: sigue cargando Phosphor desde CDN.
 
 **Cambio de servidor:**
 - Añadir static para `/shared`:
@@ -347,46 +374,194 @@ Las 97 entradas del `git ls-files` clasificadas. Categorías:
   ```
 
 **Validación runtime obligatoria:**
-- Iconos Phosphor (clases `ph ph-*`) renderizan en el Hub y en el formulario discovery.
+- En el **discovery** (`prismaconsul.com/apex`): los iconos Phosphor (clases `ph ph-*`) renderizan correctamente. En DevTools → Network: confirmar que `/shared/fonts/phosphor/phosphor.css` y los archivos `.woff2`/`.woff`/`.ttf` responden 200.
+- En el **Hub** (`prismaconsul.com/hub`): los iconos siguen renderizando idéntico (NO debe haber cambio porque sigue usando CDN). Esta verificación es de **regresión negativa**: confirma que NO se rompió el Hub mientras se reorganizaban las fuentes del discovery.
 
-**Riesgo:** bajo. Si los iconos no aparecen, retroceder hasta encontrar la referencia rota.
+**Riesgo:** bajo. Si los iconos no aparecen en el discovery, la referencia `<link>` en su `index.html` quedó mal. Mitigación: verificar la ruta absoluta `/shared/fonts/phosphor/phosphor.css` exacta tras el cambio.
 
 ### Subpaso 2.6 — Migración aditiva de BD
 
-**Migraciones SQL** (sin destruir nada):
+**DDL exacto, ejecutable en este orden** (Neon SQL Editor o `psql`). Cada bloque es idempotente vía `IF NOT EXISTS` cuando aplica.
+
+#### 2.6.a — Tabla `clientes`
 
 ```sql
--- Cliente
-CREATE TABLE clientes (...)              -- según MODELO-DOMINIO.md §5.2
-INSERT INTO clientes (nombre, ...)
-SELECT DISTINCT empresa FROM portal_users WHERE empresa IS NOT NULL AND empresa != '';
+CREATE TABLE IF NOT EXISTS clientes (
+  id            SERIAL PRIMARY KEY,
+  nombre        TEXT NOT NULL,
+  nombre_corto  TEXT UNIQUE NOT NULL,
+  tipo_negocio  TEXT NOT NULL CHECK (tipo_negocio IN ('clinica', 'distribuidor')),
+  rfc           TEXT,
+  direccion     TEXT,
+  ciudad        TEXT,
+  cp            TEXT,
+  telefono      TEXT,
+  sector        TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
 
--- ClientMembership
-CREATE TABLE client_memberships (...)
--- Sincronización inicial desde role legacy
+CREATE INDEX IF NOT EXISTS idx_clientes_nombre_corto ON clientes(nombre_corto);
+```
 
--- Engagements
-CREATE TABLE engagements (...)
--- Migración en dos pasos según MODELO-DOMINIO.md §11.2
+#### 2.6.b — Tabla `client_memberships`
 
--- Entrevistas, Entregables (placeholders, sin datos iniciales)
-CREATE TABLE entrevistas (...)
-CREATE TABLE entregables (...)
+```sql
+CREATE TABLE IF NOT EXISTS client_memberships (
+  id          SERIAL PRIMARY KEY,
+  usuario_id  INTEGER NOT NULL REFERENCES portal_users(id) ON DELETE CASCADE,
+  cliente_id  INTEGER NOT NULL REFERENCES clientes(id) ON DELETE CASCADE,
+  role        TEXT NOT NULL CHECK (role IN ('prisma_admin', 'cliente_admin', 'cliente_user')),
+  created_at  TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (usuario_id, cliente_id)
+);
 
--- Columnas transitorias en portal_users
-ALTER TABLE portal_users ADD COLUMN cliente_id INT REFERENCES clientes(id);
-ALTER TABLE portal_users ADD COLUMN active_engagement_id INT REFERENCES engagements(id);
+CREATE INDEX IF NOT EXISTS idx_client_memberships_usuario ON client_memberships(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_client_memberships_cliente ON client_memberships(cliente_id);
+```
 
--- Columna canónica en portal_files
-ALTER TABLE portal_files ADD COLUMN engagement_id INT REFERENCES engagements(id);
+#### 2.6.c — Tabla `engagements`
+
+```sql
+CREATE TABLE IF NOT EXISTS engagements (
+  id              SERIAL PRIMARY KEY,
+  cliente_id      INTEGER NOT NULL REFERENCES clientes(id) ON DELETE CASCADE,
+  producto        TEXT NOT NULL DEFAULT 'apex' CHECK (producto IN ('apex')),
+  vertical        TEXT NOT NULL CHECK (vertical IN ('clinica-multi', 'clinica-personal', 'distribuidor')),
+  fase_legacy_id  INTEGER NOT NULL CHECK (fase_legacy_id BETWEEN 1 AND 4),
+  submission_id   TEXT REFERENCES apex_submissions(id) ON DELETE SET NULL,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  closed_at       TIMESTAMPTZ
+);
+
+CREATE INDEX IF NOT EXISTS idx_engagements_cliente ON engagements(cliente_id);
+CREATE INDEX IF NOT EXISTS idx_engagements_submission ON engagements(submission_id);
+```
+
+#### 2.6.d — Tabla `entrevistas`
+
+```sql
+CREATE TABLE IF NOT EXISTS entrevistas (
+  id                       SERIAL PRIMARY KEY,
+  engagement_id            INTEGER NOT NULL REFERENCES engagements(id) ON DELETE CASCADE,
+  fecha                    DATE,
+  participantes            TEXT,
+  link_drive_audio         TEXT,
+  path_transcripcion_repo  TEXT,
+  created_at               TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_entrevistas_engagement ON entrevistas(engagement_id);
+```
+
+#### 2.6.e — Tabla `entregables`
+
+```sql
+CREATE TABLE IF NOT EXISTS entregables (
+  id                SERIAL PRIMARY KEY,
+  engagement_id     INTEGER NOT NULL REFERENCES engagements(id) ON DELETE CASCADE,
+  tipo              TEXT NOT NULL,
+  plantilla_origen  TEXT,
+  path_servido      TEXT NOT NULL,
+  version           INTEGER DEFAULT 1,
+  publicado_en      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_entregables_engagement ON entregables(engagement_id);
+CREATE INDEX IF NOT EXISTS idx_entregables_path ON entregables(path_servido);
+```
+
+#### 2.6.f — Columnas transitorias en `portal_users` y canónica en `portal_files`
+
+```sql
+ALTER TABLE portal_users
+  ADD COLUMN IF NOT EXISTS cliente_id INTEGER REFERENCES clientes(id) ON DELETE SET NULL,
+  ADD COLUMN IF NOT EXISTS active_engagement_id INTEGER REFERENCES engagements(id) ON DELETE SET NULL;
+
+CREATE INDEX IF NOT EXISTS idx_portal_users_cliente ON portal_users(cliente_id);
+
+ALTER TABLE portal_files
+  ADD COLUMN IF NOT EXISTS engagement_id INTEGER REFERENCES engagements(id) ON DELETE SET NULL;
+
+CREATE INDEX IF NOT EXISTS idx_portal_files_engagement ON portal_files(engagement_id);
+```
+
+#### 2.6.g — Migración inicial de datos (regla `MD-21`: 1 engagement por cliente)
+
+```sql
+-- 1. Crear cliente ARMC desde el primer portal_user con empresa no vacía
+INSERT INTO clientes (nombre, nombre_corto, tipo_negocio, rfc, direccion, ciudad, cp, telefono, sector)
+SELECT
+  empresa, 'armc', 'clinica',
+  rfc, direccion, ciudad, cp, telefono, sector
+FROM portal_users
+WHERE empresa IS NOT NULL AND empresa != '' AND role = 'user'
+LIMIT 1
+ON CONFLICT (nombre_corto) DO NOTHING;
+
+-- 2. Asignar cliente_id a usuarios cliente_user (NO a admins)
+UPDATE portal_users SET cliente_id = (SELECT id FROM clientes WHERE nombre_corto = 'armc')
+WHERE role = 'user' AND empresa IS NOT NULL AND empresa != '';
+
+-- 3. Crear UN engagement por cliente identificado
+INSERT INTO engagements (cliente_id, producto, vertical, fase_legacy_id, submission_id)
+SELECT
+  c.id, 'apex',
+  CASE WHEN u.profile_type = 'clinica' THEN 'clinica-multi' ELSE 'distribuidor' END,
+  COALESCE(u.current_phase, 1),
+  u.apex_submission_id
+FROM clientes c
+JOIN portal_users u ON u.cliente_id = c.id AND u.role = 'user'
+WHERE NOT EXISTS (SELECT 1 FROM engagements WHERE cliente_id = c.id);
+
+-- 4. active_engagement_id solo para cliente_users (admins quedan NULL)
+UPDATE portal_users SET active_engagement_id = (
+  SELECT e.id FROM engagements e WHERE e.cliente_id = portal_users.cliente_id LIMIT 1
+)
+WHERE role = 'user' AND cliente_id IS NOT NULL;
+
+-- 5. ClientMemberships: prisma_admin para todos los admins en todos los clientes
+INSERT INTO client_memberships (usuario_id, cliente_id, role)
+SELECT u.id, c.id, 'prisma_admin'
+FROM portal_users u CROSS JOIN clientes c
+WHERE u.role = 'admin'
+ON CONFLICT (usuario_id, cliente_id) DO NOTHING;
+
+-- 6. ClientMemberships: cliente_user para cada usuario con cliente_id asignado
+INSERT INTO client_memberships (usuario_id, cliente_id, role)
+SELECT u.id, u.cliente_id, 'cliente_user'
+FROM portal_users u
+WHERE u.role = 'user' AND u.cliente_id IS NOT NULL
+ON CONFLICT (usuario_id, cliente_id) DO NOTHING;
+```
+
+#### 2.6.h — Validación post-migración (queries esperadas)
+
+```sql
+-- Esperado: 1 cliente
+SELECT COUNT(*) FROM clientes;
+
+-- Esperado: 1 engagement
+SELECT COUNT(*) FROM engagements;
+
+-- Esperado: 2 memberships (1 prisma_admin info@, 1 cliente_user armc@)
+SELECT u.email, c.nombre_corto, cm.role FROM client_memberships cm
+  JOIN portal_users u ON u.id = cm.usuario_id
+  JOIN clientes c ON c.id = cm.cliente_id;
+
+-- Esperado: armc@ con cliente_id y active_engagement_id no NULL; info@ con ambos NULL
+SELECT email, role, cliente_id, active_engagement_id FROM portal_users;
 ```
 
 **Validación runtime obligatoria:**
 - Tablas legacy (`portal_users`, `portal_files`, `portal_activity_log`, `apex_submissions`) siguen funcionando idéntico.
 - Login, upload de archivos, listado, actualización, panel de actividad — todos PASS.
 - Tablas nuevas accesibles vía consulta SQL pero **no** consumidas por código de Sprint A.
+- Las queries de validación 2.6.h devuelven los conteos esperados.
 
-**Riesgo:** alto si la migración rompe consultas existentes. Mitigación: estrictamente aditiva. Hacer `pg_dump` antes en Neon.
+**Riesgo:** alto si la migración rompe consultas existentes. Mitigación obligatoria:
+1. **`pg_dump` completo de Neon** antes de ejecutar 2.6.a.
+2. Ejecutar bloques en orden estricto (a → b → c → d → e → f → g → h).
+3. Si cualquier bloque falla, detener inmediatamente y restaurar desde dump.
 
 ### Subpaso 2.7 — Actualizar `domain-sync.js` (skeleton)
 
