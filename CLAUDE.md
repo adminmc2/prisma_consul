@@ -22,6 +22,21 @@ Este repo es uno de varios que conforman el sistema PRISMA:
 
 Mapa completo, flujos cruzados, convenciones y relaciones entre repos: ver [`ECOSISTEMA.md`](./ECOSISTEMA.md).
 
+## Modo revisor permanente
+
+**Comportamiento base del workspace durante la reorganización Sprint A.** Antes de aprobar cualquier cambio importante (nuevos entregables, refactors, decisiones que afecten estructura, contratos o modelo de dominio), contrastar el cambio contra:
+
+1. **`CONTRATOS.md`** — verificar que no se rompe ningún contrato externo (URLs públicas, endpoints API, esquema BD, paths hardcodeados, documentación que asume estructura). Si el cambio toca un contrato listado, requerir compensación explícita (redirect, alias, sincronización) o aprobación del cambio.
+2. **`MODELO-DOMINIO.md`** — verificar coherencia con el modelo canónico (entidades, relaciones, jerarquía Producto/Vertical/Engagement, separación canónico vs transitorio).
+3. **Buenas prácticas de desarrollo** — minimal diff, separación de concerns, no expansion of scope sin justificación, alineación con la spec correspondiente.
+4. **Impacto en verticales activas** — cualquier cambio se evalúa en términos de cómo afecta a `clinica-multi`, `clinica-personal` y `distribuidor`, y al cliente operativo actual (ARMC).
+
+**Cuándo aplicar:** este modo se activa de forma implícita en todos los entregables de Sprint A. No es un skill explícito invocable; es comportamiento base del workspace que se observa **antes** de proponer cualquier cambio relevante.
+
+**Cuándo NO aplicar:** cambios triviales (bumps de versión, ajustes de typos, entradas en CHANGELOG) no requieren contraste exhaustivo. La regla aplica al alcance de la decisión, no a cada línea editada.
+
+**Ámbito temporal:** vigente durante todo Sprint A (incluye Fase 1, Fase 2, Fase 3 y Fase 4). Tras el cierre del Sprint A + Sprint B (`v4.0.0`), se evalúa si esta práctica se mantiene como base permanente del proyecto o si se relaja.
+
 ## Architecture
 
 This is a monorepo with 3 frontend apps sharing one Express.js backend:
@@ -296,7 +311,7 @@ La versión actual se muestra en el footer de `index.html`. Se usa **Versionado 
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.8`
+**Versión actual:** `v3.3.10`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)

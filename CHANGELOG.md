@@ -2,6 +2,40 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.3.10
+
+### Sprint A fase 1 — Bloque D: Modo revisor permanente + Replicación Ecosistema en otros repos
+
+Cierre del bloque D de Fase 1, último entregable interno antes del cierre formal de Fase 1. No toca código del producto.
+
+- **`CLAUDE.md` (web-de-prisma)**: añadida nueva sección "Modo revisor permanente" justo después del "Ecosistema de repositorios". Comportamiento base del workspace durante Sprint A: antes de aprobar cualquier cambio importante, contrastar contra `CONTRATOS.md`, `MODELO-DOMINIO.md`, buenas prácticas y impacto en verticales activas. Vigente Fase 1+2+3+4; tras Sprint A+B se evalúa si se mantiene.
+- **`above-pharma/CLAUDE.md`**: replicada sección breve "Ecosistema de repositorios" + enlace al canónico `web-de-prisma/ECOSISTEMA.md`. Working tree limpio, **commit `a7f85c6` pusheado a `origin/main` directamente**.
+- **`apex-agents/CLAUDE.md`**, **`prisma-consulting/CLAUDE.md`**, **`prisma-server-ops/CLAUDE.md`**: replicada sección breve "Ecosistema de repositorios" en cada uno. **NO commiteados** porque los working trees de los 3 tienen trabajo en progreso del usuario (9, 2 y 4 archivos modificados respectivamente). La modificación queda como cambio adicional para que el usuario la integre con su WIP cuando decida, sin que el agente arrastre trabajo ajeno en un commit propio.
+
+Estado por repo:
+
+| Repo | Estado | Acción del usuario |
+|---|---|---|
+| `web-de-prisma` | ✅ commit + push (este) | ninguna |
+| `above-pharma` | ✅ commit `a7f85c6` + push a main | ninguna |
+| `apex-agents` | 🟡 modificación local lista (no commiteada) | revisar WIP local + integrar el cambio cuando decida commitear |
+| `prisma-consulting` | 🟡 idem | idem |
+| `prisma-server-ops` | 🟡 idem | idem |
+
+Bloque D operativamente completo: el modo revisor permanente activado en el repo principal, y la sección Ecosistema replicada en 4 de 4 repos hermanos (1 commiteada, 3 listas para que el usuario integre cuando vea su WIP).
+
+## [2026-04-29] — v3.3.9
+
+### Sprint A fase 1 — Bloque C PASS + sincronización del review vivo
+
+Aplicación del dictamen final del revisor sobre `v3.3.8`. No toca código del producto.
+
+- **`docs/PLAN-FASE2.md`:** aceptado como cierre válido del bloque C. La clasificación archivo por archivo, la secuencia de subpasos y el serving final de `/apex` quedan internamente coherentes y alineados con los canónicos aprobados.
+- **`REVIEW-PRISMA-APEX.md`:** estado global actualizado para reflejar `bloque C PASS`, reducción de abiertos al solo bloque D, y nueva entrada de bitácora autorizando el arranque de bloque D.
+- **Versionado visible:** bump documental a `v3.3.9` en `index.html`, `portal/index.html` y `CLAUDE.md`.
+
+**Veredicto:** bloque C `PASS`. Próximo entregable interno autorizado: **bloque D — modo revisor permanente en `CLAUDE.md` + replicación Ecosistema en los otros 4 repos**.
+
 ## [2026-04-29] — v3.3.8
 
 ### Sprint A fase 1 — Bloque C: coherencia interna de PLAN-FASE2.md sobre serving de /apex
