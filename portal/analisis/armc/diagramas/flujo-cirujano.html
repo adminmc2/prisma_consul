@@ -187,8 +187,9 @@
           <div class="dato-box"><strong>Gabriel hace prácticamente todos los procedimientos:</strong> "Trato de hacer la mayoría." Solo cuando está muy lleno, atrasado o ausente, Divani realiza procedimientos. <span class="source-tag">— Gabriel, Cirujano</span></div>
           <div class="dato-box"><strong>Pacientes piden médico específico:</strong> Algunos ya piden directamente con Divani, otros directamente con Gabriel. <span class="source-tag">— Gabriel, Cirujano</span></div>
           <div class="dato-box"><strong>Miércoles = contenido de redes sociales:</strong> Ese día Gabriel no hace procedimientos. Se dedica a crear contenido de redes sociales de la clínica. Divani y el equipo sí ven pacientes. <span class="source-tag">— Gabriel, Cirujano</span></div>
-          <div class="dato-box"><strong>Gabriel también da valoraciones — con costo:</strong> ~1-2 valoraciones cada 15 días. Las valoraciones normales (Maricela/Divani) son gratuitas. Carlos recibe la solicitud, informa del costo, procesa el pago, y separa en la agenda. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Gabriel también da valoraciones — con costo $1,950:</strong> ~1-2 valoraciones cada 15 días. Las valoraciones normales (Maricela/Divani) son gratuitas. Carlos recibe la solicitud, informa del costo, procesa el pago, y separa en la agenda. <strong>Variante C de la consulta de valoración</strong> confirmada por la CEO: cuando el paciente pide directamente a Gabush desde el inicio, Marisela y Divani no intervienen — Gabush hace la única valoración. <span class="source-tag">— Gabriel, Cirujano + CEO</span></div>
           <div class="dato-box"><strong>Actualización profesional — congresos internacionales:</strong> España, Corea, Brasil, Turquía. Último: Harvard — actualizaciones en tecnología láser, toxina botulínica, ácido hialurónico. Patrocinados por laboratorios. <span class="source-tag">— Gabriel, Cirujano</span></div>
+          <div class="dato-box"><strong>Procedimientos de Gabriel añadidos al catálogo oficial por la CEO:</strong> 2 hallazgos nuevos confirmados en la entrevista CEO 2026-04-15 — (1) <strong>lifting facial láser</strong> (distinto del endolifting), (2) <strong>aplicación de toxina botulínica en maseteros para bruxismo</strong>. Antes no aparecían en el catálogo oficial; ahora sí están listados. <span class="source-tag">— Gabriel, Cirujano + CEO</span></div>
         </div>
       </div>
 
@@ -248,6 +249,7 @@
           <div class="dato-box"><strong>Seguimiento activo solo en tricología y manual:</strong> Elián es el único rol con seguimiento activo pero 100% manual: anota fechas en recetas, copy-paste recordatorios por WhatsApp. Principal carga operativa. Aun así, cancelaciones frecuentes. Ningún rol en ARMC tiene sistema de seguimiento automatizado. <span class="source-tag">— Elián, Tricología</span></div>
           <div class="dato-box"><strong>Roles que más necesitan checklist:</strong> Carlos (atención al paciente) y Divani (primer ayudante) — los que Gabriel considera que requieren más guía detallada paso a paso. <span class="source-tag">— Gabriel, Cirujano</span></div>
           <div class="dato-box"><strong>Protocolo revisión quirúrgica:</strong> Revisión al 3er día como regla universal. Paciente que no viene: nota de inasistencia + mensaje pidiendo que agende. <span class="source-tag">— Gabriel, Cirujano · Óscar, Enfermero</span></div>
+          <div class="dato-box"><strong>Masajes post-quirúrgicos se cobran aparte:</strong> Confirmado por la CEO — los masajes de drenaje linfático y las terapias de ultrasonido posteriores a la cirugía son procedimientos cobrados por separado, NO incluidos en el precio de la cirugía. Los realiza Brisa (cosmiatra). <span class="source-tag">— Gabriel, Cirujano + CEO</span></div>
           <div class="dato-box"><strong>Volumen estimado de la clínica:</strong> ~10-12 pacientes/día combinados (procedimientos + consultas + revisiones). Divani hace 6-7 en día fuerte (~4 inyectables + ~2 lipo láser). Tasa valoración→procedimiento ~80%. Desglose exacto Gabriel vs Divani sigue sin dato directo. <span class="source-tag">— Óscar, Enfermero · Divani, Primer Ayudante</span></div>
         </div>
       </div>
@@ -334,9 +336,9 @@ flowchart TD
         C4 -->|"Sí"| V1
     end
 
-    subgraph VAL["VALORACIÓN — $500 MXN, ~30 min"]
+    subgraph VAL["VALORACIÓN — $1,950 MXN, ~30 min"]
         V1["Paciente llega — WhatsApp anuncia"]:::entry
-        V1 --> V2["Carlos cobra valoración"]
+        V1 --> V2["Carlos cobra valoración ($1,950)"]
         V2 --> V3["Gabriel evalúa + propone plan"]
         V3 --> V4{"Mismo<br/>día"}:::decision
         V4 -->|"Casos menores"| PP1
@@ -402,12 +404,22 @@ flowchart TD
       <h2><i class="ph ph-question"></i> Vacíos de información</h2>
 
       <details>
-        <summary style="border-left-color: #4CAF50; color: #4CAF50;">Vacíos resueltos por otras entrevistas (1)</summary>
+        <summary style="border-left-color: #4CAF50; color: #4CAF50;">Vacíos resueltos por otras entrevistas (3)</summary>
         <div class="details-content">
           <div class="resolved-box">
             <strong><i class="ph ph-check-circle"></i> Papel de la hermana de Gabriel en la clínica</strong>
             — Resuelto: Elián es hermana de Gabriel, maneja tricología/capilar de forma independiente. No hay servicios complementarios entre capilar y cirugía. Dra. Elián Cabrera Narváez, 8 meses en la clínica, 40-50 pacientes activos, operación unipersonal sin respaldo. También lidera consulta de control de peso (tirzepatida).
             <span class="source-tag">— Resuelto por Elián Cabrera Narváez, Tricología</span>
+          </div>
+          <div class="resolved-box">
+            <strong><i class="ph ph-check-circle"></i> Precio definitivo de la valoración con Gabush</strong>
+            — Resuelto: $1,950 (Variante C de la consulta de valoración). Aplica cuando el paciente lo pide directamente desde el inicio. Marisela y Divani no intervienen. Antes el flujo registraba $500 — corregido tras la entrevista CEO.
+            <span class="source-tag">— Resuelto por Dra. Marisela Narváez, CEO/Dirección</span>
+          </div>
+          <div class="resolved-box">
+            <strong><i class="ph ph-check-circle"></i> Procedimientos de Gabriel oficialmente añadidos al catálogo</strong>
+            — Resuelto: lifting facial láser (distinto del endolifting) y aplicación de toxina botulínica en maseteros para bruxismo. Ambos eran procedimientos activos que Gabriel realizaba pero no aparecían en el catálogo oficial. La CEO los confirmó como añadidos.
+            <span class="source-tag">— Resuelto por Dra. Marisela Narváez, CEO/Dirección</span>
           </div>
         </div>
       </details>
@@ -420,7 +432,7 @@ flowchart TD
 
     <section class="diagram-section">
       <h2><i class="ph ph-arrows-left-right"></i> Puntos de Handoff</h2>
-      <div class="dato-box"><strong>Carlos → Gabriel:</strong> Carlos recibe solicitud del paciente que quiere valoración con Gabriel, informa del costo ($500 MXN), procesa pago, y separa en la agenda el día de la valoración.</div>
+      <div class="dato-box"><strong>Carlos → Gabriel:</strong> Carlos recibe solicitud del paciente que quiere valoración con Gabriel, informa del costo ($1,950 MXN — Variante C confirmada por la CEO), procesa pago, y separa en la agenda el día de la valoración.</div>
 
       <div class="dato-box"><strong>Equipo → Gabriel:</strong> Cualquiera de los tres (Divani, Óscar o Carlos) que tenga la información le da al cirujano un informe verbal del paciente. Gabriel no consulta la HC. Dependencia verbal bidireccional: Divani tampoco lee la HC en el flujo inverso. Óscar prepara material de memoria sin verificación — confianza total sin red de seguridad documental.</div>
 
@@ -496,6 +508,12 @@ flowchart TD
         <strong style="color: #ff4444;">Área capilar aislada — reproduce problemas sistémicos</strong>
         <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Visión de integración declarada pero no materializada. Elián opera como clínica dentro de la clínica: procesos, proveedores, inventario separados. 40-50 pacientes manejados por una sola persona. Reproduce mismos problemas: dispositivos personales, seguimiento manual, cero software. Si Elián se ausenta, el área se detiene.</p>
         <span class="source-tag">— Gabriel, Cirujano · Elián, Tricología · Marisela, CEO</span>
+      </div>
+
+      <div class="dato-box" style="border-left-color: #ff4444;">
+        <strong style="color: #ff4444;">Catálogo oficial desactualizado respecto a la práctica de Gabriel</strong>
+        <p style="margin: 0.3rem 0 0; color: #A1B8F2;">Hasta la entrevista CEO 2026-04-15, lifting facial láser y aplicación de toxina botulínica en maseteros para bruxismo eran procedimientos activos realizados por Gabriel pero no aparecían en el catálogo oficial. La CEO los confirmó como añadidos. Síntoma de un catálogo gestionado de forma manual sin reflejar la práctica clínica real.</p>
+        <span class="source-tag">— Gabriel, Cirujano · Marisela, CEO</span>
       </div>
     </section>
 
