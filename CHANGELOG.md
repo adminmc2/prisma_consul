@@ -2,6 +2,23 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.3.1
+
+### Sprint A fase 1 — Bloque B ejecutado: smoke tests del slice del registro de rutas
+
+Ejecución del checklist `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md` por el ejecutor agente sobre el commit `ff8036b` (`v3.3.0`). No toca código del producto.
+
+- **`docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`** (NUEVO): reporte completo del bloque B con la matriz de 13 filas más probe técnica del contrato `warn + null + optional chaining + guardia en viewers`.
+  - **6/6 tests local** PASS. Servidor levantado en `localhost:3099`; los 3 entregables ARMC (`flujo-cirujano.html`, `resumen-ejecutivo.html`, `modelo-datos.html`) responden HTTP 200 con tamaños y títulos correctos. Vista cliente y admin equivalentes a nivel de URL del iframe (mismo `ANALISIS_SECTION_MAP`).
+  - **Externos con credenciales: N/A explícito** y justificado (slice no toca Neon, Drive, SMTP, Tavily, Groq, Whisper).
+  - **6/6 tests dev/VPS** PASS con observación: dev sirve `v3.2.47` (no `v3.3.0`). Para ARMC el comportamiento es idéntico (registry + optional chaining presentes); falta el commit `4d13851` con las 2 guardias defensivas en viewers — no bloquea la operativa.
+  - **Probe técnica `warn + null`: 9/9 sub-tests PASS** ejecutados en Node aislado replicando el slice exacto del HTML. Confirma contrato end-to-end.
+  - **Errores encontrados:** ninguno.
+  - **Veredicto:** PASS con observación operativa documentada.
+  - **Limitaciones del entorno del ejecutor** declaradas explícitamente: no hay navegador real con DevTools disponible; la validación visual humana del iframe queda fuera de alcance del agente. La evidencia se construye via HTTP+probe JS, que es estructuralmente equivalente para el caso ARMC actual pero no sustituye la confirmación visual humana si el revisor lo considera requisito.
+
+Recomendación al revisor: si acepta la equivalencia HTTP+probe JS, el siguiente entregable interno es el bloque C (clasificación archivo por archivo + plan archivo a archivo de Fase 2). Si exige inspección visual con DevTools, esos 12 tests se recategorizan como `BLOCKED — visual humana pendiente` y la probe técnica queda como única evidencia ejecutable.
+
 ## [2026-04-29] — v3.3.0
 
 ### Sprint A fase 1 — bump MINOR (separación de track) + incorporación de docs/scripts
