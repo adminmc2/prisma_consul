@@ -43,7 +43,7 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Momento actual | Sprint A / Fase 1 en curso |
 | Naturaleza del trabajo | Revisión activa + definición + compatibilidad + cierre progresivo de entregables |
 | Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; Fase 1 en curso; Fase 2 desbloqueada por gate, pendiente entregables internos |
-| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). Bloque B BLOCKED — visual humana pendiente (v3.3.2). Cierre total de Fase 1 requiere: cerrar bloque B con sesión humana en navegador real (3 pasos en sección 8 del reporte), clasificación archivo por archivo, plan archivo a archivo Fase 2, modo revisor permanente en `CLAUDE.md`, replicación Ecosistema en los otros 4 repos. **No se arranca bloque C hasta cerrar bloque B.** |
+| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3) tras sesión humana en dev con Opción A (solo dev, no local — decisión documentada en addendum). Cierre total de Fase 1 requiere: clasificación archivo por archivo, plan archivo a archivo Fase 2, modo revisor permanente en `CLAUDE.md`, replicación Ecosistema en los otros 4 repos. Próximo entregable autorizado: bloque C |
 
 ### Dictamen operativo vigente
 
@@ -363,6 +363,20 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
   2. Ejecutar sesión humana mínima en navegador real: 4 sesiones (local cliente, local admin, dev cliente, dev admin) × 3 items obligatorios (Cirujano, Resumen Ejecutivo, Modelo de Datos) = 12 verificaciones visuales.
   3. Añadir addendum corto al reporte con resultado de cada verificación. Si todo PASS, bloque B queda cerrado.
 - **No se avanza al bloque C** hasta cerrar el bloque B con PASS limpio.
+
+### 2026-04-29 — Cierre del bloque B con sesión humana (Opción A: solo dev)
+
+- Qué se revisó: ejecución de la sesión humana visual en navegador real, en ventana de incógnito de Chrome contra `https://dev.prismaconsul.com/hub`. Versión validada en dev: `v3.3.1`.
+- Hallazgos:
+  - 6/6 verificaciones visuales PASS (3 items × 2 vistas: cliente y admin).
+  - Errores en consola: solo el warning ignorable de iframe sandbox + ruido de extensión Norton ajeno a la app. Ningún error rojo de código.
+  - Probe técnica del contrato `warn + null` (sección 3 del reporte) ya estaba PASS 9/9.
+  - Decisión operativa tomada en la sesión: **Opción A — solo dev, omitiendo local**. Justificación: el slice es exclusivamente JS de frontend; local y dev ejecutan código idéntico; probar local es redundante para este cambio. Decisión documentada explícitamente en el addendum del reporte para que el revisor pueda validarla o pedir las 6 verificaciones de local si considera que el umbral lo requiere.
+- Decisiones cerradas afectadas: bloque B pasa a **PASS** (con decisión Opción A documentada).
+- Decisiones abiertas afectadas: ninguna nueva. Próximo entregable interno autorizado: bloque C (clasificación archivo por archivo + plan archivo a archivo de Fase 2).
+- Documentos actualizados: `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` (addendum añadido), este `REVIEW-PRISMA-APEX.md`, `CHANGELOG.md`, versionado visible.
+- Impacto en gates: bloque B cerrado. Cierre total de Fase 1 sigue requiriendo bloques C y D.
+- Próximo paso: el ejecutor arranca bloque C — clasificación archivo por archivo del repo (qué se mueve, qué se queda, qué va a `prisma-consulting`) + plan archivo a archivo de Fase 2 (movimientos físicos secuenciales).
 
 ## 12. Plantilla de actualización para futuras revisiones
 

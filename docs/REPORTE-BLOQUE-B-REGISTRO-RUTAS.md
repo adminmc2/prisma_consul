@@ -181,3 +181,57 @@ Tras el addendum, el bloque B queda cerrado. **No se reabre el slice técnico.**
 ---
 
 **Fin del reporte (versión recategorizada).**
+
+---
+
+## Addendum — sesión visual humana
+
+**Fecha:** 2026-04-29
+**Operador:** usuario humano (Mandoc2) en sesión guiada por agente Claude
+**Entorno usado:** ventana de incógnito de Chrome contra `https://dev.prismaconsul.com/hub`
+**Versión validada:** `v3.3.1` desplegado en dev (verificado vía curl antes de la sesión)
+
+### Decisión operativa tomada en la sesión
+
+Tras consulta sobre alcance, se acordó la **Opción A — solo dev, omitiendo local**. Justificación: el cambio del slice (capa de registro de rutas) es exclusivamente JavaScript de frontend; no toca servidor, infraestructura, red ni rutas Express. La diferencia entre local y dev para este cambio concreto es nula a nivel del código que se ejecuta. Probar dev cubre el entorno real que ven los clientes. Probar local sería redundante para este slice. **Esta decisión reduce el alcance del addendum de 12 a 6 verificaciones**, y se documenta explícitamente para que el revisor pueda validarla o pedir las 6 restantes (local) si considera que el umbral del checklist requiere los dos entornos.
+
+### Resultados — Sesión "Dev cliente" (login `armc@prismaconsul.com`)
+
+| Item | Resultado | Observación |
+|---|---|---|
+| Roles → Cirujano | ✅ PASS | iframe carga; consola solo muestra warning ignorable de iframe sandbox |
+| Diagnóstico → Resumen Ejecutivo | ✅ PASS | idem |
+| Blueprint → Modelo de Datos | ✅ PASS | idem |
+
+### Resultados — Sesión "Dev admin" (login `info@prismaconsul.com`)
+
+| Item | Resultado | Observación |
+|---|---|---|
+| Roles → Cirujano | ✅ PASS | iframe carga; consola solo muestra warning ignorable + ruido de extensión Norton (no relacionado con la app) |
+| Diagnóstico → Resumen Ejecutivo | ✅ PASS | idem |
+| Blueprint → Modelo de Datos | ✅ PASS | idem |
+
+### Errores observados en consola que **no** son de la aplicación
+
+- `An iframe which has both allow-scripts and allow-same-origin for its sandbox attribute can escape its sandboxing` — warning informativo conocido, presente desde antes del slice.
+- Errores `chrome-extension://...` y `nortoncdn.com favicon 404` — del gestor de contraseñas Norton instalado en Chrome. Se reproduce en cualquier página y no procede del código del Hub.
+
+### Errores observados en consola que **sí** son de la aplicación
+
+Ninguno relacionado con el slice. Se observó un `401` puntual en `/api/portal-apex-results` durante una sesión inicial fallida antes del incógnito; se resolvió al limpiar sesión y volver a entrar. No tiene relación con la capa de registro de rutas.
+
+### Veredicto del addendum
+
+**Bloque B: PASS** (con la decisión de alcance Opción A documentada arriba).
+
+- 6/6 verificaciones visuales en dev: PASS.
+- Probe técnica `warn + null + optional chaining + guardia en viewers`: 9/9 PASS (sección 3 del reporte original).
+- Bloque externos con credenciales: N/A explícito (aceptado por revisor).
+
+### Implicación para el cierre total de Fase 1
+
+El slice de la capa de registro de rutas queda validado en runtime. **El siguiente entregable interno autorizado es el bloque C** (clasificación archivo por archivo + plan archivo a archivo de Fase 2), salvo que el revisor solicite ampliar la validación visual al entorno local.
+
+---
+
+**Fin del addendum.**

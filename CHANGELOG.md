@@ -2,6 +2,23 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.3.3
+
+### Sprint A fase 1 — Bloque B PASS (sesión humana visual completada)
+
+Cierre del bloque B con sesión humana en navegador real, según el plan de 3 pasos acordado en v3.3.2. No toca código del producto.
+
+- **Sesión humana ejecutada:** ventana de incógnito de Chrome contra `https://dev.prismaconsul.com/hub`. Versión validada: `v3.3.1`.
+- **Decisión operativa tomada en la sesión:** **Opción A — solo dev, omitiendo local**. Justificación documentada en el addendum: el slice es exclusivamente JavaScript de frontend; local y dev ejecutan código idéntico para este cambio; probar local sería redundante. Reduce el alcance del addendum de 12 a 6 verificaciones. Si el revisor considera que el umbral del checklist requiere los dos entornos, las 6 verificaciones de local pueden añadirse como complemento.
+- **Resultado:** 6/6 verificaciones visuales PASS.
+  - Dev cliente (`armc@prismaconsul.com`): Cirujano + Resumen Ejecutivo + Modelo de Datos → todos PASS.
+  - Dev admin (`info@prismaconsul.com`): Cirujano + Resumen Ejecutivo + Modelo de Datos → todos PASS.
+  - Errores en consola: solo el warning ignorable de iframe sandbox + ruido de extensión Norton ajeno a la app.
+- **`docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`:** añadida sección "Addendum — sesión visual humana" con fecha, operador, decisión de alcance, resultados por sesión, errores observados (clasificados entre app vs no-app), y veredicto final. No se rehace el reporte original.
+- **`REVIEW-PRISMA-APEX.md`:** estado global actualizado a "Bloque B PASS"; bitácora con nueva entrada documentando el cierre y autorizando el bloque C como próximo entregable interno.
+
+**Veredicto: Bloque B PASS** (con decisión Opción A documentada). Próximo entregable interno autorizado: **bloque C — clasificación archivo por archivo + plan archivo a archivo de Fase 2.**
+
 ## [2026-04-29] — v3.3.2
 
 ### Sprint A fase 1 — Bloque B recategorizado a BLOCKED + dev desplegado al día
