@@ -2,6 +2,19 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.3.11
+
+### Análisis ARMC — Flujo Primer Ayudante (Divani) post-entrevista CEO
+
+Quinto rol revisado a la luz de la entrevista CEO 2026-04-15. Divani es un rol moderadamente afectado: la CEO lo confirma como segundo punto de la Variante A de valoración y revela un solapamiento con Dra. Elián por el manejo de obesidad/tirzepatida. Cambios in-place dentro de secciones existentes — sin cambios estructurales.
+
+#### `portal/analisis/armc/diagramas/flujo-primer-ayudante.html` (4 ediciones)
+
+- **Slide "Valoraciones"**, entrada "Cuándo hace valoraciones": ampliada con confirmación CEO de la Variante A (Marisela o Divani, gratuita). Aclarado que las Variantes B (pre-cirugía con especialista externo Figueroa/Vargas/Ducón) y C (vía directa con Gabush $1,950) no involucran a Divani.
+- **Slide "Procedimientos"**, entrada "Tratamiento para bajar de peso": ampliada con confirmación CEO de que el servicio de manejo de obesidad lo lidera la Dra. Elián. Marcado solapamiento Divani/Elián sin reparto documentado — pendiente aclarar quién atiende cuándo.
+- **Sección "Vacíos de información"**, `<details>` "Vacíos resueltos por otras entrevistas": de 2 → 5 entradas. Añadidas 3 resueltas por la CEO: (a) Variante A confirmada, (b) manejo de obesidad como servicio activo con PNO formal pendiente (lidera Elián), (c) procedimientos nuevos del catálogo (lifting facial láser, bruxismo) que realiza Gabriel y no afectan a Divani.
+- **Sección "Fricciones identificadas"**: añadidas 2 fricciones nuevas — (a) solapamiento Divani/Elián en manejo de obesidad sin protocolo formal (pacientes pueden recibir tirzepatida sin trazabilidad de quién indicó la dosis), (b) tirzepatida y manejo de obesidad activos sin PNO formal redactado (servicio sin documentación regulatoria estandarizada).
+
 ## [2026-04-29] — v3.3.10
 
 ### Sprint A fase 1 — Bloque D: Modo revisor permanente + Replicación Ecosistema en otros repos
