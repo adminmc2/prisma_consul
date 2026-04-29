@@ -2,6 +2,17 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-28] — v3.2.49
+
+### Sprint A fase 1 — CONTRATOS.md: residual de alineación canónica
+
+Cierre del último residual señalado por el revisor sobre v3.2.48: dos pasajes de `CONTRATOS.md` seguían contradiciendo a CT-7 (ya factual) describiendo la capa de registro como trabajo pendiente. No toca código del producto.
+
+- **`CONTRATOS.md` §6.1 ("Estado")**: cambiado de "estas constantes **deben reemplazarse**" (futuro) a "estas constantes **fueron reemplazadas** en v3.2.46-48". Bloque de "Forma esperada tras refactor" sustituido por "Forma actual implementada", reflejando el código real (`ANALISIS_REGISTRY` síncrono, `getAnalysisPaths` con warn+null, optional chaining en consumers, guardia en viewers) en lugar del placeholder hipotético `await getAnalysisRegistry({...})` que nunca se implementó así.
+- **`CONTRATOS.md` §14.2 ("Entregables restantes de Fase 1")**: marcados como ✅ los entregables ya cerrados (C10 GLOSARIO.md en v3.2.44; capa de registro de rutas en v3.2.46-48). Bloque B (smoke tests) añadido como entregable abierto siguiente. "Nota operativa" final reformulada en pasado: la capa de registro era prerrequisito técnico, ya está implementada, smoke tests confirmarán comportamiento idéntico tras refactor.
+
+Estado: bloque A literalmente cerrado. CONTRATOS.md sin contradicciones internas. Pausa antes de bloque B (smoke tests).
+
 ## [2026-04-28] — v3.2.48
 
 ### Sprint A fase 1 — Capa de registro: cierre del fleco de degradación + alineación canónicos

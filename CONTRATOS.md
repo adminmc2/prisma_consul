@@ -485,17 +485,28 @@ Tres constantes JavaScript declaradas como variables `const` en `portal/index.ht
 
 **Detección:** búsqueda exhaustiva con `grep -rn "portal/analisis/armc"` confirma que estas 3 constantes son las únicas referencias hardcodeadas en el frontend. Otras referencias en `portal/analisis/GUIA-NUEVAS-SECCIONES.md` son documentación (sección 7).
 
-**Estado:** estas constantes **deben reemplazarse** por consultas a la **capa de registro de rutas** (entregable propio de fase 1, próximo). Esto desacopla la SPA del path físico antes del movimiento de archivos en fase 2.
+**Estado:** estas constantes **fueron reemplazadas** por consultas a la **capa de registro de rutas** en v3.2.46-48 (ver `REGISTRO-RUTAS.md`). El refactor desacopló la SPA del path físico antes del movimiento de archivos previsto para fase 2.
 
-**Forma esperada tras refactor:**
+**Forma actual implementada:**
 ```javascript
-const paths = await getAnalysisRegistry({ cliente: 'armc' });
-const diagramasBase   = paths.diagramas;     // '/publicados/armc/diagramas/'
-const diagnosticoBase = paths.diagnostico;
-const blueprintBase   = paths.blueprint;
+const ANALISIS_REGISTRY = {
+  armc: {
+    diagramas:   '/portal/analisis/armc/diagramas/',
+    diagnostico: '/portal/analisis/armc/diagnostico/',
+    blueprint:   '/portal/analisis/armc/blueprint/'
+  }
+};
+function getAnalysisPaths(cliente) {
+  const entry = ANALISIS_REGISTRY[cliente];
+  if (!entry) { console.warn(`getAnalysisPaths: cliente "${cliente}" no registrado`); return null; }
+  return entry;
+}
+const _armcPaths = getAnalysisPaths('armc');
+// consumers: _armcPaths?.diagramas, _armcPaths?.diagnostico, _armcPaths?.blueprint
+// viewers con guardia: if (!section || !section.path) return;
 ```
 
-El registro inicial puede ser un objeto JSON literal embebido en el frontend; si crece, evoluciona a tabla/endpoint.
+El registro es síncrono y embebido en el frontend (objeto JS literal en `portal/index.html`). Si crece, evoluciona a tabla/endpoint en sprints posteriores.
 
 ### 6.2 Otros paths
 
@@ -752,14 +763,15 @@ Cuando el revisor confirme C09 → **Fase 2 desbloqueada**.
 
 Estos entregables se completan en paralelo a Fase 2 o antes del cierre total de Fase 1; **no son prerrequisito de Fase 2**:
 
-- 🔲 **C10** — `GLOSARIO.md` (absorción del vocabulario canónico).
-- 🔲 Capa de registro de rutas (especificación + implementación) — refactor frontend mínimo que desacopla la SPA de los paths físicos.
+- ✅ **C10** — `GLOSARIO.md` (absorción del vocabulario canónico). Cerrado en v3.2.44.
+- ✅ Capa de registro de rutas (especificación + implementación) — `REGISTRO-RUTAS.md` + refactor en `portal/index.html`. Cerrada en v3.2.46-48 (spec, impl, optional chaining + guardia en viewers, alineación canónica).
+- 🔲 Smoke tests sobre el slice del registro (bloque B): entregable mixto, checklist + primera ejecución, separado en 3 bloques (locales, externos con credenciales — N/A para este slice, dev/VPS).
 - 🔲 Clasificación archivo por archivo (qué se mueve, qué se queda, qué va a `prisma-consulting`).
 - 🔲 Plan archivo a archivo de Fase 2 — aprobado por usuario antes de movimientos físicos.
 - 🔲 Modo revisor permanente en `CLAUDE.md`.
 - 🔲 Replicación de sección Ecosistema en `CLAUDE.md` de los otros repos del ecosistema.
 
-**Nota operativa:** la capa de registro de rutas, aunque no bloquee el gate formal de Fase 2 según el review, **sí debe estar lista antes de mover físicamente `portal/analisis/armc/` en Fase 2** (si no, la SPA se rompe — sección 6.1 de este documento). Es prerrequisito técnico de un sub-paso de Fase 2, no del gate completo.
+**Nota operativa:** la capa de registro de rutas, ya implementada, era prerrequisito técnico para mover físicamente `portal/analisis/armc/` en Fase 2 sin romper la SPA. Con la capa lista, el movimiento físico se vuelve seguro. Smoke tests sobre el slice (bloque B) confirmarán que el comportamiento de ARMC sigue idéntico tras el refactor.
 
 ---
 
