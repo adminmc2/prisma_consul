@@ -2,6 +2,30 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.2.46
+
+### Análisis ARMC — Flujo Cirujano (Gabriel) post-entrevista CEO
+
+Publicación a producción de la actualización del flujo del cirujano a la luz de la entrevista CEO 2026-04-15. Cambios in-place dentro de secciones existentes — sin secciones nuevas ni cambios estructurales. No incluye trabajo de reorganización Sprint A (CONTRATOS, MODELO-DOMINIO, ECOSISTEMA, GLOSARIO, REGISTRO-RUTAS, REVIEW-PRISMA-APEX) que sigue solo en `dev`.
+
+#### `portal/analisis/armc/diagramas/flujo-cirujano.html`
+
+- **Sección "Datos del cirujano"**: actualizada la entrada sobre valoraciones con Gabriel — costo confirmado en `$1,950` (antes sin precio explícito). Añadida la **variante C de la consulta de valoración** confirmada por la CEO: cuando el paciente pide directamente a Gabush desde el inicio, Marisela y Divani no intervienen — Gabush hace la única valoración.
+- **Sección "Datos del cirujano"**: añadida entrada nueva sobre **2 procedimientos de Gabriel añadidos al catálogo oficial** por la CEO 2026-04-15: (1) lifting facial láser (distinto del endolifting), (2) aplicación de toxina botulínica en maseteros para bruxismo. Antes no aparecían en el catálogo oficial.
+- **Sección "Otros datos relevantes"**: añadida entrada sobre **masajes post-quirúrgicos cobrados aparte** — confirmado por la CEO que los masajes de drenaje linfático y las terapias de ultrasonido posteriores a la cirugía son procedimientos cobrados por separado, NO incluidos en el precio de la cirugía. Los realiza Brisa (cosmiatra).
+- **Diagrama Mermaid (subgraph VALORACIÓN)**: actualizado el coste mostrado de `$500 MXN` a `$1,950 MXN`, alineado con la confirmación de la CEO sobre el costo real de la valoración con Gabush.
+
+## [2026-04-29] — v3.2.51
+
+### Sprint A fase 1 — definición operativa del bloque B del registro de rutas
+
+Con el bloque A ya cerrado por revisión, esta iteración convierte el bloque B en un entregable ejecutable por el otro agente. No cambia lógica del producto; define el checklist, las evidencias obligatorias y la forma exacta de reportar la smoke test del slice.
+
+- **`docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md`** (NUEVO): checklist operativo del bloque B. Fija alcance, definición de hecho, prerrequisitos, muestra mínima, ejecución por bloques (local, externos con credenciales `N/A`, dev/VPS), probe técnica opcional de `warn + null`, y matriz de reporte obligatoria.
+- **`REVIEW-PRISMA-APEX.md`**: actualizado para dejar explícito que la base operativa del bloque B ya está definida y que la ejecución sigue pendiente. Añadida entrada de bitácora para separar con claridad "bloque B definido" de "bloque B ejecutado".
+
+Estado: checklist del bloque B definido. La siguiente iteración ya no es de definición, sino de ejecución y evidencia.
+
 ## [2026-04-27] — v3.2.45
 
 ### Análisis ARMC — Flujo Atención al Paciente (Carlos) post-entrevista CEO + limpieza VALIDACION-CATALOGO
