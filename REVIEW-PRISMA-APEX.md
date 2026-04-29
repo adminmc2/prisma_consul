@@ -43,17 +43,18 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Momento actual | Sprint A / Fase 1 en curso |
 | Naturaleza del trabajo | Revisión activa + definición + compatibilidad + cierre progresivo de entregables |
 | Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; Fase 1 en curso; Fase 2 desbloqueada por gate, pendiente entregables internos |
-| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3) tras sesión humana en dev con Opción A (solo dev, no local — decisión documentada en addendum). Cierre total de Fase 1 requiere: clasificación archivo por archivo, plan archivo a archivo Fase 2, modo revisor permanente en `CLAUDE.md`, replicación Ecosistema en los otros 4 repos. Próximo entregable autorizado: bloque C |
+| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3) tras sesión humana en dev con Opción A (solo dev, no local — decisión documentada en addendum). Cierre total de Fase 1 requiere: bloque C (clasificación archivo por archivo + plan archivo a archivo de Fase 2), modo revisor permanente en `CLAUDE.md`, replicación Ecosistema en los otros 4 repos. Próximo entregable autorizado: bloque C |
 
 ### Dictamen operativo vigente
 
 - `MODELO-DOMINIO.md` v4 queda aprobado como primer entregable auditable de Fase 1.
 - `CONTRATOS.md`, `GLOSARIO.md`, `REGISTRO-RUTAS.md` y la implementación en `portal/index.html` quedan coherentes entre sí respecto al cierre del bloque A.
 - No se debe ejecutar Fase 2 automáticamente.
-- El siguiente entregable obligatorio del ejecutor es el bloque B: smoke tests sobre el slice del registro, separados en locales, externos con credenciales (`N/A` en este slice) y dev/VPS.
-- La base operativa del bloque B queda definida en `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md`; la ejecución sigue pendiente.
+- El bloque B queda cerrado con **PASS**; el cierre efectivo queda documentado en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` con addendum de sesión humana y decisión Opción A aceptada por revisión.
+- El siguiente entregable obligatorio del ejecutor es el bloque C: clasificación archivo por archivo + plan archivo a archivo de Fase 2.
+- `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md` queda como checklist base e historial del criterio original del bloque B; el resultado vigente de ejecución vive en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`.
 - Antes de movimientos físicos o cambios de serving, cada subpaso debe acompañarse de validación runtime específica sobre los contratos y sistemas que toque.
-- No hay discrepancia activa entre `portal/index.html`, `REGISTRO-RUTAS.md`, `CONTRATOS.md`, `CHANGELOG.md` y este review respecto al cierre del bloque A.
+- No hay discrepancia activa entre `portal/index.html`, `REGISTRO-RUTAS.md`, `CONTRATOS.md`, `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`, `CHANGELOG.md` y este review respecto al cierre de los bloques A y B.
 
 ## 4. Realidad actual del repo y del sistema
 
@@ -158,13 +159,13 @@ Entregables esperados:
 - actualización de `CLAUDE.md` — realizada
 - actualización de `ECOSISTEMA.md` — realizada
 - capa de registro de rutas — cerrada
-- smoke tests del slice del registro (bloque B)
-- plan archivo a archivo de Fase 2
+- smoke tests del slice del registro (bloque B) — aprobados
+- bloque C — clasificación archivo por archivo + plan archivo a archivo de Fase 2
 
 Estado actual de la secuencia:
 - `MODELO-DOMINIO.md` queda cerrado como primer entregable auditable.
-- Los canónicos base y el bloque A de la capa de registro quedan cerrados por revisión.
-- El siguiente paso del ejecutor es el bloque B: smoke tests sobre el slice del registro.
+- Los canónicos base y los bloques A y B de la capa de registro quedan cerrados por revisión.
+- El siguiente paso del ejecutor es el bloque C: clasificación archivo por archivo + plan archivo a archivo de Fase 2.
 
 #### Fase 2 — Reorganización física
 
@@ -234,8 +235,8 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 
 - Las menciones antiguas en bitácora a C04, C09 o C10 abiertos, o a `CONTRATOS.md` / capa de registro como "siguiente paso", se consideran **histórico de revisión**, no discrepancia activa.
 - La fuente de verdad operativa para el estado vigente es esta combinación: sección 3 (estado global), sección 7 (puntos abiertos), el gate de fase correspondiente y la entrada más reciente de bitácora.
-- No hay discrepancia activa de gate ni del bloque A del registro de rutas.
-- Los entregables internos aún abiertos son: bloque B, clasificación archivo por archivo, plan archivo a archivo de Fase 2, modo revisor permanente en `CLAUDE.md` y replicación Ecosistema.
+- No hay discrepancia activa de gate ni de los bloques A y B del registro de rutas.
+- Los entregables internos aún abiertos son: bloque C (clasificación archivo por archivo + plan archivo a archivo de Fase 2), modo revisor permanente en `CLAUDE.md` y replicación Ecosistema.
 
 ## 11. Bitácora de revisión
 

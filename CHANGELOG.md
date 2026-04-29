@@ -2,6 +2,18 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.3.4
+
+### Sprint A fase 1 — sincronización del review vivo tras cierre aceptado del bloque B
+
+Sincronización documental posterior al dictamen final del revisor. No toca código del producto.
+
+- **`REVIEW-PRISMA-APEX.md`:** eliminadas referencias operativas stale que todavía dejaban el bloque B como pendiente. El estado vigente queda alineado con el cierre ya aceptado en `v3.3.3`: bloque B `PASS`, bloque C como siguiente entregable interno autorizado y lista de abiertos reducida a bloque C + tareas documentales remanentes.
+- **`docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md`:** estado superior actualizado para dejar de figurar como “ejecución pendiente” y apuntar al reporte definitivo del bloque B.
+- **Versionado visible:** bump documental a `v3.3.4` en `index.html`, `portal/index.html` y `CLAUDE.md`.
+
+**Resultado:** el review vivo vuelve a ser coherente con `CHANGELOG.md`, el addendum del reporte del bloque B y el dictamen vigente del revisor.
+
 ## [2026-04-29] — v3.3.3
 
 ### Sprint A fase 1 — Bloque B PASS (sesión humana visual completada)

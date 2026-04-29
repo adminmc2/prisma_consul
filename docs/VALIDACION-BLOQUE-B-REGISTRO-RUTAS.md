@@ -4,7 +4,7 @@
 **Remitente:** revisor  
 **Fecha:** 2026-04-29  
 **Propósito:** ejecutar la primera validación runtime del slice del registro de rutas cerrado en el bloque A.  
-**Estado:** checklist definido; ejecución pendiente.
+**Estado:** checklist ejecutado y cerrado en `PASS` por decisión de revisión en `v3.3.3`; el resultado vigente vive en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` (addendum con Opción A aceptada).
 
 ---
 
