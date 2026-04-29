@@ -2,6 +2,21 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-28] — v3.2.48
+
+### Sprint A fase 1 — Capa de registro: cierre del fleco de degradación + alineación canónicos
+
+Cierra el último residual del bloque A señalado por el revisor: el contrato "warn + null sin excepción" no quedaba honrado end-to-end porque dos viewers (`analisisOpenItem`, `udAnalisisOpenItem`) construían el `src` del iframe sin guardia, generando URLs rotas tipo `'undefinedflujo-ceo.html'` en lugar de "sección vacía". Adicionalmente, alineación de los canónicos (`MODELO-DOMINIO.md`, `CONTRATOS.md`) que aún hablaban de las constantes hardcodeadas como si existieran.
+
+- **`portal/index.html` — guardias en los 2 viewers**:
+  - `analisisOpenItem` (vista cliente): `if (!section || !section.path) return;` añadido. Honra el contrato "sección vacía sin excepción ni iframe roto".
+  - `udAnalisisOpenItem` (vista admin "view as user"): misma guardia.
+- **`REGISTRO-RUTAS.md` sección 5**: ampliada para describir el contrato end-to-end en dos capas (optional chaining en `ANALISIS_SECTION_MAP` + guardia explícita en los 2 viewers).
+- **`MODELO-DOMINIO.md` §9.1**: actualizada la mención a las 3 constantes legacy. Ahora indica que fueron reemplazadas por la capa de registro de rutas en v3.2.46-47, con referencia a `REGISTRO-RUTAS.md`.
+- **`CONTRATOS.md` CT-7**: actualizada de "se reemplazan por la capa de registro de rutas (entregable propio, próximo)" a estado factual: "fueron reemplazadas (v3.2.46-47): `ANALISIS_REGISTRY` + `getAnalysisPaths` + consumers con optional chaining + guardia en los 2 viewers".
+
+Estado: bloque A completamente cerrado. Pausa antes de bloque B (smoke tests sobre el slice).
+
 ## [2026-04-28] — v3.2.47
 
 ### Sprint A fase 1 — Capa de registro de rutas (2 ajustes del revisor sobre bloque A)

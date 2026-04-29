@@ -66,7 +66,9 @@ function getAnalysisPaths(cliente) {
 - `getAnalysisPaths(cliente)` devuelve `null`.
 - Loggea `console.warn(...)` con el nombre solicitado para facilitar diagnóstico durante desarrollo.
 - **No lanza excepción.** No interrumpe la inicialización de la SPA.
-- **Los consumers honran este contrato end-to-end** mediante optional chaining (`_armcPaths?.diagramas`). Si la resolución devolviera `null`, el consumer recibe `undefined` en `path` y la sección queda vacía sin romper la inicialización.
+- **Los consumers honran este contrato end-to-end** en dos capas:
+  1. **Construcción de `ANALISIS_SECTION_MAP`**: optional chaining (`_armcPaths?.diagramas`). Si la resolución devuelve `null`, las propiedades `path` quedan en `undefined`.
+  2. **Apertura de viewers** (`analisisOpenItem`, `udAnalisisOpenItem`): guardia explícita `if (!section || !section.path) return;` antes de construir el `src` del iframe. Garantiza que **la sección queda literalmente vacía** (sin iframe cargado) en lugar de intentar abrir una URL rota tipo `'undefinedflujo-ceo.html'`.
 
 **Sección no existe dentro de un cliente registrado:**
 - Acceso por punto a una propiedad no declarada devuelve `undefined` (comportamiento JS estándar).

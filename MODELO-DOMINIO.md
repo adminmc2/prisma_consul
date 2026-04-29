@@ -464,7 +464,7 @@ Migración futura se beneficia de la capa centralizada. Sin ella sería compleja
 
 Hoy los entregables ARMC son HTMLs estáticos en `portal/analisis/armc/` servidos por `express.static(projectRoot, ...)` en `server/server.js`.
 
-El frontend los carga vía 3 constantes hardcodeadas en `portal/index.html` (declaraciones `ANALISIS_BASE_PATH`, `ANALISIS_DIAGNOSTICO_PATH`, `ANALISIS_BLUEPRINT_PATH`).
+El frontend los cargaba originalmente vía 3 constantes hardcodeadas en `portal/index.html` (`ANALISIS_BASE_PATH`, `ANALISIS_DIAGNOSTICO_PATH`, `ANALISIS_BLUEPRINT_PATH`). En v3.2.46-47 esas constantes fueron **reemplazadas por la capa de registro de rutas** (`ANALISIS_REGISTRY` + función `getAnalysisPaths`); ver `REGISTRO-RUTAS.md`.
 
 Cuando en fase 2 se mueva la web pública a `/web/` y se ajuste `express.static`, la raíz del repo deja de servirse.
 
