@@ -2,6 +2,20 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.2.51
+
+### Sprint A fase 1 — saneamiento del repo en `dev` tras divergencia con `main`
+
+Saneamiento de tres problemas detectados al volver de `main` a `dev`. No toca código del producto.
+
+- **`REVIEW-PRISMA-APEX.md`**: actualizado al estado más reciente del revisor (estaba desfasado en `dev` respecto al cierre del bloque A). El estado de aprobación, dictamen operativo, gates, riesgos y bitácora ahora reflejan que el bloque A está cerrado por revisión y que la base operativa del bloque B está definida en `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md`.
+- **`docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md`** (NUEVO en `dev`): checklist operativo del bloque B preparado por el revisor. Fija alcance, definición de hecho, prerrequisitos, muestra mínima, ejecución por bloques (locales, externos con credenciales `N/A`, dev/VPS), probe técnica opcional de `warn + null`, y matriz de reporte obligatoria.
+- **`.gitignore`**: añadidas reglas para `.claude/` y `.vscode/` (configs de IDE local que no deben commitearse).
+
+**Pendiente de decisión del usuario** (no se aplicó en este commit):
+- Otros archivos untracked (`docs/NOMENCLATURA.md`, `portal/analisis/GUIA-NUEVAS-SECCIONES.md`, `scripts/`) — origen de otras sesiones, decisión de añadir queda al usuario.
+- **Colisión de versión `v3.2.46`** entre `main` (publicación cirujano post-CEO, commit `52d0049`) y `dev` (capa de registro de rutas, commit `7fb12b6`). Cuando se mergee `dev → main` habrá conflicto en CHANGELOG, HTMLs y CLAUDE.md. Resolución requiere decisión sobre cómo renumerar versiones — no se aplica unilateralmente.
+
 ## [2026-04-28] — v3.2.50
 
 ### Sprint A fase 1 — CONTRATOS.md: 2 incoherencias textuales residuales

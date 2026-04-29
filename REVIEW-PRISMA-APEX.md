@@ -42,16 +42,18 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Proyecto | Reorganización de Prisma APEX |
 | Momento actual | Sprint A / Fase 1 en curso |
 | Naturaleza del trabajo | Revisión activa + definición + compatibilidad + cierre progresivo de entregables |
-| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); Fase 1 en curso; Fase 2 desbloqueada por gate, pendiente entregables internos |
-| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). Cierre total de Fase 1 requiere: capa de registro de rutas (spec + impl), smoke tests runtime, clasificación archivo por archivo, plan archivo a archivo Fase 2, modo revisor permanente en `CLAUDE.md`, replicación Ecosistema en los otros 4 repos. Verificación runtime previa a movimientos físicos pertenece a cada subpaso |
+| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; Fase 1 en curso; Fase 2 desbloqueada por gate, pendiente entregables internos |
+| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). Cierre total de Fase 1 requiere: smoke tests runtime del slice del registro (bloque B), clasificación archivo por archivo, plan archivo a archivo Fase 2, modo revisor permanente en `CLAUDE.md`, replicación Ecosistema en los otros 4 repos. Verificación runtime previa a movimientos físicos pertenece a cada subpaso |
 
 ### Dictamen operativo vigente
 
 - `MODELO-DOMINIO.md` v4 queda aprobado como primer entregable auditable de Fase 1.
+- `CONTRATOS.md`, `GLOSARIO.md`, `REGISTRO-RUTAS.md` y la implementación en `portal/index.html` quedan coherentes entre sí respecto al cierre del bloque A.
 - No se debe ejecutar Fase 2 automáticamente.
-- El siguiente entregable obligatorio del ejecutor es `CONTRATOS.md`.
-- Antes de movimientos físicos o cambios de serving, debe cerrarse C09 y quedar trazados sus impactos documentales (C04 ya cerrado).
-- No hay discrepancia activa entre `MODELO-DOMINIO.md`, `ECOSISTEMA.md`, `REVIEW-PRISMA-APEX.md` y `CHANGELOG.md` respecto al cierre de C04.
+- El siguiente entregable obligatorio del ejecutor es el bloque B: smoke tests sobre el slice del registro, separados en locales, externos con credenciales (`N/A` en este slice) y dev/VPS.
+- La base operativa del bloque B queda definida en `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md`; la ejecución sigue pendiente.
+- Antes de movimientos físicos o cambios de serving, cada subpaso debe acompañarse de validación runtime específica sobre los contratos y sistemas que toque.
+- No hay discrepancia activa entre `portal/index.html`, `REGISTRO-RUTAS.md`, `CONTRATOS.md`, `CHANGELOG.md` y este review respecto al cierre del bloque A.
 
 ## 4. Realidad actual del repo y del sistema
 
@@ -133,7 +135,7 @@ Estos puntos no bloquean el arranque de Fase 1, pero sí condicionan el paso a F
 
 Gate de Fase 2 **cumplido en v3.2.44**: C01, C02, C03, C04, C05, C09 y C10 cerrados. Fase 2 desbloqueada desde el punto de vista de revisión.
 
-**Cierre total de Fase 1** sigue requiriendo entregables internos: capa de registro de rutas (spec + impl), smoke tests runtime (entregable mixto: checklist + primera ejecución, separado en 3 bloques: locales, externos con credenciales, dev/VPS), clasificación archivo por archivo, plan archivo a archivo de Fase 2, modo revisor permanente en `CLAUDE.md`, replicación de la sección Ecosistema en los otros 4 repos.
+**Cierre total de Fase 1** sigue requiriendo entregables internos: smoke tests runtime del slice del registro (entregable mixto: checklist + primera ejecución, separado en 3 bloques: locales, externos con credenciales, dev/VPS), clasificación archivo por archivo, plan archivo a archivo de Fase 2, modo revisor permanente en `CLAUDE.md`, replicación de la sección Ecosistema en los otros 4 repos.
 
 **Validación runtime** antes de cada subpaso de Fase 2 que toque contratos reales o sistemas externos (Neon, Drive, Gmail SMTP, Tavily, Groq, Whisper, serving en `dev.prismaconsul.com`, infraestructura nginx/PM2/IONOS) — no es gate global, es prerrequisito de cada subpaso.
 
@@ -151,16 +153,18 @@ Objetivo:
 
 Entregables esperados:
 - `MODELO-DOMINIO.md` — aprobado
-- `CONTRATOS.md` — siguiente entregable obligatorio
-- `GLOSARIO.md`
+- `CONTRATOS.md` — aprobado
+- `GLOSARIO.md` — aprobado
 - actualización de `CLAUDE.md` — realizada
 - actualización de `ECOSISTEMA.md` — realizada
-- capa de registro de rutas
+- capa de registro de rutas — cerrada
+- smoke tests del slice del registro (bloque B)
 - plan archivo a archivo de Fase 2
 
 Estado actual de la secuencia:
 - `MODELO-DOMINIO.md` queda cerrado como primer entregable auditable.
-- El siguiente paso del ejecutor debe ser `CONTRATOS.md`.
+- Los canónicos base y el bloque A de la capa de registro quedan cerrados por revisión.
+- El siguiente paso del ejecutor es el bloque B: smoke tests sobre el slice del registro.
 
 #### Fase 2 — Reorganización física
 
@@ -198,11 +202,11 @@ Objetivo:
 
 | ID | Riesgo | Estado | Mitigación actual |
 |---|---|---|---|
-| R01 | Paths hardcodeados no inventariados | Activo | Inventario real + capa de registro + test manual al final de Fase 2 |
-| R02 | Reorganización rompe ARMC | Activo | Dev primero + gate antes de Fase 2 + validación completa cliente/admin |
-| R03 | Modelo nuevo y legacy divergen | Activo | `MODELO-DOMINIO.md` aprobado; falta `CONTRATOS.md` + implementación disciplinada mediante capa única de sincronización |
+| R01 | Paths hardcodeados no inventariados | Activo | Inventario real + capa de registro cerrada + bloque B + test manual antes del movimiento físico |
+| R02 | Reorganización rompe ARMC | Activo | Dev primero + bloque B + validación completa cliente/admin antes de cualquier movimiento físico |
+| R03 | Modelo nuevo y legacy divergen | Activo | `MODELO-DOMINIO.md` y `CONTRATOS.md` aprobados; falta implementación disciplinada mediante capa única de sincronización en Fase 2 |
 | R04 | `Cliente` sigue siendo texto libre demasiado tiempo | Activo | Modelo aprobado; falta materializarlo en migración aditiva de Fase 2 |
-| R05 | `/web` deja fuera a los publicados | Activo | Contrato `/publicados/[cliente]/...` aprobado; falta absorberlo en `CONTRATOS.md` y ejecutarlo en Fase 2 |
+| R05 | `/web` deja fuera a los publicados | Activo | Contrato `/publicados/[cliente]/...` aprobado y absorbido en `CONTRATOS.md`; falta ejecutarlo en Fase 2 |
 | R06 | Documentación del ecosistema se contradice | Mitigado | C04 cerrado en v3.2.37; ECOSISTEMA.md alineado con MODELO-DOMINIO.md |
 | R07 | Sprint B subestimado | Activo | Tratarlo como sprint separado con diseño propio |
 
@@ -213,25 +217,25 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 | Documento | Qué debe absorber |
 |---|---|
 | `MODELO-DOMINIO.md` | Ya absorbió producto, vertical, engagement, cliente, membresías y compatibilidad base del modelo |
-| `CONTRATOS.md` | Debe absorber URLs públicas, endpoints reales, redirects legacy, payloads críticos, paths hardcodeados y contratos no rompibles derivados del modelo aprobado |
-| `GLOSARIO.md` | Debe absorber naming canónico, roles y la distinción entre atributo canónico y conveniencia transitoria |
+| `CONTRATOS.md` | Ya absorbió URLs públicas congeladas, endpoints reales, redirects legacy, payloads críticos, inventario contractual y cierre del bloque A del registro de rutas; debe revalidarse cuando Fase 2 materialice `/publicados/[cliente]/...` y el redirect desde `/portal/analisis/...` |
+| `GLOSARIO.md` | Ya absorbió naming canónico, roles y la distinción entre atributo canónico y conveniencia transitoria; futuras altas terminológicas deben entrar ahí |
 | `CLAUDE.md` | Modo revisor permanente, convenciones operativas y reglas del workspace |
 | `ECOSISTEMA.md` | Ya quedó alineado con `MODELO-DOMINIO.md`; debe mantenerse consistente con Drive actual, publicados en repo y separación con `prisma-trabajo-clientes` |
 | `CHANGELOG.md` | Cambios ya ejecutados, no hipótesis |
 
 ### 10.1 Impactos posteriores ya detectados
 
-- `CONTRATOS.md` debe revisar expresamente los contratos congelados `/`, `/apex`, `/hub`, `/api/*`, el futuro contrato `/publicados/[cliente]/...`, el redirect desde `/portal/analisis/...`, y los payloads legacy que no pueden romperse durante la transición.
-- `CONTRATOS.md` debe inventariar los hardcodes activos en frontend y backend que hoy atan paths, fases o recursos publicados al estado legacy.
-- `GLOSARIO.md` debe absorber el vocabulario aprobado en `MODELO-DOMINIO.md` para que implementación y documentación usen los mismos términos.
-- `ECOSISTEMA.md` no tiene discrepancia activa tras el cierre de C04; solo debe revalidarse después de `CONTRATOS.md` para asegurar que no se reintroduzcan contradicciones sobre uploads, publicados y trabajo interno por repo.
+- `CONTRATOS.md` ya absorbió los contratos congelados `/`, `/apex`, `/hub`, `/api/*`, el inventario contractual real del sistema y el cierre del bloque A del registro de rutas; debe revalidarse cuando Fase 2 materialice `/publicados/[cliente]/...` y el redirect desde `/portal/analisis/...`.
+- `CONTRATOS.md` ya deja trazado el estado legacy y actual de los hardcodes del frontend; cualquier hallazgo nuevo en backend o discovery debe añadirse ahí con el mismo criterio factual.
+- `GLOSARIO.md` ya absorbió el vocabulario aprobado en `MODELO-DOMINIO.md`; futuras altas terminológicas deben seguir entrando ahí, no en el review.
+- `ECOSISTEMA.md` no tiene discrepancia activa; debe revalidarse antes de movimientos físicos para asegurar que no se reintroduzcan contradicciones sobre uploads, publicados y trabajo interno por repo.
 
 ### 10.2 Criterio del Revisor Sobre Discrepancias
 
-- Las menciones antiguas en bitácora a C04 abierto se consideran **histórico de revisión**, no discrepancia activa.
-- La fuente de verdad operativa para el estado vigente es esta combinación: sección 3 (estado global), sección 7 (puntos abiertos) y el gate de fase correspondiente.
-- La discrepancia activa que queda antes de Fase 2 es **solo C09**.
-- C10 sigue abierto, pero se trata como absorción documental obligatoria antes del cierre total de Fase 1, no como bloqueo inmediato separado de C09 para abrir Fase 2.
+- Las menciones antiguas en bitácora a C04, C09 o C10 abiertos, o a `CONTRATOS.md` / capa de registro como "siguiente paso", se consideran **histórico de revisión**, no discrepancia activa.
+- La fuente de verdad operativa para el estado vigente es esta combinación: sección 3 (estado global), sección 7 (puntos abiertos), el gate de fase correspondiente y la entrada más reciente de bitácora.
+- No hay discrepancia activa de gate ni del bloque A del registro de rutas.
+- Los entregables internos aún abiertos son: bloque B, clasificación archivo por archivo, plan archivo a archivo de Fase 2, modo revisor permanente en `CLAUDE.md` y replicación Ecosistema.
 
 ## 11. Bitácora de revisión
 
@@ -320,6 +324,26 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 - Documentos actualizados: `GLOSARIO.md` (nuevo), `REVIEW-PRISMA-APEX.md`, `CHANGELOG.md`.
 - Impacto en gates: gate de Fase 2 sigue cumplido. Cierre total de Fase 1 avanza.
 - Próximo paso: el ejecutor produce la especificación de la capa de registro de rutas, prerrequisito técnico del subpaso de Fase 2 que mueve `portal/analisis/armc/`.
+
+### 2026-04-29 — Cierre operativo del bloque A y sincronización del review vivo
+
+- Qué se revisó: estado actual del bloque A tras v3.2.46-v3.2.50 en `portal/index.html`, `REGISTRO-RUTAS.md`, `CONTRATOS.md` y este `REVIEW-PRISMA-APEX.md`.
+- Hallazgos: el slice técnico quedó cerrado y coherente; la última deuda ya no estaba en código ni en canónicos permanentes, sino en referencias stale del review vivo que seguían tratando la capa de registro como pendiente.
+- Decisiones cerradas afectadas: se consolida el cierre del bloque A (capa de registro de rutas) como entregable interno ya completado de Fase 1.
+- Decisiones abiertas afectadas: ninguna nueva. El siguiente entregable interno abierto pasa a ser el bloque B (smoke tests del slice del registro).
+- Documentos actualizados: `REVIEW-PRISMA-APEX.md`, `CHANGELOG.md`, versionado visible del proyecto.
+- Impacto en gates: sin cambio funcional. Gate de Fase 2 sigue cumplido; el cierre total de Fase 1 avanza al dejar el review otra vez sincronizado con el repo.
+- Próximo paso: el ejecutor produce el bloque B con checklist y primera ejecución, separado en locales, externos con credenciales (`N/A`) y dev/VPS.
+
+### 2026-04-29 — Definición operativa del bloque B
+
+- Qué se revisó: el alcance ya fijado en `REGISTRO-RUTAS.md` y `CONTRATOS.md` para convertirlo en un checklist ejecutable, sin ampliar el scope del slice.
+- Hallazgos: la spec ya contenía el criterio funcional; faltaba aterrizarlo en un procedimiento repetible que obligara a validar vista cliente, vista admin, entorno local, bloque `N/A` de externos y entorno dev/VPS.
+- Decisiones cerradas afectadas: ninguna nueva.
+- Decisiones abiertas afectadas: el bloque B queda definido pero no ejecutado; su cierre sigue pendiente de evidencia runtime.
+- Documentos actualizados: `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md`, `REVIEW-PRISMA-APEX.md`, `CHANGELOG.md`, versionado visible del proyecto.
+- Impacto en gates: sin cambio. Gate de Fase 2 sigue cumplido; se reduce ambigüedad operativa para el cierre total de Fase 1.
+- Próximo paso: el ejecutor ejecuta el checklist del bloque B y entrega matriz completa con resultado `PASS`, `FAIL` o `BLOCKED`.
 
 ## 12. Plantilla de actualización para futuras revisiones
 
