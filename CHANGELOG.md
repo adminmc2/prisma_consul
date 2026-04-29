@@ -2,6 +2,20 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-29] — v3.3.7
+
+### Análisis ARMC — Flujo Cosmiatra (Brisa) post-entrevista CEO
+
+Cuarto rol revisado a la luz de la entrevista CEO 2026-04-15. Cosmiatría es uno de los roles más afectados — la CEO confirmó Cosmiatría como línea propia (línea 4) con 9 servicios oficiales + 2 sublíneas (melasma, acné), y Brisa también opera Aparatología (línea 3, 7 servicios). El catálogo oficial le da 16 servicios disponibles vs los 3-4 reales que ejecuta. Cambios in-place dentro de secciones existentes — sin cambios estructurales.
+
+#### `portal/analisis/armc/diagramas/flujo-cosmiatra.html` (5 ediciones)
+
+- **Slide "Brisa: Perfil y rol"**, entrada SUBUTILIZACIÓN: ampliada con catálogo CEO (9 servicios cosmiatría + 7 aparatología = 16 oficiales vs 3-4 reales). La subutilización es DOBLE — del rol y del catálogo.
+- **Slide "Tratamientos y aparatología"**, entrada Protocolo post-lipo (5 masajes semanales): añadida confirmación CEO de que estos masajes son procedimientos cobrados aparte (no incluidos en el precio de la cirugía).
+- **Sección "Vacíos de información"**: añadido nuevo bloque `<details>` "Vacíos resueltos por otras entrevistas (3)" siguiendo el patrón estándar de Carlos, Gabriel y Óscar — Cosmiatría confirmada como línea propia con 9 servicios, sublíneas melasma y acné con cobro por sesión, masajes reductivos = futuro (no se ofrecen hoy).
+- **Sección "Fricciones identificadas"**, fricción "Rol subutilizado": ampliada con confirmación CEO del alcance oficial del rol (16 servicios disponibles vs ejecución mínima).
+- **Sección "Fricciones identificadas"**: añadida fricción nueva — "Catálogo de Cosmiatría confirmado pero invisible al paciente" (los 9 servicios + sublíneas no se promocionan, no aparecen en pautas Meta, sin agendamiento dedicado; causa estructural de la subutilización).
+
 ## [2026-04-29] — v3.3.6
 
 ### Sprint A fase 1 — Bloque C: 5 correcciones del revisor sobre PLAN-FASE2.md
