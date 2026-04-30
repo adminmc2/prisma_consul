@@ -2,6 +2,38 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-30] — v3.3.17
+
+### Cierre formal de Fase 1 — Sprint A bloque D validado en los 4 repos hermanos
+
+Cierre formal de Fase 1 del Sprint A tras validación durable del bloque D-3 (replicación de la sección "Ecosistema de repositorios" en los repos hermanos) por parte del revisor:
+
+- **`above-pharma`** — validado previamente en commit propio del repo
+- **`apex-agents`** — validado en `7205be7`
+- **`prisma-consulting`** — validado en `9ed1324`
+- **`prisma-server-ops`** — validado en `2249f78`
+
+Con la validación de `prisma-server-ops` desaparece el último bloqueo señalado en `REVIEW-PRISMA-APEX.md` ("integración durable en los 3 repos hermanos"). El propio review ya fue sincronizado por el revisor para reflejar el cierre.
+
+#### Repositorio (sin cambios de código)
+
+- `index.html`: bump de versión en footer (`data-es`, `data-en` y texto visible)
+- `portal/index.html`: bump de versión en pantalla de login (`.welcome-version`)
+- `CLAUDE.md`: bump del campo "Versión actual"
+- `CHANGELOG.md`: esta entrada
+
+#### Estado del Sprint A
+
+- `MODELO-DOMINIO.md`, `ECOSISTEMA.md`, `CONTRATOS.md`, `GLOSARIO.md`: aprobados
+- Bloques A, B, C y D: cerrados con PASS
+- **Fase 1: cerrada formalmente**
+- **Fase 2: desbloqueada y autorizada**, pendiente de ejecución controlada conforme a `docs/PLAN-FASE2.md` con validación runtime específica por subpaso
+
+#### Notas
+
+- El endurecimiento operativo de credenciales GitHub, runbooks específicos y posibles guardrails preventivos quedan como **follow-up separado**, fuera del alcance de este cierre y sin alterar el dictamen de Fase 1.
+- Colisión de versionado: el slot `v3.3.16` quedó ocupado por una sesión paralela (`d7f24fd`, fix Resumen Ejecutivo); se promueve al siguiente disponible `v3.3.17` conforme a la convención de no pre-reservar números.
+
 ## [2026-04-30] — v3.3.16
 
 ### Fix Resumen Ejecutivo — atribución del hallazgo central coherente con 8 entrevistas

@@ -40,21 +40,24 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Campo | Estado actual |
 |---|---|
 | Proyecto | Reorganización de Prisma APEX |
-| Momento actual | Sprint A / Fase 1 en curso |
-| Naturaleza del trabajo | Revisión activa + definición + compatibilidad + cierre progresivo de entregables |
-| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; Fase 1 en curso; Fase 2 desbloqueada por gate, pendiente entregables internos |
-| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3) tras sesión humana en dev con Opción A (solo dev, no local — decisión documentada en addendum). Cierre total de Fase 1 requiere: bloque C (clasificación archivo por archivo + plan archivo a archivo de Fase 2), modo revisor permanente en `CLAUDE.md`, replicación Ecosistema en los otros 4 repos. Próximo entregable autorizado: bloque C |
+| Momento actual | Sprint A / Fase 1 cerrada formalmente; Fase 2 desbloqueada |
+| Naturaleza del trabajo | Revisión cerrada de Fase 1 + preparación controlada de Fase 2 |
+| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; bloques B, C y D cerrados; Fase 1 cerrada formalmente; Fase 2 desbloqueada y pendiente de ejecución controlada |
+| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3), **bloque C PASS** (v3.3.8) y **bloque D PASS** tras validación durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops` el 2026-04-30. Fase 1 queda cerrada formalmente por revisión. Fase 2 queda autorizada, pero no se ejecuta automáticamente y mantiene validación runtime específica por subpaso. |
 
 ### Dictamen operativo vigente
 
 - `MODELO-DOMINIO.md` v4 queda aprobado como primer entregable auditable de Fase 1.
 - `CONTRATOS.md`, `GLOSARIO.md`, `REGISTRO-RUTAS.md` y la implementación en `portal/index.html` quedan coherentes entre sí respecto al cierre del bloque A.
-- No se debe ejecutar Fase 2 automáticamente.
+- Fase 2 no se ejecuta automáticamente por inercia, pero sí queda autorizada como siguiente fase explícita de trabajo.
 - El bloque B queda cerrado con **PASS**; el cierre efectivo queda documentado en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` con addendum de sesión humana y decisión Opción A aceptada por revisión.
-- El siguiente entregable obligatorio del ejecutor es el bloque C: clasificación archivo por archivo + plan archivo a archivo de Fase 2.
+- El bloque C queda cerrado con **PASS**; `docs/PLAN-FASE2.md` queda aceptado como clasificación archivo por archivo + plan secuencial auditable de Fase 2.
+- El bloque D queda cerrado con **PASS**: la réplica Ecosistema ya quedó integrada de forma durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops`.
+- Fase 1 queda cerrada formalmente.
+- El endurecimiento posterior de credenciales GitHub, runbooks y posibles guardrails preventivos queda expresamente fuera de este cierre y no altera el dictamen de Fase 1.
 - `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md` queda como checklist base e historial del criterio original del bloque B; el resultado vigente de ejecución vive en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`.
 - Antes de movimientos físicos o cambios de serving, cada subpaso debe acompañarse de validación runtime específica sobre los contratos y sistemas que toque.
-- No hay discrepancia activa entre `portal/index.html`, `REGISTRO-RUTAS.md`, `CONTRATOS.md`, `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`, `CHANGELOG.md` y este review respecto al cierre de los bloques A y B.
+- No hay discrepancia activa entre `portal/index.html`, `REGISTRO-RUTAS.md`, `CONTRATOS.md`, `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` y `docs/PLAN-FASE2.md` respecto al cierre de los bloques A, B, C y D. `CHANGELOG.md` y el versionado visible del repo principal quedan pendientes de sincronización mecánica por parte del ejecutor tras este dictamen.
 
 ## 4. Realidad actual del repo y del sistema
 
@@ -136,7 +139,7 @@ Estos puntos no bloquean el arranque de Fase 1, pero sí condicionan el paso a F
 
 Gate de Fase 2 **cumplido en v3.2.44**: C01, C02, C03, C04, C05, C09 y C10 cerrados. Fase 2 desbloqueada desde el punto de vista de revisión.
 
-**Cierre total de Fase 1** sigue requiriendo entregables internos: smoke tests runtime del slice del registro (entregable mixto: checklist + primera ejecución, separado en 3 bloques: locales, externos con credenciales, dev/VPS), clasificación archivo por archivo, plan archivo a archivo de Fase 2, modo revisor permanente en `CLAUDE.md`, replicación de la sección Ecosistema en los otros 4 repos.
+**Fase 1 queda cerrada formalmente** tras la integración durable de la sección Ecosistema en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops`, más la presente sincronización final de este review.
 
 **Validación runtime** antes de cada subpaso de Fase 2 que toque contratos reales o sistemas externos (Neon, Drive, Gmail SMTP, Tavily, Groq, Whisper, serving en `dev.prismaconsul.com`, infraestructura nginx/PM2/IONOS) — no es gate global, es prerrequisito de cada subpaso.
 
@@ -160,12 +163,13 @@ Entregables esperados:
 - actualización de `ECOSISTEMA.md` — realizada
 - capa de registro de rutas — cerrada
 - smoke tests del slice del registro (bloque B) — aprobados
-- bloque C — clasificación archivo por archivo + plan archivo a archivo de Fase 2
+- bloque C — clasificación archivo por archivo + plan archivo a archivo de Fase 2 — aprobado
+- bloque D — modo revisor permanente + replicación Ecosistema — aprobado
 
 Estado actual de la secuencia:
 - `MODELO-DOMINIO.md` queda cerrado como primer entregable auditable.
-- Los canónicos base y los bloques A y B de la capa de registro quedan cerrados por revisión.
-- El siguiente paso del ejecutor es el bloque C: clasificación archivo por archivo + plan archivo a archivo de Fase 2.
+- Los canónicos base y los bloques A, B, C y D quedan cerrados por revisión.
+- Fase 1 queda cerrada formalmente. El siguiente paso autorizado, si se decide continuar, es ejecutar Fase 2 conforme a `docs/PLAN-FASE2.md` y con validación runtime específica en cada subpaso.
 
 #### Fase 2 — Reorganización física
 
@@ -235,8 +239,14 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 
 - Las menciones antiguas en bitácora a C04, C09 o C10 abiertos, o a `CONTRATOS.md` / capa de registro como "siguiente paso", se consideran **histórico de revisión**, no discrepancia activa.
 - La fuente de verdad operativa para el estado vigente es esta combinación: sección 3 (estado global), sección 7 (puntos abiertos), el gate de fase correspondiente y la entrada más reciente de bitácora.
-- No hay discrepancia activa de gate ni de los bloques A y B del registro de rutas.
-- Los entregables internos aún abiertos son: bloque C (clasificación archivo por archivo + plan archivo a archivo de Fase 2), modo revisor permanente en `CLAUDE.md` y replicación Ecosistema.
+- No hay discrepancia activa de gate ni de los bloques A, B, C y D.
+- No hay entregables internos abiertos de Fase 1. Los follow-ups operativos separados, como el hardening de credenciales GitHub y posibles guardrails preventivos, no forman parte de este cierre.
+
+### 10.3 Trabajo posterior ya resuelto / follow-up separado
+
+El diferimiento que existió sobre la integración durable del bloque D queda **resuelto**: `apex-agents`, `prisma-consulting` y `prisma-server-ops` ya absorbieron la sección Ecosistema de forma durable en historial y esa condición dejó de ser un punto abierto.
+
+- El endurecimiento operativo de credenciales GitHub, la redacción de runbooks específicos y cualquier guardrail anti-credenciales-en-URL quedan como **follow-up separado**. No forman parte del cierre de Fase 1 ni modifican el estado de aprobación del bloque D.
 
 ## 11. Bitácora de revisión
 
@@ -378,6 +388,61 @@ Este archivo es temporal. Sus decisiones deben migrar a documentación estable s
 - Documentos actualizados: `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` (addendum añadido), este `REVIEW-PRISMA-APEX.md`, `CHANGELOG.md`, versionado visible.
 - Impacto en gates: bloque B cerrado. Cierre total de Fase 1 sigue requiriendo bloques C y D.
 - Próximo paso: el ejecutor arranca bloque C — clasificación archivo por archivo del repo (qué se mueve, qué se queda, qué va a `prisma-consulting`) + plan archivo a archivo de Fase 2 (movimientos físicos secuenciales).
+
+### 2026-04-29 — Cierre del bloque C y autorización del bloque D
+
+- Qué se revisó: `docs/PLAN-FASE2.md` tras la entrega inicial del bloque C y las dos rondas de corrección del ejecutor (`v3.3.6` y `v3.3.8`) hasta cerrar los 6 hallazgos del revisor.
+- Hallazgos:
+  - El plan ya clasifica el repo contra el inventario real de `git ls-files` (98 archivos), corrige la ubicación de la guía interna, define la migración aditiva de BD con DDL ejecutable y deja coherente el serving de `/apex` mediante `static mount`.
+  - No quedan contradicciones internas activas entre el subpaso 2.4, la sección 5 y la decisión PF2-3 sobre cómo preservar los assets relativos del discovery.
+  - La dirección general del plan queda alineada con `MODELO-DOMINIO.md`, `CONTRATOS.md` y los contratos aprobados de Sprint A.
+- Decisiones cerradas afectadas: bloque C pasa a **PASS**.
+- Decisiones abiertas afectadas: ninguna nueva. El único entregable interno restante de Fase 1 pasa a ser el bloque D.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `CHANGELOG.md`, versionado visible del proyecto.
+- Impacto en gates: sin cambio en el gate de Fase 2 (ya cumplido). El cierre total de Fase 1 queda condicionado únicamente al bloque D.
+- Próximo paso: el ejecutor arranca bloque D — modo revisor permanente en `CLAUDE.md` + replicación Ecosistema en los otros 4 repos.
+
+### 2026-04-30 — Revisión del bloque D y decisión sobre cierre formal de Fase 1
+
+- Qué se revisó: commit `8f2595e` (`v3.3.10`) en `web-de-prisma`, estado actual del working tree local y presencia efectiva de la sección "Ecosistema de repositorios" en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops`.
+- Hallazgos:
+  - `web-de-prisma` ya incorpora el modo revisor permanente en `CLAUDE.md`.
+  - `above-pharma` absorbió la sección Ecosistema de forma durable (commit propio ya empujado).
+  - `apex-agents`, `prisma-consulting` y `prisma-server-ops` sí contienen la sección Ecosistema, pero solo como modificación local dentro de working trees con WIP ajeno. La decisión de no commitear esos cambios mezclados con trabajo del usuario fue correcta.
+  - Como consecuencia, el bloque D no queda todavía en estado de cierre auditable completo.
+- Decisiones cerradas afectadas: ninguna nueva.
+- Decisiones abiertas afectadas: el bloque D queda en estado **aplicado parcialmente / integración durable pendiente**. Fase 1 no se cierra formalmente todavía.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`.
+- Impacto en gates: sin cambio en el gate de Fase 2 (ya cumplido). Fase 2 sigue sin ejecutarse automáticamente.
+- Próximo paso: integrar de forma durable la réplica Ecosistema en `apex-agents`, `prisma-consulting` y `prisma-server-ops`, y después cerrar formalmente Fase 1 en este review.
+
+### 2026-04-30 — Diferimiento explícito del cierre durable del bloque D como trabajo posterior
+
+- Qué se revisó: la conveniencia operativa de forzar ahora la integración durable en los 3 repos con WIP frente a posponerla hasta el siguiente contexto natural de commit del usuario.
+- Hallazgos:
+  - El pendiente restante no es de diseño ni de redacción; es de integración durable en historial.
+  - Ejecutarlo ahora con prisa aumenta el riesgo de mezclar WIP ajeno en commits artificiales y reduce la trazabilidad del cambio.
+  - Posponerlo no altera el gate ya cumplido de Fase 2, pero sí preserva el bar de aceptación del bloque D y evita declarar cierres que no sean auditables.
+- Decisiones cerradas afectadas: ninguna nueva.
+- Decisiones abiertas afectadas: el cierre durable del bloque D queda registrado como trabajo posterior planificado; Fase 1 sigue abierta hasta completar esa integración.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`.
+- Impacto en gates: sin cambio. Fase 2 sigue desbloqueada por gate, pero no se ejecuta automáticamente y Fase 1 no se da por cerrada.
+- Próximo paso: cuando el usuario retome `apex-agents`, `prisma-consulting` y `prisma-server-ops`, integrar `CLAUDE.md` en el contexto natural de cada repo y después sincronizar este review para cerrar Fase 1 con el siguiente PATCH libre.
+
+### 2026-04-30 — Validación durable de repos hermanos y cierre formal de Fase 1
+
+- Qué se revisó: integración durable de la sección Ecosistema en `apex-agents` (`7205be7`), `prisma-consulting` (`9ed1324`) y `prisma-server-ops` (`2249f78`), además del estado ya durable de `above-pharma`; tracking `origin/main`; aislamiento del WIP local no relacionado; y normalización suficiente de la autenticación GitHub para cerrar esta iteración.
+- Hallazgos:
+  - `apex-agents` quedó alineado con `origin/main` en `7205be7` y absorbió de forma durable la sección Ecosistema.
+  - `prisma-consulting` quedó alineado con `origin/main` en `9ed1324`; el WIP local no fue arrastrado al commit documental.
+  - `prisma-server-ops` quedó alineado con `origin/main` en `2249f78`; el WIP local tampoco fue arrastrado.
+  - La condición pendiente del bloque D queda resuelta de forma auditable: los 4 repos hermanos requeridos ya contienen la réplica Ecosistema de forma durable en historial.
+  - El hardening posterior de credenciales GitHub y posibles guardrails preventivos se tratará aparte y no bloquea este cierre.
+- Decisiones cerradas afectadas: bloque D pasa a **PASS** y Fase 1 queda cerrada formalmente.
+- Decisiones abiertas afectadas: ninguna nueva dentro de Fase 1. Fase 2 queda autorizada pero no se ejecuta automáticamente.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`.
+- Impacto en gates: sin cambio en el gate de Fase 2 (ya cumplido). Se cierra formalmente Fase 1.
+- Próximo paso: el ejecutor sincroniza el cierre en el versionado visible y en `CHANGELOG.md` del repo principal usando el siguiente PATCH libre actual (`v3.3.16`) y, si se decide continuar, podrá arrancar Fase 2 conforme a `docs/PLAN-FASE2.md`.
 
 ## 12. Plantilla de actualización para futuras revisiones
 
