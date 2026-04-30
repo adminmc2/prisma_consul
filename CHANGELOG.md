@@ -2,6 +2,23 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-30] — v3.3.15
+
+### Análisis ARMC — Revisión profunda del Resumen Ejecutivo a la luz de la 2ª entrevista CEO
+
+Tras completar el primer pase post-entrevista CEO en los 7 flujos por rol y en la documentación transversal de cirujanos externos, el Resumen Ejecutivo del Diagnóstico Integrado quedaba desfasado. 8 actualizaciones in-place dentro de secciones existentes — sin cambios estructurales, salvo la incorporación de un 6º hallazgo principal que destaca la fricción del catálogo invisible.
+
+#### `portal/analisis/armc/diagnostico/resumen-ejecutivo.html` (8 ediciones)
+
+- **KPI "Fricciones documentadas"**: 42+ → **52+** (refleja las ~10 fricciones nuevas añadidas durante el primer pase post-CEO).
+- **Subtítulo**: precisado — "8 entrevistas en total" (1 por rol + 2ª entrevista CEO de validación del catálogo del 2026-04-15) + 3 cirujanos externos identificados sin entrevista directa.
+- **Hallazgo 02 "Historia clínica es un registro muerto"**: evidencia ampliada con 2 gaps documentales confirmados por la 2ª entrevista CEO — lipoenzimas faciales/corporales sin CI específico estandarizado y manejo integral de obesidad sin PNO formal redactado.
+- **Hallazgo 03**: título reescrito de "Retención del 10% — aparatología parada" a "Retención del 10% — catálogo amplio infrautilizado". Cuerpo ampliado con el catálogo confirmado por la CEO: 5 líneas con ~52 procedimientos, de los cuales 16 servicios oficiales (Aparatología 7 + Cosmiatría 9) están infrautilizados. Fricción DOBLE: del rol y del catálogo.
+- **Hallazgo 05 "Fotos clínicas dispersas"**: 4+ → 5+ dispositivos (incluida Elián con celular + iPad personal + cámara especializada).
+- **Hallazgo 06 NUEVO**: "Catálogo oficial confirmado pero invisible al mercado" — 5 líneas con 52 procedimientos oficiales pero promoción real cubre solo ~7 (Cosmiatría, Aparatología, Tricología, hallazgos nuevos no se promocionan). Causa estructural directa de la subutilización del rol Cosmiatra y de la baja retención. Total hallazgos principales: 5 → 6.
+- **Voces del equipo**: añadida cita de Marisela de la 2ª entrevista CEO — "Primero, aunque quieran alguna liposucción, primero la hacen con nosotros" (sobre la valoración previa obligatoria como Variante A).
+- **Conclusión**: ampliada con (a) catálogo definitivo confirmado por la CEO (5 líneas, 52 procedimientos, 3 cirujanos externos), (b) la solución APEX no solo modela D1 sino que también debe visibilizar el catálogo completo, (c) bloque amarillo destacado con las 2 decisiones pendientes de cerrar con la propia CEO (C07 — costo 2ª valoración pre-cirugía con externo; C08 — quién agenda Variantes B/C y leads de obesidad). Trazadas en `REVIEW-PRISMA-APEX.md` Sección 7.
+
 ## [2026-04-30] — v3.3.14
 
 ### Análisis ARMC — Documentación transversal de cirujanos externos (Opción A)
