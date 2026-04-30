@@ -2,6 +2,33 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-30] — v3.3.18
+
+### Análisis ARMC — Correcciones tras dictamen de revisor (Hallazgo Alta + 2 Media + 1 Baja)
+
+Aplicación de las correcciones del dictamen externo sobre el primer pase post-CEO. 6 ediciones in-place sobre 4 archivos. **NO se modifica `REVIEW-PRISMA-APEX.md`** — es propiedad del usuario/otro agente y queda fuera del scope del asistente.
+
+#### `docs/VALIDACION-CATALOGO-ARMC.md` (2 ediciones)
+
+- **Hallazgo Alta — fila 3.6 sobre masajes post-quirúrgicos**: corregida la contradicción interna del documento. La fila decía "incluidos en cirugía, no se cobran aparte" pero la sección 5.3 del mismo documento contiene la corrección de la CEO afirmando que SÍ se cobran aparte. La fila 3.6 ahora refleja la versión correcta de 5.3 y deja constancia explícita de que 5.3 prevalece. El derivado en `flujo-cirujano.html` ya estaba alineado con la versión correcta.
+- **Hallazgo Baja — encabezado**: actualizada "Última actualización" de 2026-04-15 a 2026-04-30 con detalle de las correcciones aplicadas. Estado pasa de "en proceso de validación" a "validado con la CEO en reunión 2026-04-15. 32/32 preguntas resueltas. 2 puntos derivados quedan abiertos en REVIEW-PRISMA-APEX C07 y C08".
+
+#### `portal/analisis/armc/diagnostico/mapa-fricciones.html` (2 ediciones)
+
+- **Hallazgo Media #1 — KPI fricciones transversales**: 42+ → **52+** (sincronización con el Resumen Ejecutivo).
+- **Hallazgo Media #1 — fricción "Fotos clínicas dispersas"**: "4+ teléfonos personales" → "**5+ dispositivos personales**" (Gabriel, Divani, Óscar, Brisa y Elián, además del iPad personal de Elián y la cámara especializada de tricología).
+
+#### `portal/analisis/armc/diagnostico/cadena-causal.html` (1 edición)
+
+- **Hallazgo Media #1 — nodo D1**: "Fotos en 4+ dispositivos personales" → "Fotos en **5+** dispositivos personales".
+
+#### `portal/analisis/armc/diagramas/flujo-atención-paciente.html` (2 ediciones)
+
+- **Hallazgo Media #2 — handoff Carlos → Cirujano externo (línea 600)**: reformulado para que el as-is no afirme ownership. Antes decía "Carlos coordinaría la 2ª valoración"; ahora dice "Cirujano externo (...) — handoff hipotético, no validado: alguien debe coordinar... la hipótesis de trabajo es que recae en Carlos pero no consta como ownership confirmado". C08 explícitamente marcado como abierto.
+- **Hallazgo Media #2 — fricción "Coordinación con cirujanos externos sin sistema" (línea 667)**: reformulado igual — "Quién agenda esa derivación está abierto — la hipótesis de trabajo es Carlos pero NO está validado por la CEO".
+
+**No se aplica** la corrección de versión stale en `REVIEW-PRISMA-APEX.md` que sugería el dictamen — ese archivo es propiedad del otro agente. Si requiere actualización, debe hacerse fuera del scope del asistente. Pendiente menor: catch-up retroactivo sobre el commit `785d90c` del flujo-enfermero (no tuvo bump propio en su momento). Documentado aquí como nota.
+
 ## [2026-04-30] — v3.3.17
 
 ### Cierre formal de Fase 1 — Sprint A bloque D validado en los 4 repos hermanos
