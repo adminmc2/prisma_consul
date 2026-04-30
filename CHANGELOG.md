@@ -2,6 +2,16 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-30] — v3.3.16
+
+### Fix Resumen Ejecutivo — atribución del hallazgo central coherente con 8 entrevistas
+
+Corrección menor de coherencia tras v3.3.15. La atribución de la cita del hallazgo central decía "7 entrevistas" cuando ya el subtítulo refleja "8 entrevistas en total". Se actualiza para mantener consistencia.
+
+#### `portal/analisis/armc/diagnostico/resumen-ejecutivo.html` (1 edición)
+
+- Atribución de la cita del hallazgo central: "Conclusión del análisis cruzado, 7 entrevistas" → "Conclusión del análisis cruzado, **8 entrevistas a 7 roles**". Coherente con el subtítulo (que ya refleja las 8 entrevistas: 1 por rol + 2ª entrevista CEO de validación del catálogo).
+
 ## [2026-04-30] — v3.3.15
 
 ### Análisis ARMC — Revisión profunda del Resumen Ejecutivo a la luz de la 2ª entrevista CEO
