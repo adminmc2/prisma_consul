@@ -2,6 +2,43 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-01] — v3.2.54
+
+### Análisis ARMC — Catch-up del Diagnóstico Integrado a producción (Resumen Ejecutivo profundo + correcciones del dictamen)
+
+Publicación a producción de las actualizaciones acumuladas en `dev` desde v3.2.53: revisión profunda del Resumen Ejecutivo (v3.3.15 + v3.3.16) + correcciones del dictamen de revisor (v3.3.18). 5 archivos consolidados. Cambios in-place, sin secciones nuevas (salvo el Hallazgo 06 dentro del Resumen Ejecutivo). No incluye trabajo de blueprint ni Sprint A — siguen solo en `dev`.
+
+#### `portal/analisis/armc/diagnostico/resumen-ejecutivo.html` (catch-up de v3.3.15 + v3.3.16)
+
+- **KPI "Fricciones documentadas"**: 42+ → **52+**.
+- **Subtítulo**: precisado — "8 entrevistas en total" (1 por rol + 2ª entrevista CEO de validación del catálogo del 2026-04-15) + 3 cirujanos externos identificados sin entrevista directa.
+- **Atribución cita central**: "7 entrevistas" → "8 entrevistas a 7 roles" (fix de coherencia v3.3.16).
+- **Hallazgo 02 "Historia clínica es un registro muerto"**: evidencia ampliada con gaps documentales confirmados por la 2ª entrevista CEO — lipoenzimas sin CI específico, PNO de obesidad pendiente.
+- **Hallazgo 03**: título reescrito a "Retención del 10% — catálogo amplio infrautilizado". Cuerpo ampliado con catálogo confirmado (5 líneas, ~52 procedimientos, 16 servicios oficiales infrautilizados).
+- **Hallazgo 05 "Fotos clínicas dispersas"**: 4+ → **5+ dispositivos** (incluida Elián con celular + iPad + cámara especializada).
+- **Hallazgo 06 NUEVO**: "Catálogo oficial confirmado pero invisible al mercado" (5 → 6 hallazgos principales).
+- **Voces del equipo**: añadida cita de Marisela de la 2ª entrevista CEO.
+- **Conclusión**: ampliada con catálogo definitivo + visibilizar catálogo + bloque amarillo destacado con C07/C08 pendientes.
+
+#### `portal/analisis/armc/diagnostico/mapa-fricciones.html` (correcciones del dictamen v3.3.18)
+
+- **KPI fricciones transversales**: 42+ → **52+** (sincronización con Resumen Ejecutivo).
+- **Fricción "Fotos clínicas dispersas"**: "4+ teléfonos personales" → "5+ dispositivos personales" con desglose explícito (Gabriel, Divani, Óscar, Brisa y Elián + iPad + cámara especializada).
+
+#### `portal/analisis/armc/diagnostico/cadena-causal.html` (corrección del dictamen v3.3.18)
+
+- **Nodo D1 "Fotos en X dispositivos"**: 4+ → **5+** (sincronización).
+
+#### `portal/analisis/armc/diagramas/flujo-atención-paciente.html` (correcciones del dictamen v3.3.18)
+
+- **Handoff Carlos → Cirujano externo**: reformulado para que el as-is no afirme ownership. Antes decía "Carlos coordinaría la 2ª valoración"; ahora dice "Cirujano externo (...) — handoff hipotético, no validado: alguien debe coordinar... la hipótesis de trabajo es que recae en Carlos pero NO consta como ownership confirmado". C08 explícitamente marcado como abierto.
+- **Fricción "Coordinación con cirujanos externos"**: reformulada igual — "Quién agenda esa derivación está abierto — la hipótesis de trabajo es Carlos pero NO está validado por la CEO".
+
+#### `docs/VALIDACION-CATALOGO-ARMC.md` (correcciones del dictamen v3.3.18)
+
+- **Fila 3.6 sobre masajes post-quirúrgicos**: corregida contradicción interna del documento. La fila decía "incluidos en cirugía, no se cobran aparte" pero la sección 5.3 del mismo documento contenía la corrección de la CEO afirmando que SÍ se cobran aparte. Fila 3.6 ahora alineada con 5.3.
+- **Encabezado**: actualizada "Última actualización" a 2026-04-30. Estado pasa a "validado con la CEO en reunión 2026-04-15. 32/32 preguntas resueltas. 2 puntos derivados quedan abiertos en REVIEW-PRISMA-APEX C07 y C08".
+
 ## [2026-04-30] — v3.2.53
 
 ### Análisis ARMC — Documentación transversal de cirujanos externos en producción (parcial — Opción A)

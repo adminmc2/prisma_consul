@@ -3,9 +3,9 @@
 **Destinataria:** CEO de ARMC
 **Remitente:** Equipo PRISMA Consul (Proyecto APEX)
 **Fecha:** 2026-04-14
-**Última actualización:** 2026-04-15
+**Última actualización:** 2026-04-30 (limpieza de marcas ⏳ huérfanas, reapertura de B como pendiente C07, clarificación de C, corrección de 3.6 sobre masajes post-quirúrgicos para alinear con la corrección de la sección 5.3 — sección 5.3 prevalece sobre 3.6)
 **Propósito:** resolver ambigüedades taxonómicas del catálogo oficial de servicios para poder modelarlo correctamente en el sistema APEX y, en paralelo, alinear la documentación clínica interna con la realidad operativa de la clínica.
-**Estado:** en proceso de validación con la CEO (Marisela). Reunión de validación: 2026-04-15.
+**Estado:** validado con la CEO (Marisela) en reunión 2026-04-15. 32/32 preguntas resueltas. 2 puntos derivados quedan abiertos en `REVIEW-PRISMA-APEX.md` Sección 7: C07 (costo 2ª valoración pre-cirugía con especialista externo) y C08 (quién agenda Variantes B y C de valoración + leads de obesidad).
 
 ---
 
@@ -40,7 +40,7 @@ Las siguientes decisiones han sido confirmadas verbalmente por la CEO (Marisela)
 | 3.3 — Toxina botulínica arrugas vs hiperhidrosis | Técnicamente es un solo principio activo, pero **se modelan como procedimientos separados** por indicación. Además, la CEO añade un **tercer procedimiento no listado: aplicación de toxina en maseteros para bruxismo** | ✅ DECIDIDO + HALLAZGO NUEVO |
 | 3.4 — Armonización facial | **Oferta personalizable** (no fija). Convive con aplicaciones por zona individual como servicios separados. Variable en volumen (5-15 ml) y zonas según evaluación | ✅ DECIDIDO |
 | 3.5 — Hialuronidasa | **3 escenarios**: externo cobrado, error interno gratis, insatisfacción estética cobrada. Es tanto servicio activo como acto correctivo | ✅ DECIDIDO |
-| 3.6 — Masajes post-quirúrgicos y reductivos | **Se separan**: post-quirúrgicos = incluidos en cirugía (Fase C, no se cobran aparte). Reductivos = **no se ofrecen actualmente**, se quiere implementar a futuro | ✅ DECIDIDO |
+| 3.6 — Masajes post-quirúrgicos y reductivos | **Se separan**: post-quirúrgicos = parte del proceso post-cirugía pero **se cobran aparte** (corregido por la CEO en sección 5.3 de este documento — el masaje de drenaje linfático y las terapias de ultrasonido posteriores se facturan como procedimientos independientes, NO incluidos en el precio de la cirugía). Reductivos = **no se ofrecen actualmente**, se quiere implementar a futuro | ✅ DECIDIDO (corregido por sección 5.3) |
 | 3.7 — Consulta médica estética | **3 variantes**: (A) valoración general gratuita con Marisela/Divani, (B) valoración pre-cirugía con Marisela/Divani gratuita + 2ª valoración con especialista externo (⚠️ costo de la 2ª por confirmar — REVIEW-PRISMA-APEX C07), (C) vía directa con Dr. Cabrera por demanda del paciente desde el inicio = $1,950 (Marisela/Divani no intervienen) | ✅ DECIDIDO (A y C) · ⚠️ B parcial (costo 2ª pendiente) |
 | 3.8 — Manejo integral de obesidad | **Servicio activo con protocolo real**. Dra. Elián lo lleva (consulta + dieta + seguimiento + tirzepatida). Ubicado **dentro de Medicina estética** (estructura final de 5 líneas). Falta PNO formal — tarea documental | ✅ DECIDIDO |
 | 3.9 — Mesoterapia | **Son 4 procedimientos distintos**: mesoterapia capilar (infiltración, Dra. Elián), mesoterapia facial (Dermapen), peptonas (glúteo), bioestimuladores (cánulas). No son intercambiables | ✅ DECIDIDO |
