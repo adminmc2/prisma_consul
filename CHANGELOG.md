@@ -2,6 +2,28 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-30] — v3.2.53
+
+### Análisis ARMC — Documentación transversal de cirujanos externos en producción (parcial — Opción A)
+
+Publicación a producción de la documentación transversal de los 3 cirujanos externos (Figueroa, Vargas, Ducón) bajo la Opción A (no se crea perfil/flujo separado). De las 6 ediciones aplicadas en `dev` (v3.3.14), esta publicación trae a producción solo las 3 que NO son de blueprint, manteniendo la regla histórica de que el blueprint vive solo en `dev`.
+
+#### Diagnóstico (2 archivos)
+
+- **`portal/analisis/armc/diagnostico/mapa-fricciones.html`**: añadida fricción transversal nº 9 — "Coordinación con cirujanos externos sin canal formal" (3 roles: Atención, Cirujano, CEO). Contador actualizado 8 → 9.
+- **`portal/analisis/armc/diagnostico/resumen-ejecutivo.html`**: subtítulo actualizado para incluir los 3 cirujanos externos identificados. Bloque destacado nuevo en el hallazgo central documenta personal externo, decisión de quedarse con expediente/CI originales, y referencia a la fricción transversal nº 9.
+
+#### Flujo por rol (1 archivo)
+
+- **`portal/analisis/armc/diagramas/flujo-cirujano.html`** (Slide Perfil): añadida entrada "Procedimientos que NO realiza Gabriel (derivados a cirujanos externos)" — rinoplastia (Vargas/Ducón), mastopexía y abdominoplastía (Figueroa). Cierra el bucle visualmente sin contradecir la decisión previa de excluir externos del flujo de Gabriel.
+
+**No se publican a producción** (siguen solo en `dev`):
+- `portal/analisis/armc/blueprint/modelo-datos.html` (RBAC con sub-rol Cirujano externo)
+- `portal/analisis/armc/blueprint/flujos-to-be.html` (card Cirujano con item To-Be sub-rol externo)
+- `portal/analisis/armc/blueprint/fases-implementacion.html` (F1 con item Modelado de Personal Externo)
+
+Justificación: regla histórica del proyecto — el blueprint vive solo en `dev`, no en producción (commit `3a2b92e Remove blueprint section from production`).
+
 ## [2026-04-30] — v3.2.52
 
 ### Análisis ARMC — Publicación a producción de los 5 flujos restantes post-entrevista CEO
