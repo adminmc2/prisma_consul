@@ -2,6 +2,23 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-30] — v3.3.12
+
+### Análisis ARMC — Flujo Tricología (Elián) post-entrevista CEO
+
+Sexto y último rol revisado a la luz de la entrevista CEO 2026-04-15. Tricología es rol moderadamente afectado: la CEO confirma el área como línea propia (línea 5 del catálogo) con 8 servicios oficiales y aclara aspectos clave del manejo de obesidad/tirzepatida que Elián lidera. El cambio 4 cierra el solapamiento Divani/Elián identificado en la revisión anterior. Cambios in-place dentro de secciones existentes — sin cambios estructurales.
+
+#### `portal/analisis/armc/diagramas/flujo-tricologia.html` (6 ediciones)
+
+- **Slide "Perfil y rol"**, entrada "Área capilar opera de forma separada": ampliada con confirmación CEO de Tricología regenerativa como línea propia (línea 5) con 8 servicios oficiales — antes estaba dentro de "Otros".
+- **Slide "Tratamientos capilares"**, entrada "Microinjerto y prótesis capilares: aún NO activos": ampliada con confirmación CEO de la separación oficial "Consulta capilar regenerativa" vs "Implante capilar = 🔮 futuro" (antes era un solo ítem ambiguo en el catálogo).
+- **Slide "Control de peso: consulta y tratamiento"**, entrada "ÁREA ADICIONAL: también lleva control de peso": ampliada con confirmación CEO de que Elián lidera el manejo integral de obesidad oficial dentro de Medicina Estética (línea 2). Servicio activo. ⚠️ Falta PNO formal.
+- **Slide "Control de peso: bitácora y equipo"**, entrada "Divani puede poner la inyección si Elián no está": añadido contexto que cierra el solapamiento Divani/Elián identificado en el flujo del Primer Ayudante — el reparto es Elián = principal (consulta, dieta, dosis), Divani = respaldo via bitácora compartida (solo aplicación cuando Elián no está).
+- **Sección "Vacíos de información"**: añadido nuevo `<details>` "Vacíos resueltos por otras entrevistas (3)" siguiendo el patrón estándar — Tricología como línea propia con 8 servicios, Implante capilar = futuro confirmado, manejo de obesidad ubicado en Medicina Estética con PNO pendiente.
+- **Sección "Fricciones identificadas"**: añadida fricción nueva — "Manejo de obesidad activo sin PNO formal" (Elián lidera el servicio sin Procedimiento Normalizado de Operación documentado, mismo patrón que las lipoenzimas sin CI).
+
+**Cierre del primer pase de revisión post-entrevista CEO**: 6 roles completos en `dev` (Carlos, Gabriel, Óscar, Brisa, Divani, Elián). Carlos y Gabriel ya en producción; los 4 restantes pendientes de publicar.
+
 ## [2026-04-29] — v3.3.11
 
 ### Análisis ARMC — Flujo Primer Ayudante (Divani) post-entrevista CEO
