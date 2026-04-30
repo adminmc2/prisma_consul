@@ -2,6 +2,25 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-30] — v3.3.13
+
+### Análisis ARMC — Flujo CEO (Marisela) post-2ª entrevista (validación catálogo)
+
+Cierre del primer pase con la propia CEO. El flujo de Marisela ya existía desde la entrevista de descubrimiento operativo, pero faltaba absorber los hallazgos de la 2ª entrevista (validación de catálogo del 2026-04-15) que ella misma protagonizó. Cambios in-place dentro de secciones existentes — sin cambios estructurales.
+
+#### `portal/analisis/armc/diagramas/flujo-ceo.html` (8 ediciones)
+
+- **Slide "Perfil y rol"**, entrada Responsabilidades: aclarado que las valoraciones corresponden a la Variante A (Marisela O Divani — gratuita); las Variantes B y C no involucran a Marisela.
+- **Slide "Expansión y servicios"**, entrada cirugía plástica: ampliada con los 3 cirujanos externos confirmados — Dr. Figueroa (mastopexia, abdominoplastía), Dra. Vargas (rinoplastia), Dr. Ducón (rinoplastia, hallazgo nuevo). Los externos se quedan con expediente y CI originales.
+- **Slide "Captación y flujo del paciente"**, paso 2 del flujo de 10 pasos: ampliado con las 3 variantes A/B/C de la consulta de valoración.
+- **Slide "Retención — problema central"**, entrada "Servicios disponibles no ofrecidos": contextualizada con catálogo oficial — la aparatología infrautilizada son 7 servicios oficiales de Línea 3, los faciales son parte de Cosmiatría (Línea 4) con 9 servicios + sublíneas. Brisa los puede operar todos. 16 servicios oficiales ignorados en oferta y promoción.
+- **Slide "Expediente y regulación"**: añadida entrada nueva sobre 2 gaps documentales identificados en la 2ª entrevista CEO — lipoenzimas activas sin CI estandarizado, PNO de manejo de obesidad pendiente de redacción. Marisela se comprometió a verificar ambos.
+- **Sección "Vacíos de información"**: añadido nuevo `<details>` "Vacíos resueltos por 2ª entrevista CEO — validación catálogo (5)" — catálogo definitivo de 5 líneas y ~52 procedimientos, personal externo identificado, 3 variantes de valoración, Cosmiatría y Tricología como líneas propias, manejo de obesidad confirmado.
+- **Sección "Puntos de Handoff"**: añadido handoff Marisela/Divani → Cirujanos externos (Figueroa/Vargas/Ducón) para Variante B de valoración pre-cirugía. Marca pendiente de C08 (quién agenda B/C/leads obesidad).
+- **Sección "Fricciones identificadas"**: añadidas 2 fricciones nuevas — (a) catálogo oficial confirmado pero promoción restringida a ~7 procedimientos en pautas Meta (Cosmiatría, Aparatología, Tricología y hallazgos nuevos no se promocionan); (b) decisiones pendientes de la propia CEO — C07 (costo 2ª valoración pre-cirugía con externo) y C08 (quién agenda B/C/leads obesidad). Bloquean el modelado del flujo de agendamiento en APEX.
+
+**Cierre completo del primer pase post-entrevista CEO**: 7 flujos revisados (los 6 roles operativos + la propia CEO). Carlos y Gabriel ya en producción; los 5 restantes pendientes de publicar.
+
 ## [2026-04-30] — v3.3.12
 
 ### Análisis ARMC — Flujo Tricología (Elián) post-entrevista CEO
