@@ -2,6 +2,29 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-04-30] — v3.3.14
+
+### Análisis ARMC — Documentación transversal de cirujanos externos (Opción A)
+
+Tras decidir NO crear un perfil/flujo separado para los 3 cirujanos externos (Figueroa, Vargas, Ducón) — porque no han sido entrevistados directamente y crear un flujo "ground truth" sin entrevista rompería el patrón de los demás —, se documentan de forma transversal en blueprint, diagnóstico y flujo del Cirujano. Cambios in-place dentro de secciones existentes — sin cambios estructurales, sin perfil nuevo.
+
+#### Blueprint (3 archivos)
+
+- **`portal/analisis/armc/blueprint/modelo-datos.html`** (RBAC): añadida fila nueva en tabla "Cirujano externo subcontratado (sub-rol)" con acceso restringido a su propio expediente. Nota explicativa con los 3 nombres confirmados (Figueroa, Vargas, Ducón) y referencias a REVIEW-PRISMA-APEX C07/C08.
+- **`portal/analisis/armc/blueprint/flujos-to-be.html`** (card Cirujano): añadido item en columna To-Be — sub-rol Cirujano externo con acceso limitado al expediente del paciente que él mismo opera.
+- **`portal/analisis/armc/blueprint/fases-implementacion.html`** (F1): RBAC ampliado mencionando el sub-rol Cirujano externo + nuevo item "Modelado de Personal Externo subcontratado + protocolo de derivación 2ª valoración pre-cirugía (Variante B). Cierra C07 y C08".
+
+#### Diagnóstico (2 archivos)
+
+- **`portal/analisis/armc/diagnostico/mapa-fricciones.html`**: añadida fricción transversal nº 9 — "Coordinación con cirujanos externos sin canal formal" (3 roles: Atención, Cirujano, CEO). Contador actualizado 8 → 9.
+- **`portal/analisis/armc/diagnostico/resumen-ejecutivo.html`**: subtítulo actualizado para incluir los 3 cirujanos externos identificados. Bloque destacado nuevo en el hallazgo central documenta personal externo, decisión de quedarse con expediente/CI originales, y referencia a la fricción transversal nº 9.
+
+#### Flujo por rol (1 archivo)
+
+- **`portal/analisis/armc/diagramas/flujo-cirujano.html`** (Slide Perfil): añadida entrada "Procedimientos que NO realiza Gabriel (derivados a cirujanos externos)" — rinoplastia (Vargas/Ducón), mastopexía y abdominoplastía (Figueroa). Cierra el bucle visualmente sin contradecir la decisión previa de excluir externos del flujo de Gabriel.
+
+**Decisión registrada**: NO se crea perfil/flujo separado para los cirujanos externos. Justificación: los flujos por rol son patrimonio de las entrevistas directas; crear uno sin entrevista contaminaría la calidad. Si en el futuro se entrevista a alguno de los externos, sí se podrá crear su flujo propio.
+
 ## [2026-04-30] — v3.3.13
 
 ### Análisis ARMC — Flujo CEO (Marisela) post-2ª entrevista (validación catálogo)
