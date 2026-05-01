@@ -1,5 +1,11 @@
 # Plan de Coordinacion Pre-Fase 2
 
+> **Estado: CERRADO en `v3.3.22` (2026-05-01).**
+>
+> Este documento queda como historial del proceso de coordinación pre-Fase 2. Todos los problemas operativos descritos (E01, E02, E03) fueron absorbidos en el merge `65c1301` (reconciliación Git `main` → `dev`) y cerrados estructuralmente con la promoción a `main` y el despliegue a producción del baseline `v3.3.22`. C11 del review queda cerrado. No es un plan vivo.
+>
+> El siguiente trabajo (Fase 2 cuando se autorice + cualquier release intermedio) opera en el modo de dos carriles formalizado en `CLAUDE.md` ("Modo de trabajo en dos carriles"), no bajo este plan.
+
 ## 1. Proposito
 
 Este documento define el orden operativo minimo para dejar `web-de-prisma` en un estado limpio antes de ejecutar la Fase 2 del Sprint A.

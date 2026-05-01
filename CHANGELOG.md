@@ -2,6 +2,41 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-01] — v3.3.22
+
+### Cierre baseline pre-Fase 2 + publicación a producción + modo de trabajo en dos carriles
+
+Cierre operativo del tramo pre-Fase 2. Promoción de `dev` a `main` por fast-forward, despliegue a producción, validación, y formalización del modo de trabajo en dos carriles para el siguiente tramo. Sin contenido nuevo de blueprint ni de análisis ARMC. Sin arranque de Fase 2.
+
+#### Operaciones de release
+
+- Reconciliación Git `main` → `dev` ya estaba realizada y desplegada en `dev.prismaconsul.com` en `v3.3.21` (`c6db329`).
+- En este release: `origin/main` se promueve por fast-forward al commit del baseline `v3.3.22`, igualando `origin/dev` y `origin/main` en el mismo HEAD.
+- Despliegue a producción (`prismaconsul.com`) ejecutado con el flujo estándar del repo (`git pull origin main` + `pm2 restart prisma-consul`).
+- Validación HTTP post-despliegue: landing `/`, `/apex`, `/hub`, versión visible `v3.3.22` en footer y login del Hub.
+
+#### Cambios documentales
+
+- **`CLAUDE.md`**: nueva sección `## Modo de trabajo en dos carriles` (Ejecutor 1 = repo, Ejecutor 2 = contenido, Revisor = coordinación + dictamen). Bump del campo "Versión actual".
+- **`REVIEW-PRISMA-APEX.md`**: cierre baseline registrado; estado actualizado para reflejar que la reconciliación Git ya quedó publicada en `main`. C11 (coordinación `main`/`dev`) deja de figurar como problema abierto.
+- **`docs/PLAN-COORDINACION-PRE-FASE2.md`**: marcado como cerrado en su totalidad. Sirve como historial del proceso, no como plan vivo.
+- **`docs/PLAN-FASE2.md`**: nota de baseline — Fase 2 sigue sin arrancar; cuando arranque lo hará desde el commit `v3.3.22` con los dos carriles ya formalizados.
+- **`CHANGELOG.md`**: esta entrada.
+- **`index.html`**, **`portal/index.html`**: bump de versión visible.
+
+#### Lo que NO entra en este release
+
+- No se toca contenido de blueprint ni análisis ARMC.
+- No se toca lógica APEX ni Hub.
+- No se toca backend funcional.
+- No se arranca Fase 2.
+
+#### Fuera de alcance — pendiente operativo
+
+- Validación humana visual de `dev.prismaconsul.com` y `prismaconsul.com` post-despliegue (sesión del usuario / ejecutor 2).
+- Decisión sobre arranque de Fase 2 (requiere autorización explícita del revisor / usuario).
+- Carpeta local principal del usuario: queda con WIP propio no integrado en este release; se reporta su estado pero no se altera. Los siguientes carriles operan sobre worktrees limpios.
+
 ## [2026-05-01] — v3.3.21
 
 ### Coordinación pre-Fase 2 — reconciliación Git `main` → `dev` completada

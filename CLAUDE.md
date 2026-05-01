@@ -37,6 +37,21 @@ Mapa completo, flujos cruzados, convenciones y relaciones entre repos: ver [`ECO
 
 **Ámbito temporal:** vigente durante todo Sprint A (incluye Fase 1, Fase 2, Fase 3 y Fase 4). Tras el cierre del Sprint A + Sprint B (`v4.0.0`), se evalúa si esta práctica se mantiene como base permanente del proyecto o si se relaja.
 
+## Modo de trabajo en dos carriles
+
+**Vigente desde el cierre baseline pre-Fase 2 (`v3.3.22`).**
+
+- **Ejecutor 1 — carril repo:** git, ramas, deploy, release, infraestructura, versionado visible, reconciliación main/dev. No edita contenido narrativo ni blueprint salvo permiso explícito.
+- **Ejecutor 2 — carril contenido:** texto, blueprint, análisis ARMC, hallazgos, narrativa de entregables. No toca git, ramas ni release.
+- **Revisor:** coordina, dictamina, sincroniza review central. Sostiene el modo revisor permanente.
+
+**Reglas operativas:**
+
+- Los dos carriles trabajan en **ramas y/o worktrees separados**. Nunca sobre la misma rama al mismo tiempo.
+- La integración es **serial**: un carril completa, el revisor da PASS, el otro toma esa base y avanza. No hay merges paralelos sin dictamen.
+- La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) **no se usa como base de release**. Cada carril abre su propio worktree limpio sobre el último commit publicado.
+- Cualquier cambio fuera del alcance del carril activo requiere parar y reportar.
+
 ## Architecture
 
 This is a monorepo with 3 frontend apps sharing one Express.js backend:
@@ -318,7 +333,7 @@ La versión actual se muestra en el footer de `index.html`. Se usa **Versionado 
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.21`
+**Versión actual:** `v3.3.22`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)

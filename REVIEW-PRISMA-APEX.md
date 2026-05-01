@@ -40,10 +40,10 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Campo | Estado actual |
 |---|---|
 | Proyecto | Reorganización de Prisma APEX |
-| Momento actual | Sprint A / Fase 1 cerrada formalmente; reconciliación Git `main` → `dev` completada; Fase 2 pendiente de validación operativa previa |
-| Naturaleza del trabajo | Revisión cerrada de Fase 1 + validación del estado reconciliado antes de ejecutar Fase 2 |
-| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; bloques B, C y D cerrados; Fase 1 cerrada formalmente; el catch-up Git `main` → `dev` ya quedó integrado, pero Fase 2 sigue pendiente de validación del `dev` reconciliado antes de ejecución |
-| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3), **bloque C PASS** (v3.3.8) y **bloque D PASS** tras validación durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops` el 2026-04-30. La publicación directa a `main` hasta `v3.2.54` y la continuidad de `dev` hasta `v3.3.20` ya fueron absorbidas en el merge `65c1301`, sin reabrir Fase 1. Fase 2 queda pausada operativamente hasta desplegar y validar `origin/dev` reconciliado en `dev.prismaconsul.com`. |
+| Momento actual | Sprint A / Fase 1 cerrada formalmente; reconciliación Git `main` → `dev` completada, desplegada y validada técnicamente; baseline pre-Fase 2 cerrado en `v3.3.22`; Fase 2 sin arrancar |
+| Naturaleza del trabajo | Baseline operativo cerrado. Próxima fase: ejecución de Fase 2 desde el commit `v3.3.22`, en modo de trabajo de dos carriles |
+| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; bloques B, C y D cerrados; Fase 1 cerrada formalmente; reconciliación `main` ↔ `dev` cerrada con `main` y `dev` igualados en el commit baseline `v3.3.22`; Fase 2 pendiente de autorización explícita |
+| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3), **bloque C PASS** (v3.3.8) y **bloque D PASS** tras validación durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops` el 2026-04-30. Reconciliación Git `main` → `dev` (merge `65c1301`) desplegada en `dev.prismaconsul.com` en `v3.3.21` y validada técnicamente. En `v3.3.22`: `origin/main` se promueve por fast-forward al baseline; producción queda alineada con `dev`. Fase 2 arranca solo con autorización explícita del usuario / revisor; cuando arranque, lo hará desde el commit `v3.3.22` con dos carriles formalizados (ejecutor 1 = repo, ejecutor 2 = contenido). |
 
 ### Dictamen operativo vigente
 
@@ -134,7 +134,7 @@ Estos puntos no bloquean el arranque de Fase 1, pero sí condicionan el paso a F
 | C08 | Quién agenda variantes B y C de valoración + futuros leads de obesidad | Abierto | Definir en el proceso/sistema APEX si Carlos asume el agendamiento de la 2ª cita pre-cirugía (B), de la cita directa con Gabush (C) y de los leads de obesidad (hoy 100% Dra. Elián), o si la lógica la resuelve el sistema | Diseño de flujo de agendamiento y lead intake |
 | C09 | Inventario contractual real en `CONTRATOS.md` | Cerrado | Cerrado en v3.2.43 tras 6 correcciones del revisor: 17 endpoints documentados con shapes exactas, 31 columnas de `apex_submissions` (5 ausentes en `schema.sql`), 3 paths hardcodeados, redirects 301, validación runtime de Fase 2, alineamiento con gate del review | Gate funcional de Fase 2 cumplido |
 | C10 | Absorción del vocabulario canónico en `GLOSARIO.md` | Cerrado | Cerrado en v3.2.44: glosario consolidado con 15 secciones cubriendo producto, modelo de datos, roles, términos arquitectónicos, legacy frozen, ecosistema, servicios externos, proceso, contratos, URLs, Claude Code, convenciones y aclaraciones de qué NO es cada término | Coherencia documental cerrada para Fase 1 |
-| C11 | Coordinación operativa `main`/`dev` antes de Fase 2 | Abierto | Catch-up Git `main` → `dev` completado en `65c1301`; pendiente desplegar y validar `origin/dev` reconciliado en `dev.prismaconsul.com` antes del subpaso 2.1 | Orden operativo y trazabilidad antes del movimiento físico |
+| C11 | Coordinación operativa `main`/`dev` antes de Fase 2 | Cerrado | Cerrado en `v3.3.22`: catch-up Git `main` → `dev` integrado en `65c1301`, `origin/dev` `c6db329` (`v3.3.21`) desplegado y validado técnicamente en `dev.prismaconsul.com`, `origin/main` promovido por fast-forward al baseline `v3.3.22`, producción alineada con `dev`. La coordinación `main`/`dev` deja de ser un problema abierto. | Orden operativo y trazabilidad confirmados antes del movimiento físico |
 
 ### Gate para pasar a Fase 2
 
@@ -483,6 +483,20 @@ El diferimiento que existió sobre la integración durable del bloque D queda **
 - Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `docs/PLAN-FASE2.md`, `docs/PLAN-COORDINACION-PRE-FASE2.md`, `CLAUDE.md`.
 - Impacto en gates: el gate conceptual de Fase 2 no cambia; desaparece el bloqueo Git entre `main` y `dev`, pero se mantiene el bloqueo operativo hasta validar el entorno `dev` reconciliado.
 - Próximo paso: desplegar `origin/dev` en `dev.prismaconsul.com`, validar el estado reconciliado y solo entonces arrancar el subpaso 2.1.
+
+### 2026-05-01 — Cierre baseline pre-Fase 2 + publicación a `main` + dos carriles formalizados
+
+- Qué se revisó: cierre operativo del tramo pre-Fase 2 sobre la base reconciliada (`origin/dev` `c6db329`, `v3.3.21`), promoción a `main` por fast-forward, despliegue a producción (`prismaconsul.com`) y formalización del modo de trabajo en dos carriles.
+- Hallazgos:
+  - `origin/dev` `v3.3.21` fue desplegado en `dev.prismaconsul.com` y validado técnicamente (HTTP `/`, `/apex`, `/hub`, versión visible en landing y login del Hub).
+  - El bump baseline `v3.3.22` añade solo cierre documental (REVIEW, PLAN-COORDINACION, PLAN-FASE2, CHANGELOG, CLAUDE.md) y formaliza el modo de dos carriles. No hay contenido nuevo de blueprint ni de análisis ARMC. No hay cambio de lógica.
+  - `origin/main` se promueve por fast-forward al commit baseline; producción y dev quedan en el mismo HEAD.
+  - C11 deja de figurar como problema abierto: la coordinación `main`/`dev` queda cerrada estructuralmente.
+- Decisiones cerradas afectadas: C11 cerrado.
+- Decisiones abiertas afectadas: ninguna nueva. Quedan los condicionales propios de Fase 2 que no son gate (C03, C04, C05, etc.) según `docs/PLAN-FASE2.md`.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `docs/PLAN-FASE2.md`, `docs/PLAN-COORDINACION-PRE-FASE2.md` (cerrado), `CLAUDE.md` (nueva sección "Modo de trabajo en dos carriles" + bump), `CHANGELOG.md`, `index.html`, `portal/index.html`.
+- Impacto en gates: gate conceptual de Fase 2 sigue cumplido. Gate operativo de Fase 2 también queda libre. Fase 2 no se ejecuta automáticamente — requiere autorización explícita del usuario / revisor.
+- Próximo paso: validación humana visual de producción y `dev` (sesión del usuario / ejecutor 2) y, en su momento, arranque autorizado de Fase 2 desde el commit baseline `v3.3.22`.
 
 ## 12. Plantilla de actualización para futuras revisiones
 

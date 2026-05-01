@@ -6,6 +6,10 @@
 
 ---
 
+> **Nota baseline (2026-05-01, `v3.3.22`).** Fase 2 **sigue sin arrancar**. Cuando arranque, el commit base será `v3.3.22` (estado en el que `origin/dev` y `origin/main` quedaron igualados tras la reconciliación + publicación). La ejecución se hará en el **modo de dos carriles** definido en `CLAUDE.md` ("Modo de trabajo en dos carriles"): el ejecutor 1 opera el carril repo (estructura, paths, deploy) y el ejecutor 2 el carril contenido (texto, blueprint, ARMC). El subpaso 2.1 no se ejecuta hasta autorización explícita del revisor / usuario.
+
+---
+
 ## 1. Propósito
 
 Documentar **qué se mueve, dónde se mueve, en qué orden**, y **qué se queda igual**, para que la ejecución de Fase 2 sea totalmente determinista y auditable. Cada movimiento físico debe poder hacerse sin romper ARMC en ningún momento intermedio.
