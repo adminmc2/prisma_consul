@@ -209,7 +209,7 @@ ssh prisma@212.227.251.125 "cd ~/web-de-prisma-dev && git pull origin dev && pm2
 
 ### Coordinación Operativa Antes De Fase 2
 
-- No arrancar Fase 2 mientras `main` y `dev` sigan divergidos. Primero ejecutar `docs/PLAN-COORDINACION-PRE-FASE2.md`.
+- No arrancar Fase 2 hasta que `origin/dev` haya absorbido el catch-up de `origin/main` y el resultado reconciliado haya sido validado en `dev.prismaconsul.com`. El estado operativo vigente vive en `docs/PLAN-COORDINACION-PRE-FASE2.md`.
 - Si por urgencia se publica algo directo en `main`, el siguiente paso obligatorio es reconciliar ese cambio en `dev` antes de nuevos cambios estructurales o documentales relevantes.
 - Solo un agente escritor a la vez en este repo. El revisor puede actualizar `REVIEW-PRISMA-APEX.md`, pero no debe coexistir con otro agente ejecutando cambios en paralelo sin handoff explícito.
 - Nunca usar credenciales en URLs Git o comandos shell (`https://user:token@...`, `https://oauth2:...`, `x-access-token:`). Método autorizado: `gh auth login` + `gh auth setup-git`.
@@ -318,7 +318,7 @@ La versión actual se muestra en el footer de `index.html`. Se usa **Versionado 
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.20`
+**Versión actual:** `v3.3.21`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)

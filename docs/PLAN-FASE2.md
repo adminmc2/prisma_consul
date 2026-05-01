@@ -717,10 +717,10 @@ Cada subpaso debe terminar con esta verificación mínima antes de pasar al sigu
 
 ## 9. Pendientes antes de ejecutar Fase 2
 
-- Reconciliar `origin/main` (`v3.2.54`) y `origin/dev` (`v3.3.19`) segun `docs/PLAN-COORDINACION-PRE-FASE2.md`.
-- Congelar cambios paralelos en este repo hasta cerrar esa integracion.
-- Ejecutar la integracion en una rama o `worktree` temporal limpio; no sobre working tree sucio.
-- Desplegar el resultado reconciliado a `dev.prismaconsul.com` y validarlo antes del subpaso 2.1.
+- `origin/dev` ya absorbió el catch-up de `origin/main` mediante el merge `65c1301` (`v3.3.20`); no reabrir esa reconciliación salvo conflicto nuevo.
+- Mantener congelados los cambios paralelos en este repo hasta validar el `dev` reconciliado.
+- Cualquier ajuste adicional previo a Fase 2 debe hacerse en rama o `worktree` temporal limpio; no sobre working tree sucio.
+- Desplegar `origin/dev` reconciliado a `dev.prismaconsul.com` y validarlo antes del subpaso 2.1.
 - Aprobación del revisor sobre este plan.
 - Confirmación del usuario.
 - Backup de Neon (`pg_dump`) antes de subpaso 2.6.

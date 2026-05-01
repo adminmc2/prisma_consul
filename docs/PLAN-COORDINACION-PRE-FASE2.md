@@ -9,10 +9,10 @@ No redefine `docs/PLAN-FASE2.md`. Su trabajo es otro: evitar que la ejecucion de
 ## 2. Estado actual verificado
 
 - `origin/main`: `e50e63f` — `v3.2.54` (`catch-up Diagnostico Integrado a produccion + correcciones del dictamen`)
-- `origin/dev`: `f1819ae` — `v3.3.19` (`carril repo ya integrado en dev`)
-- `main...dev`: `15 43`
+- `origin/dev`: `65c1301` — `v3.3.20` (`merge Git main -> dev ya completado`)
+- `main...dev`: `0 44`
 - Fase 1: cerrada formalmente por revision
-- Fase 2: autorizada por gate, pero **todavia no debe arrancar** hasta ordenar la integracion entre ramas
+- Fase 2: autorizada por gate, pero **todavia no debe arrancar** hasta desplegar y validar el `dev` reconciliado
 
 ## 3. Problemas detectados
 
@@ -32,9 +32,9 @@ Aunque no haya conflicto inmediato en cada commit, se pierde ownership claro del
 
 `REVIEW-PRISMA-APEX.md`, `CHANGELOG.md`, `CLAUDE.md`, `index.html` y `portal/index.html` no pueden tratarse como simples bumps mecanicos cuando hay ramas divergidas. La comprobacion completa de ramas tambien muestra una superficie dual-modificada pequeña pero real en `.gitignore` y en 3 archivos blueprint de ARMC.
 
-### E05. Riesgo de arrancar Fase 2 sobre una base no reconciliada
+### E05. Riesgo de arrancar Fase 2 sin validar el `dev` reconciliado
 
-Fase 2 mueve estructura fisica, serving y rutas. Empezarla antes de reconciliar `main` y `dev` multiplicaria el coste de cada conflicto siguiente.
+Fase 2 mueve estructura fisica, serving y rutas. Aunque el catch-up Git `main` -> `dev` ya se completó, arrancarla sin validar el estado reconciliado en `dev.prismaconsul.com` seguiria multiplicando el coste de cada conflicto siguiente.
 
 ## 4. Que ya esta absorbido en `dev`
 
@@ -45,52 +45,27 @@ Los siguientes archivos del catch-up a produccion ya estan alineados semanticame
 - `portal/analisis/armc/diagnostico/cadena-causal.html`
 - `portal/analisis/armc/diagramas/flujo-atención-paciente.html`
 
-La divergencia real verificada entre `origin/main` y `origin/dev` tiene 25 rutas: 8 modificadas en ambas ramas y 17 altas solo en `dev`.
-
-Los archivos modificados en ambas ramas que si requieren coordinacion explicita antes de seguir son:
-
-- `.gitignore`
-- `CHANGELOG.md`
-- `CLAUDE.md`
-- `index.html`
-- `portal/index.html`
-- `portal/analisis/armc/blueprint/fases-implementacion.html`
-- `portal/analisis/armc/blueprint/flujos-to-be.html`
-- `portal/analisis/armc/blueprint/modelo-datos.html`
-
-Las 17 altas solo en `dev` (documentos canonicos de Sprint A, reporte/checklist del bloque B, guia de nuevas secciones y scripts auxiliares) no son conflicto puro, pero si forman parte de la carga de integracion cuando se reconcilien ramas.
-
-Para la ejecucion actual del carril repo, el ejecutor 1 trabaja solo sobre la superficie tecnica compartida del repositorio: `.gitignore`, `CHANGELOG.md`, `CLAUDE.md`, `index.html` y `portal/index.html`. Los 3 archivos blueprint quedan fuera de este carril y se tratan despues en el carril de contenido.
+La reconciliacion Git `main` -> `dev` ya fue ejecutada en el merge `65c1301`. La política aplicada dejó `dev` como árbol canónico para la superficie repo y para los 3 archivos blueprint evaluados. Las diferencias restantes entre ramas ya no son un conflicto pendiente a resolver, sino el delta normal de desarrollo sobre producción.
 
 ## 5. Politica operativa desde ahora
 
 1. Un solo agente escritor a la vez en este repo.
 2. El revisor actualiza `REVIEW-PRISMA-APEX.md`; el ejecutor no lo toca salvo instruccion explicita.
-3. No se arranca Fase 2 mientras `main` y `dev` sigan divergidos.
+3. No se arranca Fase 2 hasta que `origin/dev` haya absorbido el catch-up de `origin/main` y el resultado reconciliado haya sido validado en `dev.prismaconsul.com`.
 4. Si por urgencia se vuelve a publicar algo directo en `main`, el siguiente paso obligatorio es reconciliar ese cambio en `dev` antes de nuevos cambios estructurales.
 5. No se hace merge sobre working tree sucio ni con stash como estrategia de coordinacion.
 6. GitHub por HTTPS se usa con `gh auth login` + `gh auth setup-git`; nunca con credenciales en la URL del comando.
 
 ## 6. Secuencia obligatoria antes de Fase 2
 
-1. Congelar cambios paralelos de contenido en este repo hasta cerrar la integracion.
+1. Congelar cambios paralelos de contenido en este repo hasta cerrar la validacion.
 2. Trabajar desde `dev` limpio y actualizado (`git fetch origin`).
 3. Crear una rama o `git worktree` temporal de integracion desde `origin/dev`.
-4. Mergear `origin/main` dentro de esa rama temporal.
-5. Resolver conflictos con esta politica:
-   - `.gitignore`: gana `dev`.
-   - `CLAUDE.md`: gana `dev`.
-   - `index.html`: gana `dev`.
-   - `portal/index.html`: gana `dev`.
-   - `portal/analisis/armc/blueprint/fases-implementacion.html`: gana `dev`.
-   - `portal/analisis/armc/blueprint/flujos-to-be.html`: gana `dev`.
-   - `portal/analisis/armc/blueprint/modelo-datos.html`: gana `dev`.
-   - `CHANGELOG.md`: fusion manual. Conservar arriba el track `v3.3.x` de `dev`, y preservar como historial las publicaciones reales de `main` (`v3.2.52`, `v3.2.53`, `v3.2.54`).
-
-En el primer corte operativo del carril repo, el revisor fijo estas decisiones: version visible `v3.3.19` para `index.html`, `portal/index.html` y `CLAUDE.md`; `CHANGELOG.md` se resuelve con fusion historica acotada, tomando `dev` como base y preservando las publicaciones directas a produccion `v3.2.52`, `v3.2.53` y `v3.2.54`.
-6. Desplegar el resultado integrado a `dev.prismaconsul.com`.
-7. Ejecutar validacion humana minima de los puntos afectados por la integracion.
-8. Integrar la rama temporal de vuelta a `dev`.
+4. Mergear `origin/main` dentro de esa rama temporal. **Estado: completado en `65c1301`.**
+5. Resolver conflictos con esta politica. **Estado: completado, todos los conflictos resueltos a favor de `dev` y los auto-merges ya coincidian con `dev`.**
+6. Desplegar `origin/dev` reconciliado a `dev.prismaconsul.com`. **Estado: pendiente.**
+7. Ejecutar validacion humana minima de los puntos afectados por la integracion. **Estado: pendiente.**
+8. Mantener un solo agente escritor hasta cerrar esa validacion.
 9. Solo entonces arrancar el subpaso 2.1 de `docs/PLAN-FASE2.md`.
 
 ## 7. Definicion de orden suficiente

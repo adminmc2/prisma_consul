@@ -2,6 +2,25 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-01] — v3.3.21
+
+### Coordinación pre-Fase 2 — reconciliación Git `main` → `dev` completada
+
+Se completa la reconciliación Git entre `origin/main` (`v3.2.54`) y `origin/dev` (`v3.3.20`) mediante un merge histórico que preserva intacto el árbol canónico de `dev`. No introduce cambios funcionales nuevos; convierte el catch-up `main` → `dev` en un estado auditable y deja pendiente únicamente el despliegue/validación del `dev` reconciliado antes de arrancar Fase 2.
+
+#### Documentación / coordinación
+
+- **`docs/PLAN-COORDINACION-PRE-FASE2.md`**: actualizada para reflejar que el catch-up Git `main` → `dev` ya está completado (`65c1301`) y que el bloqueo restante antes de Fase 2 ya no es Git, sino validación del `dev` reconciliado.
+- **`REVIEW-PRISMA-APEX.md`**: sincronizado con el nuevo estado operativo; C11 sigue abierto solo por despliegue/validación, R08 pasa de divergencia Git a riesgo de arrancar sin validar el entorno reconciliado, y se añade bitácora de la reconciliación completada.
+- **`docs/PLAN-FASE2.md`**: actualiza los pendientes previos al subpaso 2.1 para que ya no pidan reabrir la reconciliación Git, sino desplegar y validar `origin/dev` reconciliado.
+- **`CLAUDE.md`**: refina la regla operativa de Fase 2 para exigir `origin/dev` reconciliado y validado, no simplemente “sin divergencia” abstracta con `main`.
+
+#### Versionado visible
+
+- **`index.html`**: bump `v3.3.20` → `v3.3.21` en footer.
+- **`portal/index.html`**: bump `v3.3.20` → `v3.3.21` en pantalla de login.
+- **`CLAUDE.md`**: campo `Versión actual` actualizado a `v3.3.21`.
+
 ## [2026-05-01] — v3.3.20
 
 ### Coordinación pre-Fase 2 — sincronización del carril revisor sobre `dev`
