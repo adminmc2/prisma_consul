@@ -2,6 +2,63 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-01] — v3.3.19
+
+### Carril repo — Unificación técnica pre-Fase 2 (saneamiento de superficie compartida main ↔ dev)
+
+Saneamiento técnico del repositorio para preparar la reconciliación entre las ramas `main` (v3.2.54) y `dev` (v3.3.18). Trabajo acotado a la superficie repo, sin tocar contenido ARMC ni blueprint, sin alterar documentación central.
+
+#### Decisiones aplicadas (carril repo)
+
+- **`.gitignore`**: prevalece la versión de `dev` (incorpora `.claude/` y `.vscode/` al bloque `# Editor / IDE local config`).
+- **`CLAUDE.md`**: prevalece la estructura de `dev` (secciones `Ecosistema de repositorios` y `Modo revisor permanente`); campo "Versión actual" actualizado a `v3.3.19`.
+- **`index.html`**: footer (`data-es`, `data-en`, texto visible) actualizado a `v3.3.19`.
+- **`portal/index.html`**: prevalece la estructura de `dev` (capa de registro de rutas `ANALISIS_REGISTRY` + función `getAnalysisPaths()`, sección Blueprint en `ANALISIS_SECTIONS`, array `ANALISIS_BLUEPRINT`, guardas en visores); `welcome-version` actualizado a `v3.3.19`.
+- **`CHANGELOG.md`**: fusión histórica acotada — `dev` como base + preservación verbatim de las 3 entradas exclusivas de `main` (`v3.2.52`, `v3.2.53`, `v3.2.54`) inyectadas en orden cronológico, sin renumerar y sin pérdida.
+
+#### Fuera de alcance de este carril
+
+- Reconciliación efectiva de ramas (merge, fast-forward, reset) — pendiente de paquete específico.
+- Smoke runtime de `portal/index.html` tras la unificación — pendiente del carril de validación runtime.
+- Blueprint, análisis ARMC, contenido narrativo y Sprint A documental — siguen en sus carriles propios.
+
+## [2026-05-01] — v3.2.54
+
+### Análisis ARMC — Catch-up del Diagnóstico Integrado a producción (Resumen Ejecutivo profundo + correcciones del dictamen)
+
+Publicación a producción de las actualizaciones acumuladas en `dev` desde v3.2.53: revisión profunda del Resumen Ejecutivo (v3.3.15 + v3.3.16) + correcciones del dictamen de revisor (v3.3.18). 5 archivos consolidados. Cambios in-place, sin secciones nuevas (salvo el Hallazgo 06 dentro del Resumen Ejecutivo). No incluye trabajo de blueprint ni Sprint A — siguen solo en `dev`.
+
+#### `portal/analisis/armc/diagnostico/resumen-ejecutivo.html` (catch-up de v3.3.15 + v3.3.16)
+
+- **KPI "Fricciones documentadas"**: 42+ → **52+**.
+- **Subtítulo**: precisado — "8 entrevistas en total" (1 por rol + 2ª entrevista CEO de validación del catálogo del 2026-04-15) + 3 cirujanos externos identificados sin entrevista directa.
+- **Atribución cita central**: "7 entrevistas" → "8 entrevistas a 7 roles" (fix de coherencia v3.3.16).
+- **Hallazgo 02 "Historia clínica es un registro muerto"**: evidencia ampliada con gaps documentales confirmados por la 2ª entrevista CEO — lipoenzimas sin CI específico, PNO de obesidad pendiente.
+- **Hallazgo 03**: título reescrito a "Retención del 10% — catálogo amplio infrautilizado". Cuerpo ampliado con catálogo confirmado (5 líneas, ~52 procedimientos, 16 servicios oficiales infrautilizados).
+- **Hallazgo 05 "Fotos clínicas dispersas"**: 4+ → **5+ dispositivos** (incluida Elián con celular + iPad + cámara especializada).
+- **Hallazgo 06 NUEVO**: "Catálogo oficial confirmado pero invisible al mercado" (5 → 6 hallazgos principales).
+- **Voces del equipo**: añadida cita de Marisela de la 2ª entrevista CEO.
+- **Conclusión**: ampliada con catálogo definitivo + visibilizar catálogo + bloque amarillo destacado con C07/C08 pendientes.
+
+#### `portal/analisis/armc/diagnostico/mapa-fricciones.html` (correcciones del dictamen v3.3.18)
+
+- **KPI fricciones transversales**: 42+ → **52+** (sincronización con Resumen Ejecutivo).
+- **Fricción "Fotos clínicas dispersas"**: "4+ teléfonos personales" → "5+ dispositivos personales" con desglose explícito (Gabriel, Divani, Óscar, Brisa y Elián + iPad + cámara especializada).
+
+#### `portal/analisis/armc/diagnostico/cadena-causal.html` (corrección del dictamen v3.3.18)
+
+- **Nodo D1 "Fotos en X dispositivos"**: 4+ → **5+** (sincronización).
+
+#### `portal/analisis/armc/diagramas/flujo-atención-paciente.html` (correcciones del dictamen v3.3.18)
+
+- **Handoff Carlos → Cirujano externo**: reformulado para que el as-is no afirme ownership. Antes decía "Carlos coordinaría la 2ª valoración"; ahora dice "Cirujano externo (...) — handoff hipotético, no validado: alguien debe coordinar... la hipótesis de trabajo es que recae en Carlos pero NO consta como ownership confirmado". C08 explícitamente marcado como abierto.
+- **Fricción "Coordinación con cirujanos externos"**: reformulada igual — "Quién agenda esa derivación está abierto — la hipótesis de trabajo es Carlos pero NO está validado por la CEO".
+
+#### `docs/VALIDACION-CATALOGO-ARMC.md` (correcciones del dictamen v3.3.18)
+
+- **Fila 3.6 sobre masajes post-quirúrgicos**: corregida contradicción interna del documento. La fila decía "incluidos en cirugía, no se cobran aparte" pero la sección 5.3 del mismo documento contenía la corrección de la CEO afirmando que SÍ se cobran aparte. Fila 3.6 ahora alineada con 5.3.
+- **Encabezado**: actualizada "Última actualización" a 2026-04-30. Estado pasa a "validado con la CEO en reunión 2026-04-15. 32/32 preguntas resueltas. 2 puntos derivados quedan abiertos en REVIEW-PRISMA-APEX C07 y C08".
+
 ## [2026-04-30] — v3.3.18
 
 ### Análisis ARMC — Correcciones tras dictamen de revisor (Hallazgo Alta + 2 Media + 1 Baja)
@@ -146,6 +203,77 @@ Sexto y último rol revisado a la luz de la entrevista CEO 2026-04-15. Tricolog�
 - **Sección "Fricciones identificadas"**: añadida fricción nueva — "Manejo de obesidad activo sin PNO formal" (Elián lidera el servicio sin Procedimiento Normalizado de Operación documentado, mismo patrón que las lipoenzimas sin CI).
 
 **Cierre del primer pase de revisión post-entrevista CEO**: 6 roles completos en `dev` (Carlos, Gabriel, Óscar, Brisa, Divani, Elián). Carlos y Gabriel ya en producción; los 4 restantes pendientes de publicar.
+
+## [2026-04-30] — v3.2.53
+
+### Análisis ARMC — Documentación transversal de cirujanos externos en producción (parcial — Opción A)
+
+Publicación a producción de la documentación transversal de los 3 cirujanos externos (Figueroa, Vargas, Ducón) bajo la Opción A (no se crea perfil/flujo separado). De las 6 ediciones aplicadas en `dev` (v3.3.14), esta publicación trae a producción solo las 3 que NO son de blueprint, manteniendo la regla histórica de que el blueprint vive solo en `dev`.
+
+#### Diagnóstico (2 archivos)
+
+- **`portal/analisis/armc/diagnostico/mapa-fricciones.html`**: añadida fricción transversal nº 9 — "Coordinación con cirujanos externos sin canal formal" (3 roles: Atención, Cirujano, CEO). Contador actualizado 8 → 9.
+- **`portal/analisis/armc/diagnostico/resumen-ejecutivo.html`**: subtítulo actualizado para incluir los 3 cirujanos externos identificados. Bloque destacado nuevo en el hallazgo central documenta personal externo, decisión de quedarse con expediente/CI originales, y referencia a la fricción transversal nº 9.
+
+#### Flujo por rol (1 archivo)
+
+- **`portal/analisis/armc/diagramas/flujo-cirujano.html`** (Slide Perfil): añadida entrada "Procedimientos que NO realiza Gabriel (derivados a cirujanos externos)" — rinoplastia (Vargas/Ducón), mastopexía y abdominoplastía (Figueroa). Cierra el bucle visualmente sin contradecir la decisión previa de excluir externos del flujo de Gabriel.
+
+**No se publican a producción** (siguen solo en `dev`):
+- `portal/analisis/armc/blueprint/modelo-datos.html` (RBAC con sub-rol Cirujano externo)
+- `portal/analisis/armc/blueprint/flujos-to-be.html` (card Cirujano con item To-Be sub-rol externo)
+- `portal/analisis/armc/blueprint/fases-implementacion.html` (F1 con item Modelado de Personal Externo)
+
+Justificación: regla histórica del proyecto — el blueprint vive solo en `dev`, no en producción (commit `3a2b92e Remove blueprint section from production`).
+
+## [2026-04-30] — v3.2.52
+
+### Análisis ARMC — Publicación a producción de los 5 flujos restantes post-entrevista CEO
+
+Cierre del primer pase de revisión de los 7 flujos a la luz de la entrevista CEO 2026-04-15. Esta publicación trae a producción los 5 flujos restantes (Óscar, Brisa, Divani, Elián, CEO Marisela). Carlos y Gabriel ya estaban en producción desde v3.2.45 y v3.2.46. Cambios in-place dentro de secciones existentes — sin cambios estructurales. No incluye trabajo de reorganización Sprint A (CONTRATOS, MODELO-DOMINIO, ECOSISTEMA, REVIEW-PRISMA-APEX, GLOSARIO, REGISTRO-RUTAS, PLAN-FASE2) que sigue solo en `dev`.
+
+#### `portal/analisis/armc/diagramas/flujo-enfermero.html` (3 ediciones)
+
+- Slide "Post-procedimiento y seguimiento", entrada "Masajes ultrasonido post-lipo → Brisa": añadida confirmación CEO de que estos masajes son procedimientos cobrados aparte (no incluidos en cirugía).
+- Sección "Vacíos de información": añadido segundo bloque `<details>` "Vacíos resueltos por otras entrevistas (1)" siguiendo el patrón estándar — los 2 procedimientos nuevos del catálogo (lifting facial láser, bruxismo) que Óscar tendrá que preparar.
+- Sección "Fricciones identificadas por análisis": añadida fricción nueva — lipoenzimas activas sin consentimiento informado estandarizado.
+
+#### `portal/analisis/armc/diagramas/flujo-cosmiatra.html` (5 ediciones)
+
+- Slide "Brisa: Perfil y rol", entrada SUBUTILIZACIÓN: ampliada con catálogo CEO — Cosmiatría línea propia con 9 servicios + Brisa también opera Aparatología (7 servicios) = 16 servicios oficiales vs 3-4 reales. Subutilización DOBLE.
+- Slide "Tratamientos y aparatología", entrada Protocolo post-lipo: añadida confirmación CEO de masajes cobrados aparte.
+- Sección "Vacíos de información": añadido `<details>` "Vacíos resueltos por otras entrevistas (3)" — Cosmiatría como línea propia, sublíneas melasma/acné con cobro por sesión, masajes reductivos = futuro.
+- Sección "Fricciones identificadas", fricción "Rol subutilizado": ampliada con confirmación CEO del alcance oficial del rol.
+- Sección "Fricciones identificadas": añadida fricción nueva — "Catálogo de Cosmiatría confirmado pero invisible al paciente" (causa estructural de la subutilización).
+
+#### `portal/analisis/armc/diagramas/flujo-primer-ayudante.html` (4 ediciones)
+
+- Slide "Valoraciones": Variante A confirmada (Marisela O Divani); B y C no involucran a Divani.
+- Slide "Procedimientos": entrada tirzepatida ampliada con confirmación CEO (Elián lidera obesidad); solapamiento marcado como pendiente aclarar.
+- Sección "Vacíos resueltos por otras entrevistas": 2 → 5 entradas — Variante A, manejo de obesidad/PNO pendiente, procedimientos nuevos del catálogo que realiza Gabriel.
+- Sección "Fricciones identificadas": +2 nuevas (solapamiento Divani/Elián en obesidad sin protocolo, tirzepatida sin PNO formal).
+
+#### `portal/analisis/armc/diagramas/flujo-tricologia.html` (6 ediciones)
+
+- Slide "Perfil y rol": Tricología confirmada como línea propia (línea 5) con 8 servicios oficiales.
+- Slide "Tratamientos capilares": separación oficial Consulta capilar regenerativa vs Implante capilar (🔮 futuro).
+- Slide "Control de peso (consulta)": Elián lidera obesidad dentro de Medicina Estética; falta PNO formal.
+- Slide "Control de peso (bitácora)": contexto del reparto Elián/Divani via bitácora compartida (cierra solapamiento del flujo Primer Ayudante).
+- Sección "Vacíos resueltos por otras entrevistas": nuevo `<details>` con 3 entradas (Tricología línea propia, Implante capilar futuro, manejo obesidad ubicación + PNO pendiente).
+- Sección "Fricciones identificadas": +1 fricción nueva — "Manejo de obesidad activo sin PNO formal".
+
+#### `portal/analisis/armc/diagramas/flujo-ceo.html` (8 ediciones)
+
+- Slide "Perfil y rol": Variante A clarificada (Marisela O Divani).
+- Slide "Expansión y servicios": 3 cirujanos externos confirmados (Figueroa, Vargas, Ducón).
+- Slide "Captación y flujo del paciente": 3 variantes A/B/C de la valoración en paso 2.
+- Slide "Retención": contextualizada con catálogo oficial — 16 servicios oficiales ignorados en oferta y promoción.
+- Slide "Expediente y regulación": gaps documentales — lipoenzimas sin CI + PNO obesidad pendiente.
+- Sección "Vacíos resueltos por 2ª entrevista CEO": nuevo `<details>` con 5 entradas (catálogo definitivo, personal externo, 3 variantes valoración, Cosmiatría/Tricología líneas propias, manejo obesidad).
+- Sección "Puntos de Handoff": +1 handoff Marisela/Divani → Cirujanos externos (Variante B).
+- Sección "Fricciones identificadas": +2 fricciones (catálogo confirmado pero promoción restringida + decisiones pendientes de la propia CEO C07/C08).
+
+**Cierre completo del primer pase post-entrevista CEO en producción**: los 7 flujos (6 roles operativos + CEO) ya están actualizados en `prismaconsul.com`. Quedan pendientes para próximas iteraciones: flujo nuevo "Cirujanos externos" (Figueroa/Vargas/Ducón), validación con CEO de los puntos abiertos C07 (costo 2ª valoración pre-cirugía con externo) y C08 (quién agenda B/C/leads obesidad).
 
 ## [2026-04-29] — v3.3.11
 
