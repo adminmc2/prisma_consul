@@ -40,16 +40,16 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Campo | Estado actual |
 |---|---|
 | Proyecto | Reorganización de Prisma APEX |
-| Momento actual | Sprint A / Fase 1 cerrada formalmente; Fase 2 desbloqueada |
-| Naturaleza del trabajo | Revisión cerrada de Fase 1 + preparación controlada de Fase 2 |
-| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; bloques B, C y D cerrados; Fase 1 cerrada formalmente; Fase 2 desbloqueada y pendiente de ejecución controlada |
-| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3), **bloque C PASS** (v3.3.8) y **bloque D PASS** tras validación durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops` el 2026-04-30. Fase 1 queda cerrada formalmente por revisión. Fase 2 queda autorizada, pero no se ejecuta automáticamente y mantiene validación runtime específica por subpaso. |
+| Momento actual | Sprint A / Fase 1 cerrada formalmente; Fase 2 autorizada por gate pero no arrancada |
+| Naturaleza del trabajo | Revisión cerrada de Fase 1 + ordenamiento operativo entre `main` y `dev` antes de Fase 2 |
+| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; bloques B, C y D cerrados; Fase 1 cerrada formalmente; Fase 2 desbloqueada por gate, pero pendiente de coordinación de ramas antes de ejecución |
+| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3), **bloque C PASS** (v3.3.8) y **bloque D PASS** tras validación durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops` el 2026-04-30. La publicación directa a `main` hasta `v3.2.54` y la continuidad de `dev` hasta `v3.3.19` no reabren Fase 1, pero sí obligan a ordenar la integración entre ramas antes de tocar estructura física. Fase 2 queda pausada operativamente hasta ejecutar `docs/PLAN-COORDINACION-PRE-FASE2.md`. |
 
 ### Dictamen operativo vigente
 
 - `MODELO-DOMINIO.md` v4 queda aprobado como primer entregable auditable de Fase 1.
 - `CONTRATOS.md`, `GLOSARIO.md`, `REGISTRO-RUTAS.md` y la implementación en `portal/index.html` quedan coherentes entre sí respecto al cierre del bloque A.
-- Fase 2 no se ejecuta automáticamente por inercia, pero sí queda autorizada como siguiente fase explícita de trabajo.
+- Fase 2 no se ejecuta automáticamente por inercia. Aunque el gate ya está cumplido, su arranque queda pausado hasta reconciliar `main` y `dev` según `docs/PLAN-COORDINACION-PRE-FASE2.md`.
 - El bloque B queda cerrado con **PASS**; el cierre efectivo queda documentado en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` con addendum de sesión humana y decisión Opción A aceptada por revisión.
 - El bloque C queda cerrado con **PASS**; `docs/PLAN-FASE2.md` queda aceptado como clasificación archivo por archivo + plan secuencial auditable de Fase 2.
 - El bloque D queda cerrado con **PASS**: la réplica Ecosistema ya quedó integrada de forma durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops`.
@@ -57,7 +57,7 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 - El endurecimiento posterior de credenciales GitHub, runbooks y posibles guardrails preventivos queda expresamente fuera de este cierre y no altera el dictamen de Fase 1.
 - `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md` queda como checklist base e historial del criterio original del bloque B; el resultado vigente de ejecución vive en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`.
 - Antes de movimientos físicos o cambios de serving, cada subpaso debe acompañarse de validación runtime específica sobre los contratos y sistemas que toque.
-- No hay discrepancia activa entre `portal/index.html`, `REGISTRO-RUTAS.md`, `CONTRATOS.md`, `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` y `docs/PLAN-FASE2.md` respecto al cierre de los bloques A, B, C y D. `CHANGELOG.md` y el versionado visible del repo principal quedan pendientes de sincronización mecánica por parte del ejecutor tras este dictamen.
+- No hay discrepancia activa sobre el cierre de Fase 1. El problema actual ya no es de aprobación sino de orden operativo: `origin/main` y `origin/dev` divergen y deben reconciliarse antes de ejecutar Fase 2.
 
 ## 4. Realidad actual del repo y del sistema
 
@@ -134,12 +134,15 @@ Estos puntos no bloquean el arranque de Fase 1, pero sí condicionan el paso a F
 | C08 | Quién agenda variantes B y C de valoración + futuros leads de obesidad | Abierto | Definir en el proceso/sistema APEX si Carlos asume el agendamiento de la 2ª cita pre-cirugía (B), de la cita directa con Gabush (C) y de los leads de obesidad (hoy 100% Dra. Elián), o si la lógica la resuelve el sistema | Diseño de flujo de agendamiento y lead intake |
 | C09 | Inventario contractual real en `CONTRATOS.md` | Cerrado | Cerrado en v3.2.43 tras 6 correcciones del revisor: 17 endpoints documentados con shapes exactas, 31 columnas de `apex_submissions` (5 ausentes en `schema.sql`), 3 paths hardcodeados, redirects 301, validación runtime de Fase 2, alineamiento con gate del review | Gate funcional de Fase 2 cumplido |
 | C10 | Absorción del vocabulario canónico en `GLOSARIO.md` | Cerrado | Cerrado en v3.2.44: glosario consolidado con 15 secciones cubriendo producto, modelo de datos, roles, términos arquitectónicos, legacy frozen, ecosistema, servicios externos, proceso, contratos, URLs, Claude Code, convenciones y aclaraciones de qué NO es cada término | Coherencia documental cerrada para Fase 1 |
+| C11 | Coordinación operativa `main`/`dev` antes de Fase 2 | Abierto | Ejecutar `docs/PLAN-COORDINACION-PRE-FASE2.md`: congelar cambios paralelos, integrar `origin/main` en una rama/worktree temporal desde `origin/dev`, resolver la superficie dual-modificada real (`.gitignore`, archivos blueprint y compartidos), fusionar `CHANGELOG.md` manualmente, desplegar y validar dev antes del subpaso 2.1 | Orden operativo y trazabilidad antes del movimiento físico |
 
 ### Gate para pasar a Fase 2
 
 Gate de Fase 2 **cumplido en v3.2.44**: C01, C02, C03, C04, C05, C09 y C10 cerrados. Fase 2 desbloqueada desde el punto de vista de revisión.
 
 **Fase 1 queda cerrada formalmente** tras la integración durable de la sección Ecosistema en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops`, más la presente sincronización final de este review.
+
+**Precondición operativa adicional (2026-05-01):** no arrancar la ejecución de Fase 2 mientras `origin/main` y `origin/dev` sigan divergidos tras `v3.2.54` / `v3.3.19`. Esa reconciliación se rige por `docs/PLAN-COORDINACION-PRE-FASE2.md` y no reabre Fase 1.
 
 **Validación runtime** antes de cada subpaso de Fase 2 que toque contratos reales o sistemas externos (Neon, Drive, Gmail SMTP, Tavily, Groq, Whisper, serving en `dev.prismaconsul.com`, infraestructura nginx/PM2/IONOS) — no es gate global, es prerrequisito de cada subpaso.
 
@@ -169,7 +172,9 @@ Entregables esperados:
 Estado actual de la secuencia:
 - `MODELO-DOMINIO.md` queda cerrado como primer entregable auditable.
 - Los canónicos base y los bloques A, B, C y D quedan cerrados por revisión.
-- Fase 1 queda cerrada formalmente. El siguiente paso autorizado, si se decide continuar, es ejecutar Fase 2 conforme a `docs/PLAN-FASE2.md` y con validación runtime específica en cada subpaso.
+- Fase 1 queda cerrada formalmente.
+- El siguiente paso autorizado no es todavía el subpaso 2.1, sino ordenar la integración entre `main` y `dev` conforme a `docs/PLAN-COORDINACION-PRE-FASE2.md`.
+- Solo después de ese ordenamiento operativo se ejecuta Fase 2 conforme a `docs/PLAN-FASE2.md` y con validación runtime específica en cada subpaso.
 
 #### Fase 2 — Reorganización física
 
@@ -214,6 +219,7 @@ Objetivo:
 | R05 | `/web` deja fuera a los publicados | Activo | Contrato `/publicados/[cliente]/...` aprobado y absorbido en `CONTRATOS.md`; falta ejecutarlo en Fase 2 |
 | R06 | Documentación del ecosistema se contradice | Mitigado | C04 cerrado en v3.2.37; ECOSISTEMA.md alineado con MODELO-DOMINIO.md |
 | R07 | Sprint B subestimado | Activo | Tratarlo como sprint separado con diseño propio |
+| R08 | `main` y `dev` divergen antes de Fase 2 | Activo | Ejecutar `docs/PLAN-COORDINACION-PRE-FASE2.md`, usar un solo agente escritor y prohibir cambios directos a `main` sin reconciliación inmediata hacia `dev` |
 
 ## 10. Documentación permanente que debe absorber decisiones
 
@@ -443,6 +449,26 @@ El diferimiento que existió sobre la integración durable del bloque D queda **
 - Documentos actualizados: este `REVIEW-PRISMA-APEX.md`.
 - Impacto en gates: sin cambio en el gate de Fase 2 (ya cumplido). Se cierra formalmente Fase 1.
 - Próximo paso: el ejecutor sincroniza el cierre en el versionado visible y en `CHANGELOG.md` del repo principal usando el siguiente PATCH libre actual (`v3.3.16`) y, si se decide continuar, podrá arrancar Fase 2 conforme a `docs/PLAN-FASE2.md`.
+
+### 2026-05-01 — Orden operativo previo a Fase 2 tras publicación directa a `main`
+
+- Qué se revisó: estado real de `origin/main` (`e50e63f`, `v3.2.54`) frente a `origin/dev` (`f1819ae`, `v3.3.19`), archivos en solapamiento efectivo, estado del review y condiciones mínimas para no arrancar Fase 2 sobre ramas divergidas.
+- Hallazgos:
+  - Fase 1 sigue cerrada formalmente; la publicación directa a `main` no reabre bloques A-D.
+  - La divergencia entre `main` y `dev` sí crea un problema operativo real antes de Fase 2: la comprobación completa arroja 25 rutas, con 8 archivos modificados en ambas ramas (`.gitignore`, `CHANGELOG.md`, `CLAUDE.md`, `index.html`, `portal/index.html` y 3 archivos blueprint de ARMC) y 17 altas solo en `dev` que llegarán como carga de integración.
+  - Los archivos del catch-up de producción `docs/VALIDACION-CATALOGO-ARMC.md`, `mapa-fricciones.html`, `cadena-causal.html` y `flujo-atención-paciente.html` ya quedaron absorbidos en `dev`; no son el centro del conflicto actual.
+  - El problema principal ya no es de contenido funcional sino de coordinación: dos tracks de versión (`v3.2.x` y `v3.3.x`), dos canales de publicación y múltiples agentes escritores sobre el mismo repo.
+- Decisiones del primer corte operativo de C11:
+  - El carril repo del ejecutor 1 se limita a `.gitignore`, `CHANGELOG.md`, `CLAUDE.md`, `index.html` y `portal/index.html`; blueprint y contenido ARMC quedan fuera de este corte.
+  - `.gitignore` gana `dev`.
+  - `CLAUDE.md` y la estructura funcional de `portal/index.html` ganan `dev`.
+  - El versionado visible del batch actual queda en `v3.3.19`.
+  - `CHANGELOG.md` se resuelve con fusion historica acotada: `dev` como base y preservacion explicita de `v3.2.52`, `v3.2.53` y `v3.2.54` como publicaciones reales de `main`.
+- Decisiones cerradas afectadas: ninguna nueva en Fase 1.
+- Decisiones abiertas afectadas: se abre C11 como precondición operativa antes del arranque de Fase 2.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `docs/PLAN-FASE2.md`, `docs/PLAN-COORDINACION-PRE-FASE2.md`, `CLAUDE.md`.
+- Impacto en gates: ninguno sobre Fase 1 ni sobre el gate conceptual de Fase 2. La pausa es operativa, no de aprobación.
+- Próximo paso: ejecutar `docs/PLAN-COORDINACION-PRE-FASE2.md`, reconciliar `main` y `dev`, desplegar dev reconciliado y solo entonces arrancar Fase 2.
 
 ## 12. Plantilla de actualización para futuras revisiones
 

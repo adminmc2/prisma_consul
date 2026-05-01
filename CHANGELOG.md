@@ -2,6 +2,25 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-01] — v3.3.20
+
+### Coordinación pre-Fase 2 — sincronización del carril revisor sobre `dev`
+
+Se integra en `dev` la capa de coordinación y revisión que faltaba después del saneamiento del carril repo (`v3.3.19`). No toca contenido funcional de negocio; deja explícito en el propio repositorio que Fase 2 sigue autorizada por gate, pero pausada hasta reconciliar `main` y `dev`.
+
+#### Documentación / coordinación
+
+- **`docs/PLAN-COORDINACION-PRE-FASE2.md`** (NUEVO en `dev`): define el orden operativo mínimo previo a Fase 2, la política de un solo agente escritor, la superficie real de divergencia entre ramas y la secuencia de integración pendiente.
+- **`REVIEW-PRISMA-APEX.md`**: sincronizado con el estado real post-`v3.3.19`; se abre C11 como precondición operativa, se añade R08 y la bitácora deja explícito que el problema actual es de coordinación de ramas, no de cierre de Fase 1.
+- **`docs/PLAN-FASE2.md`**: sección 9 ampliada con los pendientes operativos previos al subpaso 2.1 (`main`/`dev`, congelación de cambios paralelos, worktree limpio y validación en `dev.prismaconsul.com`).
+- **`CLAUDE.md`**: se añade la sección `Coordinación Operativa Antes De Fase 2` con las reglas de convivencia entre ramas, agentes y credenciales Git.
+
+#### Versionado visible
+
+- **`index.html`**: bump `v3.3.19` → `v3.3.20` en footer.
+- **`portal/index.html`**: bump `v3.3.19` → `v3.3.20` en pantalla de login.
+- **`CLAUDE.md`**: campo `Versión actual` actualizado a `v3.3.20`.
+
 ## [2026-05-01] — v3.3.19
 
 ### Carril repo — Unificación técnica pre-Fase 2 (saneamiento de superficie compartida main ↔ dev)
