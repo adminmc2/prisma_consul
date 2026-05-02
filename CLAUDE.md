@@ -50,6 +50,7 @@ Mapa completo, flujos cruzados, convenciones y relaciones entre repos: ver [`ECO
 - Los dos carriles trabajan en **ramas y/o worktrees separados**. Nunca sobre la misma rama al mismo tiempo.
 - La integración es **serial**: un carril completa, el revisor da PASS, el otro toma esa base y avanza. No hay merges paralelos sin dictamen.
 - La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) **no se usa como base de release**. Cada carril abre su propio worktree limpio sobre el último commit publicado.
+- La carpeta principal del usuario quedó realineada al baseline `v3.3.22` el 2026-05-01, pero sigue tratándose como copia local estable; el trabajo activo de cada carril sigue saliendo de worktrees o ramas dedicados.
 - Cualquier cambio fuera del alcance del carril activo requiere parar y reportar.
 
 ## Architecture
@@ -224,7 +225,7 @@ ssh prisma@212.227.251.125 "cd ~/web-de-prisma-dev && git pull origin dev && pm2
 
 ### Coordinación Operativa Antes De Fase 2
 
-- No arrancar Fase 2 hasta que `origin/dev` haya absorbido el catch-up de `origin/main` y el resultado reconciliado haya sido validado en `dev.prismaconsul.com`. El estado operativo vigente vive en `docs/PLAN-COORDINACION-PRE-FASE2.md`.
+- Tras el baseline `v3.3.22`, la coordinación `main`/`dev` previa a Fase 2 quedó cerrada. Cualquier nuevo arranque de Fase 2 o release intermedio opera desde ramas/worktrees limpios y bajo el modo de dos carriles; el historial de esa coordinación vive en `docs/PLAN-COORDINACION-PRE-FASE2.md`.
 - Si por urgencia se publica algo directo en `main`, el siguiente paso obligatorio es reconciliar ese cambio en `dev` antes de nuevos cambios estructurales o documentales relevantes.
 - Solo un agente escritor a la vez en este repo. El revisor puede actualizar `REVIEW-PRISMA-APEX.md`, pero no debe coexistir con otro agente ejecutando cambios en paralelo sin handoff explícito.
 - Nunca usar credenciales en URLs Git o comandos shell (`https://user:token@...`, `https://oauth2:...`, `x-access-token:`). Método autorizado: `gh auth login` + `gh auth setup-git`.
@@ -333,7 +334,7 @@ La versión actual se muestra en el footer de `index.html`. Se usa **Versionado 
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.22`
+**Versión actual:** `v3.3.23`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)

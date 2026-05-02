@@ -2,6 +2,45 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-02] — v3.3.23
+
+### Sync documental de cierre baseline + activación operativa de Fase 2
+
+Sync documental final tras el cierre baseline `v3.3.22`. Solo cambios de control y documentación (review, planes, CLAUDE.md, CHANGELOG, versionado visible). Sin contenido de producto, sin lógica APEX/Hub, sin backend, sin blueprint, sin ARMC.
+
+#### Estado del proyecto que este patch formaliza
+
+- Baseline `v3.3.22` cerrado, desplegado en producción y validado técnicamente (HTTP, versión visible).
+- Carpeta principal local del usuario alineada al baseline de forma no destructiva (preservación del WIP previo en `stash@{0}` + backup en `/tmp/wip-backup-main-folder-20260501-175601/`).
+- Coordinación `main`/`dev`: cerrada. C11 sigue cerrado y no se reabre.
+- Sync documental adicional del revisor (5 archivos) integrado formalmente al repo en este patch.
+
+#### Activación operativa de Fase 2
+
+- **Fase 2: autorizable.** Cuando se autorice arrancar el primer slice real, lo hará desde el commit `v3.3.23`.
+- **Modo de dos carriles activo:**
+  - Ejecutor 1 = repo / git / deploy / release.
+  - Ejecutor 2 = contenido / texto / blueprint.
+  - Revisor coordina y dictamina. Modo revisor permanente vigente.
+- Worktrees limpios listos para arranque desde el baseline:
+  - `/tmp/prisma-carril-repo-next` — base ejecutor 1.
+  - `/tmp/prisma-carril-contenido-next` — base ejecutor 2.
+
+#### Cambios documentales (5 archivos del sync del revisor + 4 del bump)
+
+- `REVIEW-PRISMA-APEX.md`: sincronización del review tras el cierre baseline.
+- `docs/PLAN-COORDINACION-PRE-FASE2.md`: ajustes de cierre.
+- `docs/PLAN-FASE2.md`: notas adicionales para el arranque.
+- `CLAUDE.md`: ajuste documental + bump de "Versión actual".
+- `CHANGELOG.md`: ajuste de la entrada `v3.3.22` + esta entrada `v3.3.23`.
+- `index.html`, `portal/index.html`: bump versión visible.
+
+#### Lo que NO entra en este patch
+
+- No se toca contenido ARMC ni blueprint de fondo.
+- No se toca backend funcional.
+- No se abre todavía un subpaso grande de Fase 2.
+
 ## [2026-05-01] — v3.3.22
 
 ### Cierre baseline pre-Fase 2 + publicación a producción + modo de trabajo en dos carriles
@@ -33,9 +72,9 @@ Cierre operativo del tramo pre-Fase 2. Promoción de `dev` a `main` por fast-for
 
 #### Fuera de alcance — pendiente operativo
 
-- Validación humana visual de `dev.prismaconsul.com` y `prismaconsul.com` post-despliegue (sesión del usuario / ejecutor 2).
+- Validación humana visual de `dev.prismaconsul.com` y `prismaconsul.com` post-despliegue: completada posteriormente por el usuario. No se reportaron regresiones visuales.
 - Decisión sobre arranque de Fase 2 (requiere autorización explícita del revisor / usuario).
-- Carpeta local principal del usuario: queda con WIP propio no integrado en este release; se reporta su estado pero no se altera. Los siguientes carriles operan sobre worktrees limpios.
+- Addendum posterior al release: la carpeta local principal del usuario se alineó no destructivamente al baseline `d06ef6e`. El WIP previo quedó preservado en stash etiquetado `WIP-pre-baseline-v3.3.22-main-folder-2026-05-01-17:56` y backup temporal en `/tmp/wip-backup-main-folder-20260501-175601/`. Los siguientes carriles siguen operando sobre worktrees limpios.
 
 ## [2026-05-01] — v3.3.21
 

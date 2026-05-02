@@ -43,21 +43,22 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Momento actual | Sprint A / Fase 1 cerrada formalmente; reconciliación Git `main` → `dev` completada, desplegada y validada técnicamente; baseline pre-Fase 2 cerrado en `v3.3.22`; Fase 2 sin arrancar |
 | Naturaleza del trabajo | Baseline operativo cerrado. Próxima fase: ejecución de Fase 2 desde el commit `v3.3.22`, en modo de trabajo de dos carriles |
 | Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; bloques B, C y D cerrados; Fase 1 cerrada formalmente; reconciliación `main` ↔ `dev` cerrada con `main` y `dev` igualados en el commit baseline `v3.3.22`; Fase 2 pendiente de autorización explícita |
-| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3), **bloque C PASS** (v3.3.8) y **bloque D PASS** tras validación durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops` el 2026-04-30. Reconciliación Git `main` → `dev` (merge `65c1301`) desplegada en `dev.prismaconsul.com` en `v3.3.21` y validada técnicamente. En `v3.3.22`: `origin/main` se promueve por fast-forward al baseline; producción queda alineada con `dev`. Fase 2 arranca solo con autorización explícita del usuario / revisor; cuando arranque, lo hará desde el commit `v3.3.22` con dos carriles formalizados (ejecutor 1 = repo, ejecutor 2 = contenido). |
+| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3), **bloque C PASS** (v3.3.8) y **bloque D PASS** tras validación durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops` el 2026-04-30. Reconciliación Git `main` → `dev` (merge `65c1301`) desplegada en `dev.prismaconsul.com` en `v3.3.21` y validada técnicamente. En `v3.3.22`: `origin/main` se promueve por fast-forward al baseline; producción queda alineada con `dev`. La carpeta principal local también queda realineada no destructivamente al baseline `d06ef6e`; el WIP previo se preserva en stash etiquetado y backup externo temporal. Fase 2 arranca solo con autorización explícita del usuario / revisor; cuando arranque, lo hará desde el commit `v3.3.22` con dos carriles formalizados (ejecutor 1 = repo, ejecutor 2 = contenido). |
 
 ### Dictamen operativo vigente
 
 - `MODELO-DOMINIO.md` v4 queda aprobado como primer entregable auditable de Fase 1.
 - `CONTRATOS.md`, `GLOSARIO.md`, `REGISTRO-RUTAS.md` y la implementación en `portal/index.html` quedan coherentes entre sí respecto al cierre del bloque A.
-- Fase 2 no se ejecuta automáticamente por inercia. Aunque el gate ya está cumplido y el catch-up Git `main` → `dev` ya se ejecutó, su arranque queda pausado hasta validar `origin/dev` reconciliado en `dev.prismaconsul.com`.
+- Fase 2 no se ejecuta automáticamente por inercia. El baseline `v3.3.22` ya quedó publicado, validado técnicamente y revisado visualmente; el siguiente paso ya no es revalidar esa base, sino autorizar explícitamente el arranque de Fase 2 o del siguiente batch de trabajo.
 - El bloque B queda cerrado con **PASS**; el cierre efectivo queda documentado en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` con addendum de sesión humana y decisión Opción A aceptada por revisión.
 - El bloque C queda cerrado con **PASS**; `docs/PLAN-FASE2.md` queda aceptado como clasificación archivo por archivo + plan secuencial auditable de Fase 2.
 - El bloque D queda cerrado con **PASS**: la réplica Ecosistema ya quedó integrada de forma durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops`.
 - Fase 1 queda cerrada formalmente.
 - El endurecimiento posterior de credenciales GitHub, runbooks y posibles guardrails preventivos queda expresamente fuera de este cierre y no altera el dictamen de Fase 1.
 - `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md` queda como checklist base e historial del criterio original del bloque B; el resultado vigente de ejecución vive en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`.
+- La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) quedó realineada no destructivamente al baseline `d06ef6e`; el WIP previo de coordinación/versionado se preservó en stash etiquetado `WIP-pre-baseline-v3.3.22-main-folder-2026-05-01-17:56` y backup temporal en `/tmp/wip-backup-main-folder-20260501-175601/`.
 - Antes de movimientos físicos o cambios de serving, cada subpaso debe acompañarse de validación runtime específica sobre los contratos y sistemas que toque.
-- No hay discrepancia activa sobre el cierre de Fase 1. El problema actual ya no es reconciliar Git, sino validar el `dev` reconciliado antes de ejecutar Fase 2.
+- No hay discrepancia activa sobre el cierre de Fase 1 ni sobre el baseline operativo. El control vigente pasa a ser mantener los dos carriles separados, con integración serial revisada, sin reabrir el problema de coordinación ya cerrado.
 
 ## 4. Realidad actual del repo y del sistema
 
@@ -142,7 +143,7 @@ Gate de Fase 2 **cumplido en v3.2.44**: C01, C02, C03, C04, C05, C09 y C10 cerra
 
 **Fase 1 queda cerrada formalmente** tras la integración durable de la sección Ecosistema en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops`, más la presente sincronización final de este review.
 
-**Precondición operativa adicional (2026-05-01):** no arrancar la ejecución de Fase 2 hasta validar en `dev.prismaconsul.com` el `origin/dev` reconciliado tras el merge `65c1301`. Esa validación se rige por `docs/PLAN-COORDINACION-PRE-FASE2.md` y no reabre Fase 1.
+**Precondición operativa adicional (2026-05-01, actualizada):** Fase 2 no arranca por inercia tras cerrar el baseline `v3.3.22`. Su ejecución requiere autorización explícita del usuario / revisor y activación de los dos carriles sobre ramas o worktrees limpios. La validación de baseline (`dev` + producción + carpeta principal local alineada) ya quedó cerrada y no reabre Fase 1.
 
 **Validación runtime** antes de cada subpaso de Fase 2 que toque contratos reales o sistemas externos (Neon, Drive, Gmail SMTP, Tavily, Groq, Whisper, serving en `dev.prismaconsul.com`, infraestructura nginx/PM2/IONOS) — no es gate global, es prerrequisito de cada subpaso.
 
@@ -497,6 +498,19 @@ El diferimiento que existió sobre la integración durable del bloque D queda **
 - Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `docs/PLAN-FASE2.md`, `docs/PLAN-COORDINACION-PRE-FASE2.md` (cerrado), `CLAUDE.md` (nueva sección "Modo de trabajo en dos carriles" + bump), `CHANGELOG.md`, `index.html`, `portal/index.html`.
 - Impacto en gates: gate conceptual de Fase 2 sigue cumplido. Gate operativo de Fase 2 también queda libre. Fase 2 no se ejecuta automáticamente — requiere autorización explícita del usuario / revisor.
 - Próximo paso: validación humana visual de producción y `dev` (sesión del usuario / ejecutor 2) y, en su momento, arranque autorizado de Fase 2 desde el commit baseline `v3.3.22`.
+
+### 2026-05-01 — Alineación no destructiva de la carpeta principal local
+
+- Qué se revisó: realineación de `/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma` desde `3f492d2` al baseline oficial `d06ef6e` (`v3.3.22`) sin usar operaciones destructivas.
+- Hallazgos:
+  - La divergencia local real respecto a `origin/dev` estaba acotada a 7 rutas y correspondía a una etapa intermedia de coordinación/versionado pre-baseline, ya superada por la base oficial.
+  - El WIP previo quedó preservado por triple vía: stash etiquetado `WIP-pre-baseline-v3.3.22-main-folder-2026-05-01-17:56`, patch tracked y copia del archivo no rastreado en `/tmp/wip-backup-main-folder-20260501-175601/`.
+  - Tras el fast-forward limpio, la carpeta principal quedó idéntica a `origin/dev` (`d06ef6e`) y dejó de ser una fuente de desfase operativo.
+- Decisiones cerradas afectadas: ninguna nueva en gates; se extiende el cierre baseline al working copy principal del usuario.
+- Decisiones abiertas afectadas: ninguna nueva. El siguiente paso sigue siendo autorización explícita para arrancar Fase 2 o el siguiente paquete de trabajo.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `docs/PLAN-COORDINACION-PRE-FASE2.md`, `docs/PLAN-FASE2.md`, `CHANGELOG.md`, `CLAUDE.md`.
+- Impacto en gates: no añade gates nuevos; elimina el último desfase entre baseline oficial y working copy principal.
+- Próximo paso: activar ramas o worktrees dedicados por carril y mantener la integración serial revisada desde el baseline `v3.3.22`.
 
 ## 12. Plantilla de actualización para futuras revisiones
 

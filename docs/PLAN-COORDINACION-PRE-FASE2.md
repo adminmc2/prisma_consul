@@ -5,6 +5,8 @@
 > Este documento queda como historial del proceso de coordinación pre-Fase 2. Todos los problemas operativos descritos (E01, E02, E03) fueron absorbidos en el merge `65c1301` (reconciliación Git `main` → `dev`) y cerrados estructuralmente con la promoción a `main` y el despliegue a producción del baseline `v3.3.22`. C11 del review queda cerrado. No es un plan vivo.
 >
 > El siguiente trabajo (Fase 2 cuando se autorice + cualquier release intermedio) opera en el modo de dos carriles formalizado en `CLAUDE.md` ("Modo de trabajo en dos carriles"), no bajo este plan.
+>
+> **Addendum local (2026-05-01):** la carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) también quedó realineada no destructivamente al baseline `d06ef6e`. El WIP previo se preservó en stash etiquetado y backup temporal externo. El desfase local deja de ser un tema operativo abierto.
 
 ## 1. Proposito
 
@@ -14,11 +16,12 @@ No redefine `docs/PLAN-FASE2.md`. Su trabajo es otro: evitar que la ejecucion de
 
 ## 2. Estado actual verificado
 
-- `origin/main`: `e50e63f` — `v3.2.54` (`catch-up Diagnostico Integrado a produccion + correcciones del dictamen`)
-- `origin/dev`: `65c1301` — `v3.3.20` (`merge Git main -> dev ya completado`)
-- `main...dev`: `0 44`
+- `origin/main`: `d06ef6e` — `v3.3.22` (`baseline pre-Fase 2 ya publicado en producción`)
+- `origin/dev`: `d06ef6e` — `v3.3.22` (`baseline pre-Fase 2 ya publicado en dev`)
+- `main...dev`: `0 0`
 - Fase 1: cerrada formalmente por revision
-- Fase 2: autorizada por gate, pero **todavia no debe arrancar** hasta desplegar y validar el `dev` reconciliado
+- Baseline pre-Fase 2: cerrado, desplegado y validado en `dev.prismaconsul.com` y `prismaconsul.com`
+- Carpeta principal local: realineada no destructivamente al baseline `d06ef6e`; WIP previo preservado en stash etiquetado + backup temporal externo
 
 ## 3. Problemas detectados
 
@@ -64,26 +67,29 @@ La reconciliacion Git `main` -> `dev` ya fue ejecutada en el merge `65c1301`. La
 
 ## 6. Secuencia obligatoria antes de Fase 2
 
-1. Congelar cambios paralelos de contenido en este repo hasta cerrar la validacion.
-2. Trabajar desde `dev` limpio y actualizado (`git fetch origin`).
-3. Crear una rama o `git worktree` temporal de integracion desde `origin/dev`.
+1. Congelar cambios paralelos de contenido en este repo hasta cerrar la validacion. **Estado: completado durante el cierre baseline `v3.3.22`.**
+2. Trabajar desde `dev` limpio y actualizado (`git fetch origin`). **Estado: completado.**
+3. Crear una rama o `git worktree` temporal de integracion desde `origin/dev`. **Estado: completado.**
 4. Mergear `origin/main` dentro de esa rama temporal. **Estado: completado en `65c1301`.**
 5. Resolver conflictos con esta politica. **Estado: completado, todos los conflictos resueltos a favor de `dev` y los auto-merges ya coincidian con `dev`.**
-6. Desplegar `origin/dev` reconciliado a `dev.prismaconsul.com`. **Estado: pendiente.**
-7. Ejecutar validacion humana minima de los puntos afectados por la integracion. **Estado: pendiente.**
-8. Mantener un solo agente escritor hasta cerrar esa validacion.
-9. Solo entonces arrancar el subpaso 2.1 de `docs/PLAN-FASE2.md`.
+6. Desplegar `origin/dev` reconciliado a `dev.prismaconsul.com`. **Estado: completado en `v3.3.21`, revalidado y absorbido en el baseline `v3.3.22`.**
+7. Ejecutar validacion humana minima de los puntos afectados por la integracion. **Estado: completado con validación técnica + validación visual posterior del usuario.**
+8. Mantener un solo agente escritor hasta cerrar esa validacion. **Estado: completado; a partir del baseline `v3.3.22` el trabajo pasa al modo de dos carriles.**
+9. Realinear no destructivamente la carpeta principal local al baseline oficial. **Estado: completado con stash etiquetado + backup temporal + fast-forward a `d06ef6e`.**
+10. Solo entonces arrancar el subpaso 2.1 de `docs/PLAN-FASE2.md`. **Estado: pendiente únicamente de autorización explícita.**
 
 ## 7. Definicion de orden suficiente
 
 Se considera que el repo ya esta ordenado para Fase 2 cuando se cumplan todas estas condiciones:
 
 - `origin/dev` ya absorbio el catch-up de `origin/main`.
+- `origin/main` y `origin/dev` comparten el mismo baseline publicado.
 - No hay segundo agente escribiendo el repo en paralelo.
 - `git status` esta limpio en la rama operativa.
 - `git stash list` esta vacio.
 - `REVIEW-PRISMA-APEX.md` refleja el estado post-integracion.
 - `dev.prismaconsul.com` corre la rama reconciliada y fue validada despues de esa integracion.
+- La carpeta principal local ya no introduce desfase respecto al baseline oficial o, si conserva WIP, este queda explícitamente preservado fuera del carril activo.
 
 ## 8. Fuera de alcance de este plan
 

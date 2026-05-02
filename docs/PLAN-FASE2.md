@@ -721,10 +721,10 @@ Cada subpaso debe terminar con esta verificación mínima antes de pasar al sigu
 
 ## 9. Pendientes antes de ejecutar Fase 2
 
-- `origin/dev` ya absorbió el catch-up de `origin/main` mediante el merge `65c1301` (`v3.3.20`); no reabrir esa reconciliación salvo conflicto nuevo.
-- Mantener congelados los cambios paralelos en este repo hasta validar el `dev` reconciliado.
-- Cualquier ajuste adicional previo a Fase 2 debe hacerse en rama o `worktree` temporal limpio; no sobre working tree sucio.
-- Desplegar `origin/dev` reconciliado a `dev.prismaconsul.com` y validarlo antes del subpaso 2.1.
+- `origin/dev` y `origin/main` ya están igualados en el baseline `v3.3.22`; no reabrir la reconciliación salvo conflicto nuevo.
+- La carpeta principal local ya quedó alineada no destructivamente a `d06ef6e`; el WIP previo quedó preservado y no debe reintroducirse por accidente en el arranque de Fase 2.
+- Activar los dos carriles sobre ramas y/o worktrees limpios antes de tocar el subpaso 2.1.
+- Cualquier ajuste adicional previo a Fase 2 debe hacerse en rama o `worktree` temporal limpio; no sobre working tree sucio ni sobre un carril ajeno.
 - Aprobación del revisor sobre este plan.
 - Confirmación del usuario.
 - Backup de Neon (`pg_dump`) antes de subpaso 2.6.
