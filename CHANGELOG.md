@@ -2,6 +2,48 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-02] — v3.3.24
+
+### Cierre de ambigüedad v3.3.22/v3.3.23 + activación real de carriles + realineación final local
+
+Patch documental/control mínimo. Sin contenido de producto, sin lógica APEX/Hub, sin backend, sin blueprint, sin ARMC. Cierra el último fleco operativo antes del arranque del primer slice de Fase 2.
+
+#### Aclaración del baseline operativo
+
+- **`v3.3.22`** queda registrado como el **baseline cerrado** del tramo pre-Fase 2 (el commit en el que `main` y `dev` se igualaron y producción se desplegó por primera vez tras la reconciliación).
+- **`v3.3.23`** fue el **sync documental de cierre baseline + activación de carriles** sobre `v3.3.22` — base operativa previa.
+- **`v3.3.24`** (este commit) es el **HEAD operativo real** desde el que arrancarán el primer slice de Fase 2 y el carril contenido.
+
+Donde la documentación previa decía "Fase 2 arrancará desde `v3.3.22`", a partir de aquí debe leerse: el baseline es `v3.3.22`, la base operativa de arranque es el commit publicado más reciente (`v3.3.24` en este momento).
+
+#### Activación real de los dos carriles
+
+- Antes de este patch, los worktrees `prisma-carril-repo-next` y `prisma-carril-contenido-next` existían pero estaban en `detached HEAD`. Eso permite leer y compilar pero no permite commits limpios sin crear rama primero.
+- En este patch se documenta y se ejecuta la convención: cada worktree de carril debe operar sobre una **rama local real** antes del primer commit. Ramas creadas a partir de `v3.3.24`:
+  - **`chore/fase2-repo-base-v3.3.24`** en `prisma-carril-repo-next`
+  - **`chore/fase2-contenido-base-v3.3.24`** en `prisma-carril-contenido-next`
+- Ningún cambio se ejecuta dentro de esos carriles en este patch — solo quedan listos con rama activa.
+
+#### Realineación final local
+
+- La carpeta principal local (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) se realinea al HEAD publicado de este patch (`v3.3.24`) de forma no destructiva (stash + fast-forward, sin `reset --hard`).
+- Stash anterior (`stash@{0}` del 2026-05-01) **no se toca** salvo instrucción explícita.
+
+#### Estado tras este patch
+
+- C11 sigue cerrado. No se reabre.
+- Modo de trabajo en dos carriles activo y formalizado en `CLAUDE.md` con regla explícita de "rama real antes del primer commit".
+- Fase 2 sigue sin arrancar; el primer slice requerirá paquete específico que autorice los archivos y el alcance.
+
+#### Cambios documentales (7 archivos del alcance)
+
+- `REVIEW-PRISMA-APEX.md`: estado actualizado al HEAD operativo `v3.3.24`; aclaración v3.3.22/v3.3.23/v3.3.24; nota de carriles con rama real.
+- `docs/PLAN-COORDINACION-PRE-FASE2.md`: nota de cierre actualizada al nuevo HEAD; sigue como historial.
+- `docs/PLAN-FASE2.md`: la nota baseline cambia "Fase 2 arrancará desde `v3.3.22`" por "Fase 2 arrancará desde el HEAD operativo más reciente publicado (`v3.3.24` en este momento)".
+- `CLAUDE.md`: regla "rama real antes del primer commit" añadida al modo de dos carriles + bump versión.
+- `CHANGELOG.md`: esta entrada + bump cabecera.
+- `index.html`, `portal/index.html`: bump versión visible.
+
 ## [2026-05-02] — v3.3.23
 
 ### Sync documental de cierre baseline + activación operativa de Fase 2

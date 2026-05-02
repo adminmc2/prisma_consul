@@ -7,6 +7,8 @@
 > El siguiente trabajo (Fase 2 cuando se autorice + cualquier release intermedio) opera en el modo de dos carriles formalizado en `CLAUDE.md` ("Modo de trabajo en dos carriles"), no bajo este plan.
 >
 > **Addendum local (2026-05-01):** la carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) también quedó realineada no destructivamente al baseline `d06ef6e`. El WIP previo se preservó en stash etiquetado y backup temporal externo. El desfase local deja de ser un tema operativo abierto.
+>
+> **Addendum local (2026-05-02, HEAD operativo `v3.3.24`):** tras los patches sucesivos `v3.3.23` y `v3.3.24`, la carpeta principal local se vuelve a alinear no destructivamente al nuevo HEAD operativo. Se preserva el WIP residual (sync ya publicado + diff vs nuevo bump) en un nuevo stash etiquetado, sin tocar el stash anterior. Los dos carriles (`prisma-carril-repo-next`, `prisma-carril-contenido-next`) dejan de estar en `detached HEAD` y pasan a operar sobre las ramas locales reales `chore/fase2-repo-base-v3.3.24` y `chore/fase2-contenido-base-v3.3.24`.
 
 ## 1. Proposito
 

@@ -6,7 +6,7 @@
 
 ---
 
-> **Nota baseline (2026-05-01, `v3.3.22`).** Fase 2 **sigue sin arrancar**. Cuando arranque, el commit base será `v3.3.22` (estado en el que `origin/dev` y `origin/main` quedaron igualados tras la reconciliación + publicación). La ejecución se hará en el **modo de dos carriles** definido en `CLAUDE.md` ("Modo de trabajo en dos carriles"): el ejecutor 1 opera el carril repo (estructura, paths, deploy) y el ejecutor 2 el carril contenido (texto, blueprint, ARMC). El subpaso 2.1 no se ejecuta hasta autorización explícita del revisor / usuario.
+> **Nota baseline (actualizada 2026-05-02, HEAD operativo `v3.3.24`).** Fase 2 **sigue sin arrancar**. `v3.3.22` quedó como **baseline cerrado** (estado en el que `origin/dev` y `origin/main` se igualaron tras la reconciliación + publicación). Tras `v3.3.22` se publicaron sucesivamente `v3.3.23` (sync documental + activación de carriles) y `v3.3.24` (cierre de ambigüedad + activación real de carriles + realineación local). **Cuando Fase 2 arranque, lo hará desde el HEAD operativo más reciente publicado en ese momento (en este momento `v3.3.24`).** La ejecución se hará en el **modo de dos carriles** definido en `CLAUDE.md` ("Modo de trabajo en dos carriles"): el ejecutor 1 opera el carril repo (estructura, paths, deploy) y el ejecutor 2 el carril contenido (texto, blueprint, ARMC). Cada carril debe operar sobre **rama local real** (no `detached HEAD`) antes del primer commit; ramas iniciales esperadas: `chore/fase2-repo-base-v3.3.24` y `chore/fase2-contenido-base-v3.3.24`. El subpaso 2.1 no se ejecuta hasta autorización explícita del revisor / usuario.
 
 ---
 

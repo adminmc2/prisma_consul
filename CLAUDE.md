@@ -50,7 +50,8 @@ Mapa completo, flujos cruzados, convenciones y relaciones entre repos: ver [`ECO
 - Los dos carriles trabajan en **ramas y/o worktrees separados**. Nunca sobre la misma rama al mismo tiempo.
 - La integración es **serial**: un carril completa, el revisor da PASS, el otro toma esa base y avanza. No hay merges paralelos sin dictamen.
 - La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) **no se usa como base de release**. Cada carril abre su propio worktree limpio sobre el último commit publicado.
-- La carpeta principal del usuario quedó realineada al baseline `v3.3.22` el 2026-05-01, pero sigue tratándose como copia local estable; el trabajo activo de cada carril sigue saliendo de worktrees o ramas dedicados.
+- La carpeta principal del usuario quedó realineada al baseline `v3.3.22` el 2026-05-01 y vuelta a alinear al HEAD operativo `v3.3.24` el 2026-05-02; sigue tratándose como copia local estable, no como base de release.
+- **Antes del primer commit de cualquier carril, el worktree correspondiente debe operar sobre una rama local real, no en `detached HEAD`.** Convención de nombres por arranque: `chore/fase2-repo-base-vX.Y.Z` para el carril repo y `chore/fase2-contenido-base-vX.Y.Z` para el carril contenido, basadas en el HEAD operativo del momento.
 - Cualquier cambio fuera del alcance del carril activo requiere parar y reportar.
 
 ## Architecture
@@ -334,7 +335,7 @@ La versión actual se muestra en el footer de `index.html`. Se usa **Versionado 
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.23`
+**Versión actual:** `v3.3.24`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)

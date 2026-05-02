@@ -40,10 +40,10 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Campo | Estado actual |
 |---|---|
 | Proyecto | Reorganización de Prisma APEX |
-| Momento actual | Sprint A / Fase 1 cerrada formalmente; reconciliación Git `main` → `dev` completada, desplegada y validada técnicamente; baseline pre-Fase 2 cerrado en `v3.3.22`; Fase 2 sin arrancar |
-| Naturaleza del trabajo | Baseline operativo cerrado. Próxima fase: ejecución de Fase 2 desde el commit `v3.3.22`, en modo de trabajo de dos carriles |
-| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; bloques B, C y D cerrados; Fase 1 cerrada formalmente; reconciliación `main` ↔ `dev` cerrada con `main` y `dev` igualados en el commit baseline `v3.3.22`; Fase 2 pendiente de autorización explícita |
-| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3), **bloque C PASS** (v3.3.8) y **bloque D PASS** tras validación durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops` el 2026-04-30. Reconciliación Git `main` → `dev` (merge `65c1301`) desplegada en `dev.prismaconsul.com` en `v3.3.21` y validada técnicamente. En `v3.3.22`: `origin/main` se promueve por fast-forward al baseline; producción queda alineada con `dev`. La carpeta principal local también queda realineada no destructivamente al baseline `d06ef6e`; el WIP previo se preserva en stash etiquetado y backup externo temporal. Fase 2 arranca solo con autorización explícita del usuario / revisor; cuando arranque, lo hará desde el commit `v3.3.22` con dos carriles formalizados (ejecutor 1 = repo, ejecutor 2 = contenido). |
+| Momento actual | Sprint A / Fase 1 cerrada formalmente; reconciliación Git `main` → `dev` completada, desplegada y validada técnicamente; baseline pre-Fase 2 cerrado en `v3.3.22`; HEAD operativo de arranque para los siguientes carriles fijado en `v3.3.24`; Fase 2 sin arrancar |
+| Naturaleza del trabajo | Baseline operativo cerrado. Próxima fase: ejecución de Fase 2 desde el HEAD operativo más reciente publicado (`v3.3.24` en este momento), en modo de trabajo de dos carriles con rama real por carril |
+| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; bloques B, C y D cerrados; Fase 1 cerrada formalmente; reconciliación `main` ↔ `dev` cerrada con `main` y `dev` igualados desde el baseline `v3.3.22` y mantenidos sincronizados en cada patch documental posterior (`v3.3.23`, `v3.3.24`); Fase 2 pendiente de autorización explícita |
+| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3), **bloque C PASS** (v3.3.8) y **bloque D PASS** tras validación durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops` el 2026-04-30. Reconciliación Git `main` → `dev` (merge `65c1301`) desplegada en `dev.prismaconsul.com` en `v3.3.21` y validada técnicamente. En `v3.3.22`: `origin/main` se promueve por fast-forward al baseline; producción queda alineada con `dev`. La carpeta principal local quedó realineada no destructivamente al baseline `d06ef6e` el 2026-05-01 y vuelta a alinear al HEAD operativo `v3.3.24` el 2026-05-02. El WIP previo de cada realineación queda preservado en stashes etiquetados sin destruirse. Fase 2 arranca solo con autorización explícita del usuario / revisor; cuando arranque, lo hará desde el HEAD operativo más reciente publicado (en este momento `v3.3.24`), con los dos carriles operando sobre ramas locales reales (no `detached HEAD`) — ramas iniciales: `chore/fase2-repo-base-v3.3.24` y `chore/fase2-contenido-base-v3.3.24`. |
 
 ### Dictamen operativo vigente
 
@@ -511,6 +511,19 @@ El diferimiento que existió sobre la integración durable del bloque D queda **
 - Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `docs/PLAN-COORDINACION-PRE-FASE2.md`, `docs/PLAN-FASE2.md`, `CHANGELOG.md`, `CLAUDE.md`.
 - Impacto en gates: no añade gates nuevos; elimina el último desfase entre baseline oficial y working copy principal.
 - Próximo paso: activar ramas o worktrees dedicados por carril y mantener la integración serial revisada desde el baseline `v3.3.22`.
+
+### 2026-05-02 — Cierre de ambigüedad v3.3.22/v3.3.23 + activación real de carriles + realineación final local
+
+- Qué se revisó: aclaración explícita del rol de `v3.3.22` (baseline cerrado) frente a `v3.3.23` (sync documental) y `v3.3.24` (HEAD operativo de arranque); conversión de los worktrees de carril desde `detached HEAD` a ramas locales reales; segunda realineación no destructiva de la carpeta principal local desde `d06ef6e` al nuevo HEAD operativo `v3.3.24`.
+- Hallazgos:
+  - La documentación previa decía "Fase 2 arrancará desde `v3.3.22`". Eso era ambiguo porque tras `v3.3.22` se publicó `v3.3.23` y ahora `v3.3.24`. La regla queda actualizada: Fase 2 arrancará desde el HEAD operativo más reciente publicado (en este momento `v3.3.24`).
+  - Los worktrees `prisma-carril-repo-next` y `prisma-carril-contenido-next` estaban en `detached HEAD`. Eso permite leer y compilar pero no permite commits limpios sin crear rama primero. La regla se documenta y se ejecuta: rama real antes del primer commit del carril.
+  - La carpeta principal local quedó atrasada respecto al nuevo HEAD por diseño del paquete previo. Se realinea no destructivamente (stash + fast-forward) al HEAD `v3.3.24`. El stash anterior (2026-05-01) **no se toca**.
+- Decisiones cerradas afectadas: ninguna nueva. C11 sigue cerrado y no se reabre.
+- Decisiones abiertas afectadas: ninguna nueva.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `docs/PLAN-COORDINACION-PRE-FASE2.md`, `docs/PLAN-FASE2.md`, `CLAUDE.md`, `CHANGELOG.md`, `index.html`, `portal/index.html`.
+- Impacto en gates: ninguno nuevo. El gate de arranque de Fase 2 sigue siendo autorización explícita del usuario / revisor.
+- Próximo paso: arrancar el primer slice real de Fase 2 desde `chore/fase2-repo-base-v3.3.24` (carril repo) o `chore/fase2-contenido-base-v3.3.24` (carril contenido) cuando el revisor / usuario lo autorice.
 
 ## 12. Plantilla de actualización para futuras revisiones
 
