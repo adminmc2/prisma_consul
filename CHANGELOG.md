@@ -2,6 +2,57 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-03] — v3.3.31
+
+### Subpaso 2.2 de Fase 2 — entregables ARMC bajo `/prisma-apex/clientes-publicados/` + URL canónica `/publicados/`
+
+Primer movimiento físico de la jerarquía de cliente bajo la nueva estructura `prisma-apex/clientes-publicados/[cliente]/`, con URL pública canónica `/publicados/[cliente]/...` y compatibilidad legacy 301 desde `/portal/analisis/[cliente]/...`. Sin tocar producción ni `main`.
+
+#### Absorción previa del freeze del carril contenido (3 SHAs autorizados)
+
+- `50f39af` — content(modelo-datos/Paciente): correcciones post-CEO + alineación contadores
+- `e7469f1` — content(modelo-datos/Paciente): Idioma preferido como selección explícita
+- `a5fca31` — content(modelo-datos/Paciente): granularizar Antecedentes (secciones 3-6) como electivos
+
+Cherry-picks limpios, sólo tocan `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html` (post-move). Verificado: ninguna otra ruta arrastrada.
+
+#### Movimientos físicos (`git mv`, historial preservado)
+
+- **`portal/analisis/armc/`** → **`prisma-apex/clientes-publicados/armc/`** (20 archivos: 1 `index.html` + 8 diagramas + 5 diagnostico + 5 blueprint + 1 css)
+- **`portal/analisis/GUIA-NUEVAS-SECCIONES.md`** → **`docs/GUIA-NUEVAS-SECCIONES.md`** (interna, NO bajo `/publicados/`)
+
+`portal/analisis/` queda vacío tras el move.
+
+#### Cambios `server/server.js`
+
+- Nuevo mount estático: `app.use('/publicados', express.static(path.join(projectRoot, 'prisma-apex', 'clientes-publicados'), { extensions: ['html'] }))`.
+- Redirect legacy 301 (fallback Express para local/sin nginx): `app.get(/^\/portal\/analisis\/(.+)$/, (req, res) => res.redirect(301, '/publicados/' + req.params[0]))`.
+- Mount `/portal` se mantiene para servir `portal/index.html` (el Hub) hasta el subpaso 2.3.
+
+#### Cambios `nginx` en `dev`
+
+- Añadido `location /publicados/` con `alias /home/prisma/web-de-prisma-dev/prisma-apex/clientes-publicados/`.
+- Añadido redirect 301 con prioridad sobre `/portal/`: `location ~ ^/portal/analisis/(.+)$ { return 301 /publicados/$1; }`.
+- Backup: `/etc/nginx/sites-available/prisma-dev.bak-20260503-subpaso-2.2`.
+
+#### Cambios frontend (`portal/index.html`)
+
+- `ANALISIS_REGISTRY.armc.{diagramas,diagnostico,blueprint}` actualizado de `/portal/analisis/armc/...` a `/publicados/armc/...`. La SPA Hub abre los iframes ya desde la URL canónica.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `portal/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este patch
+
+- No se toca producción (`prismaconsul.com`).
+- No se toca `main`.
+- No se reactiva al ejecutor 2 ni se toman commits suyos posteriores a `a5fca31`.
+- No se ejecutan los subpasos 2.3+ (cada uno requerirá paquete propio).
+
 ## [2026-05-03] — v3.3.30
 
 ### Normalización operativa pre-2.2 y simplificación del modo de dos carriles

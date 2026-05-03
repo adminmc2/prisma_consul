@@ -70,11 +70,22 @@ app.use('/apex', express.static(path.join(projectRoot, 'apex'), {
   extensions: ['html']
 }));
 
-// PRISMA Hub — portal/index.html sigue ahí hasta el subpaso 2.3. Mount
-// dedicado para los iframes de análisis ARMC bajo /portal/analisis/...
+// PRISMA Hub — portal/index.html sigue ahí hasta el subpaso 2.3.
 app.use('/portal', express.static(path.join(projectRoot, 'portal'), {
   extensions: ['html']
 }));
+
+// Entregables publicados por cliente — Subpaso 2.2 de Fase 2 (v3.3.31).
+// URL canónica: /publicados/[cliente]/...
+app.use('/publicados', express.static(path.join(projectRoot, 'prisma-apex', 'clientes-publicados'), {
+  extensions: ['html']
+}));
+
+// Redirect legacy /portal/analisis/[cliente]/... → /publicados/[cliente]/...
+// Fallback para entornos local/sin nginx; en remoto el redirect lo gestiona nginx.
+app.get(/^\/portal\/analisis\/(.+)$/, (req, res) => {
+  res.redirect(301, '/publicados/' + req.params[0]);
+});
 
 // SPA routes
 app.get('/hub', (req, res) => {
