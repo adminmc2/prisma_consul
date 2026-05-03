@@ -242,16 +242,26 @@ Las **98** entradas del `git ls-files` clasificadas (verificado el 2026-04-29 so
 
 **Cambio de servidor (`server.js`):**
 - `app.use(express.static(projectRoot, ...))` → `app.use(express.static(path.join(projectRoot, 'web'), ...))`.
+- Añadir mounts explícitos para `/apex` y `/portal` para que local/dev sin nginx sigan siendo coherentes con el árbol físico.
 - Mantener handler `/hub` apuntando a `portal/index.html` (todavía no movido).
-- Mantener handler `/apex` apuntando a `apex/index.html` (todavía no movido).
+
+**Cambio de infraestructura (Variante B, `dev` primero):**
+- Verificar antes de tocar nginx el inventario real de rutas desde el `access_log` activo de `prisma-dev`; no basta con asumir las 11 superficies como lista cerrada.
+- Preparar la nueva config nginx fuera de linea, mantener la activa intacta y usar este orden estricto en `dev`: **config nueva preparada → repo actualizado en `~/web-de-prisma-dev` → `pm2 restart prisma-dev` → activacion de la config nueva → `nginx -t` → reload**.
+- Cambiar el `root` global del site nginx de `dev` para que apunte a `/home/prisma/web-de-prisma-dev/web/` tras desplegar el slice.
+- Declarar excepciones explícitas para `/apex`, `/portal/`, `/api/` y `/hub` para que no dependan del nuevo `root` por defecto.
+- Cerrar explicitamente `/hub` por serving directo desde nginx hacia `portal/index.html` mientras 2.3 no lo mueva; el handler de Express queda como fallback local/sin nginx.
+- Respaldar la config activa de nginx antes de editarla y validar con `nginx -t` antes del reload.
+- Seguir el procedimiento detallado de `docs/RUNBOOK-EJECUTOR-VARIANTE-B-SUBPASO-2.1.md`.
 
 **Validación runtime (smoke tests obligatorios):**
 - `prismaconsul.com/` carga la landing.
 - `prismaconsul.com/aviso-legal`, `/cookies`, `/privacidad` cargan.
 - Assets de la landing (`/css/styles.css?v=147`, `/js/main.js`, `/images/...`) responden 200.
 - `/hub` y `/apex` siguen funcionando (todavía no se han movido).
+- URLs legacy bajo `/portal/...` siguen funcionando tras el cambio de `root`.
 
-**Riesgo:** alto. Cualquier path relativo en HTML que no use rutas absolutas se rompe. Mitigación: revisar que `web/index.html` use rutas absolutas (`/css/`, `/js/`, `/images/`) — el servidor reapuntado las resuelve correctamente.
+**Riesgo:** medio-alto. El cambio de `root` global puede romper cualquier superficie no declarada como excepción. Mitigación: backup previo del site `prisma-dev`, inventario real desde logs, orden estricto repo→pm2→nginx, smoke tests con cache buster, rollback completo (nginx + repo + pm2) y nota explícita sobre Cloudflare si luego se replica a producción.
 
 **Despliegue obligatorio en dev** + sesión humana mínima en `dev.prismaconsul.com/` antes de seguir.
 
@@ -272,6 +282,11 @@ Las **98** entradas del `git ls-files` clasificadas (verificado el 2026-04-29 so
     res.redirect(301, req.path.replace('/portal/analisis/', '/publicados/'));
   });
   ```
+
+**Cambio de infraestructura (Variante B ya activa):**
+- Como `/publicados` vive fuera de `/web/`, añadir una excepción explícita en nginx para `/publicados` en `dev`/producción; el static mount de Express sigue siendo necesario para local y para entornos sin nginx, pero no basta por sí solo en el remoto.
+- Como `/portal/` ya es una excepción explícita de nginx bajo Variante B, el redirect legacy `/portal/analisis/:cliente/*` debe reflejarse también en nginx o dejarse caer intencionalmente hacia Express. No asumir que el redirect de `server.js` se ejecutará en remoto si nginx consume `/portal/` antes.
+- Validar tanto la URL nueva como la legacy con cache buster tras ajustar nginx.
 
 **Cambio en frontend (`portal/index.html`):**
 - Actualizar `ANALISIS_REGISTRY` a la nueva URL canónica:
@@ -305,6 +320,10 @@ Las **98** entradas del `git ls-files` clasificadas (verificado el 2026-04-29 so
     res.sendFile(path.join(projectRoot, 'prisma-apex', 'index.html'));
   });
   ```
+
+**Cambio de infraestructura (Variante B ya activa):**
+- Reapuntar la regla nginx que sirve `/hub` directamente para que deje de devolver `portal/index.html` y pase a devolver `prisma-apex/index.html`.
+- El cambio del handler de Express sigue siendo necesario para local o entornos sin nginx, pero en `dev`/producción el comportamiento visible de `/hub` no cambia hasta ajustar nginx.
 
 **Validación runtime obligatoria:**
 - `/hub` sigue cargando la SPA del Hub idéntica.
@@ -342,6 +361,10 @@ app.use('/apex', express.static(
 ));
 ```
 
+**Cambio de infraestructura (Variante B ya activa):**
+- Reapuntar la excepción nginx de `/apex` desde el árbol viejo `apex/` al nuevo directorio `prisma-apex/core/discovery-engine/`.
+- No asumir que el static mount de Express por sí solo cambiará el comportamiento de `dev`/producción bajo esta arquitectura; nginx sigue siendo la capa principal de serving para ese path.
+
 Con `static` montado en `/apex`:
 - `prismaconsul.com/apex` (sin trailing slash) → resuelve `index.html` por `index: 'index.html'`.
 - `prismaconsul.com/apex/form.css` → resuelve `form.css` dentro de la carpeta.
@@ -376,6 +399,10 @@ Con `static` montado en `/apex`:
   ```javascript
   app.use('/shared', express.static(path.join(projectRoot, 'shared')));
   ```
+
+**Cambio de infraestructura (Variante B ya activa):**
+- Añadir una excepción nginx explícita para `/shared`, porque tras mover las fuentes fuera de `/web/` ese path ya no quedará cubierto por el `root` global del site.
+- El static mount de Express sigue siendo el contrato local/sin nginx; remoto requiere alineación explícita de nginx.
 
 **Validación runtime obligatoria:**
 - En el **discovery** (`prismaconsul.com/apex`): los iconos Phosphor (clases `ph ph-*`) renderizan correctamente. En DevTools → Network: confirmar que `/shared/fonts/phosphor/phosphor.css` y los archivos `.woff2`/`.woff`/`.ttf` responden 200.
@@ -619,6 +646,8 @@ function syncClienteUpdate(clienteId, fields) { ... }
 
 Todos los cambios al `server/server.js` durante Fase 2 quedan capturados en un solo archivo. Son acumulativos a lo largo de los subpasos:
 
+**Nota de arquitectura:** este bloque resume solo el contrato esperado de `server.js`. Bajo la Variante B adoptada para `dev`/producción, estos cambios no sustituyen la alineación equivalente en nginx para todo path público que viva fuera de `/web/` (`/hub`, `/apex`, `/publicados`, `/shared` y redirects legacy bajo `/portal/...`).
+
 ```javascript
 // Estado final esperado tras todos los subpasos:
 
@@ -692,12 +721,12 @@ Cada subpaso debe terminar con esta verificación mínima antes de pasar al sigu
 
 | # | Decisión |
 |---|---|
-| PF2-1 | Web pública pasa a `web/`; servida por `express.static('web')` |
-| PF2-2 | Hub SPA pasa a `prisma-apex/index.html`; servida por handler `/hub` explícito |
+| PF2-1 | Web pública pasa a `web/`; local/sin nginx servida por `express.static('web')` y en `dev`/producción por nginx con `root` global apuntando a `/web` |
+| PF2-2 | Hub SPA pasa a `prisma-apex/index.html`; local/sin nginx servida por handler `/hub` explícito y en `dev`/producción por regla nginx explícita para `/hub` |
 | PF2-3 | Discovery pasa a `prisma-apex/core/discovery-engine/`; servido por **static mount** bajo `/apex` (`app.use('/apex', express.static(...))`), NO por `sendFile`, para preservar la resolución de assets relativos (`form.css`, `form.js`, `signal-detector.js`) que el HTML usa internamente |
-| PF2-4 | Entregables ARMC pasan a `prisma-apex/clientes-publicados/armc/`; servidos por `express.static('/publicados')` |
-| PF2-5 | URL canónica de entregables es `/publicados/[cliente]/...`; URL legacy `/portal/analisis/[cliente]/...` redirige 301 indefinido |
-| PF2-6 | Fuentes Phosphor centralizadas en `shared/fonts/phosphor/`; servidas por `/shared` |
+| PF2-4 | Entregables ARMC pasan a `prisma-apex/clientes-publicados/armc/`; local/sin nginx servidos por `express.static('/publicados')` y en `dev`/producción por excepción nginx explícita para `/publicados` |
+| PF2-5 | URL canónica de entregables es `/publicados/[cliente]/...`; URL legacy `/portal/analisis/[cliente]/...` redirige 301 indefinido, con alineación explícita de nginx bajo Variante B |
+| PF2-6 | Fuentes Phosphor centralizadas en `shared/fonts/phosphor/`; local/sin nginx servidas por `/shared` y en `dev`/producción por excepción nginx explícita para `/shared` |
 | PF2-7 | Backend (`server/`) queda STAY con cambios en `server.js` consolidados en sección 5 |
 | PF2-8 | Migración BD estrictamente aditiva (sección 4 subpaso 2.6) |
 | PF2-9 | `domain-sync.js` se crea en Fase 2 pero sin invocar (skeleton); integración progresiva en sprints posteriores |

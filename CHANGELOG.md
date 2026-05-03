@@ -2,6 +2,97 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-03] — v3.3.28
+
+### Clarificación operativa definitiva del modo de dos carriles
+
+Patch documental de gobernanza. No ejecuta cambios runtime en `dev` ni en producción.
+
+#### Ajuste realizado
+
+- `CLAUDE.md` aclara que el carril repo gestiona la integración/publicación y que el carril contenido puede dejar paquetes cerrados en commits identificables sin asumir `push`, merge, deploy ni release.
+- Se fija la operación base con **dos worktrees persistentes**, uno por carril; los worktrees extra quedan solo para auditorías o experimentos temporales.
+- Se define que el handoff del carril contenido se congela por **SHA/commit aprobado** y no bloqueando toda la rama o todo el worktree.
+- Se explicita que el carril repo integra ese SHA de forma serial mientras el carril contenido puede seguir avanzando en el mismo worktree con commits nuevos posteriores.
+- Se añade la regla explícita del ejecutor 1: un estado probado en VPS o en rama de carril no cuenta como publicado hasta quedar absorbido en `origin/dev` y volver a validarse desde esa base publicada.
+- `REVIEW-PRISMA-APEX.md` registra esta clarificación como regla operativa vigente.
+- `REVIEW-PRISMA-APEX.md` registra además que el subpaso 2.1 ya tiene PASS técnico en `dev`, con absorción Git y validación visual aún pendientes antes del cierre final.
+
+#### Estado tras este patch
+
+- Queda cerrada la ambigüedad práctica entre trabajo paralelo y handoff entre carriles.
+- El sistema operativo estándar pasa a ser: dos worktrees fijos, handoff por SHA, integración serial por el carril repo.
+- No se toca producción.
+
+## [2026-05-02] — v3.3.27
+
+### Addendum operativo al runbook de Variante B + corrección del plan bajo nginx
+
+Patch documental y de control. No ejecuta cambios runtime en `dev` ni en producción.
+
+#### Ajuste realizado
+
+- Se aceptan los gaps operativos bien fundados del ejecutor sobre el runbook de Variante B.
+- `docs/RUNBOOK-EJECUTOR-VARIANTE-B-SUBPASO-2.1.md` se refuerza con:
+  - inventario proactivo de rutas desde logs nginx antes del cambio
+  - orden estricto de activación: config nueva preparada → repo actualizado → `pm2 restart prisma-dev` → activación nginx → `nginx -t` → reload
+  - rollback completo: nginx + repo + PM2
+  - definición explícita de `/hub` por serving directo desde nginx mientras 2.3 no lo mueva
+  - nota operativa sobre Cloudflare para futura réplica a producción
+- `docs/PLAN-FASE2.md` se corrige para que 2.1, 2.2, 2.3, 2.4 y 2.5 no vuelvan a asumir que `server.js` por sí solo resuelve los cambios de serving bajo la arquitectura Variante B.
+- `REVIEW-PRISMA-APEX.md` registra la aceptación del addendum y mantiene C12 abierto hasta validación runtime PASS en `dev`.
+
+#### Estado tras este patch
+
+- La decisión sigue siendo Variante B.
+- El runbook queda más seguro y menos ambiguo antes de ejecución.
+- No se toca producción.
+
+## [2026-05-02] — v3.3.26
+
+### Eliminación del informe técnico redundante del ejecutor para 2.1
+
+Patch documental mínimo. No ejecuta cambios runtime en `dev` ni en producción.
+
+#### Ajuste realizado
+
+- Se elimina `docs/INFORME-TECNICO-EJECUTOR-INFRA-2.1.md` por redundancia operativa.
+- El documento ejecutable y vigente para el carril repo sigue siendo `docs/RUNBOOK-EJECUTOR-VARIANTE-B-SUBPASO-2.1.md`.
+- La justificación comparativa de la decisión permanece en `docs/ANALISIS-ALTERNATIVAS-INFRA-SUBPASO-2.1.md`.
+
+#### Estado tras este patch
+
+- No cambia la decisión C12 ni el plan de ejecución de Variante B.
+- No se toca `docs/PLAN-FASE2.md`.
+- Se reduce duplicación documental antes de la ejecución del subpaso 2.1.
+
+## [2026-05-02] — v3.3.25
+
+### Selección operativa de Variante B + paquete documental de ejecución para 2.1
+
+Patch documental y de control. No ejecuta cambios runtime en `dev` ni en producción por sí mismo. Su función es convertir la decisión del revisor sobre el bloqueo de infraestructura del subpaso 2.1 en documentación operativa coherente para el ejecutor.
+
+#### Decisión registrada
+
+- El bloqueo C12 deja de estar en fase de comparación y pasa a ejecución condicionada: el revisor/usuario selecciona la **Variante B** para retomar 2.1.
+- Variante B significa: cambiar el `root` global del site de `dev` para que la web pública salga desde `/web/`, añadiendo excepciones explícitas para `/apex`, `/hub`, `/portal/` y `/api/`.
+- La decisión sigue siendo **solo para `dev`** hasta completar validación runtime y evidencias de PASS.
+
+#### Documentación sincronizada
+
+- `docs/ANALISIS-ALTERNATIVAS-INFRA-SUBPASO-2.1.md`: conserva la comparativa pero deja marcada la decisión operativa final en favor de Variante B.
+- `docs/INFORME-TECNICO-EJECUTOR-INFRA-2.1.md`: deja de recomendar Variante A y se alinea con la ejecución de Variante B.
+- `docs/RUNBOOK-EJECUTOR-VARIANTE-B-SUBPASO-2.1.md`: nuevo procedimiento paso a paso para el ejecutor, con precondiciones, verificaciones, criterio de aborto y rollback.
+- `docs/PLAN-FASE2.md`: el subpaso 2.1 ya no asume un cambio solo en Express; incorpora el cambio de `root` en nginx y sus excepciones explícitas.
+- `REVIEW-PRISMA-APEX.md`: C12 actualizado con la variante elegida y nueva entrada de bitácora.
+
+#### Estado tras este patch
+
+- No hay despliegue ejecutado en este patch.
+- No se toca producción.
+- C12 sigue abierto hasta que el ejecutor complete el runbook y deje evidencia de validación PASS en `dev`.
+- El siguiente movimiento permitido ya no es "elegir variante", sino ejecutar Variante B de forma controlada.
+
 ## [2026-05-02] — v3.3.24
 
 ### Cierre de ambigüedad v3.3.22/v3.3.23 + activación real de carriles + realineación final local

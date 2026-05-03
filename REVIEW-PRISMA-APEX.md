@@ -136,6 +136,7 @@ Estos puntos no bloquean el arranque de Fase 1, pero sí condicionan el paso a F
 | C09 | Inventario contractual real en `CONTRATOS.md` | Cerrado | Cerrado en v3.2.43 tras 6 correcciones del revisor: 17 endpoints documentados con shapes exactas, 31 columnas de `apex_submissions` (5 ausentes en `schema.sql`), 3 paths hardcodeados, redirects 301, validación runtime de Fase 2, alineamiento con gate del review | Gate funcional de Fase 2 cumplido |
 | C10 | Absorción del vocabulario canónico en `GLOSARIO.md` | Cerrado | Cerrado en v3.2.44: glosario consolidado con 15 secciones cubriendo producto, modelo de datos, roles, términos arquitectónicos, legacy frozen, ecosistema, servicios externos, proceso, contratos, URLs, Claude Code, convenciones y aclaraciones de qué NO es cada término | Coherencia documental cerrada para Fase 1 |
 | C11 | Coordinación operativa `main`/`dev` antes de Fase 2 | Cerrado | Cerrado en `v3.3.22`: catch-up Git `main` → `dev` integrado en `65c1301`, `origin/dev` `c6db329` (`v3.3.21`) desplegado y validado técnicamente en `dev.prismaconsul.com`, `origin/main` promovido por fast-forward al baseline `v3.3.22`, producción alineada con `dev`. La coordinación `main`/`dev` deja de ser un problema abierto. | Orden operativo y trazabilidad confirmados antes del movimiento físico |
+| C12 | Contrato real de serving para el subpaso 2.1 y siguientes | Abierto | El intento `077c56f` confirma que el cuello de botella no es Git ni Express sino la capa nginx/Cloudflare que sirve estáticos antes de Node. El revisor/usuario ya seleccionó la **Variante B**: cambio global de `root` a `/web/` con excepciones explícitas para `/apex`, `/hub`, `/portal/` y `/api/`, primero en `dev`, con orden estricto repo→pm2→nginx, inventario previo desde logs y rollback completo. | Desbloqueo seguro de Fase 2 física y prevención de regresiones en `/`, legales, assets, `/apex`, `/hub` y rutas legacy bajo `/portal/` |
 
 ### Gate para pasar a Fase 2
 
@@ -524,6 +525,73 @@ El diferimiento que existió sobre la integración durable del bloque D queda **
 - Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `docs/PLAN-COORDINACION-PRE-FASE2.md`, `docs/PLAN-FASE2.md`, `CLAUDE.md`, `CHANGELOG.md`, `index.html`, `portal/index.html`.
 - Impacto en gates: ninguno nuevo. El gate de arranque de Fase 2 sigue siendo autorización explícita del usuario / revisor.
 - Próximo paso: arrancar el primer slice real de Fase 2 desde `chore/fase2-repo-base-v3.3.24` (carril repo) o `chore/fase2-contenido-base-v3.3.24` (carril contenido) cuando el revisor / usuario lo autorice.
+
+### 2026-05-02 — Bloqueo real de infraestructura en el subpaso 2.1
+
+- Qué se revisó: el fallo del intento `077c56f` del subpaso 2.1 en `dev.prismaconsul.com` y las alternativas reales para destrabarlo sin abrir un incidente mayor de serving.
+- Hallazgos:
+  - El supuesto operativo de `docs/PLAN-FASE2.md` para 2.1 era incompleto: mover la web a `/web/` y cambiar `express.static(...)` no basta porque nginx sirve estáticos antes de Express.
+  - El problema observado no invalida la reorganización física, pero sí obliga a decidir explícitamente el contrato de serving antes de reintentar 2.1.
+  - Quedan formalizadas cuatro variantes de decisión: compatibilidad localizada en nginx, cambio global de `root` con excepciones, proxy fino a Express o replanificación como pre-subpaso de infraestructura.
+- Decisiones cerradas afectadas: ninguna. C11 sigue cerrado y no se reabre.
+- Decisiones abiertas afectadas: se abre C12 como decisión de infraestructura previa a retomar 2.1.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `docs/ANALISIS-ALTERNATIVAS-INFRA-SUBPASO-2.1.md`, `docs/INFORME-TECNICO-EJECUTOR-INFRA-2.1.md`.
+- Impacto en gates: el gate general de Fase 2 no se cierra ni se reabre, pero 2.1 queda condicionado a resolver C12 antes de nueva ejecución en `dev`.
+- Próximo paso: decisión del revisor / usuario sobre la variante a adoptar; recomendación actual del análisis: compatibilidad localizada en nginx primero en `dev`.
+
+### 2026-05-02 — Variante B seleccionada para ejecutar el subpaso 2.1
+
+- Qué se revisó: la resolución del revisor/usuario sobre el bloqueo C12 y la necesidad de traducir esa decisión en instrucciones operativas para el ejecutor.
+- Hallazgos:
+  - La decisión ya no es comparativa sino ejecutiva: 2.1 se intentará con **Variante B**, es decir, cambio del `root` global del site de `dev` a `/web/` más excepciones explícitas.
+  - La documentación previa quedó obsoleta en dos puntos: el análisis seguía priorizando A y `docs/PLAN-FASE2.md` seguía describiendo 2.1 como si bastara tocar Express.
+  - Se creó un runbook específico para el ejecutor con precondiciones, pasos, verificaciones, criterio de aborto y rollback.
+- Decisiones cerradas afectadas: ninguna. C11 sigue cerrado y no se reabre.
+- Decisiones abiertas afectadas: C12 sigue abierto hasta que Variante B pase validación runtime completa en `dev`.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `docs/ANALISIS-ALTERNATIVAS-INFRA-SUBPASO-2.1.md`, `docs/INFORME-TECNICO-EJECUTOR-INFRA-2.1.md`, `docs/RUNBOOK-EJECUTOR-VARIANTE-B-SUBPASO-2.1.md`, `docs/PLAN-FASE2.md`, `CHANGELOG.md`, `CLAUDE.md`, `index.html`, `portal/index.html`.
+- Impacto en gates: 2.1 ya no espera elección de variante; ahora espera ejecución controlada y validación PASS de Variante B en `dev`.
+- Próximo paso: el ejecutor 1 sigue `docs/RUNBOOK-EJECUTOR-VARIANTE-B-SUBPASO-2.1.md` de punta a punta y reporta evidencia antes de proponer merge.
+
+### 2026-05-02 — Addendum aceptado al runbook tras análisis independiente del ejecutor
+
+- Qué se revisó: los 6 gaps operativos señalados por el ejecutor sobre el runbook de Variante B.
+- Hallazgos:
+  - El diagnóstico del ejecutor es correcto en lo sustancial: el runbook inicial acertaba en la arquitectura, pero dejaba corto el orden de activación repo/nginx, el rollback completo, el `pm2 restart prisma-dev`, la verificación proactiva del inventario de rutas, la nota de Cloudflare y el mecanismo exacto de `/hub`.
+  - Se acepta el addendum: `/hub` queda definido por serving directo de nginx mientras 2.3 no lo mueva; el handler de Express pasa a ser fallback local/sin nginx.
+  - `docs/PLAN-FASE2.md` se endurece no solo en 2.1 sino también en 2.2, 2.3, 2.4 y 2.5 para dejar explícito que bajo Variante B los nuevos paths públicos fuera de `/web/` requieren alineación de nginx además del cambio en `server.js`.
+- Decisiones cerradas afectadas: ninguna. C11 sigue cerrado y no se reabre.
+- Decisiones abiertas afectadas: C12 sigue abierto hasta que el runbook reforzado pase validación runtime completa en `dev`.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `docs/RUNBOOK-EJECUTOR-VARIANTE-B-SUBPASO-2.1.md`, `docs/PLAN-FASE2.md`, `CHANGELOG.md`, `CLAUDE.md`, `index.html`, `portal/index.html`.
+- Impacto en gates: no cambia el gate de Fase 2; sí reduce el riesgo operativo del paquete de ejecución de 2.1.
+- Próximo paso: ejecutar Variante B con el runbook reforzado y, si pasa, devolver evidencia antes de proponer merge.
+
+### 2026-05-03 — Clarificación operativa definitiva del modo de dos carriles
+
+- Qué se revisó: la ambigüedad operativa sobre si el carril contenido debía detenerse por completo cuando un paquete quedaba aprobado y sobre cuántos worktrees debían mantenerse abiertos para operar en paralelo.
+- Hallazgos:
+  - La documentación vigente acertaba en la separación de responsabilidades y en la integración serial, pero no explicitaba el mecanismo operativo más simple para evitar proliferación de worktrees.
+  - La regla correcta es: **dos worktrees persistentes**, uno por carril; los worktrees extra quedan reservados para auditorías o experimentos temporales.
+  - El handoff del carril contenido se congela por **SHA/commit aprobado**, no bloqueando toda la rama ni todo el worktree.
+  - El carril repo integra ese SHA cuando corresponda y el carril contenido puede seguir avanzando en el mismo worktree con commits nuevos posteriores.
+- Decisiones cerradas afectadas: ninguna nueva. C11 sigue cerrado y no se reabre.
+- Decisiones abiertas afectadas: ninguna nueva. C12 mantiene su alcance propio de infraestructura y no gobierna este flujo de contenido.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `CLAUDE.md`, `CHANGELOG.md`, `index.html`, `portal/index.html`.
+- Impacto en gates: no cambia gates existentes; sí fija el modo operativo estándar para los siguientes handoffs entre carriles.
+- Próximo paso: operar con dos worktrees persistentes y handoff por SHA aprobado hasta nueva decisión explícita del revisor.
+
+### 2026-05-03 — Subpaso 2.1 ejecutado en dev con PASS técnico y absorción Git pendiente
+
+- Qué se revisó: la entrega del ejecutor 1 tras ejecutar Variante B del subpaso 2.1 directamente en `dev.prismaconsul.com` con el slice `077c56f` del carril repo.
+- Hallazgos:
+  - La ejecución técnica de 2.1 en `dev` pasa con evidencia suficiente: backup nginx, orden repo → pm2 → nginx, `nginx -t` OK, reload OK y smoke HTTP `17/17` PASS en `/`, legales, assets, `/apex`, `/hub` y rutas legacy bajo `/portal/`.
+  - Producción permanece intacta y `origin/main` / `origin/dev` no fueron tocados durante la prueba.
+  - El contrato Variante B queda validado técnicamente en runtime para 2.1, pero el estado todavía no puede considerarse "publicado" porque el VPS `dev` está corriendo desde la rama de carril `chore/fase2-repo-base-v3.3.24` (`077c56f`) y no desde `origin/dev`.
+  - La validación visual humana mínima sigue pendiente antes del cierre final del paquete.
+- Decisiones cerradas afectadas: ninguna nueva. C11 sigue cerrado y no se reabre.
+- Decisiones abiertas afectadas: C12 permanece abierto pero acotado a dos pendientes finales: validación visual humana y absorción del slice validado en `origin/dev` para que el estado probado en VPS quede publicado de verdad en Git.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `CLAUDE.md`, `CHANGELOG.md`.
+- Impacto en gates: 2.1 queda en **PASS técnico en dev**, pero no en PASS final de publicación mientras el estado validado no quede absorbido en `origin/dev`.
+- Próximo paso: el ejecutor 1 debe cerrar la validación visual mínima, integrar serialmente `077c56f` y los SHAs aprobados que entren en el corte de publicación, dejar el VPS `dev` alineado con `origin/dev` y repetir smoke desde el estado ya publicado.
 
 ## 12. Plantilla de actualización para futuras revisiones
 
