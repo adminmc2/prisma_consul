@@ -2,6 +2,24 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-03] — v3.3.29
+
+### Publicación adicional en dev del carril contenido ARMC
+
+Patch de contenido sobre `dev`. No toca producción.
+
+#### Ajuste realizado
+
+- Se corrigen los conteos del catálogo CEO de `~52` a `~53` en los diagramas de flujo afectados.
+- `portal/analisis/armc/diagnostico/mapa-fricciones.html` corrige la nota final de fricciones transversales de `8` a `9`.
+- `portal/analisis/armc/diagnostico/embudo-operativo.html` incorpora las 3 variantes de valoración post-CEO en la etapa de Conversión.
+- Se actualiza la versión visible del proyecto a `v3.3.29` en landing, portal, `CLAUDE.md` y `CHANGELOG.md`.
+
+#### Estado tras este patch
+
+- `origin/dev` absorbe el contenido nuevo pendiente del carril 2 posterior al corte `v3.3.28`.
+- Producción permanece intacta.
+
 ## [2026-05-03] — v3.3.28
 
 ### Clarificación operativa definitiva del modo de dos carriles

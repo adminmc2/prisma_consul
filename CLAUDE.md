@@ -41,19 +41,14 @@ Mapa completo, flujos cruzados, convenciones y relaciones entre repos: ver [`ECO
 
 **Vigente desde el cierre baseline pre-Fase 2 (`v3.3.22`).**
 
-- **Ejecutor 1 — carril repo:** git de integración, ramas de publicación, push, deploy, release, infraestructura, versionado visible y reconciliación main/dev. No edita contenido narrativo ni blueprint salvo permiso explícito.
-- **Ejecutor 2 — carril contenido:** texto, blueprint, análisis ARMC, hallazgos y narrativa de entregables. Puede dejar paquetes cerrados en commits identificables dentro de su propio carril cuando el revisor lo pida, pero no hace push, merge a `dev`/`main`, deploy, release ni versionado visible.
+- **Ejecutor 1 — carril repo:** git, ramas, deploy, release, infraestructura, versionado visible, reconciliación main/dev. No edita contenido narrativo ni blueprint salvo permiso explícito.
+- **Ejecutor 2 — carril contenido:** texto, blueprint, análisis ARMC, hallazgos, narrativa de entregables. No toca git, ramas ni release.
 - **Revisor:** coordina, dictamina, sincroniza review central. Sostiene el modo revisor permanente.
 
 **Reglas operativas:**
 
 - Los dos carriles trabajan en **ramas y/o worktrees separados**. Nunca sobre la misma rama al mismo tiempo.
-- La operación base usa **dos worktrees persistentes**, uno por carril. Los worktrees extra solo se abren para auditorías o experimentos temporales y se eliminan al cerrar ese uso.
 - La integración es **serial**: un carril completa, el revisor da PASS, el otro toma esa base y avanza. No hay merges paralelos sin dictamen.
-- El handoff del carril contenido se congela por **SHA/commit aprobado**, no congelando toda la rama ni todo el worktree.
-- El carril repo integra ese SHA de forma serial. Mientras tanto, el carril contenido puede seguir trabajando en el mismo worktree con commits nuevos posteriores, sin reescribir el SHA ya aprobado.
-- Flujo operativo del **ejecutor 1**: integrar solo SHAs/commits ya aprobados por el revisor; no tomar WIP narrativo no aprobado. Si un paquete se validó primero directo en el VPS o en una rama de carril, el estado final debe quedar absorbido en `origin/dev` antes de darlo por publicado. Ningún `dev` se considera realmente publicado mientras el servidor siga corriendo desde una rama de carril no absorbida en Git.
-- Cierre mínimo del **ejecutor 1** por cada publicación en `dev`: integrar los SHAs aprobados que entren en ese corte, dejar `dev` del VPS alineado con `origin/dev`, ejecutar smoke técnico y pedir/adjuntar validación visual humana cuando el paquete afecte rendering o UX.
 - La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) **no se usa como base de release**. Cada carril abre su propio worktree limpio sobre el último commit publicado.
 - La carpeta principal del usuario quedó realineada al baseline `v3.3.22` el 2026-05-01 y vuelta a alinear al HEAD operativo `v3.3.24` el 2026-05-02; sigue tratándose como copia local estable, no como base de release.
 - **Antes del primer commit de cualquier carril, el worktree correspondiente debe operar sobre una rama local real, no en `detached HEAD`.** Convención de nombres por arranque: `chore/fase2-repo-base-vX.Y.Z` para el carril repo y `chore/fase2-contenido-base-vX.Y.Z` para el carril contenido, basadas en el HEAD operativo del momento.
@@ -340,7 +335,7 @@ La versión actual se muestra en el footer de `index.html`. Se usa **Versionado 
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.28`
+**Versión actual:** `v3.3.29`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)
