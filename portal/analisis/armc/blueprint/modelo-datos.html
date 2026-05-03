@@ -84,7 +84,7 @@
         <div class="note">No se abre HC. Solo ficha de contacto. Sin cuenta en sistema. Tambi&eacute;n se registran (si se obtienen del chat): nombre, fuente de captaci&oacute;n, motivo de consulta, fecha primer contacto. Opcionales en etapa Lead &mdash; se confirman al registrarse como Usuario.</div>
 
         <!-- ── USUARIO ── -->
-        <div class="stg stg-user">Usuario &mdash; registro (~82 campos)</div>
+        <div class="stg stg-user">Usuario &mdash; registro (~94 campos)</div>
 
         <div class="ftsub">Obligatorios al registrarse (~25)</div>
         <div class="fl">
@@ -124,12 +124,83 @@
           <div class="f"><span class="fn">Solo comunicaciones cl&iacute;nicas</span><span class="fy">check</span><span class="fo">&mdash; Derecho de Oposici&oacute;n ARCO. Activado = el paciente recibe &uacute;nicamente comunicaciones cl&iacute;nicas (citas, recordatorios, resultados, seguimiento). Se excluyen newsletters, promociones y campa&ntilde;as. Editable en cualquier momento</span></div>
         </div>
 
-        <div class="ftsub">Antecedentes &mdash; opcionales al registro, obligatorios pre-evaluaci&oacute;n (~52 campos)</div>
+        <div class="ftsub">Antecedentes &mdash; opcionales al registro, obligatorios pre-evaluaci&oacute;n (~64 campos)</div>
+        <div class="note">Tipados como selecci&oacute;n / checkbox / num&eacute;rico / fecha siempre que el dato sea cl&iacute;nicamente cerrado. Texto libre solo en agentes espec&iacute;ficos, descripciones y campos &ldquo;otra&rdquo;. Habilita contraindicaciones autom&aacute;ticas, c&aacute;lculo de escalas (Charlson) y b&uacute;squedas estructuradas.</div>
+
+        <div class="ftsub">Secci&oacute;n 3 &mdash; Heredofamiliares (matriz 8 &times; 6)</div>
         <div class="fl">
-          <div class="f"><span class="fn">Secci&oacute;n 3 &mdash; Heredofamiliares</span><span class="fy">8 familiares &times; categor&iacute;as</span><span class="fo">&mdash; endocrino, cardiovascular, neopl&aacute;sico, GI, cong&eacute;nitas, otros</span></div>
-          <div class="f"><span class="fn">Secci&oacute;n 4 &mdash; Personales no patol&oacute;gicos</span><span class="fy">m&uacute;ltiples campos</span><span class="fo">&mdash; vivienda, higiene, toxicoman&iacute;as, inmunizaciones</span></div>
-          <div class="f"><span class="fn">Secci&oacute;n 5 &mdash; Gineco-obst&eacute;tricos</span><span class="fy">condicional (Sexo = F)</span><span class="fo">&mdash; menarca, FUM, gesta, para, ces&aacute;rea, aborto, lactancia activa (NUEVO &mdash; contraindicaci&oacute;n), embarazo actual (NUEVO &mdash; contraindicaci&oacute;n absoluta)</span></div>
-          <div class="f"><span class="fn">Secci&oacute;n 6 &mdash; Personales patol&oacute;gicos</span><span class="fy">m&uacute;ltiples campos</span><span class="fo">&mdash; al&eacute;rgicos, quir&uacute;rgicos, transfusionales, traumatismos, enfermedades previas (din&aacute;mico), tendencia a queloides (NUEVO), enfermedades autoinmunes (NUEVO), trastornos de coagulaci&oacute;n (NUEVO), medicamentos actuales (NUEVO), suplementos/vitaminas (NUEVO)</span></div>
+          <div class="f"><span class="fn">Familiares incluidos</span><span class="fy">8 fijos</span><span class="fo">&mdash; madre, padre, abuelo paterno, abuela paterna, abuelo materno, abuela materna, hermanos, hijos</span></div>
+          <div class="f"><span class="fn">Categor&iacute;as de enfermedad por familiar</span><span class="fy">checkbox m&uacute;ltiple</span><span class="fo">&mdash; endocrino / cardiovascular / neopl&aacute;sico / gastrointestinal / cong&eacute;nitas / otras</span></div>
+          <div class="f"><span class="fn">Detalle por celda activada</span><span class="fy">texto opcional</span><span class="fo">&mdash; ej: &ldquo;diabetes tipo 2 desde los 50&rdquo;</span></div>
+        </div>
+
+        <div class="ftsub">Secci&oacute;n 4 &mdash; Personales no patol&oacute;gicos (~24 campos)</div>
+        <div class="fl">
+          <div class="f"><span class="fn">Vivienda &mdash; tipo</span><span class="fy">selecci&oacute;n: propia / rentada / familiar / otra</span></div>
+          <div class="f"><span class="fn">Vivienda &mdash; construcci&oacute;n</span><span class="fy">selecci&oacute;n: casa / departamento / cuarto / otra</span></div>
+          <div class="f"><span class="fn">Vivienda &mdash; servicios</span><span class="fy">checkbox m&uacute;ltiple: agua / luz / drenaje / gas / internet</span></div>
+          <div class="f"><span class="fn">Vivienda &mdash; habitantes</span><span class="fy">n&uacute;mero</span></div>
+          <div class="f"><span class="fn">Convive con animales</span><span class="fy">selecci&oacute;n s&iacute; / no</span><span class="fo">&mdash; si s&iacute;: detalle (texto)</span></div>
+          <div class="f"><span class="fn">Higiene &mdash; ba&ntilde;o</span><span class="fy">selecci&oacute;n: diario / cada 2 d&iacute;as / 1-2 por semana / variable</span></div>
+          <div class="f"><span class="fn">Higiene &mdash; cambio de ropa</span><span class="fy">selecci&oacute;n: diario / cada 2 d&iacute;as / variable</span></div>
+          <div class="f"><span class="fn">Higiene &mdash; cepillado dental</span><span class="fy">selecci&oacute;n: 1 vez / 2 veces / 3 o m&aacute;s / no diario</span></div>
+          <div class="f"><span class="fn">Tabaco &mdash; estado</span><span class="fy">selecci&oacute;n: no / ex-fumador / activo</span></div>
+          <div class="f"><span class="fn">Tabaco &mdash; cigarros/d&iacute;a</span><span class="fy">n&uacute;mero (condicional &ldquo;activo&rdquo;)</span></div>
+          <div class="f"><span class="fn">Tabaco &mdash; a&ntilde;os fumando</span><span class="fy">n&uacute;mero (condicional &ldquo;activo&rdquo;)</span></div>
+          <div class="f"><span class="fn">Alcohol &mdash; consumo</span><span class="fy">selecci&oacute;n: no / social / frecuente / diario</span></div>
+          <div class="f"><span class="fn">Alcohol &mdash; frecuencia</span><span class="fy">selecci&oacute;n condicional: ocasional / fines de semana / 2-3/sem / diario</span></div>
+          <div class="f"><span class="fn">Drogas</span><span class="fy">selecci&oacute;n s&iacute; / no</span></div>
+          <div class="f"><span class="fn">Drogas &mdash; tipo</span><span class="fy">texto (condicional s&iacute;)</span></div>
+          <div class="f"><span class="fn">Drogas &mdash; frecuencia</span><span class="fy">selecci&oacute;n condicional: ocasional / semanal / diaria</span></div>
+          <div class="f"><span class="fn">Cafe&iacute;na</span><span class="fy">n&uacute;mero (tazas/d&iacute;a)</span></div>
+          <div class="f"><span class="fn">Esquema b&aacute;sico de vacunaci&oacute;n</span><span class="fy">selecci&oacute;n: completo / incompleto / desconoce</span></div>
+          <div class="f"><span class="fn">Vacunas registradas</span><span class="fy">checkbox m&uacute;ltiple + fecha &uacute;ltima por cada una</span><span class="fo">&mdash; Hep B / Influenza / COVID-19 / HPV / T&eacute;tanos / Neumococo</span></div>
+          <div class="f"><span class="fn">Otras vacunas</span><span class="fy">texto</span></div>
+        </div>
+
+        <div class="ftsub">Secci&oacute;n 5 &mdash; Gineco-obst&eacute;tricos (~11 campos, condicional Sexo = F)</div>
+        <div class="fl">
+          <div class="f"><span class="fn">Menarca</span><span class="fy">n&uacute;mero (edad en a&ntilde;os)</span></div>
+          <div class="f"><span class="fn">FUM (fecha &uacute;ltima menstruaci&oacute;n)</span><span class="fy">fecha</span></div>
+          <div class="f"><span class="fn">Gesta</span><span class="fy">n&uacute;mero</span></div>
+          <div class="f"><span class="fn">Para</span><span class="fy">n&uacute;mero</span></div>
+          <div class="f"><span class="fn">Ces&aacute;rea</span><span class="fy">n&uacute;mero</span></div>
+          <div class="f"><span class="fn">Aborto</span><span class="fy">n&uacute;mero</span></div>
+          <div class="f"><span class="fn">Lactancia activa</span><span class="fy">selecci&oacute;n s&iacute; / no</span><span class="fo">&mdash; NUEVO. Contraindicaci&oacute;n: dispara alerta cl&iacute;nica autom&aacute;tica</span></div>
+          <div class="f"><span class="fn">Embarazo actual</span><span class="fy">selecci&oacute;n: s&iacute; / no / desconocido</span><span class="fo">&mdash; NUEVO. Contraindicaci&oacute;n absoluta: bloquea agendamiento de cirug&iacute;a / l&aacute;ser / inyectables</span></div>
+          <div class="f"><span class="fn">M&eacute;todo anticonceptivo</span><span class="fy">selecci&oacute;n: ninguno / p&iacute;ldora / DIU / inyecci&oacute;n / parche / implante / quir&uacute;rgico / otro</span></div>
+          <div class="f"><span class="fn">Menopausia</span><span class="fy">selecci&oacute;n s&iacute; / no</span></div>
+          <div class="f"><span class="fn">Menopausia &mdash; edad</span><span class="fy">n&uacute;mero (condicional s&iacute;)</span></div>
+        </div>
+
+        <div class="ftsub">Secci&oacute;n 6 &mdash; Personales patol&oacute;gicos (~26 campos)</div>
+        <div class="fl">
+          <div class="f"><span class="fn">Al&eacute;rgicos &mdash; tipos</span><span class="fy">checkbox m&uacute;ltiple: medicamentos / alimentos / ambientales / l&aacute;tex / metales / cosm&eacute;ticos / ninguno conocido</span></div>
+          <div class="f"><span class="fn">Al&eacute;rgicos &mdash; agente y reacci&oacute;n</span><span class="fy">texto (condicional)</span></div>
+          <div class="f"><span class="fn">Quir&uacute;rgicos &mdash; procedimiento</span><span class="fy">texto (lista din&aacute;mica)</span></div>
+          <div class="f"><span class="fn">Quir&uacute;rgicos &mdash; fecha</span><span class="fy">fecha (lista din&aacute;mica)</span></div>
+          <div class="f"><span class="fn">Quir&uacute;rgicos &mdash; complicaci&oacute;n</span><span class="fy">selecci&oacute;n s&iacute; / no (lista din&aacute;mica)</span></div>
+          <div class="f"><span class="fn">Quir&uacute;rgicos &mdash; detalle complicaci&oacute;n</span><span class="fy">texto (condicional)</span></div>
+          <div class="f"><span class="fn">Transfusionales &mdash; recibido</span><span class="fy">selecci&oacute;n s&iacute; / no</span></div>
+          <div class="f"><span class="fn">Transfusionales &mdash; fecha</span><span class="fy">fecha (condicional)</span></div>
+          <div class="f"><span class="fn">Transfusionales &mdash; motivo</span><span class="fy">texto (condicional)</span></div>
+          <div class="f"><span class="fn">Traumatismos &mdash; sufrido</span><span class="fy">selecci&oacute;n s&iacute; / no</span></div>
+          <div class="f"><span class="fn">Traumatismos &mdash; descripci&oacute;n</span><span class="fy">texto (condicional)</span></div>
+          <div class="f"><span class="fn">Enfermedades previas &mdash; cat&aacute;logo</span><span class="fy">selecci&oacute;n m&uacute;ltiple</span><span class="fo">&mdash; DM / HTA / hipotiroidismo / hipertiroidismo / asma / EPOC / dislipidemia / depresi&oacute;n / ansiedad / otras</span></div>
+          <div class="f"><span class="fn">Enfermedades previas &mdash; otras</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">Tendencia a queloides</span><span class="fy">selecci&oacute;n: s&iacute; / no / desconoce</span><span class="fo">&mdash; NUEVO. Dispara alerta de cicatrizaci&oacute;n para procedimientos con incisi&oacute;n</span></div>
+          <div class="f"><span class="fn">Enfermedades autoinmunes</span><span class="fy">checkbox m&uacute;ltiple: lupus / artritis reumatoide / vit&iacute;ligo / psoriasis / Hashimoto / Sj&ouml;gren / esclerodermia / esclerosis m&uacute;ltiple</span><span class="fo">&mdash; NUEVO</span></div>
+          <div class="f"><span class="fn">Autoinmunes &mdash; otra</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">Trastornos de coagulaci&oacute;n</span><span class="fy">checkbox m&uacute;ltiple: hemofilia A / hemofilia B / von Willebrand / trombofilia / anticoagulantes orales en uso</span><span class="fo">&mdash; NUEVO. Dispara alerta de riesgo de sangrado</span></div>
+          <div class="f"><span class="fn">Coagulaci&oacute;n &mdash; otra</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">Medicamentos actuales &mdash; nombre</span><span class="fy">texto autocompletable (lista din&aacute;mica)</span><span class="fo">&mdash; NUEVO</span></div>
+          <div class="f"><span class="fn">Medicamentos actuales &mdash; dosis</span><span class="fy">texto (lista din&aacute;mica)</span></div>
+          <div class="f"><span class="fn">Medicamentos actuales &mdash; frecuencia</span><span class="fy">selecci&oacute;n: 1/d&iacute;a / 2/d&iacute;a / 3/d&iacute;a / cada 8h / cada 12h / a demanda / otra</span></div>
+          <div class="f"><span class="fn">Medicamentos actuales &mdash; indicaci&oacute;n</span><span class="fy">texto (lista din&aacute;mica)</span></div>
+          <div class="f"><span class="fn">Suplementos / vitaminas &mdash; nombre</span><span class="fy">texto autocompletable (lista din&aacute;mica)</span><span class="fo">&mdash; NUEVO</span></div>
+          <div class="f"><span class="fn">Suplementos / vitaminas &mdash; dosis</span><span class="fy">texto (lista din&aacute;mica)</span></div>
+          <div class="f"><span class="fn">Suplementos / vitaminas &mdash; frecuencia</span><span class="fy">selecci&oacute;n: 1/d&iacute;a / 2/d&iacute;a / 3/d&iacute;a / variable</span></div>
+          <div class="f"><span class="fn">Suplementos / vitaminas &mdash; indicaci&oacute;n</span><span class="fy">texto (lista din&aacute;mica)</span></div>
         </div>
         <div class="note warn">Mec&aacute;nica de doble etapa: estas secciones est&aacute;n disponibles desde la creaci&oacute;n de cuenta como opcionales. Si no se completan antes de la evaluaci&oacute;n, se vuelven obligatorios el d&iacute;a de la evaluaci&oacute;n (NOM-004-SSA3).</div>
 
