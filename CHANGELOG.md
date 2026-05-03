@@ -2,6 +2,32 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-03] — v3.3.32
+
+### Saneamiento documental post-2.2 — sincronizar fuentes contractuales con la URL canónica `/publicados/`
+
+Micro-paquete documental tras el dictamen del revisor sobre el subpaso 2.2 (PASS con deuda documental pendiente). Sin cambios runtime, sin tocar `main` ni producción. Cierra los 3 findings de docs identificados.
+
+#### Findings cerrados
+
+- **Medium (CONTRATOS.md):** la sección que describe el `ANALISIS_REGISTRY` como "forma actual implementada" mostraba todavía `/portal/analisis/armc/...` cuando el código real ya usa `/publicados/armc/...` desde `v3.3.31`. Actualizado a la forma canónica vigente; añadida nota sobre el redirect 301 que cubre legacy.
+- **Medium (`docs/GUIA-NUEVAS-SECCIONES.md`):** los ejemplos enseñaban a crear secciones nuevas con paths bajo `/portal/analisis/...`. Actualizadas las dos zonas mencionadas (líneas ~130 y ~344) a la URL canónica `/publicados/[cliente]/...`. Añadidas notas explícitas: el legacy sigue funcionando vía 301, pero **no debe usarse** para código nuevo. Se recomienda además el patrón `ANALISIS_REGISTRY` (capa de registro) sobre constantes ad-hoc.
+- **Low (`CLAUDE.md` "Directory Structure"):** árbol stale (no reflejaba `web/` ni `prisma-apex/clientes-publicados/`). Refrescado para reflejar la estructura post-2.1/2.2, con marcadores de qué subpasos introdujeron cada bloque y nota sobre la URL canónica.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `portal/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este patch
+
+- No se toca runtime (`server/server.js`, `portal/index.html` ANALISIS_REGISTRY, nginx).
+- No se toca `main` ni producción.
+- No se reactiva el ejecutor 2.
+- No se arranca subpaso 2.3.
+
 ## [2026-05-03] — v3.3.31
 
 ### Subpaso 2.2 de Fase 2 — entregables ARMC bajo `/prisma-apex/clientes-publicados/` + URL canónica `/publicados/`

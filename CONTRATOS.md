@@ -485,17 +485,17 @@ Rutas físicas que el JavaScript del frontend construye literalmente y que dejan
 | `ANALISIS_DIAGNOSTICO_PATH` | `'/portal/analisis/armc/diagnostico/'` | concatenado con `s.file` para abrir HTMLs de diagnóstico |
 | `ANALISIS_BLUEPRINT_PATH` | `'/portal/analisis/armc/blueprint/'` | concatenado con `s.file` para abrir HTMLs de blueprint |
 
-**Detección original:** búsqueda exhaustiva con `grep -rn "portal/analisis/armc"` confirmó en su día que estas 3 constantes eran las únicas referencias hardcodeadas en el frontend. Otras referencias en `portal/analisis/GUIA-NUEVAS-SECCIONES.md` eran documentación (sección 7).
+**Detección original:** búsqueda exhaustiva con `grep -rn "portal/analisis/armc"` confirmó en su día que estas 3 constantes eran las únicas referencias hardcodeadas en el frontend. Otras referencias en `docs/GUIA-NUEVAS-SECCIONES.md` (movida a `docs/` en `v3.3.31`) eran documentación.
 
-**Estado:** estas constantes **fueron reemplazadas** por consultas a la **capa de registro de rutas** en v3.2.46-48 (ver `REGISTRO-RUTAS.md`). El refactor desacopló la SPA del path físico antes del movimiento de archivos previsto para fase 2.
+**Estado:** estas constantes **fueron reemplazadas** por consultas a la **capa de registro de rutas** en v3.2.46-48 (ver `REGISTRO-RUTAS.md`). El refactor desacopló la SPA del path físico antes del movimiento de archivos de Fase 2. En el subpaso 2.2 (`v3.3.31`) las rutas físicas se actualizaron a la URL canónica `/publicados/[cliente]/...`; el redirect 301 desde `/portal/analisis/[cliente]/...` cubre cualquier consumidor externo (correos, marcadores).
 
 **Forma actual implementada:**
 ```javascript
 const ANALISIS_REGISTRY = {
   armc: {
-    diagramas:   '/portal/analisis/armc/diagramas/',
-    diagnostico: '/portal/analisis/armc/diagnostico/',
-    blueprint:   '/portal/analisis/armc/blueprint/'
+    diagramas:   '/publicados/armc/diagramas/',
+    diagnostico: '/publicados/armc/diagnostico/',
+    blueprint:   '/publicados/armc/blueprint/'
   }
 };
 function getAnalysisPaths(cliente) {

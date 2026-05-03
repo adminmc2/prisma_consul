@@ -72,24 +72,35 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 
 ## Directory Structure
 
+> **Estructura vigente desde el subpaso 2.2 (`v3.3.31`).** Tras los subpasos 2.1 y 2.2 de Fase 2, la web pública vive bajo `web/` y los entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`. La URL canónica de entregables es `/publicados/[cliente]/...`; el path legacy `/portal/analisis/[cliente]/...` sigue resolviendo vía redirect 301.
+
 ```
-├── index.html                  # Landing page
-├── aviso-legal.html            # Legal pages
-├── cookies.html
-├── privacidad.html
-├── css/styles.css              # Landing page styles
-├── js/main.js                  # Landing page scripts
-├── images/                     # All media assets
-│   ├── logos/                  # SVG logos, favicon
-│   ├── team/                   # Team member photos
-│   └── videos/                 # Marketing videos
-├── apex/                       # APEX Discovery Form (self-contained SPA)
+├── web/                        # Web pública (Subpaso 2.1, v3.3.25+)
+│   ├── index.html              # Landing page
+│   ├── aviso-legal.html        # Legal pages
+│   ├── cookies.html
+│   ├── privacidad.html
+│   ├── css/styles.css
+│   ├── js/main.js
+│   └── images/                 # All media assets
+│       ├── logos/              # SVG logos, favicon
+│       ├── team/               # Team member photos
+│       └── videos/             # Marketing videos
+├── prisma-apex/                # Sistema interno PRISMA APEX (en construcción)
+│   └── clientes-publicados/    # Entregables publicados por cliente (Subpaso 2.2, v3.3.31)
+│       └── armc/               # ARMC — primer cliente
+│           ├── index.html
+│           ├── diagramas/      # 7 flujos por rol + template
+│           ├── diagnostico/    # Resumen, fricciones, matriz, embudo, cadena causal
+│           ├── blueprint/      # Modelo datos, flujos to-be, automatizaciones, fases, KPIs
+│           └── css/
+├── apex/                       # APEX Discovery Form — legacy hasta el subpaso 2.4
 │   ├── index.html
 │   ├── form.js                 # Main form logic (~3500 lines)
 │   ├── form.css
 │   ├── signal-detector.js
 │   └── fonts/                  # Phosphor Icons (local)
-├── portal/                     # PRISMA Hub (single-file SPA)
+├── portal/                     # PRISMA Hub (single-file SPA) — legacy hasta el subpaso 2.3
 │   └── index.html              # Login + document management + admin panel
 ├── server/                     # Express.js backend
 │   ├── server.js               # App setup, middleware, route mounting
@@ -340,7 +351,7 @@ La versión actual se muestra en el footer de `web/index.html`. Se usa **Version
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.31`
+**Versión actual:** `v3.3.32`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `web/index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)

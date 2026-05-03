@@ -127,11 +127,11 @@ const ANALISIS_PROCESOS = [
   { id: 'facturacion', file: 'proceso-facturacion.html', title: 'Facturación', icon: 'ph ph-receipt', desc: 'Proceso de cobro y facturación' },
   { id: 'inventario', file: 'proceso-inventario.html', title: 'Inventario', icon: 'ph ph-package', desc: 'Control de materiales y stock' }
 ];
-const ANALISIS_PROCESOS_PATH = '/portal/analisis/armc/procesos/';
+const ANALISIS_PROCESOS_PATH = '/publicados/armc/procesos/';
 ```
 
 - `file` debe coincidir exactamente con el nombre del archivo HTML que creaste
-- La ruta (`PATH`) es relativa a la raíz del servidor, empieza con `/portal/analisis/...`
+- La ruta (`PATH`) es relativa a la raíz del servidor, empieza con `/publicados/[cliente]/...` (URL canónica vigente desde el subpaso 2.2 / `v3.3.31`). El path legacy `/portal/analisis/[cliente]/...` sigue funcionando vía redirect 301, pero **no debe usarse** para nuevas secciones.
 
 ### 4. Añade la lógica en `analisisOpenSection`
 
@@ -341,7 +341,7 @@ const ANALISIS_ROLES = [
   { id: 'cirujano', file: 'flujo-cirujano.html', title: 'Cirujano', icon: 'ph ph-stethoscope', desc: 'Evaluación, procedimiento y seguimiento post' },
   // ... 5 más ...
 ];
-const ANALISIS_BASE_PATH = '/portal/analisis/armc/diagramas/';
+const ANALISIS_BASE_PATH = '/publicados/armc/diagramas/';
 
 // En analisisOpenSection:
 if (sectionId === 'roles') { /* poblar grid con ANALISIS_ROLES, mostrar capa 2 */ }
@@ -351,3 +351,5 @@ if (sectionId === 'roles') { /* poblar grid con ANALISIS_ROLES, mostrar capa 2 *
 ```
 
 Sigue exactamente este patrón para tus nuevas secciones.
+
+> **Nota tras el subpaso 2.2 (`v3.3.31`).** La URL canónica vigente para entregables publicados es `/publicados/[cliente]/...`. El ejemplo legacy `/portal/analisis/[cliente]/...` sigue resolviendo vía redirect 301, pero **no debe usarse** para código nuevo. Patrón actual recomendado: usar `ANALISIS_REGISTRY` (capa de registro de rutas) en lugar de constantes ad-hoc tipo `ANALISIS_BASE_PATH`.
