@@ -40,25 +40,25 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 | Campo | Estado actual |
 |---|---|
 | Proyecto | Reorganización de Prisma APEX |
-| Momento actual | Sprint A / Fase 1 cerrada formalmente; reconciliación Git `main` → `dev` completada, desplegada y validada técnicamente; baseline pre-Fase 2 cerrado en `v3.3.22`; HEAD operativo de arranque para los siguientes carriles fijado en `v3.3.24`; Fase 2 sin arrancar |
-| Naturaleza del trabajo | Baseline operativo cerrado. Próxima fase: ejecución de Fase 2 desde el HEAD operativo más reciente publicado (`v3.3.24` en este momento), en modo de trabajo de dos carriles con rama real por carril |
-| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloque A de la capa de registro de rutas cerrado; bloques B, C y D cerrados; Fase 1 cerrada formalmente; reconciliación `main` ↔ `dev` cerrada con `main` y `dev` igualados desde el baseline `v3.3.22` y mantenidos sincronizados en cada patch documental posterior (`v3.3.23`, `v3.3.24`); Fase 2 pendiente de autorización explícita |
-| Condición de avance | Gate de Fase 2 cumplido (v3.2.44). **Bloque B PASS** (v3.3.3), **bloque C PASS** (v3.3.8) y **bloque D PASS** tras validación durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops` el 2026-04-30. Reconciliación Git `main` → `dev` (merge `65c1301`) desplegada en `dev.prismaconsul.com` en `v3.3.21` y validada técnicamente. En `v3.3.22`: `origin/main` se promueve por fast-forward al baseline; producción queda alineada con `dev`. La carpeta principal local quedó realineada no destructivamente al baseline `d06ef6e` el 2026-05-01 y vuelta a alinear al HEAD operativo `v3.3.24` el 2026-05-02. El WIP previo de cada realineación queda preservado en stashes etiquetados sin destruirse. Fase 2 arranca solo con autorización explícita del usuario / revisor; cuando arranque, lo hará desde el HEAD operativo más reciente publicado (en este momento `v3.3.24`), con los dos carriles operando sobre ramas locales reales (no `detached HEAD`) — ramas iniciales: `chore/fase2-repo-base-v3.3.24` y `chore/fase2-contenido-base-v3.3.24`. |
+| Momento actual | Sprint A / Fase 2 iniciada; subpaso 2.1 absorbido y validado en `dev`; HEAD operativo publicado actual `v3.3.29`; base operativa pre-2.2 en normalización final |
+| Naturaleza del trabajo | Limpieza operativa y cierre documental antes de 2.2. Carril repo oficial = carpeta principal limpia sobre `dev`; carril contenido = worktree dedicado con handoff por SHA |
+| Estado de aprobación | `MODELO-DOMINIO.md` aprobado; `ECOSISTEMA.md` alineado; `CONTRATOS.md` aprobado (C09 cerrado); `GLOSARIO.md` aprobado (C10 cerrado); bloques A, B, C y D cerrados; Fase 1 cerrada formalmente; subpaso 2.1 absorbido en `origin/dev`; C12 cerrado; siguiente subpaso operativo autorizado: 2.2 |
+| Condición de avance | Gate de Fase 2 cumplido (v3.2.44) y ya ejercido. **Bloque B PASS** (v3.3.3), **bloque C PASS** (v3.3.8) y **bloque D PASS** tras validación durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops` el 2026-04-30. Reconciliación Git `main` → `dev` (merge `65c1301`) desplegada en `dev.prismaconsul.com` en `v3.3.21` y validada técnicamente. En `v3.3.22`: `origin/main` se promueve por fast-forward al baseline; producción queda alineada con `dev`. En `v3.3.28`: el subpaso 2.1 queda absorbido en `origin/dev`; en `v3.3.29`: se absorbe el patch adicional de contenido ARMC. La carpeta principal local queda realineada a `origin/dev` (`0ef125e`) y pasa a ser la base oficial del carril repo; el carril contenido queda congelable por SHA para evitar colisiones con movimientos estructurales. Próximo paso permitido: arrancar 2.2 con validación runtime específica, sin reabrir Fase 1 ni 2.1. |
 
 ### Dictamen operativo vigente
 
 - `MODELO-DOMINIO.md` v4 queda aprobado como primer entregable auditable de Fase 1.
 - `CONTRATOS.md`, `GLOSARIO.md`, `REGISTRO-RUTAS.md` y la implementación en `portal/index.html` quedan coherentes entre sí respecto al cierre del bloque A.
-- Fase 2 no se ejecuta automáticamente por inercia. El baseline `v3.3.22` ya quedó publicado, validado técnicamente y revisado visualmente; el siguiente paso ya no es revalidar esa base, sino autorizar explícitamente el arranque de Fase 2 o del siguiente batch de trabajo.
+- Fase 2 ya está iniciada. El baseline `v3.3.22` y el subpaso 2.1 no se reabren; el siguiente batch autorizado es 2.2.
 - El bloque B queda cerrado con **PASS**; el cierre efectivo queda documentado en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` con addendum de sesión humana y decisión Opción A aceptada por revisión.
 - El bloque C queda cerrado con **PASS**; `docs/PLAN-FASE2.md` queda aceptado como clasificación archivo por archivo + plan secuencial auditable de Fase 2.
 - El bloque D queda cerrado con **PASS**: la réplica Ecosistema ya quedó integrada de forma durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops`.
 - Fase 1 queda cerrada formalmente.
 - El endurecimiento posterior de credenciales GitHub, runbooks y posibles guardrails preventivos queda expresamente fuera de este cierre y no altera el dictamen de Fase 1.
 - `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md` queda como checklist base e historial del criterio original del bloque B; el resultado vigente de ejecución vive en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`.
-- La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) quedó realineada no destructivamente al baseline `d06ef6e`; el WIP previo de coordinación/versionado se preservó en stash etiquetado `WIP-pre-baseline-v3.3.22-main-folder-2026-05-01-17:56` y backup temporal en `/tmp/wip-backup-main-folder-20260501-175601/`.
+- La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) queda realineada a `origin/dev` (`0ef125e`) y pasa a ser la base oficial del carril repo sobre `dev`; cualquier WIP paralelo debe vivir fuera de esa superficie.
 - Antes de movimientos físicos o cambios de serving, cada subpaso debe acompañarse de validación runtime específica sobre los contratos y sistemas que toque.
-- No hay discrepancia activa sobre el cierre de Fase 1 ni sobre el baseline operativo. El control vigente pasa a ser mantener los dos carriles separados, con integración serial revisada, sin reabrir el problema de coordinación ya cerrado.
+- No hay discrepancia activa sobre el cierre de Fase 1 ni sobre el baseline operativo. El control vigente pasa a ser operar con dos superficies persistentes: carpeta principal = carril repo, worktree dedicado = carril contenido, integración serial y freeze por SHA aprobado cuando un subpaso estructural cruce un subtree activo del carril contenido.
 
 ## 4. Realidad actual del repo y del sistema
 
@@ -121,7 +121,7 @@ El objetivo no es solo ordenar archivos. El objetivo es alinear el repo y el sis
 
 ## 7. Decisiones condicionales y puntos abiertos
 
-Estos puntos no bloquean el arranque de Fase 1, pero sí condicionan el paso a Fase 2.
+Estos puntos nacieron como condicionantes del paso a Fase 2. Los que siguen abiertos hoy afectan diseño o ejecución posterior, pero no reabren Fase 1.
 
 | ID | Tema | Estado | Qué falta cerrar | Impacto |
 |---|---|---|---|---|
@@ -136,15 +136,15 @@ Estos puntos no bloquean el arranque de Fase 1, pero sí condicionan el paso a F
 | C09 | Inventario contractual real en `CONTRATOS.md` | Cerrado | Cerrado en v3.2.43 tras 6 correcciones del revisor: 17 endpoints documentados con shapes exactas, 31 columnas de `apex_submissions` (5 ausentes en `schema.sql`), 3 paths hardcodeados, redirects 301, validación runtime de Fase 2, alineamiento con gate del review | Gate funcional de Fase 2 cumplido |
 | C10 | Absorción del vocabulario canónico en `GLOSARIO.md` | Cerrado | Cerrado en v3.2.44: glosario consolidado con 15 secciones cubriendo producto, modelo de datos, roles, términos arquitectónicos, legacy frozen, ecosistema, servicios externos, proceso, contratos, URLs, Claude Code, convenciones y aclaraciones de qué NO es cada término | Coherencia documental cerrada para Fase 1 |
 | C11 | Coordinación operativa `main`/`dev` antes de Fase 2 | Cerrado | Cerrado en `v3.3.22`: catch-up Git `main` → `dev` integrado en `65c1301`, `origin/dev` `c6db329` (`v3.3.21`) desplegado y validado técnicamente en `dev.prismaconsul.com`, `origin/main` promovido por fast-forward al baseline `v3.3.22`, producción alineada con `dev`. La coordinación `main`/`dev` deja de ser un problema abierto. | Orden operativo y trazabilidad confirmados antes del movimiento físico |
-| C12 | Contrato real de serving para el subpaso 2.1 y siguientes | Abierto | El intento `077c56f` confirma que el cuello de botella no es Git ni Express sino la capa nginx/Cloudflare que sirve estáticos antes de Node. El revisor/usuario ya seleccionó la **Variante B**: cambio global de `root` a `/web/` con excepciones explícitas para `/apex`, `/hub`, `/portal/` y `/api/`, primero en `dev`, con orden estricto repo→pm2→nginx, inventario previo desde logs y rollback completo. | Desbloqueo seguro de Fase 2 física y prevención de regresiones en `/`, legales, assets, `/apex`, `/hub` y rutas legacy bajo `/portal/` |
+| C12 | Contrato real de serving para el subpaso 2.1 y siguientes | Cerrado | Cerrado en `v3.3.28`: Variante B ejecutada, absorbida en `origin/dev` y validada en `dev`. El contrato operativo vigente queda fijado como `root` `/web` + excepciones explícitas en nginx + validación runtime específica por subpaso. **Alcance del cierre: cubre la decisión arquitectónica y su ejecución en `dev`. La replicación de la Variante B a producción (`prismaconsul.com`) sigue pendiente como paquete específico aparte y queda fuera del alcance de C12.** | Base de serving clarificada para 2.2 y siguientes movimientos físicos |
 
 ### Gate para pasar a Fase 2
 
-Gate de Fase 2 **cumplido en v3.2.44**: C01, C02, C03, C04, C05, C09 y C10 cerrados. Fase 2 desbloqueada desde el punto de vista de revisión.
+Gate de Fase 2 **cumplido en v3.2.44**: C01, C02, C03, C04, C05, C09 y C10 cerrados. Fase 2 desbloqueada desde el punto de vista de revisión y ya iniciada en 2.1.
 
 **Fase 1 queda cerrada formalmente** tras la integración durable de la sección Ecosistema en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops`, más la presente sincronización final de este review.
 
-**Precondición operativa adicional (2026-05-01, actualizada):** Fase 2 no arranca por inercia tras cerrar el baseline `v3.3.22`. Su ejecución requiere autorización explícita del usuario / revisor y activación de los dos carriles sobre ramas o worktrees limpios. La validación de baseline (`dev` + producción + carpeta principal local alineada) ya quedó cerrada y no reabre Fase 1.
+**Precondición operativa adicional (2026-05-03, actualizada):** Fase 2 ya quedó autorizada e iniciada. El requisito vigente ya no es reautorizarla, sino mantener la base limpia antes de cada subpaso: carpeta principal alineada a `origin/dev` para el carril repo, carril contenido en worktree dedicado y freeze por SHA cuando el subpaso estructural cruce un subtree activo del ejecutor 2.
 
 **Validación runtime** antes de cada subpaso de Fase 2 que toque contratos reales o sistemas externos (Neon, Drive, Gmail SMTP, Tavily, Groq, Whisper, serving en `dev.prismaconsul.com`, infraestructura nginx/PM2/IONOS) — no es gate global, es prerrequisito de cada subpaso.
 
@@ -592,6 +592,20 @@ El diferimiento que existió sobre la integración durable del bloque D queda **
 - Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `CLAUDE.md`, `CHANGELOG.md`.
 - Impacto en gates: 2.1 queda en **PASS técnico en dev**, pero no en PASS final de publicación mientras el estado validado no quede absorbido en `origin/dev`.
 - Próximo paso: el ejecutor 1 debe cerrar la validación visual mínima, integrar serialmente `077c56f` y los SHAs aprobados que entren en el corte de publicación, dejar el VPS `dev` alineado con `origin/dev` y repetir smoke desde el estado ya publicado.
+
+### 2026-05-03 — Normalización operativa pre-2.2 y simplificación del carril repo
+
+- Qué se revisó: la incoherencia entre la política documental de carriles y el estado real ya publicado tras 2.1, para dejar una base única y limpia antes de arrancar 2.2.
+- Hallazgos:
+  - Mantener la carpeta principal fuera del flujo de release después de haberla realineado a `origin/dev` ya solo añadía ambigüedad operativa.
+  - La forma más simple y estable es: **carpeta principal sobre `dev` = carril repo oficial**; **worktree dedicado = carril contenido**; los worktrees extra quedan solo para auditoría, experimento o recuperación temporal.
+  - El freeze por SHA aprobado pasa a ser obligatorio cuando un subpaso estructural cruce un subtree activo del carril contenido; para 2.2 el freeze vigente es `50f39af`, `e7469f1` y `a5fca31`.
+  - `REVIEW-PRISMA-APEX.md` y `docs/PLAN-FASE2.md` seguían describiendo Fase 2 como “sin arrancar” y C12 como abierto, lo que ya era stale tras `v3.3.28` y `v3.3.29`.
+- Decisiones cerradas afectadas: C12 pasa a **cerrado**.
+- Decisiones abiertas afectadas: C07 y C08 se mantienen sin cambios.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `CLAUDE.md`, `docs/PLAN-FASE2.md`, `CHANGELOG.md`, `web/index.html`, `portal/index.html`.
+- Impacto en gates: no abre gates nuevos; deja una base operativa única y limpia para 2.2 sin reabrir Fase 1 ni 2.1.
+- Próximo paso: el ejecutor 1 absorbe el freeze aprobado del carril contenido en la carpeta principal y ejecuta 2.2 desde esa base limpia.
 
 ## 12. Plantilla de actualización para futuras revisiones
 

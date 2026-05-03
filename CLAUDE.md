@@ -41,17 +41,22 @@ Mapa completo, flujos cruzados, convenciones y relaciones entre repos: ver [`ECO
 
 **Vigente desde el cierre baseline pre-Fase 2 (`v3.3.22`).**
 
-- **Ejecutor 1 — carril repo:** git, ramas, deploy, release, infraestructura, versionado visible, reconciliación main/dev. No edita contenido narrativo ni blueprint salvo permiso explícito.
-- **Ejecutor 2 — carril contenido:** texto, blueprint, análisis ARMC, hallazgos, narrativa de entregables. No toca git, ramas ni release.
+- **Ejecutor 1 — carril repo:** trabaja en la carpeta principal sobre `dev`; gestiona git de integración, absorción de SHAs aprobados, deploy, release, infraestructura, versionado visible y reconciliación main/dev. No edita contenido narrativo ni blueprint salvo permiso explícito.
+- **Ejecutor 2 — carril contenido:** trabaja en un worktree dedicado; desarrolla texto, blueprint, análisis ARMC, hallazgos y narrativa de entregables. Puede dejar commits locales identificables para handoff por SHA, pero no integra en `dev`, no hace push, no despliega, no publica releases ni toca el versionado visible.
 - **Revisor:** coordina, dictamina, sincroniza review central. Sostiene el modo revisor permanente.
 
 **Reglas operativas:**
 
-- Los dos carriles trabajan en **ramas y/o worktrees separados**. Nunca sobre la misma rama al mismo tiempo.
+- Los dos carriles trabajan en **superficies de checkout separadas**. Convención vigente: **carpeta principal limpia y alineada** = carril repo; **worktree dedicado** = carril contenido. Nunca sobre la misma superficie al mismo tiempo.
 - La integración es **serial**: un carril completa, el revisor da PASS, el otro toma esa base y avanza. No hay merges paralelos sin dictamen.
-- La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) **no se usa como base de release**. Cada carril abre su propio worktree limpio sobre el último commit publicado.
-- La carpeta principal del usuario quedó realineada al baseline `v3.3.22` el 2026-05-01 y vuelta a alinear al HEAD operativo `v3.3.24` el 2026-05-02; sigue tratándose como copia local estable, no como base de release.
-- **Antes del primer commit de cualquier carril, el worktree correspondiente debe operar sobre una rama local real, no en `detached HEAD`.** Convención de nombres por arranque: `chore/fase2-repo-base-vX.Y.Z` para el carril repo y `chore/fase2-contenido-base-vX.Y.Z` para el carril contenido, basadas en el HEAD operativo del momento.
+- La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) **sí es la base oficial del carril repo y del release a `dev`**. Debe arrancar y cerrar cada slice limpia, alineada con `origin/dev` y operada solo por el ejecutor 1.
+- El carril contenido opera en un **worktree dedicado** y sobre una **rama local real**; no toca git, deploy ni release.
+- **Antes del primer commit de cualquier carril, la superficie correspondiente debe operar sobre una rama local real, no en `detached HEAD`.** Convención: el carril contenido usa `chore/fase2-contenido-base-vX.Y.Z`; el carril repo trabaja desde la carpeta principal sobre `dev`, salvo instrucción explícita del revisor.
+- El handoff del carril contenido se congela por **SHA/commit aprobado**, no bloqueando toda la rama ni todo el worktree.
+- Si un subpaso estructural mueve o renombra un subtree activo del carril contenido, el ejecutor 2 se pausa; el carril repo absorbe primero los SHAs aprobados y solo después ejecuta el movimiento estructural.
+- Tras cada publicación en `dev`, realinear de inmediato la carpeta principal a `origin/dev`, confirmar que queda limpia y dejar cualquier worktree extra fuera de la operación normal.
+- Los worktrees extra quedan solo para auditorías, experimentos o recuperación temporal; no son base normal de release.
+- **Mitigación obligatoria al operar en la carpeta principal (carril repo).** Antes de iniciar cualquier slice del carril repo en la carpeta principal, el ejecutor 1 debe: (a) verificar `git status` limpio; (b) si hay WIP del usuario, **parar y reportar antes de tocar git**; (c) si el slice implica `git mv` masivos o cambios en archivos que el usuario pueda tener abiertos en el editor (especialmente subpasos físicos como 2.2, 2.3, 2.4 que mueven `portal/`, `apex/`, ARMC), **avisar al usuario antes de ejecutar** para que cierre o guarde sus pestañas; (d) tras el slice, devolver la carpeta principal a estado **limpio y alineado con `origin/dev`**.
 - Cualquier cambio fuera del alcance del carril activo requiere parar y reportar.
 
 ## Architecture
@@ -330,15 +335,15 @@ Los nameservers del dominio están en **Cloudflare** (migrados desde IONOS para 
 
 ## Versionado
 
-La versión actual se muestra en el footer de `index.html`. Se usa **Versionado Semántico** (`MAJOR.MINOR.PATCH`):
+La versión actual se muestra en el footer de `web/index.html`. Se usa **Versionado Semántico** (`MAJOR.MINOR.PATCH`):
 - **MAJOR** — Cambio grande: rediseño, nueva arquitectura (v1 → v2 → v3)
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.29`
+**Versión actual:** `v3.3.30`
 
 Al hacer cualquier cambio, actualizar la versión en:
-1. El footer de `index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)
+1. El footer de `web/index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)
 2. La pantalla de login de `portal/index.html` (elemento `.welcome-version`)
 3. La cabecera del `CHANGELOG.md` (nueva entrada con la versión)
 4. Este campo "Versión actual" en CLAUDE.md

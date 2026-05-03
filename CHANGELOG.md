@@ -2,6 +2,26 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-03] — v3.3.30
+
+### Normalización operativa pre-2.2 y simplificación del modo de dos carriles
+
+Patch documental y de higiene operativa. No ejecuta cambios runtime en `dev` ni en producción.
+
+#### Ajuste realizado
+
+- `CLAUDE.md` deja una sola política operativa vigente: la carpeta principal limpia y alineada pasa a ser la base oficial del carril repo sobre `dev`; el carril contenido permanece en un worktree dedicado; el handoff se congela por SHA aprobado y los worktrees extra quedan solo para auditoría, experimento o recuperación temporal.
+- `CLAUDE.md` aclara además el reparto exacto de ejecución: el ejecutor 1 trabaja desde la carpeta principal sobre `dev` y el ejecutor 2 desde un worktree dedicado, donde puede dejar commits locales identificables para handoff sin asumir integración, push ni release.
+- `REVIEW-PRISMA-APEX.md` se actualiza al estado real del proyecto: Fase 2 ya está iniciada, 2.1 ya fue absorbido en `origin/dev`, C12 deja de estar abierto y el siguiente subpaso autorizado pasa a ser 2.2.
+- `docs/PLAN-FASE2.md` sincroniza su nota operativa con el estado real publicado (`v3.3.29`) y con el flujo simplificado de carriles antes de ejecutar 2.2.
+- Se actualiza la versión visible del proyecto a `v3.3.30` en landing, portal, `CLAUDE.md` y `CHANGELOG.md`.
+
+#### Estado tras este patch
+
+- Queda una única base operativa clara para el carril repo antes de 2.2.
+- El carril contenido queda congelado por SHA para evitar colisión con el movimiento estructural de 2.2.
+- No se toca producción.
+
 ## [2026-05-03] — v3.3.29
 
 ### Publicación adicional en dev del carril contenido ARMC
