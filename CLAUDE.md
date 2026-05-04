@@ -72,7 +72,7 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 
 ## Directory Structure
 
-> **Estructura vigente desde el subpaso 2.4 (`v3.3.36`).** Tras los subpasos 2.1, 2.2, 2.3 y 2.4 de Fase 2: la web pública vive bajo `web/`, los entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`, el entrypoint del Hub en `prisma-apex/index.html` y el discovery engine en `prisma-apex/core/discovery-engine/`. URL canónica de entregables: `/publicados/[cliente]/...` (legacy `/portal/analisis/[cliente]/...` resuelve vía redirect 301). URL pública del discovery `/apex` se mantiene idéntica. `portal/` queda vestigial; `apex/` queda parcial — solo conserva `fonts/` hasta el subpaso 2.5 (centralización de fuentes).
+> **Estructura vigente desde el subpaso 2.5 (`v3.3.37`).** Tras los subpasos 2.1, 2.2, 2.3, 2.4 y 2.5 de Fase 2: la web pública vive bajo `web/`, los entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`, el entrypoint del Hub en `prisma-apex/index.html`, el discovery engine en `prisma-apex/core/discovery-engine/` y los recursos compartidos (fuentes Phosphor del discovery) bajo `shared/fonts/phosphor/`. URL canónica de entregables: `/publicados/[cliente]/...` (legacy `/portal/analisis/[cliente]/...` resuelve vía redirect 301). URL pública del discovery `/apex` se mantiene idéntica. URL pública de recursos compartidos: `/shared/...`. `portal/` queda vestigial; `apex/` queda eliminado del árbol efectivo tras 2.5 (vacío, sin tracking git).
 
 ```
 ├── web/                        # Web pública (Subpaso 2.1, v3.3.25+)
@@ -101,8 +101,13 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 │           ├── diagnostico/    # Resumen, fricciones, matriz, embudo, cadena causal
 │           ├── blueprint/      # Modelo datos, flujos to-be, automatizaciones, fases, KPIs
 │           └── css/
-├── apex/                       # Parcial post-2.4 — solo conserva fonts/ hasta el subpaso 2.5
-│   └── fonts/                  # Phosphor Icons (centralización pendiente en 2.5)
+├── shared/                     # Recursos compartidos entre apps (Subpaso 2.5, v3.3.37)
+│   └── fonts/
+│       └── phosphor/           # Phosphor Icons del discovery — servido bajo /shared/fonts/phosphor/
+│           ├── phosphor.css
+│           ├── Phosphor.woff2
+│           ├── Phosphor.woff
+│           └── Phosphor.ttf
 ├── portal/                     # Vestigio post-2.3 (sin contenido propio; soporte vestigial para routing legacy)
 │   └── analisis/               # Vacío — residual del subpaso 2.2
 ├── server/                     # Express.js backend
@@ -354,7 +359,7 @@ La versión actual se muestra en el footer de `web/index.html`. Se usa **Version
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.36`
+**Versión actual:** `v3.3.37`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `web/index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)

@@ -70,7 +70,18 @@ URLs servidas por Express o redirigidas a través del stack nginx → Cloudflare
 
 **Implicación para fase 2:** estas URLs **se sustituyen** por `prismaconsul.com/publicados/armc/...` (contrato canónico — `MODELO-DOMINIO.md` sección 9). Las URLs antiguas se mantienen vivas vía **redirect 301** durante un periodo de transición indefinido para no romper enlaces externos (correos, documentos PDF que pudieran apuntar a la URL antigua).
 
-### 3.4 Fallback
+### 3.4 Recursos compartidos (`/shared/`) — introducido por subpaso 2.5 (`v3.3.37`)
+
+| URL | Sirve | Mecanismo | Estado |
+|---|---|---|---|
+| `prismaconsul.com/shared/fonts/phosphor/phosphor.css` | Hoja de estilos de iconos Phosphor del discovery | `express.static` montado en `/shared` (`shared/`) | Frozen tras subpaso 2.5 |
+| `prismaconsul.com/shared/fonts/phosphor/Phosphor.woff2` | Fuente WOFF2 (referenciada por `phosphor.css` con ruta relativa `./Phosphor.woff2`) | `express.static` montado en `/shared` | Frozen tras subpaso 2.5 |
+| `prismaconsul.com/shared/fonts/phosphor/Phosphor.woff` | Fuente WOFF (fallback) | `express.static` montado en `/shared` | Frozen tras subpaso 2.5 |
+| `prismaconsul.com/shared/fonts/phosphor/Phosphor.ttf` | Fuente TTF (fallback) | `express.static` montado en `/shared` | Frozen tras subpaso 2.5 |
+
+**Consumidor actual:** discovery (`/apex/`) referencia la hoja como `<link rel="stylesheet" href="/shared/fonts/phosphor/phosphor.css">`. El Hub (`/hub`) sigue cargando Phosphor desde CDN, no desde aquí. Cualquier app que incorpore Phosphor en el futuro debe consumir desde `/shared/...` y no replicar las fuentes.
+
+### 3.5 Fallback
 
 | URL | Comportamiento | Mecanismo | Estado |
 |---|---|---|---|

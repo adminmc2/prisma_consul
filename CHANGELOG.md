@@ -2,6 +2,59 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-04] — v3.3.37
+
+### Subpaso 2.5 de Fase 2 — Centralización de fuentes Phosphor del discovery en `shared/fonts/phosphor/`
+
+Quinto movimiento físico de Fase 2. Se sacan las 4 fuentes Phosphor de la ubicación legacy `apex/fonts/` y se centralizan en una nueva ruta compartida `shared/fonts/phosphor/`, expuesta al navegador como `/shared/fonts/phosphor/...`. Sin tocar `main` ni producción. Sin reactivar al ejecutor 2.
+
+#### Movimiento físico (`git mv`, historial preservado)
+
+- `apex/fonts/Phosphor.ttf`   → `shared/fonts/phosphor/Phosphor.ttf`
+- `apex/fonts/Phosphor.woff`  → `shared/fonts/phosphor/Phosphor.woff`
+- `apex/fonts/Phosphor.woff2` → `shared/fonts/phosphor/Phosphor.woff2`
+- `apex/fonts/phosphor.css`   → `shared/fonts/phosphor/phosphor.css`
+
+`phosphor.css` no se edita: usa rutas relativas (`./Phosphor.woff2`, `./Phosphor.woff`, `./Phosphor.ttf`) que siguen resolviéndose porque CSS y binarios viajan juntos a la misma carpeta. `apex/` queda eliminado del árbol efectivo tras el move (sin archivos, sin tracking git).
+
+#### Cambios `prisma-apex/core/discovery-engine/index.html`
+
+- Línea 31: `<link rel="stylesheet" href="fonts/phosphor.css">` → `<link rel="stylesheet" href="/shared/fonts/phosphor/phosphor.css">`. URL pública absoluta para que el discovery cargue las fuentes desde la nueva ubicación canónica.
+
+#### Cambios `server/server.js`
+
+- Eliminado el mount legacy `/apex/fonts` (que en `v3.3.36` apuntaba a `apex/fonts/`).
+- Añadido mount nuevo: `app.use('/shared', express.static(path.join(projectRoot, 'shared')))`.
+- Mount general `/apex` se mantiene intacto (sirve discovery desde `prisma-apex/core/discovery-engine/`).
+- `/hub`, `/publicados`, redirects 301 legacy y `/api/` no se tocan.
+
+#### Cambios `nginx` en `dev`
+
+- Eliminado `location /apex/fonts/`.
+- Añadido `location /shared/` con `alias` a `/home/prisma/web-de-prisma-dev/shared/`.
+- Resto de la config Variante B intacto.
+- Backup: `/etc/nginx/sites-available/prisma-dev.bak-20260504-subpaso-2.5`.
+
+#### Cambios documentales
+
+- `CLAUDE.md`: Directory Structure refrescada — `apex/` ya no aparece (vacío post-move); aparece `shared/fonts/phosphor/` con sus 4 archivos.
+- `CONTRATOS.md`: añadida sección 3.4 documentando `/shared/fonts/phosphor/*` como superficie pública nueva (4 URLs: `phosphor.css`, `Phosphor.woff2`, `Phosphor.woff`, `Phosphor.ttf`). Nota explícita: el Hub sigue cargando Phosphor desde CDN; cualquier app futura que use Phosphor debe consumir desde `/shared/...`.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual" + Directory Structure)
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este patch
+
+- No se toca el Hub runtime (sigue usando Phosphor por CDN).
+- No se abre microparche correctivo para la canonicalización `/apex` → `/apex/` (decisión del revisor: aceptado como normalización técnica).
+- No se toca `main` ni producción.
+- No se reactiva ejecutor 2.
+- No se arranca subpaso 2.6.
+
 ## [2026-05-04] — v3.3.36
 
 ### Subpaso 2.4 de Fase 2 — APEX Discovery movido a `prisma-apex/core/discovery-engine/`

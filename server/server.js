@@ -62,13 +62,12 @@ app.use(express.static(path.join(projectRoot, 'web'), {
   extensions: ['html']
 }));
 
-// APEX Discovery — Subpaso 2.4 (v3.3.36): el discovery engine vive en
-// prisma-apex/core/discovery-engine/. La URL pública /apex se mantiene idéntica.
-// fonts/ NO se centraliza en este subpaso (queda para 2.5); se sirve desde
-// la ubicación legacy apex/fonts/ vía mount específico declarado ANTES del
-// general para que /apex/fonts/* siga resolviéndose como espera el HTML
-// del discovery (referencia relativa fonts/phosphor.css).
-app.use('/apex/fonts', express.static(path.join(projectRoot, 'apex', 'fonts')));
+// Recursos compartidos entre apps — Subpaso 2.5 (v3.3.37): fuentes Phosphor del
+// discovery centralizadas en shared/fonts/phosphor/. Mount expuesto bajo /shared.
+app.use('/shared', express.static(path.join(projectRoot, 'shared')));
+
+// APEX Discovery — vive en prisma-apex/core/discovery-engine/ desde Subpaso 2.4
+// (v3.3.36). La URL pública /apex se mantiene idéntica.
 app.use('/apex', express.static(path.join(projectRoot, 'prisma-apex', 'core', 'discovery-engine'), {
   index: 'index.html',
   extensions: ['html']
