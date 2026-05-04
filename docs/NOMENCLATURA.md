@@ -416,7 +416,7 @@ Este orden es ideal para inspección visual y para pipelines que procesan el cor
 1. Justificar por qué los tipos existentes no cubren el caso.
 2. Elegir un nombre corto, en mayúsculas, sin abreviaturas (ej. `PROTOCOLO`, `ACTA`, `AUTORIZACION`).
 3. Actualizar esta tabla (sección 3.3) y el mapeo a `doc_type` del Hub (sección 7.1).
-4. Si el tipo nuevo requiere una categoría nueva en la UI del Hub, añadir la categoría a `DOC_TYPE_COLORS`, `DOC_TYPE_LABELS` y `DOC_TYPE_OPTIONS` en `portal/index.html` y desplegar a producción.
+4. Si el tipo nuevo requiere una categoría nueva en la UI del Hub, añadir la categoría a `DOC_TYPE_COLORS`, `DOC_TYPE_LABELS` y `DOC_TYPE_OPTIONS` en `prisma-apex/index.html` y desplegar a producción.
 
 ---
 
@@ -432,6 +432,6 @@ Este orden es ideal para inspección visual y para pipelines que procesan el cor
 
 - **Script de renombrado masivo**: [`scripts/rename-armc-files.js`](../scripts/rename-armc-files.js) — aplica la nomenclatura a archivos ya existentes en el Hub (Drive + BD).
 - **Script de doc_type**: [`scripts/update-armc-doctypes.js`](../scripts/update-armc-doctypes.js) — asigna la categoría correcta en el campo `doc_type` según el TIPODOC.
-- **Código del Hub afectado**: [`portal/index.html`](../portal/index.html) líneas 1087-1119 (`DOC_TYPE_COLORS`, `DOC_TYPE_LABELS`, `DOC_TYPE_OPTIONS`).
+- **Código del Hub afectado**: [`prisma-apex/index.html`](../prisma-apex/index.html) líneas 1087-1119 (`DOC_TYPE_COLORS`, `DOC_TYPE_LABELS`, `DOC_TYPE_OPTIONS`).
 - **Endpoint de upload**: [`server/routes/portal.js`](../server/routes/portal.js) línea 223 (`POST /portal-upload`) — **pendiente** de reescribir para que genere automáticamente nombres según esta nomenclatura en vez del formato sistemático legacy (`{prefijoUsuario}_{NNN}.ext`).
 - **Memoria del proyecto**: `memory/project_nomenclatura_documentos.md` (referencia para conversaciones futuras con asistentes de IA).

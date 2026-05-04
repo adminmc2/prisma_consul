@@ -72,7 +72,7 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 
 ## Directory Structure
 
-> **Estructura vigente desde el subpaso 2.2 (`v3.3.31`).** Tras los subpasos 2.1 y 2.2 de Fase 2, la web pública vive bajo `web/` y los entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`. La URL canónica de entregables es `/publicados/[cliente]/...`; el path legacy `/portal/analisis/[cliente]/...` sigue resolviendo vía redirect 301.
+> **Estructura vigente desde el subpaso 2.3 (`v3.3.33`).** Tras los subpasos 2.1, 2.2 y 2.3 de Fase 2, la web pública vive bajo `web/`, los entregables ARMC bajo `prisma-apex/clientes-publicados/armc/` y el entrypoint del Hub en `prisma-apex/index.html`. URL canónica de entregables: `/publicados/[cliente]/...` (legacy `/portal/analisis/[cliente]/...` resuelve vía redirect 301). El subdirectorio `portal/` queda vestigial: solo contiene `analisis/` vacío como residual de los moves anteriores; los redirects 301 legacy lo siguen utilizando como soporte de routing.
 
 ```
 ├── web/                        # Web pública (Subpaso 2.1, v3.3.25+)
@@ -87,6 +87,7 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 │       ├── team/               # Team member photos
 │       └── videos/             # Marketing videos
 ├── prisma-apex/                # Sistema interno PRISMA APEX (en construcción)
+│   ├── index.html              # PRISMA Hub — entrypoint (Subpaso 2.3, v3.3.33)
 │   └── clientes-publicados/    # Entregables publicados por cliente (Subpaso 2.2, v3.3.31)
 │       └── armc/               # ARMC — primer cliente
 │           ├── index.html
@@ -100,8 +101,8 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 │   ├── form.css
 │   ├── signal-detector.js
 │   └── fonts/                  # Phosphor Icons (local)
-├── portal/                     # PRISMA Hub (single-file SPA) — legacy hasta el subpaso 2.3
-│   └── index.html              # Login + document management + admin panel
+├── portal/                     # Vestigio post-2.3 (sin contenido propio; soporte vestigial para routing legacy)
+│   └── analisis/               # Vacío — residual del subpaso 2.2
 ├── server/                     # Express.js backend
 │   ├── server.js               # App setup, middleware, route mounting
 │   ├── package.json            # All backend dependencies
@@ -351,11 +352,11 @@ La versión actual se muestra en el footer de `web/index.html`. Se usa **Version
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.33`
+**Versión actual:** `v3.3.34`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `web/index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)
-2. La pantalla de login de `portal/index.html` (elemento `.welcome-version`)
+2. La pantalla de login de `prisma-apex/index.html` (elemento `.welcome-version`) — entrypoint del Hub desde el subpaso 2.3 (`v3.3.33`)
 3. La cabecera del `CHANGELOG.md` (nueva entrada con la versión)
 4. Este campo "Versión actual" en CLAUDE.md
 

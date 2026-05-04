@@ -2,6 +2,34 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-04] — v3.3.34
+
+### Saneamiento documental post-2.3 — sincronizar fuentes vivas con el entrypoint del Hub en `prisma-apex/index.html`
+
+Micro-paquete documental autorizado por dictamen del revisor sobre el subpaso 2.3 (PASS con deuda documental pendiente). Sin cambios runtime, sin tocar `main` ni producción. Cierra las referencias residuales a `portal/index.html` que aún figuraban como instrucción operativa o presente canónico en docs vivos.
+
+#### Cambios documentales
+
+- **`CLAUDE.md`** — Directory Structure refrescada: `prisma-apex/index.html` aparece como entrypoint del Hub; `portal/` documentado como vestigial post-2.3 (sin contenido propio, soporte vestigial para routing legacy). Punto 2 de la sección "Versionado" actualizado: la pantalla de login ahora vive en `prisma-apex/index.html`.
+- **`docs/GUIA-NUEVAS-SECCIONES.md`** — instrucciones operativas actualizadas: registrar nuevas secciones en `prisma-apex/index.html`, no en `portal/index.html`. 4 puntos tocados (paso 2 de la guía + 3 referencias en el ejemplo completo de ARMC).
+- **`docs/NOMENCLATURA.md`** — sección 10 paso 4 (alta de tipos nuevos) y sección 12 ("Código del Hub afectado") referencian `prisma-apex/index.html` con líneas exactas (1087-1119) preservadas.
+- **`CONTRATOS.md`** — cabecera, tabla de URLs públicas (sección 3), sección 4.1 (consumer login) y título de sección 6.1 actualizados al estado vigente post-2.1/2.2/2.3. Implicación para Fase 2 reescrita: 2.1, 2.2 y 2.3 ya ejecutados en `dev`; pendiente 2.4. Replicación a producción documentada como paquete específico aparte.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este patch
+
+- No se toca runtime (`server/server.js`, ANALISIS_REGISTRY, nginx).
+- No se toca `main` ni producción.
+- No se reactiva ejecutor 2.
+- No se arranca subpaso 2.4.
+- No se reescriben docs históricos (PLAN-FASE2.md, runbooks antiguos, entradas viejas del changelog) salvo donde alguna línea afirme presente canónico.
+
 ## [2026-05-04] — v3.3.33
 
 ### Subpaso 2.3 de Fase 2 — entrypoint del Hub movido a `prisma-apex/index.html`

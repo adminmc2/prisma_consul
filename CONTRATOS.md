@@ -4,7 +4,7 @@ Inventario exhaustivo de los **contratos externos** del sistema: promesas que `w
 
 > Este documento cierra C09 del review. Es el gate funcional para pasar a Fase 2.
 >
-> Auditable como unidad independiente. Construido leyendo código real (`server/server.js`, `server/routes/*.js`, `server/middleware/auth.js`, `server/schema.sql`, `portal/index.html`, `portal/analisis/GUIA-NUEVAS-SECCIONES.md`).
+> Auditable como unidad independiente. Construido leyendo código real (`server/server.js`, `server/routes/*.js`, `server/middleware/auth.js`, `server/schema.sql`, `prisma-apex/index.html` — entrypoint del Hub desde el subpaso 2.3 / `v3.3.33`, `docs/GUIA-NUEVAS-SECCIONES.md` — movida en `v3.3.31`).
 
 ---
 
@@ -53,10 +53,10 @@ URLs servidas por Express o redirigidas a través del stack nginx → Cloudflare
 
 | URL | Sirve | Handler | Estado |
 |---|---|---|---|
-| `prismaconsul.com/apex` | `apex/index.html` (Discovery SPA) | servido por `express.static` con `extensions: ['html']` (la URL `/apex` → `apex/index.html`) | Frozen Sprint A |
-| `prismaconsul.com/hub` | `portal/index.html` (Prisma APEX SPA) | `app.get('/hub', ...)` en `server.js:64` con `res.sendFile(...portal/index.html)` | Frozen Sprint A |
+| `prismaconsul.com/apex` | `apex/index.html` (Discovery SPA) | servido por `express.static` con `extensions: ['html']` (la URL `/apex` → `apex/index.html`) | Frozen Sprint A — pendiente de mover en subpaso 2.4 a `prisma-apex/core/discovery-engine/` |
+| `prismaconsul.com/hub` | `prisma-apex/index.html` (Prisma APEX SPA) — entrypoint movido en subpaso 2.3 (`v3.3.33`) | `app.get('/hub', ...)` en `server/server.js` con `res.sendFile(...prisma-apex/index.html)` + `location /hub` en nginx con alias a `prisma-apex/` | Frozen Sprint A — URL pública intacta; entrypoint físico ya migrado |
 
-**Implicación para fase 2:** tras renombrar internamente `portal/` → `prisma-apex/` y `apex/` → `prisma-apex/core/discovery-engine/`, los handlers deben reapuntar al nuevo path físico **manteniendo las URLs públicas `/apex` y `/hub` idénticas**.
+**Implicación para Fase 2 (estado actual):** los subpasos 2.1, 2.2 y 2.3 ya quedan ejecutados en `dev`: web pública bajo `web/`, entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`, entrypoint del Hub en `prisma-apex/index.html`. URLs públicas `/`, `/apex` y `/hub` siguen idénticas. Pendiente: subpaso 2.4 — mover `apex/` → `prisma-apex/core/discovery-engine/` reapuntando el handler `/apex`. Replicación de la estructura+nginx a producción queda fuera de los subpasos físicos: paquete específico aparte.
 
 ### 3.3 Entregables ARMC publicados (estado actual)
 
@@ -108,7 +108,7 @@ Express monta tres routers bajo `/api`: `portal.js`, `apex.js`, `ai.js` (`server
 **Response 401:** `{ error: 'Credenciales incorrectas' }`.
 **Response 500:** `{ error: 'Error...' }`.
 **Side effects:** actualiza `last_login`; crea/asegura `drive_folder_id` en Drive vía service account; loggea actividad `'login'`.
-**Consumer:** SPA del Hub (`portal/index.html`, formulario login).
+**Consumer:** SPA del Hub (`prisma-apex/index.html`, formulario login — entrypoint movido en subpaso 2.3 / `v3.3.33`).
 **Estado:** Frozen Sprint A. La response shape se conserva; los campos `current_phase`, `profile_type`, `apex_submission_id` se siguen devolviendo como hoy aunque internamente vivan en `engagements` (sincronización vía `domain-sync.js` — `MODELO-DOMINIO.md` sección 6.6).
 
 ### 4.2 Portal — APEX results (1)
@@ -473,7 +473,7 @@ INDEX idx_apex_submissions_sector     ON apex_submissions(empresa_sector)
 
 Rutas físicas que el JavaScript del frontend construye literalmente y que dejan de funcionar si los archivos se mueven sin compensación.
 
-### 6.1 Paths a entregables ARMC en `portal/index.html`
+### 6.1 Paths a entregables ARMC en `prisma-apex/index.html`
 
 **Estado actual (post v3.2.46-48):** ya no hay paths hardcodeados a entregables ARMC en el frontend. La capa de registro de rutas (`ANALISIS_REGISTRY` + `getAnalysisPaths`) es la fuente de verdad. Esta sección documenta el estado **legacy** que existía hasta v3.2.45 incluido para trazabilidad histórica del refactor.
 

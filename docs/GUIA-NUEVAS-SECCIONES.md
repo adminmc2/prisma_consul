@@ -94,7 +94,7 @@ portal/analisis/armc/procesos/          ← Ejemplo
 - **NO incluir footer** de empresa/proyecto
 - Usar caracteres UTF-8 reales (`é`, `ñ`, `á`) — nunca escapes como `\u00e9`
 
-### 2. Registra la sección en `portal/index.html`
+### 2. Registra la sección en `prisma-apex/index.html`
 
 Busca el array `ANALISIS_SECTIONS` (aprox. línea 2299). Añade tu sección:
 
@@ -306,12 +306,12 @@ Regla del border-radius: **el borde recto mira hacia dentro** (hacia el centro).
 git checkout dev
 git pull origin dev
 
-# Haz tus cambios (archivos HTML + ediciones en portal/index.html)
+# Haz tus cambios (archivos HTML + ediciones en prisma-apex/index.html)
 # ...
 
 # Commit
 git add portal/analisis/tu-carpeta/
-git add portal/index.html
+git add prisma-apex/index.html
 git commit -m "Add [nombre de tu sección] analysis to Hub Análisis tab"
 
 # Push a dev
@@ -328,7 +328,7 @@ Para que veas el patrón completo que ya está funcionando:
 
 **Archivos**: 7 HTML en `portal/analisis/armc/diagramas/`
 
-**En `portal/index.html`:**
+**En `prisma-apex/index.html`:**
 ```js
 // Array de sección (Capa 1)
 const ANALISIS_SECTIONS = [
