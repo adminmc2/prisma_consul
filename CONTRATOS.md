@@ -508,7 +508,7 @@ const _armcPaths = getAnalysisPaths('armc');
 // viewers con guardia: if (!section || !section.path) return;
 ```
 
-El registro es síncrono y embebido en el frontend (objeto JS literal en `portal/index.html`). Si crece, evoluciona a tabla/endpoint en sprints posteriores.
+El registro es síncrono y embebido en el frontend (objeto JS literal en `prisma-apex/index.html` — entrypoint del Hub desde el subpaso 2.3 / `v3.3.33`). Si crece, evoluciona a tabla/endpoint en sprints posteriores.
 
 ### 6.2 Otros paths
 
@@ -518,7 +518,7 @@ No se han detectado otros paths hardcodeados a artefactos físicos en el fronten
 
 ### 6.3 Nota técnica importante
 
-Las cuatro fases legacy del sistema (`Formulario APEX`, `Documentación`, `Entrevistas`, `Análisis de flujos y procesos`) **derivan del fallback al perfil clínica del frontend** (`portal/index.html` define la lista de fases en código JS asumiendo `profile_type='clinica'`). Cuando entre la vertical distribuidor real, **probablemente las 4 fases visibles del panel admin cambiarán o se condicionarán por vertical**. Este punto no es un contrato funcional sino una nota técnica para fase 3 (cuando se cree la vertical distribuidor real).
+Las cuatro fases legacy del sistema (`Formulario APEX`, `Documentación`, `Entrevistas`, `Análisis de flujos y procesos`) **derivan del fallback al perfil clínica del frontend** (`prisma-apex/index.html` define la lista de fases en código JS asumiendo `profile_type='clinica'`). Cuando entre la vertical distribuidor real, **probablemente las 4 fases visibles del panel admin cambiarán o se condicionarán por vertical**. Este punto no es un contrato funcional sino una nota técnica para fase 3 (cuando se cree la vertical distribuidor real).
 
 ---
 
@@ -526,7 +526,7 @@ Las cuatro fases legacy del sistema (`Formulario APEX`, `Documentación`, `Entre
 
 Archivos `.md` que dan instrucciones referenciando rutas físicas concretas. Si las rutas cambian, esta documentación queda desfasada.
 
-### 7.1 `portal/analisis/GUIA-NUEVAS-SECCIONES.md`
+### 7.1 `docs/GUIA-NUEVAS-SECCIONES.md`
 
 **Contenido:** guía operativa para crear nuevas secciones de análisis (diagramas, diagnósticos, blueprint) en la estructura ARMC.
 
@@ -618,7 +618,7 @@ Lista de "quién usa qué" para validar que cada cambio considera a todos los af
 | Consumer | Endpoints API que llama | URLs públicas que sirve |
 |---|---|---|
 | `apex/index.html` (Discovery SPA) | `/api/research-company`, `/api/generate-questions`, `/api/submit-form`, `/api/groq-chat`, `/api/groq-whisper` | `/apex` |
-| `portal/index.html` (Hub SPA) | `/api/portal-auth`, `/api/portal-apex-results`, `/api/portal-profile` (GET/PATCH), `/api/portal-upload`, `/api/portal-files` (GET/DELETE/PATCH), `/api/portal-users` (GET/POST), `/api/portal-users/:id` (PATCH), `/api/portal-activity` | `/hub` y entregables ARMC vía iframe |
+| `prisma-apex/index.html` (Hub SPA — entrypoint movido en `v3.3.33`) | `/api/portal-auth`, `/api/portal-apex-results`, `/api/portal-profile` (GET/PATCH), `/api/portal-upload`, `/api/portal-files` (GET/DELETE/PATCH), `/api/portal-users` (GET/POST), `/api/portal-users/:id` (PATCH), `/api/portal-activity` | `/hub` y entregables ARMC vía iframe |
 
 ### 10.2 Frontend público
 
@@ -648,14 +648,14 @@ Lista de "quién usa qué" para validar que cada cambio considera a todos los af
 | CT-4 | Los endpoints `/api/portal-profile` (PATCH) y `/api/portal-users/:id` (PATCH) son **CONTRATOS CRÍTICOS**: siguen aceptando los campos empresariales y de fase exactamente como hoy; la sincronización a `clientes` y `engagements` es transparente vía `domain-sync.js`. |
 | CT-5 | Las **4 tablas BD** existentes (`portal_users`, `portal_files`, `portal_activity_log`, `apex_submissions`) son **frozen durante Sprint A**: solo se añaden tablas y columnas nuevas (aditivas). |
 | CT-6 | Las 5 tablas nuevas de fase 2 (`clientes`, `client_memberships`, `engagements`, `entrevistas`, `entregables`) son **aditivas**; ningún consumidor existente las depende. |
-| CT-7 | Las 3 constantes hardcodeadas en `portal/index.html` (`ANALISIS_BASE_PATH`, `ANALISIS_DIAGNOSTICO_PATH`, `ANALISIS_BLUEPRINT_PATH`) **fueron reemplazadas por la capa de registro de rutas** (v3.2.46-47, `REGISTRO-RUTAS.md`): `ANALISIS_REGISTRY` + `getAnalysisPaths(cliente)` + consumers con optional chaining + guardia `if (!section.path)` en los 2 viewers. |
-| CT-8 | `portal/analisis/GUIA-NUEVAS-SECCIONES.md`, `README.md` y la sección "Directory Structure" de `CLAUDE.md` **se actualizan en fase 2** simultáneamente al movimiento físico. |
+| CT-7 | Las 3 constantes hardcodeadas que vivían en `portal/index.html` hasta `v3.2.45` (`ANALISIS_BASE_PATH`, `ANALISIS_DIAGNOSTICO_PATH`, `ANALISIS_BLUEPRINT_PATH`) **fueron reemplazadas por la capa de registro de rutas** (v3.2.46-47, `REGISTRO-RUTAS.md`): `ANALISIS_REGISTRY` + `getAnalysisPaths(cliente)` + consumers con optional chaining + guardia `if (!section.path)` en los 2 viewers. El registro vive ahora en `prisma-apex/index.html` (entrypoint del Hub desde el subpaso 2.3 / `v3.3.33`) con valores `/publicados/[cliente]/...` desde el subpaso 2.2 (`v3.3.31`). |
+| CT-8 | `docs/GUIA-NUEVAS-SECCIONES.md` (movida a `docs/` en `v3.3.31`), `README.md` y la sección "Directory Structure" de `CLAUDE.md` **se actualizan durante Fase 2** sincronizando cada subpaso físico con su micro-paquete documental (ver `v3.3.32` para 2.2 y `v3.3.34` para 2.3). |
 | CT-9 | El `CHANGELOG.md` no se modifica retroactivamente. Entradas históricas son inmutables. |
 | CT-10 | Cualquier cambio que **modifique** un contrato (no romperlo, modificarlo) requiere: anuncio en CHANGELOG + convivencia temporal viejo/nuevo + redirect/alias hasta retirada. |
 | CT-11 | El JWT contract `{id, email, nombre, role}` **frozen durante Sprint A**. Centralización de auth queda fuera. |
 | CT-12 | El payload del email de confirmación enviado por `/api/submit-form` es contrato implícito; cualquier cambio se documenta. |
 | CT-13 | El comportamiento del fallback `app.get('*', ...)` (404 con cuerpo de landing) se mantiene. Mejora opcional fuera del alcance. |
-| CT-14 | Las 4 fases legacy visibles en `portal/index.html` derivan del fallback clínica; **es nota técnica, no contrato funcional**. Cambios reales por vertical se contemplan en fase 3. |
+| CT-14 | Las 4 fases legacy visibles en `prisma-apex/index.html` (entrypoint del Hub desde el subpaso 2.3 / `v3.3.33`) derivan del fallback clínica; **es nota técnica, no contrato funcional**. Cambios reales por vertical se contemplan en fase 3. |
 
 ---
 

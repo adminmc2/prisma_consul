@@ -2,6 +2,39 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-04] — v3.3.35
+
+### Remate documental sobre `CONTRATOS.md` post-2.3 — cierre del saneamiento previo a 2.4
+
+Micro-paquete de cierre del saneamiento documental iniciado en `v3.3.34`. Tras dictamen del revisor (PASS con remate pendiente, concentrado solo en `CONTRATOS.md`), se completan las 7 referencias residuales a `portal/index.html` o `portal/analisis/GUIA-NUEVAS-SECCIONES.md` que aún afirmaban presente canónico en lugar de contexto histórico. Sin cambios runtime, sin tocar `main` ni producción.
+
+#### Líneas actualizadas en `CONTRATOS.md`
+
+- **L511** (capa de registro de rutas): el objeto JS literal vive ahora en `prisma-apex/index.html`.
+- **L521** (fases legacy): `prisma-apex/index.html` define la lista de fases.
+- **L529** (sección 7.1, título): `docs/GUIA-NUEVAS-SECCIONES.md` (movida a `docs/` en `v3.3.31`).
+- **L621** (tabla mapeo Hub SPA → endpoints): `prisma-apex/index.html` (Hub SPA — entrypoint movido en `v3.3.33`).
+- **L651** (CT-7): contextualizado histórico — las constantes "vivían en `portal/index.html` hasta `v3.2.45`" y "el registro vive ahora en `prisma-apex/index.html` con valores `/publicados/[cliente]/...`".
+- **L652** (CT-8): la sincronización documental se hace por subpaso (`v3.3.32` para 2.2, `v3.3.34` para 2.3); guía referenciada como `docs/GUIA-NUEVAS-SECCIONES.md`.
+- **L658** (CT-14): `prisma-apex/index.html` (entrypoint del Hub desde `v3.3.33`).
+
+Quedan 3 referencias a `portal/index.html` (L480, L651, L769) **en contexto histórico explícito** ("Estado legacy v3.2.45 y anterior", "que vivían… hasta v3.2.45", "Cerrada en v3.2.46-48"). Aceptables como registro histórico per regla del revisor.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este patch
+
+- No se toca runtime (`server/server.js`, ANALISIS_REGISTRY, nginx).
+- No se toca `main` ni producción.
+- No se reactiva ejecutor 2.
+- No se arranca subpaso 2.4.
+- No se reescriben docs históricos.
+
 ## [2026-05-04] — v3.3.34
 
 ### Saneamiento documental post-2.3 — sincronizar fuentes vivas con el entrypoint del Hub en `prisma-apex/index.html`
