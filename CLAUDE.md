@@ -72,7 +72,7 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 
 ## Directory Structure
 
-> **Estructura vigente desde el subpaso 2.3 (`v3.3.33`).** Tras los subpasos 2.1, 2.2 y 2.3 de Fase 2, la web pública vive bajo `web/`, los entregables ARMC bajo `prisma-apex/clientes-publicados/armc/` y el entrypoint del Hub en `prisma-apex/index.html`. URL canónica de entregables: `/publicados/[cliente]/...` (legacy `/portal/analisis/[cliente]/...` resuelve vía redirect 301). El subdirectorio `portal/` queda vestigial: solo contiene `analisis/` vacío como residual de los moves anteriores; los redirects 301 legacy lo siguen utilizando como soporte de routing.
+> **Estructura vigente desde el subpaso 2.4 (`v3.3.36`).** Tras los subpasos 2.1, 2.2, 2.3 y 2.4 de Fase 2: la web pública vive bajo `web/`, los entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`, el entrypoint del Hub en `prisma-apex/index.html` y el discovery engine en `prisma-apex/core/discovery-engine/`. URL canónica de entregables: `/publicados/[cliente]/...` (legacy `/portal/analisis/[cliente]/...` resuelve vía redirect 301). URL pública del discovery `/apex` se mantiene idéntica. `portal/` queda vestigial; `apex/` queda parcial — solo conserva `fonts/` hasta el subpaso 2.5 (centralización de fuentes).
 
 ```
 ├── web/                        # Web pública (Subpaso 2.1, v3.3.25+)
@@ -88,6 +88,12 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 │       └── videos/             # Marketing videos
 ├── prisma-apex/                # Sistema interno PRISMA APEX (en construcción)
 │   ├── index.html              # PRISMA Hub — entrypoint (Subpaso 2.3, v3.3.33)
+│   ├── core/
+│   │   └── discovery-engine/   # APEX Discovery — movido en Subpaso 2.4 (v3.3.36)
+│   │       ├── index.html
+│   │       ├── form.js         # Main form logic (~3500 lines)
+│   │       ├── form.css
+│   │       └── signal-detector.js
 │   └── clientes-publicados/    # Entregables publicados por cliente (Subpaso 2.2, v3.3.31)
 │       └── armc/               # ARMC — primer cliente
 │           ├── index.html
@@ -95,12 +101,8 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 │           ├── diagnostico/    # Resumen, fricciones, matriz, embudo, cadena causal
 │           ├── blueprint/      # Modelo datos, flujos to-be, automatizaciones, fases, KPIs
 │           └── css/
-├── apex/                       # APEX Discovery Form — legacy hasta el subpaso 2.4
-│   ├── index.html
-│   ├── form.js                 # Main form logic (~3500 lines)
-│   ├── form.css
-│   ├── signal-detector.js
-│   └── fonts/                  # Phosphor Icons (local)
+├── apex/                       # Parcial post-2.4 — solo conserva fonts/ hasta el subpaso 2.5
+│   └── fonts/                  # Phosphor Icons (centralización pendiente en 2.5)
 ├── portal/                     # Vestigio post-2.3 (sin contenido propio; soporte vestigial para routing legacy)
 │   └── analisis/               # Vacío — residual del subpaso 2.2
 ├── server/                     # Express.js backend
@@ -352,7 +354,7 @@ La versión actual se muestra en el footer de `web/index.html`. Se usa **Version
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.35`
+**Versión actual:** `v3.3.36`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `web/index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)

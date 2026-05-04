@@ -62,10 +62,14 @@ app.use(express.static(path.join(projectRoot, 'web'), {
   extensions: ['html']
 }));
 
-// APEX Discovery — sigue en /apex/ hasta el subpaso 2.4. Mount dedicado para
-// que sus assets locales (form.css, form.js, fonts/, signal-detector.js)
-// sigan resolviéndose tras reapuntar el static principal a /web.
-app.use('/apex', express.static(path.join(projectRoot, 'apex'), {
+// APEX Discovery — Subpaso 2.4 (v3.3.36): el discovery engine vive en
+// prisma-apex/core/discovery-engine/. La URL pública /apex se mantiene idéntica.
+// fonts/ NO se centraliza en este subpaso (queda para 2.5); se sirve desde
+// la ubicación legacy apex/fonts/ vía mount específico declarado ANTES del
+// general para que /apex/fonts/* siga resolviéndose como espera el HTML
+// del discovery (referencia relativa fonts/phosphor.css).
+app.use('/apex/fonts', express.static(path.join(projectRoot, 'apex', 'fonts')));
+app.use('/apex', express.static(path.join(projectRoot, 'prisma-apex', 'core', 'discovery-engine'), {
   index: 'index.html',
   extensions: ['html']
 }));

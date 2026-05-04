@@ -2,6 +2,50 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-04] — v3.3.36
+
+### Subpaso 2.4 de Fase 2 — APEX Discovery movido a `prisma-apex/core/discovery-engine/`
+
+Cuarto movimiento físico de Fase 2. El discovery engine deja la raíz `apex/` y pasa a `prisma-apex/core/discovery-engine/`. URL pública `/apex` se mantiene idéntica. `fonts/` **NO se centraliza** en este subpaso (queda para 2.5). Sin tocar `main` ni producción.
+
+#### Movimiento físico (`git mv`, historial preservado)
+
+- `apex/index.html`           → `prisma-apex/core/discovery-engine/index.html`
+- `apex/form.css`             → `prisma-apex/core/discovery-engine/form.css`
+- `apex/form.js`              → `prisma-apex/core/discovery-engine/form.js`
+- `apex/signal-detector.js`   → `prisma-apex/core/discovery-engine/signal-detector.js`
+
+`apex/` queda parcial: solo conserva `fonts/`. La centralización de fuentes pertenece al subpaso 2.5.
+
+#### Cambios `server/server.js`
+
+Sustituido el mount único `/apex` por dos mounts ordenados:
+
+- **`app.use('/apex/fonts', express.static('apex/fonts'))`** — declarado primero. Preserva la ruta legacy `apex/fonts/` para que las referencias relativas `fonts/phosphor.css` del HTML del discovery sigan resolviéndose como `/apex/fonts/phosphor.css` sin tocar el HTML.
+- **`app.use('/apex', express.static('prisma-apex/core/discovery-engine', { index: 'index.html', extensions: ['html'] }))`** — sirve el discovery desde su nueva ubicación. Se mantiene `express.static` (NO `sendFile`) para preservar la resolución automática de assets relativos `form.css`, `form.js`, `signal-detector.js`.
+
+#### Cambios `nginx` en `dev`
+
+- `location /apex/fonts/` con `alias` a `apex/fonts/` (legacy hasta 2.5).
+- `location /apex` con `alias` reapuntado a `prisma-apex/core/discovery-engine/`.
+- Resto de la config Variante B intacto (`/`, `/hub`, `/publicados/`, redirects 301, `/api/`).
+- Backup: `/etc/nginx/sites-available/prisma-dev.bak-20260504-subpaso-2.4`.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual" + Directory Structure refrescada)
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este patch
+
+- No se centraliza `fonts/` (subpaso 2.5).
+- No se toca `main` ni producción.
+- No se reactiva ejecutor 2.
+- No se toca runtime del Hub, `/hub`, `/publicados`, `ANALISIS_REGISTRY`.
+- No se usa `app.get('/apex', sendFile ...)` — preservado `express.static` para no romper assets relativos.
+
 ## [2026-05-04] — v3.3.35
 
 ### Remate documental sobre `CONTRATOS.md` post-2.3 — cierre del saneamiento previo a 2.4
