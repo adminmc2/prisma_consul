@@ -2,6 +2,44 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-04] — v3.3.33
+
+### Subpaso 2.3 de Fase 2 — entrypoint del Hub movido a `prisma-apex/index.html`
+
+Tercer movimiento físico de Fase 2. El entrypoint del Hub deja `portal/index.html` y pasa a `prisma-apex/index.html`. El handler `/hub` y la config nginx en `dev` se reapuntan a la nueva ubicación. Sin tocar `main` ni producción. Sin cambios funcionales en la SPA del Hub (mismo HTML).
+
+#### Movimiento físico (`git mv`, historial preservado)
+
+- **`portal/index.html`** → **`prisma-apex/index.html`**
+
+`portal/` queda solo con el subdirectorio vacío `analisis/` (residual del subpaso 2.2; no rastreado por git).
+
+#### Cambios `server/server.js`
+
+- Handler `/hub` reapuntado: `res.sendFile(path.join(projectRoot, 'prisma-apex', 'index.html'))`.
+- Mount `/portal` se conserva como soporte vestigial para los redirects 301 legacy del subpaso 2.2 (`/portal/analisis/...` → `/publicados/...`).
+
+#### Cambios `nginx` en `dev`
+
+- `location /hub` con `alias` reapuntado a `/home/prisma/web-de-prisma-dev/prisma-apex/`.
+- Redirect 301 legacy `/portal/analisis/...` → `/publicados/...` se conserva intacto.
+- Backup: `/etc/nginx/sites-available/prisma-dev.bak-20260504-subpaso-2.3`.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub — antes en `portal/index.html`)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este patch
+
+- No se toca producción (`prismaconsul.com`).
+- No se toca `main`.
+- No se reactiva ejecutor 2 ni se toman commits suyos posteriores a `a5fca31`.
+- No se arranca subpaso 2.4 (movimiento de `apex/`).
+- No se limpia `portal/analisis/` vacío (queda como residual; limpieza fuera de alcance).
+
 ## [2026-05-03] — v3.3.32
 
 ### Saneamiento documental post-2.2 — sincronizar fuentes contractuales con la URL canónica `/publicados/`

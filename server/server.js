@@ -70,7 +70,9 @@ app.use('/apex', express.static(path.join(projectRoot, 'apex'), {
   extensions: ['html']
 }));
 
-// PRISMA Hub — portal/index.html sigue ahí hasta el subpaso 2.3.
+// PRISMA Hub — entrypoint movido a prisma-apex/index.html en el subpaso 2.3 (v3.3.33).
+// El mount /portal queda como soporte vestigial para los redirects 301 legacy
+// (/portal/analisis/... → /publicados/...) gestionados más abajo.
 app.use('/portal', express.static(path.join(projectRoot, 'portal'), {
   extensions: ['html']
 }));
@@ -88,8 +90,9 @@ app.get(/^\/portal\/analisis\/(.+)$/, (req, res) => {
 });
 
 // SPA routes
+// Subpaso 2.3 (v3.3.33): el Hub se sirve desde prisma-apex/index.html.
 app.get('/hub', (req, res) => {
-  res.sendFile(path.join(projectRoot, 'portal', 'index.html'));
+  res.sendFile(path.join(projectRoot, 'prisma-apex', 'index.html'));
 });
 
 // Fallback
