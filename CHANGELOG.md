@@ -2,6 +2,51 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-04] — v3.3.38
+
+### Micro-paquete de higiene de serving — honestidad HTTP de rutas inexistentes + retiro explícito del subtree legacy `/apex/fonts/*`
+
+Micro-paquete de higiene técnica acotada al estado post-2.5 en `dev`. **NO es subpaso 2.6 ni 2.9.** Sin tocar `main`, sin tocar producción, sin reactivar al ejecutor 2, sin mover scripts ARMC ni limpiar backups nginx, sin borrar manualmente directorios vacíos del filesystem.
+
+#### Problemas que cierra
+
+1. En `dev`, ciertas rutas inexistentes bajo `/apex/*` y `/hub/*` devolvían `200 text/html` con la landing en lugar de fallar de forma honesta. Esto degradaba la lectura de errores por parte de cualquier consumidor (browser intentaba parsear HTML como CSS/JS/imagen).
+2. En Express seguía vivo el mount `app.use('/portal', express.static(...))` apuntando a `portal/` vacío — código muerto tras el subpaso 2.3.
+
+#### Cambios `nginx` en `dev`
+
+- **`location /apex { try_files $uri $uri/ =404; }`** (antes `/index.html`). Paths inexistentes bajo `/apex/*` ahora dan 404 honesto.
+- **`location /hub { try_files $uri $uri/ =404; }`** (antes `/index.html`). Idem para `/hub/*`.
+- **`location ~ ^/apex/fonts/ { return 410; }`** declarado *antes* del bloque `/apex` para tener prioridad. Marca el subtree retirado con **410 Gone** (mejor que 404 para señal explícita de retiro definitivo).
+- **`location /portal/`** eliminado (era alias a directorio vacío).
+- **Mantenido intacto:** `location ~ ^/portal/analisis/(.+)$ { return 301 /publicados/$1; }` — el redirect legacy sigue indispensable.
+- Backup: `/etc/nginx/sites-available/prisma-dev.bak-20260504-subpaso-2.5h`.
+
+#### Cambios `server/server.js`
+
+- **Eliminado `app.use('/portal', express.static(portal/, ...))`** — código muerto.
+- **Añadido handler 410** para `/apex/fonts/*` (regex) declarado **antes** del mount `/apex`. Devuelve `410 Gone` con body `text/plain` explicando dónde están las fuentes ahora.
+- **Fallback `app.get('*', ...)` cambiado**: antes devolvía `404` con body HTML de la landing; ahora devuelve `404 Not Found` con body `text/plain`. Cierra el mismo problema de honestidad HTTP que la corrección nginx.
+- **Mantenidos intactos:** redirect 301 regex `/portal/analisis/...`, mount `/apex` (discovery), mount `/shared`, mount `/publicados`, handler `/hub`, mounts API.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este patch
+
+- No subpaso 2.6 (migración de BD).
+- No subpaso 2.9 (export scripts ARMC).
+- No limpieza de backups nginx anteriores.
+- No `rm -rf` de `apex/` o `portal/` vacíos del filesystem.
+- No corrección de la canonicalización `/apex` → `/apex/` (aceptada por dictamen).
+- No se toca producción ni `main`.
+- No se reactiva ejecutor 2.
+- No se toca discovery logic, runtime del Hub, `/shared/`, `/publicados/` ni APIs.
+
 ## [2026-05-04] — v3.3.37
 
 ### Subpaso 2.5 de Fase 2 — Centralización de fuentes Phosphor del discovery en `shared/fonts/phosphor/`

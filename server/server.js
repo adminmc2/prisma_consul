@@ -66,6 +66,15 @@ app.use(express.static(path.join(projectRoot, 'web'), {
 // discovery centralizadas en shared/fonts/phosphor/. Mount expuesto bajo /shared.
 app.use('/shared', express.static(path.join(projectRoot, 'shared')));
 
+// /apex/fonts/* — Subpaso 2.5 (v3.3.37) movió las fuentes Phosphor a
+// /shared/fonts/phosphor/. La micro-higiene de v3.3.38 marca el subtree
+// retirado como 410 Gone (no 404) para que cualquier consumidor legacy
+// reciba una señal clara de retiro definitivo en lugar de un 200 engañoso
+// con HTML del discovery.
+app.get(/^\/apex\/fonts\/.+$/, (req, res) => {
+  res.status(410).type('text/plain').send('Gone — Phosphor fonts moved to /shared/fonts/phosphor/ in v3.3.37');
+});
+
 // APEX Discovery — vive en prisma-apex/core/discovery-engine/ desde Subpaso 2.4
 // (v3.3.36). La URL pública /apex se mantiene idéntica.
 app.use('/apex', express.static(path.join(projectRoot, 'prisma-apex', 'core', 'discovery-engine'), {
@@ -73,12 +82,9 @@ app.use('/apex', express.static(path.join(projectRoot, 'prisma-apex', 'core', 'd
   extensions: ['html']
 }));
 
-// PRISMA Hub — entrypoint movido a prisma-apex/index.html en el subpaso 2.3 (v3.3.33).
-// El mount /portal queda como soporte vestigial para los redirects 301 legacy
-// (/portal/analisis/... → /publicados/...) gestionados más abajo.
-app.use('/portal', express.static(path.join(projectRoot, 'portal'), {
-  extensions: ['html']
-}));
+// Mount /portal eliminado en la micro-higiene v3.3.38: portal/ está vacío
+// tras el subpaso 2.3 (Hub movido a prisma-apex/index.html). Solo queda
+// activo el redirect 301 legacy /portal/analisis/... gestionado más abajo.
 
 // Entregables publicados por cliente — Subpaso 2.2 de Fase 2 (v3.3.31).
 // URL canónica: /publicados/[cliente]/...
@@ -98,9 +104,11 @@ app.get('/hub', (req, res) => {
   res.sendFile(path.join(projectRoot, 'prisma-apex', 'index.html'));
 });
 
-// Fallback
+// Fallback — micro-higiene v3.3.38: 404 honesto en text/plain. Antes devolvía
+// el HTML de la landing como body, lo cual confundía al cliente cuando el
+// path solicitado era un asset (browser parseaba HTML como CSS/JS/imagen).
 app.get('*', (req, res) => {
-  res.status(404).sendFile(path.join(projectRoot, 'web', 'index.html'));
+  res.status(404).type('text/plain').send('Not Found');
 });
 
 // ── Start ──────────────────────────────────────────────
