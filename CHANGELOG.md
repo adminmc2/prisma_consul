@@ -2,6 +2,53 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-05] — v3.3.39
+
+### Subpaso 2.7 de Fase 2 — `server/lib/domain-sync.js` skeleton
+
+Sexto entregable de Fase 2. Slice **estrecho** sobre carril repo: crea el helper de dominio, lo deja exportado y documentado, **sin conectarlo todavía a rutas** ni cambiar comportamiento del sistema. Sin tocar `main`, sin tocar producción runtime, sin tocar BD (la BD ya quedó migrada en `v3.3.38` / subpaso 2.6).
+
+#### Archivo nuevo
+
+- **`server/lib/domain-sync.js`** — capa única de aplicación que sincronizará legacy ↔ nuevo cuando se cablée en rutas (decisión cerrada en `MODELO-DOMINIO.md` §6.6).
+
+#### Funciones exportadas (5 + clasificación de campos)
+
+Lecturas (implementadas):
+- `getClienteFromUser(userId)` — devuelve la fila canónica de `clientes` si el usuario tiene `cliente_id`; cae a fallback con campos legacy de `portal_users` con shape compatible si no.
+- `getActiveEngagement(userId)` — resuelve el engagement por `portal_users.active_engagement_id`; devuelve `null` si no hay.
+
+Escrituras (skeleton, firma fija, lanzan `Error` "not wired yet"):
+- `syncLegacyUserUpdate(userId, fields)` — preparada para el cableado en `PATCH /portal-profile` y `PATCH /portal-users/:id`. Documenta en código las 3 rutas de redirect (empresariales → `clientes`, fase → `engagements`, personales → `portal_users`).
+- `syncEngagementUpdate(engagementId, fields)` — reservada para futuro panel/endpoint admin de engagements.
+- `syncClienteUpdate(clienteId, fields)` — reservada para futuro panel/endpoint admin de clientes.
+
+Constantes:
+- `FIELDS_EMPRESARIALES`, `FIELDS_FASE`, `FIELDS_PERSONALES` — clasificación canónica de campos para el cableado posterior.
+
+#### Estilo y patrón
+
+CommonJS simple (`module.exports`), alineado con `server/lib/fetch-timeout.js` y `server/lib/google-drive.js`. Helper local `getSQL()` instancia `neon(process.env.DATABASE_URL)` por llamada — mismo patrón que `server/routes/portal.js` para evitar conexiones colgadas en serverless.
+
+#### Lo que NO entra en este slice (alcance estrecho)
+
+- **No se importa** `domain-sync.js` desde ninguna ruta.
+- **No se modifica** SQL existente en `server/routes/portal.js` (líneas 154 y 500 intactas).
+- **No cambian shapes** de respuesta de `/api/portal-profile` ni `/api/portal-users/:id`.
+- **No se toca** la BD, `server/server.js`, middleware, frontend ni nginx.
+- **No se mezcla** subpaso 2.8 ni 2.9.
+
+#### Cierre del subpaso 2.6
+
+`REVIEW-PRISMA-APEX.md` registra el cierre runtime de 2.6 (validación humana del flujo del Hub PASS sobre producción tras la migración aditiva ejecutada en `v3.3.38`). El backup pre-migración (`production-pre-2.6.dump` + `production-pre-2.6.sql`, 2026-05-05 07:43 UTC) se movió desde `/tmp` al almacenamiento durable de ops.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
 ## [2026-05-04] — v3.3.38
 
 ### Micro-paquete de higiene de serving — honestidad HTTP de rutas inexistentes + retiro explícito del subtree legacy `/apex/fonts/*`
