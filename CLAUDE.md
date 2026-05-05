@@ -72,7 +72,7 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 
 ## Directory Structure
 
-> **Estructura vigente desde el subpaso 2.5 (`v3.3.37`).** Tras los subpasos 2.1, 2.2, 2.3, 2.4 y 2.5 de Fase 2: la web pública vive bajo `web/`, los entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`, el entrypoint del Hub en `prisma-apex/index.html`, el discovery engine en `prisma-apex/core/discovery-engine/` y los recursos compartidos (fuentes Phosphor del discovery) bajo `shared/fonts/phosphor/`. URL canónica de entregables: `/publicados/[cliente]/...` (legacy `/portal/analisis/[cliente]/...` resuelve vía redirect 301). URL pública del discovery `/apex` se mantiene idéntica. URL pública de recursos compartidos: `/shared/...`. `portal/` queda vestigial; `apex/` queda eliminado del árbol efectivo tras 2.5 (vacío, sin tracking git).
+> **Estructura vigente tras los subpasos 2.1 a 2.7 de Fase 2 (`v3.3.40`).** La web pública vive bajo `web/`, los entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`, el entrypoint del Hub en `prisma-apex/index.html`, el discovery engine en `prisma-apex/core/discovery-engine/` y los recursos compartidos (fuentes Phosphor del discovery) bajo `shared/fonts/phosphor/`. El subpaso **2.6** (`v3.3.38`) ejecutó la **migración aditiva de BD** sobre Neon (5 tablas nuevas + columnas transitorias en `portal_users` y canónica en `portal_files`); el árbol de archivos no cambió. El subpaso **2.7** (`v3.3.39`) añadió el helper de dominio `server/lib/domain-sync.js` (skeleton, no invocado todavía). URL canónica de entregables: `/publicados/[cliente]/...` (legacy `/portal/analisis/[cliente]/...` resuelve vía redirect 301). URL pública del discovery `/apex` se mantiene idéntica. URL pública de recursos compartidos: `/shared/...`. `portal/` queda vestigial; `apex/` queda eliminado del árbol efectivo tras 2.5 (vacío, sin tracking git).
 
 ```
 ├── web/                        # Web pública (Subpaso 2.1, v3.3.25+)
@@ -124,7 +124,8 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 │   └── lib/
 │       ├── pain-knowledge-base.js  # Pain/situation database (469 pains)
 │       ├── google-drive.js     # Google Drive client + per-user folder helpers
-│       └── fetch-timeout.js    # Fetch wrapper with AbortController
+│       ├── fetch-timeout.js    # Fetch wrapper with AbortController
+│       └── domain-sync.js      # Capa única legacy ↔ nuevo (Subpaso 2.7, v3.3.39 — skeleton, aún no invocado por rutas)
 ├── .env                        # Secrets (NOT committed)
 ├── .gitignore
 └── .github/
@@ -135,7 +136,7 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 
 - **Frontend:** Vanilla HTML/CSS/JS (no frameworks)
 - **Fonts:** Quicksand (headings) + Source Sans 3 (body) via Google Fonts
-- **Icons:** Phosphor Icons (local font files in `apex/fonts/`)
+- **Icons:** Phosphor Icons (local font files in `shared/fonts/phosphor/` — centralizadas en el subpaso 2.5 / `v3.3.37`; el discovery las consume vía `/shared/fonts/phosphor/phosphor.css`. El Hub sigue usando Phosphor por CDN)
 - **Backend:** Express.js with modular routes (server/routes/)
 - **Database:** Neon PostgreSQL (`apex_submissions`, `portal_users`, `portal_files`, `portal_activity_log`)
 - **Auth:** JWT (jsonwebtoken) + bcryptjs, 24h token expiry. Role-based: admin/user. Shared auth for APEX y Hub.
@@ -359,7 +360,7 @@ La versión actual se muestra en el footer de `web/index.html`. Se usa **Version
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.39`
+**Versión actual:** `v3.3.40`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `web/index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)

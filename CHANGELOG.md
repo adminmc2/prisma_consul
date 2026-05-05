@@ -2,6 +2,35 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-05] — v3.3.40
+
+### Subpaso 2.8 de Fase 2 — refresh final de `CLAUDE.md` Directory Structure
+
+Octavo subpaso de Fase 2. Slice **estrecho** documental sobre carril repo: actualizar la sección "Directory Structure" de `CLAUDE.md` para reflejar el estado real del repo tras 2.1 a 2.7, conforme a `docs/PLAN-FASE2.md` subpaso 2.8. Sin tocar runtime, sin tocar BD, sin tocar nginx, sin reactivar al ejecutor 2, sin abrir 2.9.
+
+#### Cambios `CLAUDE.md`
+
+- **Cabecera "Directory Structure"** reescrita: pasa de "Estructura vigente desde el subpaso 2.5 (`v3.3.37`)" a "Estructura vigente tras los subpasos 2.1 a 2.7 de Fase 2 (`v3.3.40`)". Añade explicación explícita del subpaso 2.6 (migración aditiva de BD sobre Neon — 5 tablas nuevas + columnas transitorias; árbol de archivos sin cambios) y del subpaso 2.7 (helper `server/lib/domain-sync.js` skeleton no invocado).
+- **Bloque `server/lib/`** del árbol: añadido `domain-sync.js` con descripción que indica `(Subpaso 2.7, v3.3.39 — skeleton, aún no invocado por rutas)`.
+- **Tech Stack — línea Icons**: corregida referencia stale `apex/fonts/` (path eliminado en `v3.3.37`) → `shared/fonts/phosphor/`. Aclaración añadida: el discovery consume vía `/shared/fonts/phosphor/phosphor.css`; el Hub sigue cargando Phosphor por CDN.
+
+#### Lo que NO entra en este slice
+
+- No se mezcla 2.9 (export de scripts ARMC a `prisma-consulting`).
+- No se toca código de `server/`, `web/`, `prisma-apex/`, `shared/` ni rutas.
+- No se toca Neon ni el schema de BD.
+- No se toca `nginx`.
+- No se reactiva al ejecutor 2.
+- No se hace limpieza física de directorios legacy filesystem-only (`apex/fonts/` vacío, `portal/analisis/` vacío) — fuera de alcance de un slice documental.
+- No se reescriben otras secciones de `CLAUDE.md` fuera de las 3 zonas estructurales corregidas.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
 ## [2026-05-05] — v3.3.39
 
 ### Subpaso 2.7 de Fase 2 — `server/lib/domain-sync.js` skeleton
