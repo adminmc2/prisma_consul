@@ -2,6 +2,18 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-05] — Cierre operativo post-v3.3.42 (sin bump)
+
+### Cierre del paquete `v3.3.42`: push, deploy DEV, higiene checkout PROD, promoción main + deploy PROD
+
+- **Push a `origin/dev`:** commit `f7d335d4ee39136c9a0e0394d29a2dd578955527` publicado en `origin/dev`.
+- **Deploy DEV validado:** `prisma-dev` reiniciado; `dev.prismaconsul.com/` y `/hub` sirven `v3.3.42` ✓.
+- **Higiene checkout PROD (`~/web-de-prisma`):** vestigio `images/datos.mp4` eliminado tras verificar SHA256 idéntico al canónico `web/images/videos/datos.mp4` (`7729ab6a…`); `git status` limpio. Sin impacto público: `https://prismaconsul.com/images/videos/datos.mp4` → 200, `https://prismaconsul.com/images/datos.mp4` → 404.
+- **Promoción fast-forward `dev` → `main`:** `main` y `origin/main` promovidos por fast-forward a `f7d335d4`. Carpeta principal local devuelta a `dev` limpia.
+- **Deploy PROD validado:** `~/web-de-prisma` del VPS actualizado a `f7d335d4`; `prisma-consul` reiniciado; `prismaconsul.com/` y `prismaconsul.com/hub` sirven `v3.3.42` ✓. `prisma-dev` y nginx no tocados.
+- Sin cambio de versión visible adicional.
+- Pendiente restante: reactivación del ejecutor 2, sujeta a autorización específica.
+
 ## [2026-05-05] — v3.3.42
 
 ### Cableado mínimo de `domain-sync.js` en los PATCH de portal (sincronización atómica)
