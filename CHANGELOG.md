@@ -2,6 +2,54 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-05] — Cierre operativo post-`v3.3.41` (sin bump)
+
+Entrada documental de cierre del paquete operativo ejecutado y validado tras absorber los 9 subpasos físicos de Fase 2. **No es una versión nueva**: no hay bump, no se toca runtime ni `server.js`, no se toca `domain-sync.js`, no se toca Neon, no se toca `prisma-consulting`, no se reactiva al ejecutor 2.
+
+### 1. Promoción `dev` → `main`
+
+- `origin/main` alineado por fast-forward con `origin/dev` en el baseline `b61d00f4c789af28608ead8e4efe500c99f41a64`.
+- Producción (`prismaconsul.com`) desplegada y sirviendo `v3.3.41` (mismo SHA en producción que en `dev`).
+
+### 2. Alineación nginx de producción a Variante B
+
+- `/etc/nginx/sites-enabled/prisma-consul` reescrito para replicar la Variante B ya vigente en `dev`:
+  - `root /home/prisma/web-de-prisma/web` (web pública).
+  - Aliases explícitos para `/apex` (→ `prisma-apex/core/discovery-engine`), `/hub` (→ `prisma-apex`), `/publicados/` (→ `prisma-apex/clientes-publicados/`), `/shared/` (→ `shared/`).
+  - Redirect 301 `/portal/analisis/...` → `/publicados/...` operativo.
+  - `/api/*` proxied a Express (PM2 `prisma-consul`, puerto 3000).
+- Backup vigente: `/etc/nginx/sites-available/prisma-consul.bak-20260505-pre-fase2-replication`.
+
+### 3. Micro-paquete nginx `404/410 text/plain` (dev y prod)
+
+Aplicado en ambos sites (`/etc/nginx/sites-enabled/prisma-dev` y `/etc/nginx/sites-enabled/prisma-consul`) para alinear la capa nginx con el contrato Express de `v3.3.38` (`server.js` 404/410 text/plain):
+
+- Nuevo named location interno `@plain404` (`internal; types { } default_type text/plain; return 404 "Not Found\n";`).
+- `/apex/fonts/*` actualizado a `410 + text/plain` con body explícito (`Gone — Phosphor fonts moved to /shared/fonts/phosphor/ in v3.3.37\n`).
+- Misses bajo `/apex` y `/hub` (`try_files ... =404`) reemplazados por `try_files ... @plain404` para devolver 404 + text/plain en lugar del HTML default de nginx.
+- `nginx -t` OK + reload limpio en ambos sites.
+- Validación curl en origen (bypass Cloudflare) y pública: 9/9 OK (410 fonts + 404 misses con `Content-Type: text/plain`; `/`, `/apex/`, `/hub/`, `/publicados/armc/` siguen 200; redirect legacy 301 operativo).
+- Backups: `/etc/nginx/sites-available/prisma-dev.bak-20260505-text-plain`, `/etc/nginx/sites-available/prisma-consul.bak-20260505-text-plain`.
+
+### 4. Higiene operativa del checkout `~/web-de-prisma-dev` del VPS
+
+- Checkout remoto realineado a `b61d00f` (HEAD = baseline).
+- `git status` limpio.
+- Vestigio `~/web-de-prisma-dev/images/datos.mp4` eliminado **solo después** de verificar que era duplicado byte a byte del canónico `~/web-de-prisma-dev/web/images/videos/datos.mp4`, que sigue presente.
+- Validación pública: ruta canónica `https://dev.prismaconsul.com/images/videos/datos.mp4` → 200; ruta vestigial `https://dev.prismaconsul.com/images/datos.mp4` → 404.
+
+### Fuera de alcance de este cierre
+
+- `server/lib/domain-sync.js` no se cablea (paquete específico posterior).
+- Neon no se toca.
+- Ejecutor 2 no se reactiva.
+- Sin bump de versión visible: `web/index.html`, `prisma-apex/index.html` y `CLAUDE.md` mantienen `v3.3.41`. Esta entrada es documental, no funcional.
+
+### Pendientes operativos vigentes
+
+1. Cableado de `domain-sync.js` en rutas.
+2. Reactivación del ejecutor 2.
+
 ## [2026-05-05] — v3.3.41
 
 ### Subpaso 2.9 de Fase 2 — exportar operación consultiva ARMC a `prisma-consulting`
