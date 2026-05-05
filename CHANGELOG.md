@@ -6,7 +6,7 @@ Registro de cambios relevantes del proyecto PRISMA Consul.
 
 ### Subpaso 2.7 de Fase 2 — `server/lib/domain-sync.js` skeleton
 
-Sexto entregable de Fase 2. Slice **estrecho** sobre carril repo: crea el helper de dominio, lo deja exportado y documentado, **sin conectarlo todavía a rutas** ni cambiar comportamiento del sistema. Sin tocar `main`, sin tocar producción runtime, sin tocar BD (la BD ya quedó migrada en `v3.3.38` / subpaso 2.6).
+Séptimo subpaso de Fase 2. Slice **estrecho** sobre carril repo: crea el helper de dominio, lo deja exportado y documentado, **sin conectarlo todavía a rutas** ni cambiar comportamiento del sistema. Sin tocar `main`, sin tocar producción runtime, sin tocar BD (la BD ya quedó migrada en `v3.3.38` / subpaso 2.6).
 
 #### Archivo nuevo
 
