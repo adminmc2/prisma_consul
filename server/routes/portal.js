@@ -11,6 +11,7 @@ const Busboy = require('busboy');
 const { Readable } = require('stream');
 const { auth, requireAdmin } = require('../middleware/auth');
 const { getDriveClient, getOrCreateUserFolder, listFilesInFolder } = require('../lib/google-drive');
+const { syncLegacyUserUpdate } = require('../lib/domain-sync');
 
 const router = express.Router();
 
@@ -157,25 +158,38 @@ router.patch('/portal-profile', auth, async (req, res) => {
   try {
     const sql = getSQL();
     const b = req.body;
-    // Users can only edit these fields (not role, phase, etc.)
-    const result = await sql`
-      UPDATE portal_users SET
-        nombre = COALESCE(${b.nombre !== undefined ? b.nombre : null}, nombre),
-        empresa = COALESCE(${b.empresa !== undefined ? b.empresa : null}, empresa),
-        rfc = COALESCE(${b.rfc !== undefined ? b.rfc : null}, rfc),
-        direccion = COALESCE(${b.direccion !== undefined ? b.direccion : null}, direccion),
-        ciudad = COALESCE(${b.ciudad !== undefined ? b.ciudad : null}, ciudad),
-        cp = COALESCE(${b.cp !== undefined ? b.cp : null}, cp),
-        telefono = COALESCE(${b.telefono !== undefined ? b.telefono : null}, telefono),
-        contacto_principal = COALESCE(${b.contacto_principal !== undefined ? b.contacto_principal : null}, contacto_principal),
-        cargo = COALESCE(${b.cargo !== undefined ? b.cargo : null}, cargo),
-        sector = COALESCE(${b.sector !== undefined ? b.sector : null}, sector)
-      WHERE id = ${req.user.id}
-      RETURNING id, email, nombre, empresa, rfc, direccion, ciudad, cp, telefono, contacto_principal, cargo, sector
-    `;
-    if (!result.length) return res.status(404).json({ error: 'Usuario no encontrado' });
+    // Users can only edit these fields (not role, phase, etc.).
+    // El helper sincroniza legacy + canónico transparentemente (CT-4).
+    const allowed = {
+      nombre: b.nombre,
+      empresa: b.empresa,
+      rfc: b.rfc,
+      direccion: b.direccion,
+      ciudad: b.ciudad,
+      cp: b.cp,
+      telefono: b.telefono,
+      contacto_principal: b.contacto_principal,
+      cargo: b.cargo,
+      sector: b.sector,
+    };
+    const { userRow } = await syncLegacyUserUpdate(req.user.id, allowed);
+    if (!userRow) return res.status(404).json({ error: 'Usuario no encontrado' });
+    const user = {
+      id: userRow.id,
+      email: userRow.email,
+      nombre: userRow.nombre,
+      empresa: userRow.empresa,
+      rfc: userRow.rfc,
+      direccion: userRow.direccion,
+      ciudad: userRow.ciudad,
+      cp: userRow.cp,
+      telefono: userRow.telefono,
+      contacto_principal: userRow.contacto_principal,
+      cargo: userRow.cargo,
+      sector: userRow.sector,
+    };
     await logActivity(sql, req.user.id, 'profile_updated', { changes: Object.keys(b) }, getClientIP(req));
-    res.json({ user: result[0] });
+    res.json({ user });
   } catch (error) {
     console.error('Profile update error:', error);
     res.status(500).json({ error: 'Error al actualizar perfil' });
@@ -492,34 +506,43 @@ router.patch('/portal-users/:id', auth, requireAdmin, async (req, res) => {
     const userId = parseInt(req.params.id);
     const sql = getSQL();
 
-    const existing = await sql`SELECT id FROM portal_users WHERE id = ${userId}`;
-    if (!existing.length) {
+    const b = req.body;
+    // El helper sincroniza legacy + canónico transparentemente (CT-4).
+    // Pasa NULL en campos no provistos (semántica COALESCE: no toca).
+    const fields = {
+      nombre: b.nombre,
+      empresa: b.empresa,
+      rfc: b.rfc,
+      direccion: b.direccion,
+      ciudad: b.ciudad,
+      cp: b.cp,
+      telefono: b.telefono,
+      contacto_principal: b.contacto_principal,
+      cargo: b.cargo,
+      sector: b.sector,
+      current_phase: b.current_phase,
+      profile_type: b.profile_type,
+      apex_submission_id: b.apex_submission_id,
+    };
+    const { userRow } = await syncLegacyUserUpdate(userId, fields);
+    if (!userRow) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
-
-    const b = req.body;
-    const result = await sql`
-      UPDATE portal_users SET
-        nombre = COALESCE(${b.nombre !== undefined ? b.nombre : null}, nombre),
-        empresa = COALESCE(${b.empresa !== undefined ? b.empresa : null}, empresa),
-        rfc = COALESCE(${b.rfc !== undefined ? b.rfc : null}, rfc),
-        direccion = COALESCE(${b.direccion !== undefined ? b.direccion : null}, direccion),
-        ciudad = COALESCE(${b.ciudad !== undefined ? b.ciudad : null}, ciudad),
-        cp = COALESCE(${b.cp !== undefined ? b.cp : null}, cp),
-        telefono = COALESCE(${b.telefono !== undefined ? b.telefono : null}, telefono),
-        contacto_principal = COALESCE(${b.contacto_principal !== undefined ? b.contacto_principal : null}, contacto_principal),
-        cargo = COALESCE(${b.cargo !== undefined ? b.cargo : null}, cargo),
-        sector = COALESCE(${b.sector !== undefined ? b.sector : null}, sector),
-        current_phase = COALESCE(${b.current_phase !== undefined ? b.current_phase : null}, current_phase),
-        profile_type = COALESCE(${b.profile_type !== undefined ? b.profile_type : null}, profile_type),
-        apex_submission_id = COALESCE(${b.apex_submission_id !== undefined ? b.apex_submission_id : null}, apex_submission_id)
-      WHERE id = ${userId}
-      RETURNING id, email, nombre, empresa, sector, current_phase, profile_type, apex_submission_id, role
-    `;
+    const user = {
+      id: userRow.id,
+      email: userRow.email,
+      nombre: userRow.nombre,
+      empresa: userRow.empresa,
+      sector: userRow.sector,
+      current_phase: userRow.current_phase,
+      profile_type: userRow.profile_type,
+      apex_submission_id: userRow.apex_submission_id,
+      role: userRow.role,
+    };
 
     await logActivity(sql, req.user.id, 'user_updated', { targetUserId: userId, changes: Object.keys(b) }, getClientIP(req));
 
-    res.json({ user: result[0] });
+    res.json({ user });
 
   } catch (error) {
     console.error('Portal update user error:', error);

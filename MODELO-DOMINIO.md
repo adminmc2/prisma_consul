@@ -391,6 +391,9 @@ syncClienteUpdate(clienteId, fields)
 - Cualquier endpoint que toque legacy o nuevo **invoca al helper**, no implementa la sincronización inline.
 - Sin triggers de BD.
 - El helper es la única definición de "qué se sincroniza con qué". Cuando los campos legacy se cierren (sprint posterior), se borra el helper.
+- Las escrituras múltiples del helper (legacy + canónico) se ejecutan en una sola transacción atómica. La derivación de los targets canónicos (`cliente_id`, `active_engagement_id`) ocurre **dentro** de la transacción mediante subqueries contra `portal_users`, no antes — así no es posible que cambien entre la decisión y la escritura. No es admisible un estado donde `portal_users` quede actualizado y `clientes`/`engagements` no, o viceversa.
+
+**Addendum (`v3.3.42`) — `profile_type` queda legacy-only en el cableado mínimo.** El cableado de `syncLegacyUserUpdate` ejecutado en `v3.3.42` propaga `current_phase`→`engagements.fase_legacy_id` y `apex_submission_id`→`engagements.submission_id`, pero **no** propaga `profile_type` a `engagements.vertical`. Razón: MD-4 establece que `profile_type='clinica'`→`vertical='clinica-multi'` es asignación inicial, no default permanente, y el mapeo no es 1:1 (`profile_type` tiene 2 valores legacy; `vertical` tiene 3 valores canónicos). Convertir esa relación en propagación técnica automática es una decisión de modelo que requiere autorización explícita en un slice posterior. Hasta entonces, `profile_type` se escribe únicamente en `portal_users`. La pseudo-firma del helper en este documento (líneas anteriores) describe la **forma esperada general**; el cableado real respeta esta restricción.
 
 ### 6.7 Casos límite
 

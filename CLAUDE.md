@@ -125,7 +125,7 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 │       ├── pain-knowledge-base.js  # Pain/situation database (469 pains)
 │       ├── google-drive.js     # Google Drive client + per-user folder helpers
 │       ├── fetch-timeout.js    # Fetch wrapper with AbortController
-│       └── domain-sync.js      # Capa única legacy ↔ nuevo (Subpaso 2.7, v3.3.39 — skeleton, aún no invocado por rutas)
+│       └── domain-sync.js      # Capa única legacy ↔ nuevo. Skeleton en 2.7 (v3.3.39); cableado mínimo en v3.3.42 — `syncLegacyUserUpdate` invocado por `PATCH /api/portal-profile` y `PATCH /api/portal-users/:id`, sincronización atómica vía `sql.transaction()`. `profile_type` queda legacy-only en este slice (ver MD-4); `syncClienteUpdate` y `syncEngagementUpdate` siguen como skeleton.
 ├── .env                        # Secrets (NOT committed)
 ├── .gitignore
 └── .github/
@@ -360,7 +360,7 @@ La versión actual se muestra en el footer de `web/index.html`. Se usa **Version
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.41`
+**Versión actual:** `v3.3.42`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `web/index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)

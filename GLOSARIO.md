@@ -143,11 +143,15 @@ Columna `INTEGER` en `portal_users`. Fase legacy del proceso APEX en curso. Valo
 *Canónico:* `MODELO-DOMINIO.md` §6.2 y `CONTRATOS.md` §5.1.
 
 ### `profile_type`
-Columna `TEXT` en `portal_users`. Tipo de cliente legacy: `'clinica'` o `'distribuidor'`. Default `'clinica'`. Mapping a `engagements.vertical` durante transición:
+Columna `TEXT` en `portal_users`. Tipo de cliente legacy: `'clinica'` o `'distribuidor'`. Default `'clinica'`.
+
+**Estado vigente (`v3.3.42`):** legacy-only. El cableado de `domain-sync.js` ejecutado en `v3.3.42` **no propaga** `profile_type` a `engagements.vertical`. La canonicalización es decisión de modelo (MD-4) y requiere autorización explícita en un slice posterior.
+
+Mapping de referencia (asignación inicial documentada en MD-4, **no aplicada como propagación automática**):
 - `'clinica'` → `'clinica-multi'` (asignación inicial para clientes existentes; **no default permanente**).
 - `'distribuidor'` → `'distribuidor'`.
 
-*Canónico:* `MODELO-DOMINIO.md` §6.4 y MD-4.
+*Canónico:* `MODELO-DOMINIO.md` §6.4, §6.6 addendum y MD-4. Excepción CT-4 en `CONTRATOS.md`.
 
 ### `apex_submission_id`
 Columna `TEXT` en `portal_users`. Enlace al `id` de una fila en `apex_submissions`. Pasa a `engagements.submission_id` post-transición; se conserva legacy durante Sprint A.

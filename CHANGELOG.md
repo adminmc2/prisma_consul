@@ -2,6 +2,65 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-05] — v3.3.42
+
+### Cableado mínimo de `domain-sync.js` en los PATCH de portal (sincronización atómica)
+
+Primer paquete operativo posterior al cierre de los 9 subpasos físicos de Fase 2. Slice **estrecho** sobre carril repo: implementa la lógica efectiva de `syncLegacyUserUpdate` en `server/lib/domain-sync.js` (skeleton desde 2.7) y la cablea en los dos únicos endpoints que escriben campos legacy: `PATCH /api/portal-profile` y `PATCH /api/portal-users/:id`. **Contrato externo intacto** (CT-4): mismo body aceptado, mismo shape de respuesta, mismos códigos HTTP, mismos `activity_log` actions. **Sin tocar esquema de Neon.**
+
+#### `server/lib/domain-sync.js` — `syncLegacyUserUpdate` cableado
+
+1. **Toda la lógica vive dentro de la transacción** — no hay lectura previa de `cliente_id` / `active_engagement_id` antes del `BEGIN`. El array de queries se construye según los flags `hasEmpresarial` y `hasFaseCanon` derivados del body, y los UPDATE a `clientes` y `engagements` resuelven el target con un subquery contra `portal_users` **dentro de la misma transacción**:
+   - **`UPDATE portal_users`** siempre (regla MD-21: legacy convive con canónico). Semántica COALESCE: solo se tocan los campos cuyo valor es `!== undefined`.
+   - **`UPDATE clientes`** si hay al menos un campo de `FIELDS_EMPRESARIALES` en el body. Mapeo: `empresa`→`clientes.nombre`; `rfc/direccion/ciudad/cp/telefono/sector` 1:1. Filtro: `WHERE id = (SELECT cliente_id FROM portal_users WHERE id = $userId)` — si el usuario no existe o no tiene `cliente_id`, el subquery devuelve `NULL` y el UPDATE no afecta filas.
+   - **`UPDATE engagements`** si hay `current_phase` o `apex_submission_id` en el body. Mapeo: `current_phase`→`fase_legacy_id`; `apex_submission_id`→`submission_id`. Filtro análogo con `(SELECT active_engagement_id FROM portal_users WHERE id = $userId)`.
+2. **404 preservado:** si el usuario no existe, el primer UPDATE devuelve 0 filas y los subqueries de los otros dos UPDATE devuelven `NULL` (UPDATE no afecta filas). El helper detecta `userRow=null` tras el COMMIT y devuelve `{userRow: null, clienteRow: null, engagementRow: null}`, que las rutas traducen a HTTP 404 con el mismo body que antes.
+3. Si una de las escrituras falla, BEGIN/COMMIT hace rollback de todas. Como la decisión de "a qué cliente / a qué engagement escribir" se toma en SQL dentro de la transacción, no es posible que `cliente_id` / `active_engagement_id` cambien entre la decisión y la escritura.
+
+**Decisión explícita — `profile_type` legacy-only.** Aunque `engagements.vertical` existe en el schema (2.6.c), el mapeo `profile_type`→`vertical` es una decisión de modelo (MD-4: `'clinica'`→`'clinica-multi'` solo asignación inicial, no default permanente; el mapeo no es 1:1 — `profile_type` tiene 2 valores legacy y `vertical` tiene 3 valores canónicos), no una propagación técnica automática. El helper escribe `profile_type` únicamente en `portal_users`. Cualquier canonicalización futura requiere autorización explícita del usuario en un slice posterior. Documentado en `MODELO-DOMINIO.md` §6.6 addendum y `CONTRATOS.md` (CT-4 + §12.8).
+
+#### `server/routes/portal.js` — cableado de los dos PATCH
+
+- **`PATCH /api/portal-profile`** (auth user): construye `allowed` con los 10 campos editables por el usuario (personales + empresariales, sin fase) y delega en el helper. La respuesta proyecta exactamente las mismas 12 claves que devolvía el `RETURNING` previo.
+- **`PATCH /api/portal-users/:id`** (auth admin): construye `fields` con los 13 campos editables por admin (personales + empresariales + fase) y delega en el helper. La respuesta proyecta exactamente las mismas 9 claves que antes (`id, email, nombre, empresa, sector, current_phase, profile_type, apex_submission_id, role`). El `SELECT id` previo de existencia se elimina: el helper devuelve `userRow=null` cuando el `UPDATE portal_users ... RETURNING` no encuentra fila dentro de la transacción, preservando el 404.
+
+#### Validación
+
+- **Smoke funcional** contra Neon (6 escenarios + rollback, idempotencia confirmada — cero drift respecto a baseline):
+  1. Admin sin `cliente_id`: `clienteRow=null`, `engagementRow=null` ✓
+  2. Usuario inexistente: las 3 filas `null` (la transacción ejecuta sin afectar filas: subqueries devuelven `NULL`) ✓
+  3. armc empresarial (txn 2 queries): `userRow.sector` y `clienteRow.sector` actualizados; `engagementRow=null` ✓
+  4. armc fase canónica (txn 2 queries): `userRow.current_phase` y `engagementRow.fase_legacy_id` actualizados; `clienteRow=null` ✓
+  5. armc `profile_type` solo: `userRow.profile_type` actualizado; `engagementRow=null`; **`engagements.vertical` invariante** (`clinica-multi` ↔ `clinica-multi` PASS) ✓
+  6. armc combinada empresarial+fase (txn 3 queries atómicas): los 3 rows actualizados ✓
+  7. **Test de atomicidad/rollback**: invocando `sql.transaction` con un `UPDATE portal_users` válido seguido de un `UPDATE` con columna inexistente, la transacción lanza y `portal_users.sector` permanece invariante (rollback efectivo) ✓
+- **Smoke HTTP** sobre servidor local (PORT=3099) con JWT firmado:
+  - `PATCH /api/portal-profile` (admin sin cliente_id): shape de respuesta = 12 claves esperadas ✓
+  - `PATCH /api/portal-profile` (armc con cliente_id): shape = 12 claves esperadas ✓
+  - `PATCH /api/portal-users/3` (admin actualiza `current_phase`/`profile_type`/`apex_submission_id` sobre armc): shape = 9 claves esperadas ✓
+  - `PATCH /api/portal-users/99999`: status 404, body `{"error":"Usuario no encontrado"}` ✓
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Documentación alineada
+
+- `REVIEW-PRISMA-APEX.md`: §3 estado actualizado; §4.2 corregida (deja de decir "skeleton aún no cableada"); bitácora con entrada del slice.
+- `CLAUDE.md`: línea de árbol de `domain-sync.js` actualizada (cableado en `v3.3.42`, sincronización atómica, `profile_type` legacy-only).
+- `MODELO-DOMINIO.md`: addendum a §6.6 que registra la decisión `profile_type` legacy-only y la regla de atomicidad.
+- `CONTRATOS.md`: CT-4 matizado, sección 12.8 actualizada con checklist real (qué se propaga, qué no, y por qué), nota en `/api/portal-auth` y en `PATCH /portal-users/:id` sobre `profile_type` legacy-only.
+
+#### Lo que NO entra en este slice
+
+- **No se toca esquema de Neon** (no se añaden columnas, no se modifica schema; cualquier canonicalización de `profile_type` requiere autorización explícita futura).
+- No se cablean `syncClienteUpdate` ni `syncEngagementUpdate` como flujos autónomos (siguen como skeleton; reservados para endpoints `/api/clientes/:id` y `/api/engagements/:id` futuros).
+- No se cambia el storage de archivos (Drive sigue siendo backend; cambio diferido a paquete posterior ya documentado).
+- No se toca frontend, nginx, ni se reactiva al ejecutor 2.
+
 ## [2026-05-05] — Cierre operativo post-`v3.3.41` (sin bump)
 
 Entrada documental de cierre del paquete operativo ejecutado y validado tras absorber los 9 subpasos físicos de Fase 2. **No es una versión nueva**: no hay bump, no se toca runtime ni `server.js`, no se toca `domain-sync.js`, no se toca Neon, no se toca `prisma-consulting`, no se reactiva al ejecutor 2.

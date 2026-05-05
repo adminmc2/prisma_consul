@@ -120,7 +120,7 @@ Express monta tres routers bajo `/api`: `portal.js`, `apex.js`, `ai.js` (`server
 **Response 500:** `{ error: 'Error...' }`.
 **Side effects:** actualiza `last_login`; crea/asegura `drive_folder_id` en Drive vía service account; loggea actividad `'login'`.
 **Consumer:** SPA del Hub (`prisma-apex/index.html`, formulario login — entrypoint movido en subpaso 2.3 / `v3.3.33`).
-**Estado:** Frozen Sprint A. La response shape se conserva; los campos `current_phase`, `profile_type`, `apex_submission_id` se siguen devolviendo como hoy aunque internamente vivan en `engagements` (sincronización vía `domain-sync.js` — `MODELO-DOMINIO.md` sección 6.6).
+**Estado:** Frozen Sprint A. La response shape se conserva; los campos `current_phase`, `profile_type`, `apex_submission_id` se siguen devolviendo como hoy. Desde `v3.3.42`, el cableado de `domain-sync.js` refleja `current_phase` y `apex_submission_id` en `engagements`; `profile_type` queda **legacy-only** por decisión explícita (ver `MODELO-DOMINIO.md` §6.6 addendum y MD-4).
 
 ### 4.2 Portal — APEX results (1)
 
@@ -209,7 +209,7 @@ Express monta tres routers bajo `/api`: `portal.js`, `apex.js`, `ai.js` (`server
 **Response 404:** `{ error: 'Usuario no encontrado' }`.
 **Side effects:** loggea actividad `'user_updated'` con la lista de campos cambiados.
 **Consumer:** SPA del Hub, panel admin edición de usuario y panel "Fase del Proceso".
-**Estado:** Frozen Sprint A — **CONTRATO CRÍTICO**. Los campos `current_phase`, `profile_type`, `apex_submission_id` se siguen aceptando aquí; `domain-sync.js` propaga a `engagements`. Los campos empresariales se redirigen a `clientes`.
+**Estado:** Frozen Sprint A — **CONTRATO CRÍTICO**. Los campos `current_phase`, `profile_type`, `apex_submission_id` se siguen aceptando aquí. Desde `v3.3.42`: `current_phase`→`engagements.fase_legacy_id` y `apex_submission_id`→`engagements.submission_id` se propagan vía `domain-sync.js` cuando hay `active_engagement_id`; `profile_type` permanece **legacy-only** por decisión explícita de slice (ver `MODELO-DOMINIO.md` §6.6 addendum y MD-4 — la canonicalización a `engagements.vertical` requiere autorización futura). Los campos empresariales se reflejan en `clientes` cuando hay `cliente_id`. Sincronización atómica (transacción única).
 
 ### 4.6 Portal — Admin: Activity log (1)
 
@@ -367,7 +367,8 @@ last_login TIMESTAMPTZ
 
 **Frozen.** Columnas que reciben atención especial durante la transición:
 - `empresa`, `rfc`, `direccion`, `ciudad`, `cp`, `telefono`, `sector` → datos canónicos pasan a vivir en tabla `clientes` (fase 2). Aquí se conservan como legacy (`MODELO-DOMINIO.md` MD-2).
-- `current_phase`, `profile_type`, `apex_submission_id` → datos canónicos pasan a `engagements`. Aquí se conservan como legacy (`MODELO-DOMINIO.md` MD-3, MD-5).
+- `current_phase`, `apex_submission_id` → reflejo canónico en `engagements` (cableado en `v3.3.42` vía `domain-sync.js`). Aquí se conservan como legacy (`MODELO-DOMINIO.md` MD-3, MD-5).
+- `profile_type` → **legacy-only** en este cableado por decisión explícita de slice. La canonicalización a `engagements.vertical` requiere autorización futura (ver §6.6 addendum + MD-4 en `MODELO-DOMINIO.md`).
 - `role` → fuente de verdad efectiva durante Sprint A (`MODELO-DOMINIO.md` MD-8).
 
 **Columnas a añadir en fase 2** (todas nullable, no rompen):
@@ -656,7 +657,7 @@ Lista de "quién usa qué" para validar que cada cambio considera a todos los af
 | CT-1 | URLs públicas `/`, `/apex`, `/hub`, `/api/*`, `/aviso-legal*`, `/cookies*`, `/privacidad*`, `/css/*`, `/js/*`, `/images/*` **frozen durante Sprint A**. Ninguna se renombra. |
 | CT-2 | URLs de entregables ARMC `/portal/analisis/armc/...` **se sustituyen por `/publicados/armc/...` en fase 2** con redirect 301 indefinido desde la URL antigua. |
 | CT-3 | Los **17 endpoints API** (sección 4) **frozen durante Sprint A**: ningún endpoint se renombra ni cambia su shape de request/response. |
-| CT-4 | Los endpoints `/api/portal-profile` (PATCH) y `/api/portal-users/:id` (PATCH) son **CONTRATOS CRÍTICOS**: siguen aceptando los campos empresariales y de fase exactamente como hoy; la sincronización a `clientes` y `engagements` es transparente vía `domain-sync.js`. |
+| CT-4 | Los endpoints `/api/portal-profile` (PATCH) y `/api/portal-users/:id` (PATCH) son **CONTRATOS CRÍTICOS**: siguen aceptando los campos empresariales y de fase exactamente como hoy; la sincronización a `clientes` y `engagements` es transparente vía `domain-sync.js` (cableado `v3.3.42`, sincronización atómica). Excepción explícita: `profile_type` queda **legacy-only** en este cableado por decisión de slice (`MODELO-DOMINIO.md` §6.6 addendum + MD-4). |
 | CT-5 | Las **4 tablas BD** existentes (`portal_users`, `portal_files`, `portal_activity_log`, `apex_submissions`) son **frozen durante Sprint A**: solo se añaden tablas y columnas nuevas (aditivas). |
 | CT-6 | Las 5 tablas nuevas de fase 2 (`clientes`, `client_memberships`, `engagements`, `entrevistas`, `entregables`) son **aditivas**; ningún consumidor existente las depende. |
 | CT-7 | Las 3 constantes hardcodeadas que vivían en `portal/index.html` hasta `v3.2.45` (`ANALISIS_BASE_PATH`, `ANALISIS_DIAGNOSTICO_PATH`, `ANALISIS_BLUEPRINT_PATH`) **fueron reemplazadas por la capa de registro de rutas** (v3.2.46-47, `REGISTRO-RUTAS.md`): `ANALISIS_REGISTRY` + `getAnalysisPaths(cliente)` + consumers con optional chaining + guardia `if (!section.path)` en los 2 viewers. El registro vive ahora en `prisma-apex/index.html` (entrypoint del Hub desde el subpaso 2.3 / `v3.3.33`) con valores `/publicados/[cliente]/...` desde el subpaso 2.2 (`v3.3.31`). |
@@ -736,9 +737,13 @@ Estos son los tests manuales mínimos que **deben pasar** antes de aprobar el me
 
 ### 12.8 Sincronización (`domain-sync.js`)
 
-- [ ] PATCH a `portal_users.empresa` propaga a `clientes.nombre` (cuando `cliente_id` no es NULL).
-- [ ] PATCH a `portal_users.current_phase` propaga a `engagements.fase_legacy_id`.
-- [ ] PATCH a `clientes.nombre` (vía nuevo endpoint admin) propaga a `portal_users.empresa` de los usuarios pertenecientes.
+Cableado mínimo en `v3.3.42` (sincronización atómica vía `sql.transaction`):
+
+- [x] PATCH a `portal_users.empresa` propaga a `clientes.nombre` (cuando `cliente_id` no es NULL).
+- [x] PATCH a `portal_users.current_phase` propaga a `engagements.fase_legacy_id` (cuando `active_engagement_id` no es NULL).
+- [x] PATCH a `portal_users.apex_submission_id` propaga a `engagements.submission_id` (cuando `active_engagement_id` no es NULL).
+- [ ] PATCH a `portal_users.profile_type` **NO propaga** a `engagements.vertical` en este cableado. Decisión explícita de slice — la canonicalización requiere autorización futura (ver §6.6 addendum + MD-4 en `MODELO-DOMINIO.md`).
+- [ ] PATCH a `clientes.nombre` (vía nuevo endpoint admin) propaga a `portal_users.empresa` de los usuarios pertenecientes — pendiente, requiere endpoint nuevo (`syncClienteUpdate` sigue como skeleton).
 
 ---
 
