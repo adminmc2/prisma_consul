@@ -2,6 +2,49 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-05] — v3.3.41
+
+### Subpaso 2.9 de Fase 2 — exportar operación consultiva ARMC a `prisma-consulting`
+
+Noveno y último subpaso físico de Fase 2. Slice **estrecho** sobre carril repo: saca de este repo lo que `docs/PLAN-FASE2.md` clasificó como **operación consultiva cliente-específica**, dejándolo en `prisma-consulting`. Sin tocar runtime del producto, sin tocar `server.js`, rutas, frontend, `nginx`, Neon ni reactivar al ejecutor 2.
+
+#### Archivos exportados (7) — borrados de aquí, incorporados allá
+
+- `scripts/delete-armc-duplicates.js`   → `prisma-consulting/scripts/clientes/armc/delete-duplicates.js`
+- `scripts/list-armc-files.js`          → `prisma-consulting/scripts/clientes/armc/list-files.js`
+- `scripts/move-armc-patient-data.js`   → `prisma-consulting/scripts/clientes/armc/move-patient-data.js`
+- `scripts/rename-armc-files.js`        → `prisma-consulting/scripts/clientes/armc/rename-files.js`
+- `scripts/revert-armc-patient-data.js` → `prisma-consulting/scripts/clientes/armc/revert-patient-data.js`
+- `scripts/update-armc-doctypes.js`     → `prisma-consulting/scripts/clientes/armc/update-doctypes.js`
+- `docs/VALIDACION-CATALOGO-ARMC.md`    → `prisma-consulting/clientes/armc/VALIDACION-CATALOGO.md`
+
+`scripts/` queda vacío en este repo (git deja de rastrearlo). `pain-knowledge-base.js` y los 2 scripts de `server/scripts/` no se mueven (fuera de alcance per `docs/PLAN-FASE2.md`).
+
+#### Cross-reference
+
+- Commit espejo en `prisma-consulting` (rama `dev`): **`1e0ee7b8ccbe18361f5fc1e251b71b94659ab3ae`** — `feat: incorporar scripts y validación ARMC desde web-de-prisma (subpaso 2.9 Fase 2)`. Adapta paths mínimos (`.env` y resolución de deps) sin tocar lógica de negocio. Crea `package.json` con `@neondatabase/serverless` + `googleapis` y `package-lock.json`. Validado: `list-files.js` (solo lectura) corre desde `prisma-consulting` y devuelve los 63 archivos ARMC con su distribución por `doc_type`.
+
+#### Cambios documentales en este repo
+
+- `docs/NOMENCLATURA.md` (sección 12 "Referencias internas"): paths de `rename-armc-files.js` y `update-armc-doctypes.js` reapuntados a sus nuevas ubicaciones canónicas en `prisma-consulting/scripts/clientes/armc/...` con nota del subpaso 2.9 / `v3.3.41`.
+- `REVIEW-PRISMA-APEX.md`: registra 2.9 absorbido y cierra Fase 2 a nivel de subpasos físicos en `dev` (2.1 a 2.9 completos).
+- `CHANGELOG.md`: esta entrada.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este patch
+
+- No se ejecutan scripts destructivos como parte de la validación (solo `list-files.js`, lectura).
+- No se mueve `pain-knowledge-base.js` ni `server/scripts/` (fuera de alcance).
+- No se toca `main`, producción runtime, BD, `server.js`, rutas, middleware, frontend, `shared/`, `prisma-apex/clientes-publicados/` ni `nginx`.
+- No se reactiva al ejecutor 2.
+- No se replica la estructura Fase 2 a producción (paquete específico aparte).
+
 ## [2026-05-05] — v3.3.40
 
 ### Subpaso 2.8 de Fase 2 — refresh final de `CLAUDE.md` Directory Structure

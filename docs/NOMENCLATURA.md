@@ -430,8 +430,8 @@ Este orden es ideal para inspección visual y para pipelines que procesan el cor
 
 ## 12. Referencias internas
 
-- **Script de renombrado masivo**: [`scripts/rename-armc-files.js`](../scripts/rename-armc-files.js) — aplica la nomenclatura a archivos ya existentes en el Hub (Drive + BD).
-- **Script de doc_type**: [`scripts/update-armc-doctypes.js`](../scripts/update-armc-doctypes.js) — asigna la categoría correcta en el campo `doc_type` según el TIPODOC.
+- **Script de renombrado masivo**: `prisma-consulting/scripts/clientes/armc/rename-files.js` — aplica la nomenclatura a archivos ya existentes en el Hub (Drive + BD). Exportado a `prisma-consulting` en el subpaso 2.9 / `v3.3.41` por ser operación consultiva cliente-específica.
+- **Script de doc_type**: `prisma-consulting/scripts/clientes/armc/update-doctypes.js` — asigna la categoría correcta en el campo `doc_type` según el TIPODOC. Exportado a `prisma-consulting` en el subpaso 2.9 / `v3.3.41`.
 - **Código del Hub afectado**: [`prisma-apex/index.html`](../prisma-apex/index.html) líneas 1087-1119 (`DOC_TYPE_COLORS`, `DOC_TYPE_LABELS`, `DOC_TYPE_OPTIONS`).
 - **Endpoint de upload**: [`server/routes/portal.js`](../server/routes/portal.js) línea 223 (`POST /portal-upload`) — **pendiente** de reescribir para que genere automáticamente nombres según esta nomenclatura en vez del formato sistemático legacy (`{prefijoUsuario}_{NNN}.ext`).
 - **Memoria del proyecto**: `memory/project_nomenclatura_documentos.md` (referencia para conversaciones futuras con asistentes de IA).
