@@ -49,14 +49,14 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 
 - `MODELO-DOMINIO.md` v4 queda aprobado como primer entregable auditable de Fase 1.
 - `CONTRATOS.md`, `GLOSARIO.md`, `REGISTRO-RUTAS.md` y la implementación en `portal/index.html` quedan coherentes entre sí respecto al cierre del bloque A.
-- Fase 2 ya está iniciada. El baseline `v3.3.22` y el subpaso 2.1 no se reabren; el siguiente batch autorizado es 2.2.
+- Fase 2 en curso: subpasos 2.1 a 2.7 ya absorbidos en `origin/dev` (no se reabren). 2.6 cerrado en runtime sobre producción (`v3.3.38`); 2.7 (`server/lib/domain-sync.js`) cerrado como skeleton no invocado (`v3.3.39`). Siguiente slice pendiente de autorización: 2.8 (refresh `CLAUDE.md` Directory Structure final) o 2.9 (export de scripts ARMC a `prisma-consulting`).
 - El bloque B queda cerrado con **PASS**; el cierre efectivo queda documentado en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` con addendum de sesión humana y decisión Opción A aceptada por revisión.
 - El bloque C queda cerrado con **PASS**; `docs/PLAN-FASE2.md` queda aceptado como clasificación archivo por archivo + plan secuencial auditable de Fase 2.
 - El bloque D queda cerrado con **PASS**: la réplica Ecosistema ya quedó integrada de forma durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops`.
 - Fase 1 queda cerrada formalmente.
 - El endurecimiento posterior de credenciales GitHub, runbooks y posibles guardrails preventivos queda expresamente fuera de este cierre y no altera el dictamen de Fase 1.
 - `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md` queda como checklist base e historial del criterio original del bloque B; el resultado vigente de ejecución vive en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`.
-- La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) queda realineada a `origin/dev` (`0ef125e`) y pasa a ser la base oficial del carril repo sobre `dev`; cualquier WIP paralelo debe vivir fuera de esa superficie.
+- La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) es la **base oficial del carril repo** sobre `dev` y debe mantenerse alineada con `origin/dev` al cierre de cada slice; cualquier WIP paralelo debe vivir fuera de esa superficie.
 - Antes de movimientos físicos o cambios de serving, cada subpaso debe acompañarse de validación runtime específica sobre los contratos y sistemas que toque.
 - No hay discrepancia activa sobre el cierre de Fase 1 ni sobre el baseline operativo. El control vigente pasa a ser operar con dos superficies persistentes: carpeta principal = carril repo, worktree dedicado = carril contenido, integración serial y freeze por SHA aprobado cuando un subpaso estructural cruce un subtree activo del carril contenido.
 
