@@ -58,7 +58,11 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 - `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md` queda como checklist base e historial del criterio original del bloque B; el resultado vigente de ejecución vive en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`.
 - La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) es la **base oficial del carril repo** sobre `dev` y debe mantenerse alineada con `origin/dev` al cierre de cada slice; cualquier WIP paralelo debe vivir fuera de esa superficie.
 - Antes de movimientos físicos o cambios de serving, cada subpaso debe acompañarse de validación runtime específica sobre los contratos y sistemas que toque.
-- No hay discrepancia activa sobre el cierre de Fase 1 ni sobre el baseline operativo. El control vigente pasa a ser operar con dos superficies persistentes: carpeta principal = carril repo, worktree dedicado = carril contenido, integración serial y freeze por SHA aprobado cuando un subpaso estructural cruce un subtree activo del carril contenido.
+- No hay discrepancia activa sobre el cierre de Fase 1 ni sobre el baseline operativo.
+- A fecha 2026-05-05, se declara cerrado el objetivo técnico y operativo de la reorganización Sprint A del repo `web-de-prisma`.
+- La base actual queda considerada estable y funcional en su alcance vigente: web pública, Hub, discovery, serving, contratos visibles y paquete `v3.3.42` desplegado y validado en dev y producción.
+- Los abiertos remanentes dejan de tratarse como bloqueo de este cierre base y se reclasifican como trabajo posterior no bloqueante: reactivación del ejecutor 2, diseño detallado de Sprint B y decisiones operativas de negocio ARMC aún pendientes.
+- El control vigente pasa a ser operar con dos superficies persistentes: carpeta principal = carril repo, worktree dedicado = carril contenido, integración serial y freeze por SHA aprobado cuando un subpaso estructural cruce un subtree activo del carril contenido.
 
 ## 4. Realidad actual del repo y del sistema
 
@@ -653,6 +657,16 @@ El diferimiento que existió sobre la integración durable del bloque D queda **
 - Documentos actualizados: este `REVIEW-PRISMA-APEX.md`, `CHANGELOG.md`. Sin bump de versión visible.
 - Impacto en gates: no abre gates nuevos. `v3.3.42` queda cerrado en `origin/dev` y `origin/main`.
 - Próximo paso: reactivación del ejecutor 2, sujeta a autorización específica.
+
+### 2026-05-05 — Declaración formal de cierre técnico y operativo de Sprint A
+
+- Qué se revisó: la compatibilidad entre el estado real del sistema tras `v3.3.42` y la condición de cierre de la reorganización Sprint A.
+- Hallazgos: la base vigente queda estable y funcional en su alcance actual; los abiertos remanentes no bloquean el cierre de esta etapa y se reclasifican como trabajo posterior.
+- Decisiones cerradas afectadas: ninguna nueva ID; se formaliza el cierre global de la etapa Sprint A a partir de decisiones ya ejecutadas y validadas.
+- Decisiones abiertas afectadas: C06, C07 y C08 dejan de interpretarse como bloqueo del cierre base; permanecen abiertos como trabajo posterior no bloqueante. La reactivación del ejecutor 2 sigue como pendiente operativo separado.
+- Documentos actualizados: este `REVIEW-PRISMA-APEX.md` y `CHANGELOG.md`. Sin bump de versión visible.
+- Impacto en gates: no abre gates nuevos; la reorganización Sprint A deja de estar en estado abierto y pasa a estado estable.
+- Próximo paso: separar control vivo de histórico y definir la reactivación del ejecutor 2.
 
 ## 12. Plantilla de actualización para futuras revisiones
 

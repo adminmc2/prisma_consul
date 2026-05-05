@@ -2,6 +2,16 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-05] — Declaración formal de cierre de Sprint A (sin bump)
+
+### Cierre de etapa y reclasificación de pendientes
+
+Se declara cerrado el objetivo técnico y operativo de la reorganización Sprint A del repo `web-de-prisma`.
+
+- La base actual queda considerada estable y funcional en su alcance vigente: web pública, Hub, discovery, serving, contratos visibles y paquete `v3.3.42` validado en dev y producción.
+- Los pendientes remanentes se reclasifican como trabajo posterior no bloqueante del cierre base: reactivación del ejecutor 2, diseño detallado de Sprint B y decisiones operativas de negocio ARMC.
+- Sin cambio de versión visible.
+
 ## [2026-05-05] — Cierre operativo post-v3.3.42 (sin bump)
 
 ### Cierre del paquete `v3.3.42`: push, deploy DEV, higiene checkout PROD, promoción main + deploy PROD
