@@ -1,5 +1,7 @@
 # Runbook del ejecutor para Variante B del subpaso 2.1
 
+> **Documento histórico — Sprint A.** Trabajo ya ejecutado o decisión ya cerrada. Cierre formal de Sprint A: 2026-05-05. Movido a `docs/historico/sprint-a/` en el slice de consolidación post-Sprint A. Las referencias internas reflejan el estado en el momento de redacción y no se actualizan al nuevo path.
+
 **Fecha:** 2026-05-02
 **Estado:** vigente
 **Objetivo:** ejecutar el subpaso 2.1 usando la **Variante B**: cambiar el `root` global del site de `dev` para que la web publica salga desde `/web/`, manteniendo excepciones explicitas para las superficies que no se han movido.

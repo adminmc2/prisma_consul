@@ -1,5 +1,7 @@
 # Plan archivo a archivo de Fase 2
 
+> **Documento histórico — Sprint A.** Trabajo ya ejecutado o decisión ya cerrada. Cierre formal de Sprint A: 2026-05-05. Movido a `docs/historico/sprint-a/` en el slice de consolidación post-Sprint A. Las referencias internas reflejan el estado en el momento de redacción y no se actualizan al nuevo path.
+
 **Fecha:** 2026-04-29
 **Versión del repo a la que aplica:** desde commit `d10b4ff` (`v3.3.3`) hacia adelante.
 **Cierra el bloque C de Fase 1.** Combina (1) clasificación archivo por archivo y (2) plan secuencial de movimientos físicos, en un único documento auditable.

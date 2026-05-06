@@ -251,7 +251,7 @@ ssh prisma@212.227.251.125 "cd ~/web-de-prisma-dev && git pull origin dev && pm2
 
 ### Coordinación Operativa Antes De Fase 2
 
-- Tras el baseline `v3.3.22`, la coordinación `main`/`dev` previa a Fase 2 quedó cerrada. Cualquier nuevo arranque de Fase 2 o release intermedio opera desde ramas/worktrees limpios y bajo el modo de dos carriles; el historial de esa coordinación vive en `docs/PLAN-COORDINACION-PRE-FASE2.md`.
+- Tras el baseline `v3.3.22`, la coordinación `main`/`dev` previa a Fase 2 quedó cerrada. Cualquier nuevo arranque de Fase 2 o release intermedio opera desde ramas/worktrees limpios y bajo el modo de dos carriles; el historial de esa coordinación vive en `docs/historico/sprint-a/PLAN-COORDINACION-PRE-FASE2.md`.
 - Si por urgencia se publica algo directo en `main`, el siguiente paso obligatorio es reconciliar ese cambio en `dev` antes de nuevos cambios estructurales o documentales relevantes.
 - Solo un agente escritor a la vez en este repo. El revisor puede actualizar `REVIEW-PRISMA-APEX.md`, pero no debe coexistir con otro agente ejecutando cambios en paralelo sin handoff explícito.
 - Nunca usar credenciales en URLs Git o comandos shell (`https://user:token@...`, `https://oauth2:...`, `x-access-token:`). Método autorizado: `gh auth login` + `gh auth setup-git`.

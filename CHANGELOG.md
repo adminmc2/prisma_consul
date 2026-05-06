@@ -2,6 +2,45 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-05] — Consolidación documental post-Sprint A: archivado a `docs/historico/sprint-a/` (sin bump)
+
+### Movimiento físico de documentación de coordinación, Variante B y validación a histórico
+
+Tras la declaración formal de cierre de Sprint A (entrada inmediatamente posterior), se consolida la documentación ya ejecutada moviéndola físicamente al subdirectorio `docs/historico/sprint-a/` con marca visible al inicio de cada archivo. **Slice estrictamente documental**: sin tocar código, runtime, PM2, nginx ni BD; sin bump de versión visible.
+
+#### Archivados a `docs/historico/sprint-a/`
+
+- `docs/PLAN-COORDINACION-PRE-FASE2.md` → `docs/historico/sprint-a/PLAN-COORDINACION-PRE-FASE2.md`
+- `docs/PLAN-FASE2.md` → `docs/historico/sprint-a/PLAN-FASE2.md`
+- `docs/ANALISIS-ALTERNATIVAS-INFRA-SUBPASO-2.1.md` → `docs/historico/sprint-a/ANALISIS-ALTERNATIVAS-INFRA-SUBPASO-2.1.md`
+- `docs/RUNBOOK-EJECUTOR-VARIANTE-B-SUBPASO-2.1.md` → `docs/historico/sprint-a/RUNBOOK-EJECUTOR-VARIANTE-B-SUBPASO-2.1.md`
+- `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md` → `docs/historico/sprint-a/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md`
+- `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` → `docs/historico/sprint-a/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`
+
+Cada uno lleva ahora un banner explícito al inicio que lo identifica como documento histórico de Sprint A, indicando que las referencias internas reflejan el estado en el momento de redacción y no se actualizan al nuevo path.
+
+#### Cambios en raíz
+
+- `REVIEW-PRISMA-APEX.md`: pasa a **bitácora cerrada / no panel vivo**. Se añade banner bajo el título declarando el cierre, una línea bajo §3 que congela el estado global, y una nota de "Cierre de uso operativo" al final de §13. Las secciones 7 y 9 quedan intactas y congeladas en su estado de cierre — limpieza fina diferida a un slice posterior. Las tres referencias vivas del dictamen apuntan al nuevo path; las referencias de la bitácora histórica quedan como están (registro del momento).
+- `CLAUDE.md`: una sola referencia viva actualizada — `docs/PLAN-COORDINACION-PRE-FASE2.md` → `docs/historico/sprint-a/PLAN-COORDINACION-PRE-FASE2.md`.
+- `CHANGELOG.md`: entrada nueva (esta) separada del cierre operativo post-`v3.3.42`. Las entradas históricas previas no se reescriben — describen el estado en el momento de redacción.
+
+#### Nuevo
+
+- `docs/historico/README.md`: índice del histórico con enlaces internos al subdirectorio `sprint-a/` y nota explícita de que estos documentos no dirigen trabajo en curso.
+
+#### Lo que NO entra en este slice
+
+- No se mueven los documentos permanentes vivos en raíz: `CLAUDE.md`, `MODELO-DOMINIO.md`, `CONTRATOS.md`, `GLOSARIO.md`, `ECOSISTEMA.md`, `NOMENCLATURA.md`, `GUIA-NUEVAS-SECCIONES.md`.
+- No se abre Sprint B.
+- No se rediseña storage ni arquitectura.
+- No se reactiva al ejecutor 2 — queda fijado como **siguiente paso autorizado** pero sin ejecutar dentro de este slice.
+- No se hace limpieza masiva de §7 ni §9 de `REVIEW-PRISMA-APEX.md` — basta el banner de cierre.
+
+#### Pendiente único restante
+
+- Reactivación del ejecutor 2, sujeta a autorización específica.
+
 ## [2026-05-05] — Declaración formal de cierre de Sprint A (sin bump)
 
 ### Cierre de etapa y reclasificación de pendientes

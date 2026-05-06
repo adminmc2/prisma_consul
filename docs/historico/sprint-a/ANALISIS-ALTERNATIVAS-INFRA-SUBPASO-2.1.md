@@ -1,5 +1,7 @@
 # Analisis de alternativas para destrabar el subpaso 2.1
 
+> **Documento histórico — Sprint A.** Trabajo ya ejecutado o decisión ya cerrada. Cierre formal de Sprint A: 2026-05-05. Movido a `docs/historico/sprint-a/` en el slice de consolidación post-Sprint A. Las referencias internas reflejan el estado en el momento de redacción y no se actualizan al nuevo path.
+
 **Fecha:** 2026-05-02
 **Estado:** analisis comparativo cerrado a nivel de decision. La **Variante B** fue seleccionada por el revisor/usuario como camino operativo para retomar 2.1.
 **Contexto:** el intento del subpaso 2.1 (`077c56f`) fue correcto en Git y en Express, pero fallo en `dev.prismaconsul.com` porque nginx sirve los estaticos antes de que la peticion llegue a Express.

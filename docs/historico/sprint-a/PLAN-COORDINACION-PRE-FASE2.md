@@ -1,5 +1,7 @@
 # Plan de Coordinacion Pre-Fase 2
 
+> **Documento histórico — Sprint A.** Trabajo ya ejecutado o decisión ya cerrada. Cierre formal de Sprint A: 2026-05-05. Movido a `docs/historico/sprint-a/` en el slice de consolidación post-Sprint A. Las referencias internas reflejan el estado en el momento de redacción y no se actualizan al nuevo path.
+
 > **Estado: CERRADO en `v3.3.22` (2026-05-01).**
 >
 > Este documento queda como historial del proceso de coordinación pre-Fase 2. Todos los problemas operativos descritos (E01, E02, E03) fueron absorbidos en el merge `65c1301` (reconciliación Git `main` → `dev`) y cerrados estructuralmente con la promoción a `main` y el despliegue a producción del baseline `v3.3.22`. C11 del review queda cerrado. No es un plan vivo.

@@ -1,5 +1,7 @@
 # Validación del bloque B — registro de rutas ARMC
 
+> **Documento histórico — Sprint A.** Trabajo ya ejecutado o decisión ya cerrada. Cierre formal de Sprint A: 2026-05-05. Movido a `docs/historico/sprint-a/` en el slice de consolidación post-Sprint A. Las referencias internas reflejan el estado en el momento de redacción y no se actualizan al nuevo path.
+
 **Destinatario:** ejecutor del bloque B  
 **Remitente:** revisor  
 **Fecha:** 2026-04-29  

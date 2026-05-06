@@ -1,5 +1,7 @@
 # Review Prisma APEX
 
+> **Estado: bitácora cerrada — Sprint A finalizado el 2026-05-05.** Este documento queda como registro histórico de la reorganización Sprint A. **No es un panel operativo vivo** y no debe usarse para dirigir trabajo en curso. El control vivo del proyecto vive en los documentos permanentes de la raíz (`CLAUDE.md`, `MODELO-DOMINIO.md`, `CONTRATOS.md`, `GLOSARIO.md`, `ECOSISTEMA.md`). Las secciones 7 y 9 quedan congeladas en su estado de cierre y no se actualizarán dentro de este slice; cualquier limpieza fina queda fuera de alcance.
+
 Documento vivo de revisión de la reorganización de Prisma APEX.
 
 Este archivo centraliza:
@@ -37,6 +39,8 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 
 ## 3. Estado global actual
 
+> Sprint A cerrado el 2026-05-05. Esta sección queda congelada en su estado de cierre.
+
 | Campo | Estado actual |
 |---|---|
 | Proyecto | Reorganización de Prisma APEX |
@@ -50,12 +54,12 @@ Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico par
 - `MODELO-DOMINIO.md` v4 queda aprobado como primer entregable auditable de Fase 1.
 - `CONTRATOS.md`, `GLOSARIO.md`, `REGISTRO-RUTAS.md` y la implementación en `portal/index.html` quedan coherentes entre sí respecto al cierre del bloque A.
 - Fase 2 con los 9 subpasos físicos absorbidos en `origin/dev` y promovidos a `origin/main` por fast-forward el 2026-05-05 (no se reabren): 2.1 a 2.5 estructurales (`v3.3.28`–`v3.3.37`), 2.6 migración aditiva de BD validada en runtime sobre producción (`v3.3.38`), 2.7 helper `server/lib/domain-sync.js` skeleton no invocado (`v3.3.39`), 2.8 refresh final de `CLAUDE.md` Directory Structure (`v3.3.40`), 2.9 export de operación consultiva ARMC a `prisma-consulting` (`v3.3.41`, commit espejo `1e0ee7b` + corrección de paths/comandos en `efaf977` sobre `prisma-consulting/dev`). Producción sirviendo `v3.3.42`; nginx de producción alineado con Variante B (replicado de dev); micro-paquete nginx `404/410 text/plain` aplicado en dev y prod (`@plain404` named location, `/apex/fonts/*` con `410 text/plain`, misses bajo `/apex` y `/hub` con `404 text/plain`), validado en origen y públicamente; higiene operativa del checkout `~/web-de-prisma-dev` del VPS cerrada (realineado a `b61d00f` en el cierre post-`v3.3.41`; actualizado a `f7d335d4` / `origin/dev` tras deploy DEV de `v3.3.42`, status limpio, vestigio `images/datos.mp4` eliminado, ruta canónica `/images/videos/datos.mp4` operativa, ruta vestigial `/images/datos.mp4` devuelve 404). Cableado mínimo de `domain-sync.js` ejecutado y promovido a `origin/main` (`v3.3.42`; SHA `f7d335d4`) con sincronización atómica y `profile_type` legacy-only por decisión explícita. `prismaconsul.com` y `/hub` validados públicamente en `v3.3.42`. Higiene checkout PROD (`~/web-de-prisma`) cerrada. Pendiente operativo vigente: reactivación del ejecutor 2.
-- El bloque B queda cerrado con **PASS**; el cierre efectivo queda documentado en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` con addendum de sesión humana y decisión Opción A aceptada por revisión.
-- El bloque C queda cerrado con **PASS**; `docs/PLAN-FASE2.md` queda aceptado como clasificación archivo por archivo + plan secuencial auditable de Fase 2.
+- El bloque B queda cerrado con **PASS**; el cierre efectivo queda documentado en `docs/historico/sprint-a/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md` con addendum de sesión humana y decisión Opción A aceptada por revisión.
+- El bloque C queda cerrado con **PASS**; `docs/historico/sprint-a/PLAN-FASE2.md` queda aceptado como clasificación archivo por archivo + plan secuencial auditable de Fase 2.
 - El bloque D queda cerrado con **PASS**: la réplica Ecosistema ya quedó integrada de forma durable en `above-pharma`, `apex-agents`, `prisma-consulting` y `prisma-server-ops`.
 - Fase 1 queda cerrada formalmente.
 - El endurecimiento posterior de credenciales GitHub, runbooks y posibles guardrails preventivos queda expresamente fuera de este cierre y no altera el dictamen de Fase 1.
-- `docs/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md` queda como checklist base e historial del criterio original del bloque B; el resultado vigente de ejecución vive en `docs/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`.
+- `docs/historico/sprint-a/VALIDACION-BLOQUE-B-REGISTRO-RUTAS.md` queda como checklist base e historial del criterio original del bloque B; el resultado vigente de ejecución vive en `docs/historico/sprint-a/REPORTE-BLOQUE-B-REGISTRO-RUTAS.md`.
 - La carpeta principal del usuario (`/Users/armandocruz/Documents/PRISMA CONSUL/PHARMA/web-de-prisma`) es la **base oficial del carril repo** sobre `dev` y debe mantenerse alineada con `origin/dev` al cierre de cada slice; cualquier WIP paralelo debe vivir fuera de esa superficie.
 - Antes de movimientos físicos o cambios de serving, cada subpaso debe acompañarse de validación runtime específica sobre los contratos y sistemas que toque.
 - No hay discrepancia activa sobre el cierre de Fase 1 ni sobre el baseline operativo.
@@ -692,3 +696,5 @@ Este archivo se elimina cuando se cumplan estas condiciones:
 2. La reorganización haya terminado o pasado a estado estable.
 3. No existan gates de fase abiertos que dependan de esta bitácora.
 4. La bitácora ya no aporte información que no viva en otro documento oficial.
+
+**Cierre de uso operativo (2026-05-05).** Con el cierre formal de Sprint A, este documento deja de actuar como panel operativo vivo y queda como bitácora histórica. Nuevos cambios al proyecto se documentan en `CHANGELOG.md` y en los documentos permanentes de la raíz; este archivo solo se modifica para correcciones puntuales o anotaciones históricas. La eliminación efectiva queda diferida a un slice posterior cuando se cumplan las cuatro condiciones anteriores.
