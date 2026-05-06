@@ -27,6 +27,14 @@ Cada commit absorbido conserva el footer `(cherry picked from commit …)` apunt
 - `CLAUDE.md` (campo "Versión actual")
 - `CHANGELOG.md` (esta cabecera)
 
+#### Cierre operativo
+
+- **Push a `origin/dev`:** SHA local `cce789e5f7df1ca106f39b438a6c00210ce2aacc` publicado (`2549695..cce789e`).
+- **Deploy DEV validado:** `~/web-de-prisma-dev` actualizado a `cce789e`; `prisma-dev` reiniciado; `dev.prismaconsul.com/` y `/hub` sirven `v3.3.43`; blueprint canónico `https://dev.prismaconsul.com/publicados/armc/blueprint/modelo-datos.html` accesible (HTTP 200).
+- **Promoción fast-forward `dev` → `main`:** `main` y `origin/main` promovidos a `cce789e` (`2549695..cce789e`). Carpeta principal local devuelta a `dev` limpia.
+- **Deploy PROD validado:** `~/web-de-prisma` del VPS actualizado a `cce789e`; `prisma-consul` reiniciado; `prismaconsul.com/` y `prismaconsul.com/hub` sirven `v3.3.43`; blueprint canónico `https://prismaconsul.com/publicados/armc/blueprint/modelo-datos.html` accesible (HTTP 200) con `Last-Modified: Wed, 06 May 2026 09:53:15 GMT` (timestamp del cherry-pick reciente). Marcadores `Paciente`/`Documento`/`Señal de Inacción` presentes (27 ocurrencias). `prisma-dev` y nginx no tocados.
+- **SHA final en producción:** `cce789e5f7df1ca106f39b438a6c00210ce2aacc`. Cuatro refs (`dev`, `origin/dev`, `main`, `origin/main`) y `HEAD` PROD alineados.
+
 #### Lo que NO entra en este slice
 
 - Sin tocar backend, BD, PM2 ni nginx.

@@ -297,7 +297,7 @@ El mismo VPS sirve **dos entornos**:
 ### Desarrollo — `dev.prismaconsul.com` + `dev.prismaconsul.com/hub`
 
 - **Código:** `/home/prisma/web-de-prisma-dev/` (rama `dev`)
-- **Proceso PM2:** `prisma-dev` (id 3) — Express en puerto 3001
+- **Proceso PM2:** `prisma-dev` (id 1) — Express en puerto 3001
 - **Config PM2:** `/home/prisma/ecosystem-dev.config.js` (apps → prisma-dev, script → /home/prisma/web-de-prisma-dev/server/server.js, cwd → /home/prisma/web-de-prisma-dev, env.PORT → 3001)
 - **Nginx:** bloque dedicado en `/etc/nginx/sites-enabled/prisma-dev` con `server_name dev.prismaconsul.com`
 - **Despliegue:** `ssh prisma@212.227.251.125 "cd ~/web-de-prisma-dev && git pull origin dev && pm2 restart prisma-dev"`
