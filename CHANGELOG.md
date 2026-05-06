@@ -2,6 +2,39 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-06] — v3.3.43
+
+### Absorción canónica del primer port de contenido del carril 2 (modelo de datos ARMC)
+
+Primer paquete operativo de absorción de contenido tras el cierre de Sprint A. Cherry-pick lineal con trazabilidad `-x` de tres SHAs emitidos por el carril contenido sobre la nueva base canónica (`chore/fase2-contenido-base-v3.3.42`, abierta en el slice anterior). Todos tocan únicamente el archivo canónico vivo `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`. **Sin tocar backend, BD, nginx ni PM2.** Cambio puramente de contenido del modelo de datos ARMC; contratos visibles intactos.
+
+#### Commits absorbidos (cherry-pick `-x`)
+
+- `1cac771` → `6029b29`: `content(modelo-datos/Paciente): tipar 6 campos como selección explícita`
+- `fe9c3d1` → `a91c6a5`: `content(modelo-datos/Documento): tipar Tipo y Estado + promover FK Procedimiento`
+- `e38c020` → `6e2a9cd`: `content(modelo-datos/Señal de Inacción): tipar Tipo / Estado / Canal respuesta como selección explícita`
+
+Diff total: 1 archivo, +10 / -10 líneas en `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`.
+
+#### Trazabilidad
+
+Cada commit absorbido conserva el footer `(cherry picked from commit …)` apuntando al SHA original del carril contenido. La rama de origen `chore/fase2-contenido-base-v3.3.42` queda respaldada en `origin` como referencia auditable.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este slice
+
+- Sin tocar backend, BD, PM2 ni nginx.
+- Sin abrir slices de limpieza documental stale post-Fase-2 (MODELO-DOMINIO, CONTRATOS, REGISTRO-RUTAS) — pendientes para slice posterior.
+- Sin borrar ramas locales: la rama vieja del carril contenido (`chore/fase2-contenido-base-v3.3.24`) ni las 9 ramas locales `chore/*` ya absorbidas hace tiempo en `dev`/`main`; todas quedan pendientes para un slice diferido de limpieza de ramas.
+- Sin tocar el worktree huérfano `web-de-prisma-coordinacion.0tTOVc`.
+- Sin reactivar al ejecutor 2 — sigue como pendiente operativo separado.
+
 ## [2026-05-05] — Consolidación documental post-Sprint A: archivado a `docs/historico/sprint-a/` (sin bump)
 
 ### Movimiento físico de documentación de coordinación, Variante B y validación a histórico
