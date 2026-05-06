@@ -85,7 +85,7 @@
 
         <!-- ── USUARIO ── -->
         <div class="stg stg-user">Usuario &mdash; registro (~114 campos)</div>
-        <div class="note"><strong><i class="ph ph-lock-key-open"></i> ZONA EDITABLE LIBREMENTE.</strong> Mientras el paciente no haya firmado la Evaluaci&oacute;n M&eacute;dica, todos estos datos (perfil, contacto y antecedentes) son modificables por el propio paciente sin firma adicional. Cada cambio queda en audit log.</div>
+        <div class="note"><strong><i class="ph ph-lock-key-open"></i> ZONA EDITABLE &mdash; antes de la firma de evaluaci&oacute;n.</strong> Mientras el paciente no haya firmado su primera Evaluaci&oacute;n M&eacute;dica con el m&eacute;dico, todos estos datos (perfil, contacto y antecedentes) son modificables por &eacute;l mismo sin firma adicional. Cada cambio queda en audit log. <strong>Tras la firma de evaluaci&oacute;n, los antecedentes quedan inmovilizados</strong> y solo se modifican v&iacute;a addendum con doble firma m&eacute;dico + paciente; los datos administrativos (contacto, domicilio) siguen siempre editables.</div>
 
         <div class="ftsub">Obligatorios al registrarse (~27)</div>
         <div class="fl">
@@ -239,7 +239,7 @@
 
         <!-- ── PACIENTE — evaluación médica ── -->
         <div class="stg stg-pac">Paciente &mdash; evaluaci&oacute;n m&eacute;dica (~74 campos)</div>
-        <div class="note warn"><strong><i class="ph ph-signature"></i> ZONA QUE SE FIRMA Y SE BLOQUEA.</strong> Estos datos los completa el m&eacute;dico durante la evaluaci&oacute;n y se cierran con la doble firma (m&eacute;dico + paciente) al final del bloque. Tras la firma, modificar cualquier dato cl&iacute;nico de la HC requiere addendum con misma doble firma. Los datos administrativos siguen editables aparte.</div>
+        <div class="note warn"><strong><i class="ph ph-signature"></i> ZONA QUE SE COMPLETA EL D&Iacute;A DE LA EVALUACI&Oacute;N.</strong> Estos datos los registra el m&eacute;dico durante la consulta. La doble firma (m&eacute;dico + paciente) al final de este bloque <strong>no solo bloquea estos datos: dispara tambi&eacute;n la inmovilizaci&oacute;n de TODO el contenido m&eacute;dico del expediente</strong>, incluidos los Antecedentes (Heredofamiliares, No patol&oacute;gicos, Gineco-obst&eacute;tricos, Personales patol&oacute;gicos &mdash; con enfermedades previas, alergias, medicamentos, etc.) que el paciente hab&iacute;a completado previamente en el bloque &lsquo;Usuario &mdash; registro&rsquo;. Despu&eacute;s de la firma, cualquier modificaci&oacute;n en datos m&eacute;dicos requiere addendum con misma doble firma. Los datos administrativos (contacto, domicilio) siguen editables siempre por el paciente sin firma.</div>
 
         <div class="ftsub">Evaluaci&oacute;n especializada (screenings por edad)</div>
         <div class="fl">
