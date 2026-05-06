@@ -2,6 +2,33 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-07] — v3.3.45
+
+### Patch correctivo de coherencia en modelo-datos.html (total de campos + redacción de captura de fotos)
+
+Micro-slice de carril repo. **Sin reabrir Paciente para más modelado**; cierra incoherencias arrastradas tras la absorción del segundo bloque (`v3.3.44`).
+
+#### Correcciones
+
+- `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html` línea 46 (cabecera del documento, contador "Campos definidos"): `260` → `313`.
+- `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html` línea 812 (nota de cierre): `Documento de referencia — 260 campos en 10 entidades` → `Documento de referencia — 313 campos en 10 entidades`.
+- `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html` línea 256 (campo "Fotos iniciales estandarizadas" de Paciente): se sustituye la coletilla fuerte de fotos por una redacción suavizada que separa flujo clínico (no depende de copias permanentes en galería o dispositivo personal) de detalles de persistencia local temporal (dependientes de la plataforma de captura). Mantiene la referencia a la sección "Captura de fotografías clínicas".
+
+El total `313` resulta del conteo actual de las 10 entidades: Paciente 215, Cita 18, Procedimiento 13, Inventario 10, Comunicación 11, Documento 9, Señal de Inacción 8, Protocolo de Revisión 11, Log de Auditoría 9, Evaluación Clínica 9.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este slice
+
+- Sin tocar backend, BD, PM2 ni nginx.
+- Sin reabrir el bloque Paciente para añadir/quitar/modificar campos; este slice cierra incoherencias, no modela.
+- Sin promoción a `main` en este slice — solo publicación a `dev`.
+
 ## [2026-05-06] — v3.3.44
 
 ### Absorción del segundo bloque de contenido del carril 2 (modelo de datos ARMC, expansión Paciente + Protocolo Revisión + Bloqueo HC)
