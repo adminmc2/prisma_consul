@@ -516,12 +516,12 @@
         <div class="fl">
           <div class="f"><span class="fn">ID Se&ntilde;al</span><span class="fy">auto (PK)</span><span class="fo">&mdash; Identificador &uacute;nico</span></div>
           <div class="f"><span class="fn">Paciente</span><span class="fy">FK &rarr; Paciente</span><span class="fo">&mdash; A qui&eacute;n pertenece</span></div>
-          <div class="f"><span class="fn">Tipo se&ntilde;al</span><span class="fy">enum (S1&ndash;S8)</span><span class="fo">&mdash; Cu&aacute;l se&ntilde;al se activ&oacute;</span></div>
+          <div class="f"><span class="fn">Tipo se&ntilde;al</span><span class="fy">selecci&oacute;n: S1 no agenda post-evaluaci&oacute;n / S2 no confirma cita / S3 no completa formulario / S4 no asiste a revisi&oacute;n / S5 no responde mensaje / S6 no abre newsletters / S7 no agenda siguiente / S8 no accede a la app</span><span class="fo">&mdash; Cu&aacute;l se&ntilde;al se activ&oacute;. Definiciones, umbrales y respuestas en automatizaciones.html</span></div>
           <div class="f"><span class="fn">Fecha activaci&oacute;n</span><span class="fy">fecha auto</span><span class="fo">&mdash; Cu&aacute;ndo se detect&oacute; la inacci&oacute;n</span></div>
           <div class="f"><span class="fn">Fecha resoluci&oacute;n</span><span class="fy">fecha</span><span class="fo">&mdash; Null si sigue activa</span></div>
-          <div class="f"><span class="fn">Estado</span><span class="fy">enum: activa / resuelta</span><span class="fo">&mdash; Default: activa</span></div>
+          <div class="f"><span class="fn">Estado</span><span class="fy">selecci&oacute;n: activa / resuelta</span><span class="fo">&mdash; Default: activa</span></div>
           <div class="f"><span class="fn">Respuesta ejecutada</span><span class="fy">texto</span><span class="fo">&mdash; Qu&eacute; acci&oacute;n tom&oacute; el sistema o equipo</span></div>
-          <div class="f"><span class="fn">Canal respuesta</span><span class="fy">enum</span><span class="fo">&mdash; WhatsApp / email / llamada / push / presencial</span></div>
+          <div class="f"><span class="fn">Canal respuesta</span><span class="fy">selecci&oacute;n: WhatsApp / email / llamada / push / presencial</span></div>
         </div>
         <div class="rl">
           <div class="r"><i class="ph ph-arrow-left"></i> Pertenece a <strong>Paciente</strong> (tiene muchas)</div>
