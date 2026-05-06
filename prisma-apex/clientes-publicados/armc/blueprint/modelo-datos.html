@@ -84,7 +84,7 @@
         <div class="note">No se abre HC. Solo ficha de contacto. Sin cuenta en sistema. Tambi&eacute;n se registran (si se obtienen del chat): nombre, fuente de captaci&oacute;n, motivo de consulta, fecha primer contacto. Opcionales en etapa Lead &mdash; se confirman al registrarse como Usuario.</div>
 
         <!-- ── USUARIO ── -->
-        <div class="stg stg-user">Usuario &mdash; registro (~97 campos)</div>
+        <div class="stg stg-user">Usuario &mdash; registro (~108 campos)</div>
 
         <div class="ftsub">Obligatorios al registrarse (~27)</div>
         <div class="fl">
@@ -127,7 +127,7 @@
           <div class="f"><span class="fn">Solo comunicaciones cl&iacute;nicas</span><span class="fy">check</span><span class="fo">&mdash; Derecho de Oposici&oacute;n ARCO. Activado = el paciente recibe &uacute;nicamente comunicaciones cl&iacute;nicas (citas, recordatorios, resultados, seguimiento). Se excluyen newsletters, promociones y campa&ntilde;as. Editable en cualquier momento</span></div>
         </div>
 
-        <div class="ftsub">Antecedentes &mdash; opcionales al registro, obligatorios pre-evaluaci&oacute;n (~64 campos)</div>
+        <div class="ftsub">Antecedentes &mdash; opcionales al registro, obligatorios pre-evaluaci&oacute;n (~75 campos)</div>
         <div class="note">Tipados como selecci&oacute;n / checkbox / num&eacute;rico / fecha siempre que el dato sea cl&iacute;nicamente cerrado. Texto libre solo en agentes espec&iacute;ficos, descripciones y campos &ldquo;otra&rdquo;. Habilita contraindicaciones autom&aacute;ticas, c&aacute;lculo de escalas (Charlson) y b&uacute;squedas estructuradas.</div>
 
         <div class="ftsub">Secci&oacute;n 3 &mdash; Heredofamiliares (matriz 8 &times; 6)</div>
@@ -137,11 +137,13 @@
           <div class="f"><span class="fn">Detalle por celda activada</span><span class="fy">texto opcional</span><span class="fo">&mdash; ej: &ldquo;diabetes tipo 2 desde los 50&rdquo;</span></div>
         </div>
 
-        <div class="ftsub">Secci&oacute;n 4 &mdash; Personales no patol&oacute;gicos (~24 campos)</div>
+        <div class="ftsub">Secci&oacute;n 4 &mdash; Personales no patol&oacute;gicos (~32 campos)</div>
         <div class="fl">
           <div class="f"><span class="fn">Vivienda &mdash; tipo</span><span class="fy">selecci&oacute;n: propia / rentada / familiar / otra</span></div>
           <div class="f"><span class="fn">Vivienda &mdash; construcci&oacute;n</span><span class="fy">selecci&oacute;n: casa / departamento / cuarto / otra</span></div>
+          <div class="f"><span class="fn">Vivienda &mdash; nivel socioecon&oacute;mico</span><span class="fy">selecci&oacute;n: bajo / medio / alto</span><span class="fo">&mdash; presente en HC papel ARMC</span></div>
           <div class="f"><span class="fn">Vivienda &mdash; servicios</span><span class="fy">checkbox m&uacute;ltiple: agua / luz / drenaje / gas / internet</span></div>
+          <div class="f"><span class="fn">Vivienda &mdash; n&uacute;mero de cuartos</span><span class="fy">n&uacute;mero</span><span class="fo">&mdash; presente en HC papel ARMC. Independiente de habitantes</span></div>
           <div class="f"><span class="fn">Vivienda &mdash; habitantes</span><span class="fy">n&uacute;mero</span></div>
           <div class="f"><span class="fn">Convive con animales</span><span class="fy">selecci&oacute;n s&iacute; / no</span><span class="fo">&mdash; si s&iacute;: detalle (texto)</span></div>
           <div class="f"><span class="fn">Higiene &mdash; ba&ntilde;o</span><span class="fy">selecci&oacute;n: diario / cada 2 d&iacute;as / 1-2 por semana / variable</span></div>
@@ -156,12 +158,19 @@
           <div class="f"><span class="fn">Drogas &mdash; tipo</span><span class="fy">texto (condicional s&iacute;)</span></div>
           <div class="f"><span class="fn">Drogas &mdash; frecuencia</span><span class="fy">selecci&oacute;n condicional: ocasional / semanal / diaria</span></div>
           <div class="f"><span class="fn">Cafe&iacute;na</span><span class="fy">n&uacute;mero (tazas/d&iacute;a)</span></div>
+          <div class="f"><span class="fn">Alimentaci&oacute;n &mdash; adecuada en cantidad y calidad</span><span class="fy">selecci&oacute;n s&iacute; / no</span><span class="fo">&mdash; presente en HC papel ARMC</span></div>
+          <div class="f"><span class="fn">Alimentaci&oacute;n &mdash; especificaciones</span><span class="fy">texto (condicional &ldquo;no&rdquo;)</span></div>
+          <div class="f"><span class="fn">IVSA (inicio vida sexual activa)</span><span class="fy">n&uacute;mero (edad en a&ntilde;os)</span><span class="fo">&mdash; presente en HC papel ARMC</span></div>
+          <div class="f"><span class="fn">N&uacute;mero de parejas sexuales</span><span class="fy">n&uacute;mero</span><span class="fo">&mdash; presente en HC papel ARMC</span></div>
+          <div class="f"><span class="fn">Viajes recientes</span><span class="fy">selecci&oacute;n s&iacute; / no</span><span class="fo">&mdash; presente en HC papel ARMC. Relevante epidemiol&oacute;gicamente</span></div>
+          <div class="f"><span class="fn">Viajes recientes &mdash; detalle</span><span class="fy">texto (condicional s&iacute;)</span></div>
           <div class="f"><span class="fn">Esquema b&aacute;sico de vacunaci&oacute;n</span><span class="fy">selecci&oacute;n: completo / incompleto / desconoce</span></div>
           <div class="f"><span class="fn">Vacunas registradas</span><span class="fy">checkbox m&uacute;ltiple + fecha &uacute;ltima por cada una</span><span class="fo">&mdash; Hep B / Influenza / COVID-19 / HPV / T&eacute;tanos / Neumococo</span></div>
           <div class="f"><span class="fn">Otras vacunas</span><span class="fy">texto</span></div>
         </div>
+        <div class="note pending">&#x23F3; COMBRE: el formulario en papel de ARMC incluye un campo etiquetado &ldquo;COMBRE&rdquo; (s&iacute; / no) cuya sem&aacute;ntica no se deduce del documento. Pendiente de confirmaci&oacute;n con ARMC antes de tipificarlo.</div>
 
-        <div class="ftsub">Secci&oacute;n 5 &mdash; Gineco-obst&eacute;tricos (~11 campos, condicional Sexo = F)</div>
+        <div class="ftsub">Secci&oacute;n 5 &mdash; Gineco-obst&eacute;tricos (~14 campos, condicional Sexo = F)</div>
         <div class="fl">
           <div class="f"><span class="fn">Menarca</span><span class="fy">n&uacute;mero (edad en a&ntilde;os)</span></div>
           <div class="f"><span class="fn">FUM (fecha &uacute;ltima menstruaci&oacute;n)</span><span class="fy">fecha</span></div>
@@ -169,6 +178,9 @@
           <div class="f"><span class="fn">Para</span><span class="fy">n&uacute;mero</span></div>
           <div class="f"><span class="fn">Ces&aacute;rea</span><span class="fy">n&uacute;mero</span></div>
           <div class="f"><span class="fn">Aborto</span><span class="fy">n&uacute;mero</span></div>
+          <div class="f"><span class="fn">&Uacute;ltimo parto</span><span class="fy">fecha</span><span class="fo">&mdash; presente en HC papel ARMC</span></div>
+          <div class="f"><span class="fn">&Uacute;ltima mastograf&iacute;a</span><span class="fy">fecha</span><span class="fo">&mdash; presente en HC papel ARMC. Null si nunca</span></div>
+          <div class="f"><span class="fn">&Uacute;ltimo PAP (Papanicolaou)</span><span class="fy">fecha</span><span class="fo">&mdash; presente en HC papel ARMC. Null si nunca</span></div>
           <div class="f"><span class="fn">Lactancia activa</span><span class="fy">selecci&oacute;n s&iacute; / no</span><span class="fo">&mdash; NUEVO. Contraindicaci&oacute;n: dispara alerta cl&iacute;nica autom&aacute;tica</span></div>
           <div class="f"><span class="fn">Embarazo actual</span><span class="fy">selecci&oacute;n: s&iacute; / no / desconocido</span><span class="fo">&mdash; NUEVO. Contraindicaci&oacute;n absoluta: bloquea agendamiento de cirug&iacute;a / l&aacute;ser / inyectables</span></div>
           <div class="f"><span class="fn">M&eacute;todo anticonceptivo</span><span class="fy">selecci&oacute;n: ninguno / p&iacute;ldora / DIU / inyecci&oacute;n / parche / implante / quir&uacute;rgico / otro</span></div>
