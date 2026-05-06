@@ -84,7 +84,7 @@
         <div class="note">No se abre HC. Solo ficha de contacto. Sin cuenta en sistema. Tambi&eacute;n se registran (si se obtienen del chat): nombre, fuente de captaci&oacute;n, motivo de consulta, fecha primer contacto. Opcionales en etapa Lead &mdash; se confirman al registrarse como Usuario.</div>
 
         <!-- ── USUARIO ── -->
-        <div class="stg stg-user">Usuario &mdash; registro (~111 campos)</div>
+        <div class="stg stg-user">Usuario &mdash; registro (~114 campos)</div>
 
         <div class="ftsub">Obligatorios al registrarse (~27)</div>
         <div class="fl">
@@ -127,7 +127,7 @@
           <div class="f"><span class="fn">Solo comunicaciones cl&iacute;nicas</span><span class="fy">check</span><span class="fo">&mdash; Derecho de Oposici&oacute;n ARCO. Activado = el paciente recibe &uacute;nicamente comunicaciones cl&iacute;nicas (citas, recordatorios, resultados, seguimiento). Se excluyen newsletters, promociones y campa&ntilde;as. Editable en cualquier momento</span></div>
         </div>
 
-        <div class="ftsub">Antecedentes &mdash; opcionales al registro, obligatorios pre-evaluaci&oacute;n (~78 campos)</div>
+        <div class="ftsub">Antecedentes &mdash; opcionales al registro, obligatorios pre-evaluaci&oacute;n (~81 campos)</div>
         <div class="note">Tipados como selecci&oacute;n / checkbox / num&eacute;rico / fecha siempre que el dato sea cl&iacute;nicamente cerrado. Texto libre solo en agentes espec&iacute;ficos, descripciones y campos &ldquo;otra&rdquo;. Habilita contraindicaciones autom&aacute;ticas, c&aacute;lculo de escalas (Charlson) y b&uacute;squedas estructuradas.</div>
 
         <div class="ftsub">Secci&oacute;n 3 &mdash; Heredofamiliares (matriz 8 &times; 6)</div>
@@ -190,7 +190,7 @@
           <div class="f"><span class="fn">Particularidades</span><span class="fy">texto opcional</span><span class="fo">&mdash; presente en HC papel ARMC. Observaciones gineco-obst&eacute;tricas no cubiertas por los campos anteriores</span></div>
         </div>
 
-        <div class="ftsub">Secci&oacute;n 6 &mdash; Personales patol&oacute;gicos (~27 campos)</div>
+        <div class="ftsub">Secci&oacute;n 6 &mdash; Personales patol&oacute;gicos (~30 campos)</div>
         <div class="fl">
           <div class="f"><span class="fn">Al&eacute;rgicos &mdash; tipos</span><span class="fy">checkbox m&uacute;ltiple: medicamentos / alimentos / ambientales / l&aacute;tex / metales / cosm&eacute;ticos / ninguno conocido</span></div>
           <div class="f"><span class="fn">Al&eacute;rgicos &mdash; agente y reacci&oacute;n</span><span class="fy">texto (condicional)</span></div>
@@ -203,8 +203,11 @@
           <div class="f"><span class="fn">Transfusionales &mdash; motivo</span><span class="fy">texto (condicional)</span></div>
           <div class="f"><span class="fn">Traumatismos &mdash; sufrido</span><span class="fy">selecci&oacute;n s&iacute; / no</span></div>
           <div class="f"><span class="fn">Traumatismos &mdash; descripci&oacute;n</span><span class="fy">texto (condicional)</span></div>
-          <div class="f"><span class="fn">Enfermedades previas &mdash; cat&aacute;logo</span><span class="fy">selecci&oacute;n m&uacute;ltiple</span><span class="fo">&mdash; DM / HTA / hipotiroidismo / hipertiroidismo / asma / EPOC / dislipidemia / depresi&oacute;n / ansiedad / otras</span></div>
-          <div class="f"><span class="fn">Enfermedades previas &mdash; otras</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">Enfermedades previas &mdash; cat&aacute;logo r&aacute;pido</span><span class="fy">selecci&oacute;n m&uacute;ltiple</span><span class="fo">&mdash; DM / HTA / hipotiroidismo / hipertiroidismo / asma / EPOC / dislipidemia / depresi&oacute;n / ansiedad / otras. Marca r&aacute;pida; el detalle vive en la lista din&aacute;mica</span></div>
+          <div class="f"><span class="fn">Enfermedades previas &mdash; diagn&oacute;stico</span><span class="fy">texto autocompletable (lista din&aacute;mica)</span><span class="fo">&mdash; presente en HC papel ARMC. Una entrada por enfermedad, con detalle estructurado (tripleta enfermedad / edad inicio / tratamiento)</span></div>
+          <div class="f"><span class="fn">Enfermedades previas &mdash; edad de inicio</span><span class="fy">n&uacute;mero (lista din&aacute;mica)</span></div>
+          <div class="f"><span class="fn">Enfermedades previas &mdash; tratamiento actual</span><span class="fy">texto (lista din&aacute;mica)</span></div>
+          <div class="f"><span class="fn">Enfermedades previas &mdash; control actual</span><span class="fy">selecci&oacute;n: controlado / no controlado / desconoce (lista din&aacute;mica)</span></div>
           <div class="f"><span class="fn">Tendencia a queloides</span><span class="fy">selecci&oacute;n: s&iacute; / no / desconoce</span><span class="fo">&mdash; NUEVO. Dispara alerta de cicatrizaci&oacute;n para procedimientos con incisi&oacute;n</span></div>
           <div class="f"><span class="fn">Enfermedades autoinmunes</span><span class="fy">checkbox m&uacute;ltiple: lupus / artritis reumatoide / vit&iacute;ligo / psoriasis / Hashimoto / Sj&ouml;gren / esclerodermia / esclerosis m&uacute;ltiple</span><span class="fo">&mdash; NUEVO</span></div>
           <div class="f"><span class="fn">Autoinmunes &mdash; otra</span><span class="fy">texto</span></div>
@@ -234,7 +237,7 @@
         <div class="note">Al agendar evaluaci&oacute;n para un lead sin cuenta &rarr; env&iacute;o autom&aacute;tico de invitaci&oacute;n a crear cuenta (email/WhatsApp) con link de registro y pre-llenado de secciones 3-6 antes de llegar. Si no crea cuenta &rarr; registro presencial el d&iacute;a de la cita.</div>
 
         <!-- ── PACIENTE — evaluación médica ── -->
-        <div class="stg stg-pac">Paciente &mdash; evaluaci&oacute;n m&eacute;dica (~40 campos)</div>
+        <div class="stg stg-pac">Paciente &mdash; evaluaci&oacute;n m&eacute;dica (~74 campos)</div>
 
         <div class="ftsub">Evaluaci&oacute;n especializada (screenings por edad)</div>
         <div class="fl">
@@ -272,21 +275,67 @@
           <div class="f"><span class="fn">Piel</span><span class="fy">selecci&oacute;n: normal / anormal + hallazgos texto (condicional anormal)</span></div>
         </div>
 
-        <div class="ftsub">Exploraci&oacute;n f&iacute;sica</div>
+        <div class="ftsub">Exploraci&oacute;n f&iacute;sica (~47 sub-campos)</div>
+        <div class="note">Tipado granular alineado con la HC papel ARMC: cada regi&oacute;n con sub-campos estructurados. Convenci&oacute;n: selecci&oacute;n binaria o categ&oacute;rica + texto opcional para hallazgos. Permite b&uacute;squedas estructuradas, alertas autom&aacute;ticas y trazabilidad cl&iacute;nica que el bloque texto plano anterior no soportaba.</div>
         <div class="fl">
-          <div class="f"><span class="fn">Signos vitales</span><span class="fy">FC, FR, SatO2, Temp, TA</span></div>
+          <div class="f"><span class="fn">Signos vitales</span><span class="fy">FC, FR, SatO2, Temp, TA (n&uacute;meros)</span></div>
           <div class="f"><span class="fn">Somatometr&iacute;a</span><span class="fy">peso, talla, IMC auto</span></div>
-          <div class="f"><span class="fn">Habitus</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Tegumentos</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Cabeza</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Ojos</span><span class="fy">texto</span></div>
+
+          <div class="f"><span class="fn">Habitus &mdash; sexo aparente</span><span class="fy">selecci&oacute;n: masculino / femenino</span></div>
+          <div class="f"><span class="fn">Habitus &mdash; edad aparente vs cronol&oacute;gica</span><span class="fy">selecci&oacute;n: igual / mayor / menor</span></div>
+          <div class="f"><span class="fn">Habitus &mdash; actitud</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">Habitus &mdash; estado de alerta</span><span class="fy">selecci&oacute;n: alerta / somnoliento / estuporoso / coma</span></div>
+          <div class="f"><span class="fn">Habitus &mdash; orientaci&oacute;n</span><span class="fy">checkbox m&uacute;ltiple: tiempo / espacio / persona</span></div>
+          <div class="f"><span class="fn">Habitus &mdash; marcha</span><span class="fy">texto</span></div>
+
+          <div class="f"><span class="fn">Tegumentos y mucosas &mdash; coloraci&oacute;n</span><span class="fy">texto</span><span class="fo">&mdash; ej: normal / palidez / cian&oacute;tica / ict&eacute;rica</span></div>
+          <div class="f"><span class="fn">Tegumentos y mucosas &mdash; hidrataci&oacute;n</span><span class="fy">selecci&oacute;n: hidratado / deshidratado</span></div>
+
+          <div class="f"><span class="fn">Cabeza &mdash; normocéfalo</span><span class="fy">selecci&oacute;n s&iacute; / no + observaci&oacute;n</span></div>
+          <div class="f"><span class="fn">Cabeza &mdash; endostosis</span><span class="fy">selecci&oacute;n s&iacute; / no + ubicaci&oacute;n</span></div>
+          <div class="f"><span class="fn">Cabeza &mdash; exostosis</span><span class="fy">selecci&oacute;n s&iacute; / no + ubicaci&oacute;n</span></div>
+          <div class="f"><span class="fn">Cabeza &mdash; implantaci&oacute;n del pelo</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">Cabeza &mdash; cuero cabelludo</span><span class="fy">selecci&oacute;n: normal / anormal + hallazgos texto (condicional anormal)</span></div>
+
+          <div class="f"><span class="fn">Ojos &mdash; movimientos oculares</span><span class="fy">selecci&oacute;n: normales / anormales + texto</span></div>
+          <div class="f"><span class="fn">Ojos &mdash; pupilas</span><span class="fy">texto</span><span class="fo">&mdash; ej: isoc&oacute;ricas, normorreactivas a la luz</span></div>
+          <div class="f"><span class="fn">Ojos &mdash; conjuntivas</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">Ojos &mdash; fondo de ojo</span><span class="fy">texto</span></div>
+
           <div class="f"><span class="fn">Narinas</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Cuello</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">T&oacute;rax</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Abdomen</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Genitales</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Extremidades</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Neurol&oacute;gico</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">CAE (conducto auditivo externo)</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">T&iacute;mpano</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">Orofaringe</span><span class="fy">selecci&oacute;n: normal / hiper&eacute;mica + texto (condicional)</span></div>
+
+          <div class="f"><span class="fn">Cuello &mdash; masas</span><span class="fy">selecci&oacute;n s&iacute; / no + ubicaci&oacute;n</span></div>
+          <div class="f"><span class="fn">Cuello &mdash; adenomegalias</span><span class="fy">selecci&oacute;n s&iacute; / no + ubicaci&oacute;n</span></div>
+          <div class="f"><span class="fn">Cuello &mdash; tr&aacute;quea</span><span class="fy">selecci&oacute;n: central / desviada</span></div>
+          <div class="f"><span class="fn">Cuello &mdash; ingurgitaci&oacute;n yugular</span><span class="fy">selecci&oacute;n s&iacute; / no</span></div>
+          <div class="f"><span class="fn">Cuello &mdash; pulsos carot&iacute;deos</span><span class="fy">selecci&oacute;n: sim&eacute;tricos / asim&eacute;tricos</span></div>
+
+          <div class="f"><span class="fn">T&oacute;rax &mdash; inspecci&oacute;n</span><span class="fy">selecci&oacute;n: normal / anormal + texto (condicional anormal)</span></div>
+          <div class="f"><span class="fn">T&oacute;rax &mdash; amplexi&oacute;n</span><span class="fy">selecci&oacute;n: normal / anormal + texto (condicional anormal)</span></div>
+          <div class="f"><span class="fn">T&oacute;rax &mdash; campos pulmonares</span><span class="fy">selecci&oacute;n: limpios / con agregados + texto</span></div>
+          <div class="f"><span class="fn">T&oacute;rax &mdash; ruidos cardiacos</span><span class="fy">selecci&oacute;n: r&iacute;tmicos / arr&iacute;tmicos</span></div>
+          <div class="f"><span class="fn">T&oacute;rax &mdash; intensidad cardiaca</span><span class="fy">selecci&oacute;n: adecuada / no adecuada</span></div>
+          <div class="f"><span class="fn">T&oacute;rax &mdash; soplos</span><span class="fy">selecci&oacute;n s&iacute; / no + descripci&oacute;n</span></div>
+
+          <div class="f"><span class="fn">Abdomen &mdash; forma</span><span class="fy">selecci&oacute;n: plano / globoso</span></div>
+          <div class="f"><span class="fn">Abdomen &mdash; palpaci&oacute;n</span><span class="fy">selecci&oacute;n: depresible / no depresible / doloroso</span></div>
+          <div class="f"><span class="fn">Abdomen &mdash; hiperestesia</span><span class="fy">selecci&oacute;n s&iacute; / no</span></div>
+          <div class="f"><span class="fn">Abdomen &mdash; resistencia muscular</span><span class="fy">selecci&oacute;n: normal / incrementada</span></div>
+          <div class="f"><span class="fn">Abdomen &mdash; peristalsis</span><span class="fy">selecci&oacute;n: hiperactiva / normal / hipoactiva / ausente</span></div>
+          <div class="f"><span class="fn">Abdomen &mdash; agregados</span><span class="fy">texto</span></div>
+
+          <div class="f"><span class="fn">Genitales</span><span class="fy">selecci&oacute;n: de acuerdo a edad y sexo / otros + observaciones</span></div>
+
+          <div class="f"><span class="fn">Extremidades &mdash; integridad y simetr&iacute;a</span><span class="fy">selecci&oacute;n s&iacute; / no + observaciones</span></div>
+          <div class="f"><span class="fn">Extremidades &mdash; fuerza muscular</span><span class="fy">n&uacute;mero /5 (escala MRC)</span></div>
+          <div class="f"><span class="fn">Extremidades &mdash; sensibilidad</span><span class="fy">selecci&oacute;n: conservada / alterada + texto</span></div>
+          <div class="f"><span class="fn">Extremidades &mdash; ROTs</span><span class="fy">n&uacute;mero /4 (escala ++++)</span></div>
+          <div class="f"><span class="fn">Extremidades &mdash; godete</span><span class="fy">selecci&oacute;n s&iacute; / no + grado</span></div>
+
+          <div class="f"><span class="fn">Neurol&oacute;gico</span><span class="fy">texto estructurado</span><span class="fo">&mdash; complementa la valoraci&oacute;n por sistemas</span></div>
         </div>
 
         <div class="ftsub">Diagn&oacute;stico y plan</div>
