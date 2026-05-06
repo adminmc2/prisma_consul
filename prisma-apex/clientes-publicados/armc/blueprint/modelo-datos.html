@@ -233,7 +233,7 @@
           <div class="f"><span class="fn">Fototipo Fitzpatrick</span><span class="fy">selector visual: 6 muestras de color de piel etiquetadas I a VI</span><span class="fo">&mdash; UI: el m&eacute;dico elige el c&iacute;rculo cuyo tono coincide con la piel del paciente, no un n&uacute;mero romano abstracto. Cada opci&oacute;n muestra el numeral (I-VI) junto a una muestra de color representativa del fototipo. Reduce error de clasificaci&oacute;n y acelera el registro frente a un dropdown textual. Implementaci&oacute;n: 6 swatches en fila, etiqueta visible al hover con descripci&oacute;n breve del fototipo</span></div>
           <div class="f"><span class="fn">Tipo de piel</span><span class="fy">selecci&oacute;n</span></div>
           <div class="f"><span class="fn">Expectativas del paciente</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Fotos iniciales estandarizadas</span><span class="fy">im&aacute;genes</span></div>
+          <div class="f"><span class="fn">Fotos iniciales estandarizadas</span><span class="fy">set de im&aacute;genes (captura nativa m&oacute;vil)</span><span class="fo">&mdash; Set de varias tomas seg&uacute;n protocolo (frontal, perfil derecho, perfil izquierdo, tres cuartos, &aacute;rea espec&iacute;fica). Captura directa desde la c&aacute;mara del dispositivo m&oacute;vil del m&eacute;dico/asistente; guardado autom&aacute;tico en el sistema, sin pasar por galer&iacute;a ni dispositivos personales. Ver secci&oacute;n &lsquo;Captura de fotograf&iacute;as cl&iacute;nicas&rsquo;</span></div>
           <div class="f"><span class="fn">Evaluaci&oacute;n facial/corporal/capilar</span><span class="fy">texto estructurado</span></div>
           <div class="f"><span class="fn">Calidad de piel</span><span class="fy">selecci&oacute;n</span></div>
           <div class="f"><span class="fn">Cicatrices existentes</span><span class="fy">texto</span></div>
@@ -295,8 +295,8 @@
         <div class="stg stg-proc">Por procedimiento (6 campos por cada uno)</div>
         <div class="fl">
           <div class="f"><span class="fn">Consentimiento informado</span><span class="fy">documento estructurado</span><span class="fo">&mdash; 9 sub-campos NOM-004</span></div>
-          <div class="f"><span class="fn">Fotos pre-procedimiento</span><span class="fy">im&aacute;genes</span></div>
-          <div class="f"><span class="fn">Fotos post-procedimiento</span><span class="fy">im&aacute;genes</span></div>
+          <div class="f"><span class="fn">Fotos pre-procedimiento</span><span class="fy">set de im&aacute;genes (captura nativa m&oacute;vil)</span><span class="fo">&mdash; Tomas estandarizadas inmediatamente antes del procedimiento. Mismo mecanismo de captura que las fotos iniciales. Ver secci&oacute;n &lsquo;Captura de fotograf&iacute;as cl&iacute;nicas&rsquo;</span></div>
+          <div class="f"><span class="fn">Fotos post-procedimiento</span><span class="fy">set de im&aacute;genes (captura nativa m&oacute;vil)</span><span class="fo">&mdash; Tomas estandarizadas tras el procedimiento. Permite comparativa pre/post desde el sistema. Ver secci&oacute;n &lsquo;Captura de fotograf&iacute;as cl&iacute;nicas&rsquo;</span></div>
           <div class="f"><span class="fn">Nota de evoluci&oacute;n</span><span class="fy">texto largo</span></div>
           <div class="f"><span class="fn">Indicaciones post-procedimiento</span><span class="fy">template por tipo</span></div>
           <div class="f"><span class="fn">Satisfacci&oacute;n del paciente</span><span class="fy">escala 1-10 + texto</span></div>
@@ -659,6 +659,19 @@
       <div class="f"><span class="fn">Firmas digitales</span></div>
       <div class="f"><span class="fn">Formato: membrete ARMC + ID HC + fecha generaci&oacute;n</span></div>
     </div>
+
+    <h2><i class="ph ph-camera" style="color:#31BEEF"></i> Captura de fotograf&iacute;as cl&iacute;nicas</h2>
+    <p style="color:#A1B8F2;margin-bottom:.5rem">Las fotos cl&iacute;nicas (iniciales, pre-procedimiento, post-procedimiento, evoluci&oacute;n) se capturan dentro del propio sistema. Resuelve la fricci&oacute;n actual de fotos dispersas en dispositivos personales del equipo.</p>
+    <table>
+      <tr><th>Aspecto</th><th>Especificaci&oacute;n</th></tr>
+      <tr><td>Mecanismo de captura</td><td>C&aacute;mara nativa del dispositivo m&oacute;vil del m&eacute;dico/asistente, invocada desde la app o web responsive del sistema. No se permite subida desde galer&iacute;a en flujo cl&iacute;nico (evita fotos sin trazabilidad)</td></tr>
+      <tr><td>Set estandarizado</td><td>Cada tipo de toma (inicial / pre / post / evoluci&oacute;n) define su propio set de vistas requeridas (ej. frontal, perfil derecho, perfil izquierdo, tres cuartos, &aacute;rea espec&iacute;fica). El sistema gu&iacute;a al operador toma a toma</td></tr>
+      <tr><td>Almacenamiento</td><td>Guardado autom&aacute;tico en el sistema en el momento de la captura, vinculado a Paciente y a la entidad correspondiente (Evaluaci&oacute;n m&eacute;dica / Procedimiento). No se conservan copias en el dispositivo</td></tr>
+      <tr><td>Comparativa pre/post</td><td>El sistema permite vista comparada por &aacute;ngulo equivalente para que el m&eacute;dico contraste evoluci&oacute;n sin gestionar archivos manualmente</td></tr>
+      <tr><td>Trazabilidad</td><td>Cada captura registra usuario, fecha/hora y dispositivo en el Log de Auditor&iacute;a (NOM-024)</td></tr>
+      <tr><td>Acceso por rol</td><td>Sometido al RBAC de datos cl&iacute;nicos (las fotos son parte de la HC)</td></tr>
+    </table>
+    <div class="note pending">&#x23F3; ARMC debe definir los sets estandarizados por l&iacute;nea de servicio (cu&aacute;ntas tomas y qu&eacute; &aacute;ngulos para cirug&iacute;a, medicina est&eacute;tica, aparatolog&iacute;a, cosmiatr&iacute;a, tricolog&iacute;a). Esos sets viven en Protocolo de Revisi&oacute;n; el mecanismo de captura es transversal.</div>
 
     <h2><i class="ph ph-clock-countdown" style="color:#31BEEF"></i> Retenci&oacute;n de datos</h2>
     <table>
