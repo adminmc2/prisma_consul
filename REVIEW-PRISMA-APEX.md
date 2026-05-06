@@ -2,19 +2,19 @@
 
 > **Estado: bitácora cerrada — Sprint A finalizado el 2026-05-05.** Este documento queda como registro histórico de la reorganización Sprint A. **No es un panel operativo vivo** y no debe usarse para dirigir trabajo en curso. El control vivo del proyecto vive en los documentos permanentes de la raíz (`CLAUDE.md`, `MODELO-DOMINIO.md`, `CONTRATOS.md`, `GLOSARIO.md`, `ECOSISTEMA.md`). Las secciones 7 y 9 quedan congeladas en su estado de cierre y no se actualizarán dentro de este slice; cualquier limpieza fina queda fuera de alcance.
 
-Documento vivo de revisión de la reorganización de Prisma APEX.
+Bitácora histórica de la reorganización Sprint A de Prisma APEX (cerrada el 2026-05-05).
 
-Este archivo centraliza:
-- el estado actual de la revisión,
+Este archivo centralizó durante Sprint A:
+- el estado de la revisión en cada momento,
 - las decisiones ya cerradas,
 - las decisiones condicionales o pendientes,
 - los gates entre fases,
 - los riesgos abiertos,
 - y la bitácora de revisiones.
 
-Regla operativa: después de cada revisión relevante, este documento se actualiza antes de dar por cerrada la iteración.
+Regla operativa histórica (vigente solo durante Sprint A): después de cada revisión relevante, este documento se actualizaba antes de dar por cerrada la iteración. Esa regla **dejó de aplicar** con el cierre formal de Sprint A.
 
-Vigencia: temporal. Cuando la reorganización quede estabilizada, su contenido debe haberse absorbido en la documentación permanente del proyecto y este archivo se elimina.
+Vigencia: el documento queda como registro histórico congelado. Su eliminación efectiva queda diferida a un slice posterior cuando se cumplan las condiciones listadas en §13.
 
 ## 1. Propósito
 
@@ -672,9 +672,11 @@ El diferimiento que existió sobre la integración durable del bloque D queda **
 - Impacto en gates: no abre gates nuevos; la reorganización Sprint A deja de estar en estado abierto y pasa a estado estable.
 - Próximo paso: separar control vivo de histórico y definir la reactivación del ejecutor 2.
 
-## 12. Plantilla de actualización para futuras revisiones
+## 12. Plantilla de actualización (histórica — ya no en uso)
 
-Usar este formato mínimo cuando se actualice la bitácora:
+> Esta plantilla se usó durante Sprint A para añadir entradas a la bitácora. **No debe usarse para nuevos cambios.** Se conserva como referencia histórica del formato que rigió Sprint A. Cualquier cambio nuevo del proyecto se documenta en `CHANGELOG.md` y, si procede, en los documentos permanentes de la raíz.
+
+Formato histórico:
 
 ```md
 ### YYYY-MM-DD — [nombre corto de la revisión]
