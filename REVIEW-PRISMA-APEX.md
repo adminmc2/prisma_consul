@@ -16,18 +16,20 @@ Regla operativa histórica (vigente solo durante Sprint A): después de cada rev
 
 Vigencia: el documento queda como registro histórico congelado. Su eliminación efectiva queda diferida a un slice posterior cuando se cumplan las condiciones listadas en §13.
 
-## 1. Propósito
+## 1. Propósito (histórico)
 
-Este documento existe para evitar tres problemas:
+Durante Sprint A este documento existió para evitar tres problemas:
 - perder contexto entre revisiones,
 - mezclar decisiones cerradas con hipótesis todavía abiertas,
 - y avanzar de fase sin dejar constancia de qué quedó realmente aprobado.
 
-No sustituye a la documentación permanente. Actúa como capa de control y seguimiento mientras dure la reorganización.
+No sustituía a la documentación permanente. Actuó como capa de control y seguimiento mientras duró la reorganización Sprint A. Con el cierre formal del 2026-05-05 dejó de cumplir esa función.
 
-## 2. Protocolo de actualización
+## 2. Protocolo de actualización (histórico — ya no en uso)
 
-Después de cada revisión importante, este documento debe actualizarse con estos pasos:
+> Este protocolo rigió únicamente durante Sprint A. **No debe aplicarse a cambios nuevos.** Se conserva como referencia del procedimiento que se siguió.
+
+Durante Sprint A, después de cada revisión importante este documento se actualizaba con estos pasos:
 
 1. Ajustar el estado global del proyecto.
 2. Mover decisiones entre "cerradas", "condicionales" y "bloqueantes" según corresponda.
@@ -35,7 +37,7 @@ Después de cada revisión importante, este documento debe actualizarse con esto
 4. Registrar qué documentos permanentes deben absorber el cambio.
 5. Marcar si algún gate de fase se abre o se mantiene bloqueado.
 
-Regla adicional: no se pasa a una fase nueva solo porque el trabajo técnico parezca listo. Se pasa cuando el gate correspondiente esté explícitamente marcado como aprobado aquí.
+Regla adicional histórica: durante Sprint A no se pasaba a una fase nueva solo porque el trabajo técnico pareciera listo; se pasaba cuando el gate correspondiente quedaba explícitamente marcado como aprobado aquí. Esa regla quedó cumplida con el cierre del Sprint A y no rige para etapas posteriores.
 
 ## 3. Estado global actual
 
