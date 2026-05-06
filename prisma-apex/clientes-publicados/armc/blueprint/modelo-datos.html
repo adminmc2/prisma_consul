@@ -84,9 +84,9 @@
         <div class="note">No se abre HC. Solo ficha de contacto. Sin cuenta en sistema. Tambi&eacute;n se registran (si se obtienen del chat): nombre, fuente de captaci&oacute;n, motivo de consulta, fecha primer contacto. Opcionales en etapa Lead &mdash; se confirman al registrarse como Usuario.</div>
 
         <!-- ── USUARIO ── -->
-        <div class="stg stg-user">Usuario &mdash; registro (~99 campos)</div>
+        <div class="stg stg-user">Usuario &mdash; registro (~97 campos)</div>
 
-        <div class="ftsub">Obligatorios al registrarse (~30)</div>
+        <div class="ftsub">Obligatorios al registrarse (~27)</div>
         <div class="fl">
           <div class="f"><span class="fn">ID Sistema</span><span class="fy">auto</span></div>
           <div class="f"><span class="fn">ID Historia Cl&iacute;nica</span><span class="fy">auto</span></div>
@@ -102,13 +102,10 @@
           <div class="f"><span class="fn">Ocupaci&oacute;n</span><span class="fy">texto</span></div>
           <div class="f"><span class="fn">Originario</span><span class="fy">texto</span></div>
           <div class="f"><span class="fn">Escolaridad</span><span class="fy">selecci&oacute;n</span></div>
-          <div class="f"><span class="fn">Calle y n&uacute;mero</span><span class="fy">texto</span><span class="fo">&mdash; calle + n&uacute;mero exterior. Parte del domicilio NOM-004</span></div>
-          <div class="f"><span class="fn">N&uacute;mero interior</span><span class="fy">texto</span><span class="fo">&mdash; opcional (depto, casa, suite)</span></div>
-          <div class="f"><span class="fn">Colonia</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">C&oacute;digo postal</span><span class="fy">texto (5 d&iacute;gitos)</span></div>
-          <div class="f"><span class="fn">Municipio / Alcald&iacute;a</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Estado</span><span class="fy">selecci&oacute;n din&aacute;mica seg&uacute;n Pa&iacute;s</span><span class="fo">&mdash; 32 entidades federativas si Pa&iacute;s = M&eacute;xico; 50 estados si Pa&iacute;s = Estados Unidos</span></div>
-          <div class="f"><span class="fn">Pa&iacute;s</span><span class="fy">selecci&oacute;n: M&eacute;xico / Estados Unidos</span><span class="fo">&mdash; Default: M&eacute;xico</span></div>
+          <div class="f"><span class="fn">Direcci&oacute;n 1</span><span class="fy">texto</span><span class="fo">&mdash; l&iacute;nea principal del domicilio. Parte del domicilio NOM-004</span></div>
+          <div class="f"><span class="fn">Pa&iacute;s</span><span class="fy">selecci&oacute;n: M&eacute;xico / Estados Unidos</span><span class="fo">&mdash; Default: M&eacute;xico. Determina la lista de Estado y la validaci&oacute;n de C&oacute;digo postal</span></div>
+          <div class="f"><span class="fn">Estado / Provincia / Regi&oacute;n</span><span class="fy">selecci&oacute;n din&aacute;mica seg&uacute;n Pa&iacute;s</span><span class="fo">&mdash; 32 entidades federativas si Pa&iacute;s = M&eacute;xico; 50 estados si Pa&iacute;s = Estados Unidos</span></div>
+          <div class="f"><span class="fn">C&oacute;digo postal</span><span class="fy">texto</span><span class="fo">&mdash; formato y validaci&oacute;n se resuelven en implementaci&oacute;n seg&uacute;n Pa&iacute;s</span></div>
           <div class="f"><span class="fn">Familiar responsable</span><span class="fy">texto</span></div>
           <div class="f"><span class="fn">Tel. familiar responsable</span><span class="fy">tel&eacute;fono</span></div>
           <div class="f"><span class="fn">Grupo sangu&iacute;neo y RH</span><span class="fy">selecci&oacute;n</span></div>
@@ -120,8 +117,9 @@
           <div class="f"><span class="fn">Consentimiento comunicaci&oacute;n digital</span><span class="fy">check</span><span class="fo">&mdash; autoriza WhatsApp/email</span></div>
         </div>
 
-        <div class="ftsub">Opcionales al registrarse (~5)</div>
+        <div class="ftsub">Opcionales al registrarse (~6)</div>
         <div class="fl">
+          <div class="f"><span class="fn">Direcci&oacute;n 2</span><span class="fy">texto</span><span class="fo">&mdash; l&iacute;nea complementaria del domicilio (interior, referencias). Parte del domicilio NOM-004</span></div>
           <div class="f"><span class="fn">Instagram / red social</span><span class="fy">texto</span></div>
           <div class="f"><span class="fn">Idioma preferido</span><span class="fy">selecci&oacute;n: espa&ntilde;ol / ingl&eacute;s</span></div>
           <div class="f"><span class="fn">CURP</span><span class="fy">texto</span><span class="fo">&mdash; recomendado, no obligatorio</span></div>
