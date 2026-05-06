@@ -85,6 +85,7 @@
 
         <!-- ── USUARIO ── -->
         <div class="stg stg-user">Usuario &mdash; registro (~114 campos)</div>
+        <div class="note"><strong>&#x1F513; ZONA EDITABLE LIBREMENTE.</strong> Mientras el paciente no haya firmado la Evaluaci&oacute;n M&eacute;dica, todos estos datos (perfil, contacto y antecedentes) son modificables por el propio paciente sin firma adicional. Cada cambio queda en audit log.</div>
 
         <div class="ftsub">Obligatorios al registrarse (~27)</div>
         <div class="fl">
@@ -238,6 +239,7 @@
 
         <!-- ── PACIENTE — evaluación médica ── -->
         <div class="stg stg-pac">Paciente &mdash; evaluaci&oacute;n m&eacute;dica (~74 campos)</div>
+        <div class="note warn"><strong>&#x270D;&#xFE0F; ZONA QUE SE FIRMA Y SE BLOQUEA.</strong> Estos datos los completa el m&eacute;dico durante la evaluaci&oacute;n y se cierran con la doble firma (m&eacute;dico + paciente) al final del bloque. Tras la firma, modificar cualquier dato cl&iacute;nico de la HC requiere addendum con misma doble firma. Los datos administrativos siguen editables aparte.</div>
 
         <div class="ftsub">Evaluaci&oacute;n especializada (screenings por edad)</div>
         <div class="fl">
@@ -350,9 +352,10 @@
 
         <div class="ftsub">Firmas de evaluaci&oacute;n</div>
         <div class="fl">
-          <div class="f"><span class="fn">Firma del m&eacute;dico</span><span class="fy">digital expl&iacute;cita</span><span class="fo">&mdash; inmoviliza la nota (solo lectura)</span></div>
-          <div class="f"><span class="fn">Firma del paciente</span><span class="fy">digital</span><span class="fo">&mdash; confirma informaci&oacute;n correcta</span></div>
+          <div class="f"><span class="fn">Firma del m&eacute;dico</span><span class="fy">firma aut&oacute;grafa digitalizada (iPad/tablet)</span><span class="fo">&mdash; inmoviliza la nota (solo lectura)</span></div>
+          <div class="f"><span class="fn">Firma del paciente</span><span class="fy">firma aut&oacute;grafa digitalizada (iPad/tablet)</span><span class="fo">&mdash; confirma informaci&oacute;n correcta</span></div>
         </div>
+        <div class="note warn" style="border-left-width:6px"><strong>&#x1F512; PUNTO DE BLOQUEO DE LA HC.</strong> Estas dos firmas, juntas, disparan la inmutabilidad de los datos cl&iacute;nicos del expediente. Tras este momento, cualquier modificaci&oacute;n en datos de salud o historial cl&iacute;nico (antecedentes, alergias, medicamentos, etc.) <strong>solo es posible v&iacute;a addendum con la misma doble firma m&eacute;dico + paciente</strong>, conservando la versi&oacute;n anterior en el historial. Los datos meramente administrativos (contacto, domicilio) siguen editables siempre por el paciente sin firma adicional. Detalle del mecanismo en las secciones &lsquo;Inmutabilidad&rsquo; y &lsquo;Correcciones COFEPRIS&rsquo;.</div>
         <div class="note">Desde este momento = PACIENTE. Se activa la clasificaci&oacute;n autom&aacute;tica.</div>
         <div class="note warn">Los testigos firman SOLO el consentimiento informado (10.1.9), no la HC de evaluaci&oacute;n. NOM-004 numeral 10.1.1 exige testigos para la Carta de Consentimiento Informado. La HC se firma solo con m&eacute;dico + paciente.</div>
 
@@ -700,22 +703,34 @@
     </table>
 
     <h2><i class="ph ph-lock-key" style="color:#31BEEF"></i> Inmutabilidad</h2>
+    <div class="note warn" style="margin-bottom:1rem"><strong>&#x1F512; Regla central:</strong> la firma m&eacute;dico + paciente al cierre de la Evaluaci&oacute;n M&eacute;dica <strong>bloquea</strong> los datos cl&iacute;nicos de la HC. A partir de ese momento, cualquier cambio en datos de salud o del historial cl&iacute;nico requiere <strong>addendum con doble firma (m&eacute;dico + paciente)</strong>. Los datos meramente administrativos (contacto, domicilio, etc.) siguen editables siempre por el paciente con audit log.</div>
     <table>
       <tr><th>Tipo de dato</th><th>Ejemplos</th><th>Editable</th><th>Mecanismo de cambio</th></tr>
-      <tr><td>Datos de perfil</td><td>Nombre, domicilio, tel&eacute;fono, antecedentes</td><td>S&iacute;, libremente</td><td>Edici&oacute;n con historial de correcciones COFEPRIS</td></tr>
-      <tr><td>Notas m&eacute;dicas firmadas</td><td>HC firmada, notas evoluci&oacute;n, consentimientos</td><td>No &mdash; solo lectura</td><td>Addendum vinculado al original</td></tr>
+      <tr><td>Datos administrativos / contacto</td><td>Tel&eacute;fono, email, domicilio, contacto familiar, m&eacute;todos de comunicaci&oacute;n</td><td>S&iacute;, siempre, por el paciente</td><td>Edici&oacute;n directa con audit log. No requiere firma</td></tr>
+      <tr><td>Datos cl&iacute;nicos &mdash; pre-firma de evaluaci&oacute;n</td><td>Antecedentes (heredofamiliares, no patol&oacute;gicos, gineco, patol&oacute;gicos), alergias, medicamentos, &aacute;reas de inter&eacute;s</td><td>S&iacute;, libremente, por el paciente</td><td>Edici&oacute;n directa con audit log</td></tr>
+      <tr><td>Datos cl&iacute;nicos &mdash; post-firma de evaluaci&oacute;n</td><td>Mismos antecedentes y datos cl&iacute;nicos una vez firmados por m&eacute;dico + paciente</td><td><strong>No</strong> &mdash; bloqueados</td><td><strong>Addendum con doble firma m&eacute;dico + paciente</strong>, fecha, dato anterior, dato nuevo y motivo. Versi&oacute;n anterior se conserva visible en el historial</td></tr>
+      <tr><td>Notas m&eacute;dicas firmadas y consentimientos por procedimiento</td><td>HC firmada, notas de evoluci&oacute;n, consentimientos informados</td><td>No &mdash; solo lectura</td><td>Addendum vinculado al original</td></tr>
     </table>
 
     <h2><i class="ph ph-note-pencil" style="color:#31BEEF"></i> Correcciones COFEPRIS</h2>
-    <p style="color:#A1B8F2;margin-bottom:.5rem">COFEPRIS obliga a que la HC pueda ser corregida sin borrar la informaci&oacute;n anterior. Cada correcci&oacute;n guarda:</p>
+    <p style="color:#A1B8F2;margin-bottom:.5rem">COFEPRIS obliga a que la HC pueda ser corregida sin borrar la informaci&oacute;n anterior. El sistema soporta <strong>dos modos</strong> de correcci&oacute;n seg&uacute;n el tipo de dato y el momento del cambio.</p>
+    <table style="margin-bottom:1rem">
+      <tr><th>Modo</th><th>Aplica a</th><th>Firma requerida</th><th>Resultado</th></tr>
+      <tr><td>Administrativa</td><td>Datos de contacto, domicilio, m&eacute;todos de comunicaci&oacute;n. Tambi&eacute;n datos cl&iacute;nicos antes de la firma de evaluaci&oacute;n</td><td>Ninguna firma adicional &mdash; solo audit log</td><td>El campo se actualiza; la versi&oacute;n anterior queda en historial</td></tr>
+      <tr><td>Cl&iacute;nica post-firma</td><td>Datos cl&iacute;nicos despu&eacute;s de la firma de evaluaci&oacute;n (antecedentes, alergias, medicamentos, etc.)</td><td><strong>Doble firma obligatoria: m&eacute;dico + paciente</strong> sobre el addendum</td><td>Se genera un Documento tipo &ldquo;addendum&rdquo; vinculado al original; el dato vivo refleja la nueva informaci&oacute;n; la versi&oacute;n anterior queda visible en el historial</td></tr>
+    </table>
+    <p style="color:#A1B8F2;margin-bottom:.5rem">Campos auditados en cada correcci&oacute;n:</p>
     <div class="fl" style="margin-bottom:.5rem">
+      <div class="f"><span class="fn">Modo de correcci&oacute;n</span><span class="fy">selecci&oacute;n: administrativa / cl&iacute;nica post-firma</span><span class="fo">&mdash; Determina las firmas requeridas</span></div>
       <div class="f"><span class="fn">Valor anterior</span><span class="fo">&mdash; nunca se borra</span></div>
       <div class="f"><span class="fn">Valor nuevo</span></div>
       <div class="f"><span class="fn">Fecha de correcci&oacute;n</span><span class="fy">datetime</span></div>
       <div class="f"><span class="fn">Qui&eacute;n la hizo</span><span class="fy">FK &rarr; Usuario</span></div>
-      <div class="f"><span class="fn">Motivo</span><span class="fy">texto</span><span class="fo">&mdash; opcional</span></div>
+      <div class="f"><span class="fn">Motivo</span><span class="fy">texto</span><span class="fo">&mdash; opcional en modo administrativa, recomendado en modo cl&iacute;nica post-firma</span></div>
+      <div class="f"><span class="fn">Firma del m&eacute;dico</span><span class="fy">firma aut&oacute;grafa digitalizada</span><span class="fo">&mdash; obligatoria en modo cl&iacute;nica post-firma</span></div>
+      <div class="f"><span class="fn">Firma del paciente</span><span class="fy">firma aut&oacute;grafa digitalizada</span><span class="fo">&mdash; obligatoria en modo cl&iacute;nica post-firma. Sin esta firma el cambio no se aplica</span></div>
     </div>
-    <div class="note warn">Campos NO corregibles: IDs, fechas de acci&oacute;n, contadores, clasificaciones autom&aacute;ticas.</div>
+    <div class="note warn">Campos NO corregibles bajo ning&uacute;n modo: IDs, fechas de acci&oacute;n, contadores, clasificaciones autom&aacute;ticas, logs de auditor&iacute;a.</div>
 
     <h2><i class="ph ph-file-pdf" style="color:#31BEEF"></i> Generaci&oacute;n de PDF</h2>
     <p style="color:#A1B8F2;margin-bottom:.5rem">APEX genera un PDF completo de la HC con:</p>
