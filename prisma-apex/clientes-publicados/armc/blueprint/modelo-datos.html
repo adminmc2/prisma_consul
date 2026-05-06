@@ -549,7 +549,7 @@
     <div class="ec" onclick="this.classList.toggle('open')">
       <div class="eh"><i class="ph ph-clipboard-text ei"></i><span class="en">Protocolo de Revisi&oacute;n</span><div class="dbw"><span class="db d2">D2</span></div><i class="ph ph-caret-down xp"></i></div>
       <div class="eb">
-        <div class="ft">Campos (10)</div>
+        <div class="ft">Campos (11)</div>
         <div class="fl">
           <div class="f"><span class="fn">ID Protocolo</span><span class="fy">auto (PK)</span><span class="fo">&mdash; Identificador &uacute;nico</span></div>
           <div class="f"><span class="fn">L&iacute;nea de servicio</span><span class="fy">enum: cirug&iacute;a / cosmiatr&iacute;a / tricolog&iacute;a</span><span class="fo">&mdash; Clasificaci&oacute;n general</span></div>
@@ -560,6 +560,7 @@
           <div class="f"><span class="fn">Umbral pre-perdido</span><span class="fy">n&uacute;mero (d&iacute;as)</span><span class="fo">&mdash; ~2.5x ciclo &rarr; Fase 3</span></div>
           <div class="f"><span class="fn">Umbral perdido</span><span class="fy">n&uacute;mero (d&iacute;as)</span><span class="fo">&mdash; ~3x ciclo &rarr; Fase 4</span></div>
           <div class="f"><span class="fn">Escalas cl&iacute;nicas aplicables</span><span class="fy">array de enums</span><span class="fo">&mdash; Qu&eacute; escalas estandarizadas aplican para este procedimiento. Ej: rinoplastia &rarr; [GAIS, FACE-Q, VSS, BDD-YBOCS]</span></div>
+          <div class="f"><span class="fn">Sets de fotograf&iacute;as por momento</span><span class="fy">array de configuraciones {momento, vistas[]}</span><span class="fo">&mdash; Define qu&eacute; tomas se requieren en cada momento cl&iacute;nico (inicial / pre-procedimiento / post-procedimiento / evoluci&oacute;n) para este protocolo. Ej: rinoplastia post &rarr; [frontal, perfil derecho, perfil izquierdo, base nasal]. Patr&oacute;n an&aacute;logo a &lsquo;Revisiones esperadas&rsquo; y &lsquo;Escalas cl&iacute;nicas aplicables&rsquo;. Consumido por el mecanismo descrito en &lsquo;Captura de fotograf&iacute;as cl&iacute;nicas&rsquo;. Pendiente: ARMC define las vistas concretas por procedimiento</span></div>
           <div class="f"><span class="fn">Duraci&oacute;n estimada</span><span class="fy">minutos</span><span class="fo">&mdash; Duraci&oacute;n t&iacute;pica del procedimiento. Auto-sugiere Cita.Duraci&oacute;n estimada al seleccionar este protocolo. Ej: Limpieza facial &rarr; 60 min, Rinoplastia &rarr; 180 min</span></div>
         </div>
         <div class="rl">
@@ -683,7 +684,7 @@
       <tr><td>Trazabilidad</td><td>Cada captura registra usuario, fecha/hora y dispositivo en el Log de Auditor&iacute;a (NOM-024)</td></tr>
       <tr><td>Acceso por rol</td><td>Sometido al RBAC de datos cl&iacute;nicos (las fotos son parte de la HC)</td></tr>
     </table>
-    <div class="note pending">&#x23F3; ARMC debe definir los sets estandarizados por l&iacute;nea de servicio (cu&aacute;ntas tomas y qu&eacute; &aacute;ngulos para cirug&iacute;a, medicina est&eacute;tica, aparatolog&iacute;a, cosmiatr&iacute;a, tricolog&iacute;a). Esos sets viven en Protocolo de Revisi&oacute;n; el mecanismo de captura es transversal.</div>
+    <div class="note pending">&#x23F3; ARMC debe definir los sets estandarizados por l&iacute;nea de servicio (cu&aacute;ntas tomas y qu&eacute; &aacute;ngulos para cirug&iacute;a, medicina est&eacute;tica, aparatolog&iacute;a, cosmiatr&iacute;a, tricolog&iacute;a). La superficie de datos est&aacute; declarada en el campo &lsquo;Sets de fotograf&iacute;as por momento&rsquo; de la entidad Protocolo de Revisi&oacute;n; el mecanismo de captura es transversal.</div>
 
     <h2><i class="ph ph-clock-countdown" style="color:#31BEEF"></i> Retenci&oacute;n de datos</h2>
     <table>
