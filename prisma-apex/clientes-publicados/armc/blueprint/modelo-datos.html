@@ -84,9 +84,9 @@
         <div class="note">No se abre HC. Solo ficha de contacto. Sin cuenta en sistema. Tambi&eacute;n se registran (si se obtienen del chat): nombre, fuente de captaci&oacute;n, motivo de consulta, fecha primer contacto. Opcionales en etapa Lead &mdash; se confirman al registrarse como Usuario.</div>
 
         <!-- ── USUARIO ── -->
-        <div class="stg stg-user">Usuario &mdash; registro (~94 campos)</div>
+        <div class="stg stg-user">Usuario &mdash; registro (~99 campos)</div>
 
-        <div class="ftsub">Obligatorios al registrarse (~25)</div>
+        <div class="ftsub">Obligatorios al registrarse (~30)</div>
         <div class="fl">
           <div class="f"><span class="fn">ID Sistema</span><span class="fy">auto</span></div>
           <div class="f"><span class="fn">ID Historia Cl&iacute;nica</span><span class="fy">auto</span></div>
@@ -102,8 +102,13 @@
           <div class="f"><span class="fn">Ocupaci&oacute;n</span><span class="fy">texto</span></div>
           <div class="f"><span class="fn">Originario</span><span class="fy">texto</span></div>
           <div class="f"><span class="fn">Escolaridad</span><span class="fy">selecci&oacute;n</span></div>
-          <div class="f"><span class="fn">Domicilio</span><span class="fy">texto</span><span class="fo">&mdash; obligatorio NOM-004</span></div>
-          <div class="f"><span class="fn">Lugar de residencia</span><span class="fy">texto</span><span class="fo">&mdash; obligatorio NOM-004</span></div>
+          <div class="f"><span class="fn">Calle y n&uacute;mero</span><span class="fy">texto</span><span class="fo">&mdash; calle + n&uacute;mero exterior. Parte del domicilio NOM-004</span></div>
+          <div class="f"><span class="fn">N&uacute;mero interior</span><span class="fy">texto</span><span class="fo">&mdash; opcional (depto, casa, suite)</span></div>
+          <div class="f"><span class="fn">Colonia</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">C&oacute;digo postal</span><span class="fy">texto (5 d&iacute;gitos)</span></div>
+          <div class="f"><span class="fn">Municipio / Alcald&iacute;a</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">Estado</span><span class="fy">selecci&oacute;n din&aacute;mica seg&uacute;n Pa&iacute;s</span><span class="fo">&mdash; 32 entidades federativas si Pa&iacute;s = M&eacute;xico; 50 estados si Pa&iacute;s = Estados Unidos</span></div>
+          <div class="f"><span class="fn">Pa&iacute;s</span><span class="fy">selecci&oacute;n: M&eacute;xico / Estados Unidos</span><span class="fo">&mdash; Default: M&eacute;xico</span></div>
           <div class="f"><span class="fn">Familiar responsable</span><span class="fy">texto</span></div>
           <div class="f"><span class="fn">Tel. familiar responsable</span><span class="fy">tel&eacute;fono</span></div>
           <div class="f"><span class="fn">Grupo sangu&iacute;neo y RH</span><span class="fy">selecci&oacute;n</span></div>
