@@ -84,7 +84,7 @@
         <div class="note">No se abre HC. Solo ficha de contacto. Sin cuenta en sistema. Tambi&eacute;n se registran (si se obtienen del chat): nombre, fuente de captaci&oacute;n, motivo de consulta, fecha primer contacto. Opcionales en etapa Lead &mdash; se confirman al registrarse como Usuario.</div>
 
         <!-- ── USUARIO ── -->
-        <div class="stg stg-user">Usuario &mdash; registro (~108 campos)</div>
+        <div class="stg stg-user">Usuario &mdash; registro (~111 campos)</div>
 
         <div class="ftsub">Obligatorios al registrarse (~27)</div>
         <div class="fl">
@@ -127,7 +127,7 @@
           <div class="f"><span class="fn">Solo comunicaciones cl&iacute;nicas</span><span class="fy">check</span><span class="fo">&mdash; Derecho de Oposici&oacute;n ARCO. Activado = el paciente recibe &uacute;nicamente comunicaciones cl&iacute;nicas (citas, recordatorios, resultados, seguimiento). Se excluyen newsletters, promociones y campa&ntilde;as. Editable en cualquier momento</span></div>
         </div>
 
-        <div class="ftsub">Antecedentes &mdash; opcionales al registro, obligatorios pre-evaluaci&oacute;n (~75 campos)</div>
+        <div class="ftsub">Antecedentes &mdash; opcionales al registro, obligatorios pre-evaluaci&oacute;n (~78 campos)</div>
         <div class="note">Tipados como selecci&oacute;n / checkbox / num&eacute;rico / fecha siempre que el dato sea cl&iacute;nicamente cerrado. Texto libre solo en agentes espec&iacute;ficos, descripciones y campos &ldquo;otra&rdquo;. Habilita contraindicaciones autom&aacute;ticas, c&aacute;lculo de escalas (Charlson) y b&uacute;squedas estructuradas.</div>
 
         <div class="ftsub">Secci&oacute;n 3 &mdash; Heredofamiliares (matriz 8 &times; 6)</div>
@@ -137,7 +137,7 @@
           <div class="f"><span class="fn">Detalle por celda activada</span><span class="fy">texto opcional</span><span class="fo">&mdash; ej: &ldquo;diabetes tipo 2 desde los 50&rdquo;</span></div>
         </div>
 
-        <div class="ftsub">Secci&oacute;n 4 &mdash; Personales no patol&oacute;gicos (~32 campos)</div>
+        <div class="ftsub">Secci&oacute;n 4 &mdash; Personales no patol&oacute;gicos (~33 campos)</div>
         <div class="fl">
           <div class="f"><span class="fn">Vivienda &mdash; tipo</span><span class="fy">selecci&oacute;n: propia / rentada / familiar / otra</span></div>
           <div class="f"><span class="fn">Vivienda &mdash; construcci&oacute;n</span><span class="fy">selecci&oacute;n: casa / departamento / cuarto / otra</span></div>
@@ -152,6 +152,7 @@
           <div class="f"><span class="fn">Tabaco &mdash; estado</span><span class="fy">selecci&oacute;n: no / ex-fumador / activo</span></div>
           <div class="f"><span class="fn">Tabaco &mdash; cigarros/d&iacute;a</span><span class="fy">n&uacute;mero (condicional &ldquo;activo&rdquo;)</span></div>
           <div class="f"><span class="fn">Tabaco &mdash; a&ntilde;os fumando</span><span class="fy">n&uacute;mero (condicional &ldquo;activo&rdquo;)</span></div>
+          <div class="f"><span class="fn">Tabaco &mdash; &iacute;ndice tabáquico (IT)</span><span class="fy">n&uacute;mero auto-calculado (paquetes/a&ntilde;o)</span><span class="fo">&mdash; presente en HC papel ARMC. C&aacute;lculo: (cigarros/d&iacute;a / 20) &times; a&ntilde;os fumando. Solo si Tabaco = activo o ex-fumador</span></div>
           <div class="f"><span class="fn">Alcohol &mdash; consumo</span><span class="fy">selecci&oacute;n: no / social / frecuente / diario</span></div>
           <div class="f"><span class="fn">Alcohol &mdash; frecuencia</span><span class="fy">selecci&oacute;n condicional: ocasional / fines de semana / 2-3/sem / diario</span></div>
           <div class="f"><span class="fn">Drogas</span><span class="fy">selecci&oacute;n s&iacute; / no</span></div>
@@ -170,7 +171,7 @@
         </div>
         <div class="note pending">&#x23F3; COMBRE: el formulario en papel de ARMC incluye un campo etiquetado &ldquo;COMBRE&rdquo; (s&iacute; / no) cuya sem&aacute;ntica no se deduce del documento. Pendiente de confirmaci&oacute;n con ARMC antes de tipificarlo.</div>
 
-        <div class="ftsub">Secci&oacute;n 5 &mdash; Gineco-obst&eacute;tricos (~14 campos, condicional Sexo = F)</div>
+        <div class="ftsub">Secci&oacute;n 5 &mdash; Gineco-obst&eacute;tricos (~15 campos, condicional Sexo = F)</div>
         <div class="fl">
           <div class="f"><span class="fn">Menarca</span><span class="fy">n&uacute;mero (edad en a&ntilde;os)</span></div>
           <div class="f"><span class="fn">FUM (fecha &uacute;ltima menstruaci&oacute;n)</span><span class="fy">fecha</span></div>
@@ -186,9 +187,10 @@
           <div class="f"><span class="fn">M&eacute;todo anticonceptivo</span><span class="fy">selecci&oacute;n: ninguno / p&iacute;ldora / DIU / inyecci&oacute;n / parche / implante / quir&uacute;rgico / otro</span></div>
           <div class="f"><span class="fn">Menopausia</span><span class="fy">selecci&oacute;n s&iacute; / no</span></div>
           <div class="f"><span class="fn">Menopausia &mdash; edad</span><span class="fy">n&uacute;mero (condicional s&iacute;)</span></div>
+          <div class="f"><span class="fn">Particularidades</span><span class="fy">texto opcional</span><span class="fo">&mdash; presente en HC papel ARMC. Observaciones gineco-obst&eacute;tricas no cubiertas por los campos anteriores</span></div>
         </div>
 
-        <div class="ftsub">Secci&oacute;n 6 &mdash; Personales patol&oacute;gicos (~26 campos)</div>
+        <div class="ftsub">Secci&oacute;n 6 &mdash; Personales patol&oacute;gicos (~27 campos)</div>
         <div class="fl">
           <div class="f"><span class="fn">Al&eacute;rgicos &mdash; tipos</span><span class="fy">checkbox m&uacute;ltiple: medicamentos / alimentos / ambientales / l&aacute;tex / metales / cosm&eacute;ticos / ninguno conocido</span></div>
           <div class="f"><span class="fn">Al&eacute;rgicos &mdash; agente y reacci&oacute;n</span><span class="fy">texto (condicional)</span></div>
@@ -216,6 +218,7 @@
           <div class="f"><span class="fn">Suplementos / vitaminas &mdash; dosis</span><span class="fy">texto (lista din&aacute;mica)</span></div>
           <div class="f"><span class="fn">Suplementos / vitaminas &mdash; frecuencia</span><span class="fy">selecci&oacute;n: 1/d&iacute;a / 2/d&iacute;a / 3/d&iacute;a / variable</span></div>
           <div class="f"><span class="fn">Suplementos / vitaminas &mdash; indicaci&oacute;n</span><span class="fy">texto (lista din&aacute;mica)</span></div>
+          <div class="f"><span class="fn">Otros antecedentes patol&oacute;gicos</span><span class="fy">texto libre</span><span class="fo">&mdash; presente en HC papel ARMC (campo &ldquo;Otras&rdquo; al cierre de Personales Patol&oacute;gicos). Catch-all para informaci&oacute;n no cubierta por los campos anteriores</span></div>
         </div>
         <div class="note warn">Mec&aacute;nica de doble etapa: estas secciones est&aacute;n disponibles desde la creaci&oacute;n de cuenta como opcionales. Si no se completan antes de la evaluaci&oacute;n, se vuelven obligatorios el d&iacute;a de la evaluaci&oacute;n (NOM-004-SSA3).</div>
 
@@ -257,15 +260,16 @@
         </div>
 
         <div class="ftsub">Interrogatorio por aparatos y sistemas (8 sistemas)</div>
+        <div class="note">Cada sistema con tipado uniforme: selecci&oacute;n binaria de estado + hallazgos texto solo si anormal. Refleja la estructura real de la HC papel ARMC (&ldquo;Cardiopulmonar: Normal / No / Hallazgos: ___&rdquo;).</div>
         <div class="fl">
-          <div class="f"><span class="fn">Cardiopulmonar</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Gastrointestinal</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Genitourinario</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Sentidos</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Endocrino</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Nervioso</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Musculoesquel&eacute;tico</span><span class="fy">texto</span></div>
-          <div class="f"><span class="fn">Piel</span><span class="fy">texto</span></div>
+          <div class="f"><span class="fn">Cardiopulmonar</span><span class="fy">selecci&oacute;n: normal / anormal + hallazgos texto (condicional anormal)</span></div>
+          <div class="f"><span class="fn">Gastrointestinal</span><span class="fy">selecci&oacute;n: normal / anormal + hallazgos texto (condicional anormal)</span></div>
+          <div class="f"><span class="fn">Genitourinario</span><span class="fy">selecci&oacute;n: normal / anormal + hallazgos texto (condicional anormal)</span></div>
+          <div class="f"><span class="fn">Sentidos</span><span class="fy">selecci&oacute;n: normal / anormal + hallazgos texto (condicional anormal)</span></div>
+          <div class="f"><span class="fn">Endocrino</span><span class="fy">selecci&oacute;n: normal / anormal + hallazgos texto (condicional anormal)</span></div>
+          <div class="f"><span class="fn">Nervioso</span><span class="fy">selecci&oacute;n: normal / anormal + hallazgos texto (condicional anormal)</span></div>
+          <div class="f"><span class="fn">Musculoesquel&eacute;tico</span><span class="fy">selecci&oacute;n: normal / anormal + hallazgos texto (condicional anormal)</span></div>
+          <div class="f"><span class="fn">Piel</span><span class="fy">selecci&oacute;n: normal / anormal + hallazgos texto (condicional anormal)</span></div>
         </div>
 
         <div class="ftsub">Exploraci&oacute;n f&iacute;sica</div>
