@@ -85,7 +85,7 @@
 
         <!-- ── USUARIO ── -->
         <div class="stg stg-user">Usuario &mdash; registro (~114 campos)</div>
-        <div class="note"><strong>&#x1F513; ZONA EDITABLE LIBREMENTE.</strong> Mientras el paciente no haya firmado la Evaluaci&oacute;n M&eacute;dica, todos estos datos (perfil, contacto y antecedentes) son modificables por el propio paciente sin firma adicional. Cada cambio queda en audit log.</div>
+        <div class="note"><strong><i class="ph ph-lock-key-open"></i> ZONA EDITABLE LIBREMENTE.</strong> Mientras el paciente no haya firmado la Evaluaci&oacute;n M&eacute;dica, todos estos datos (perfil, contacto y antecedentes) son modificables por el propio paciente sin firma adicional. Cada cambio queda en audit log.</div>
 
         <div class="ftsub">Obligatorios al registrarse (~27)</div>
         <div class="fl">
@@ -170,7 +170,7 @@
           <div class="f"><span class="fn">Vacunas registradas</span><span class="fy">checkbox m&uacute;ltiple + fecha &uacute;ltima por cada una</span><span class="fo">&mdash; Hep B / Influenza / COVID-19 / HPV / T&eacute;tanos / Neumococo</span></div>
           <div class="f"><span class="fn">Otras vacunas</span><span class="fy">texto</span></div>
         </div>
-        <div class="note pending">&#x23F3; COMBRE: el formulario en papel de ARMC incluye un campo etiquetado &ldquo;COMBRE&rdquo; (s&iacute; / no) cuya sem&aacute;ntica no se deduce del documento. Pendiente de confirmaci&oacute;n con ARMC antes de tipificarlo.</div>
+        <div class="note pending"><i class="ph ph-hourglass-medium"></i> COMBRE: el formulario en papel de ARMC incluye un campo etiquetado &ldquo;COMBRE&rdquo; (s&iacute; / no) cuya sem&aacute;ntica no se deduce del documento. Pendiente de confirmaci&oacute;n con ARMC antes de tipificarlo.</div>
 
         <div class="ftsub">Secci&oacute;n 5 &mdash; Gineco-obst&eacute;tricos (~15 campos, condicional Sexo = F)</div>
         <div class="fl">
@@ -239,7 +239,7 @@
 
         <!-- ── PACIENTE — evaluación médica ── -->
         <div class="stg stg-pac">Paciente &mdash; evaluaci&oacute;n m&eacute;dica (~74 campos)</div>
-        <div class="note warn"><strong>&#x270D;&#xFE0F; ZONA QUE SE FIRMA Y SE BLOQUEA.</strong> Estos datos los completa el m&eacute;dico durante la evaluaci&oacute;n y se cierran con la doble firma (m&eacute;dico + paciente) al final del bloque. Tras la firma, modificar cualquier dato cl&iacute;nico de la HC requiere addendum con misma doble firma. Los datos administrativos siguen editables aparte.</div>
+        <div class="note warn"><strong><i class="ph ph-signature"></i> ZONA QUE SE FIRMA Y SE BLOQUEA.</strong> Estos datos los completa el m&eacute;dico durante la evaluaci&oacute;n y se cierran con la doble firma (m&eacute;dico + paciente) al final del bloque. Tras la firma, modificar cualquier dato cl&iacute;nico de la HC requiere addendum con misma doble firma. Los datos administrativos siguen editables aparte.</div>
 
         <div class="ftsub">Evaluaci&oacute;n especializada (screenings por edad)</div>
         <div class="fl">
@@ -355,7 +355,7 @@
           <div class="f"><span class="fn">Firma del m&eacute;dico</span><span class="fy">firma aut&oacute;grafa digitalizada (iPad/tablet)</span><span class="fo">&mdash; inmoviliza la nota (solo lectura)</span></div>
           <div class="f"><span class="fn">Firma del paciente</span><span class="fy">firma aut&oacute;grafa digitalizada (iPad/tablet)</span><span class="fo">&mdash; confirma informaci&oacute;n correcta</span></div>
         </div>
-        <div class="note warn" style="border-left-width:6px"><strong>&#x1F512; PUNTO DE BLOQUEO DE LA HC.</strong> Estas dos firmas, juntas, disparan la inmutabilidad de los datos cl&iacute;nicos del expediente. Tras este momento, cualquier modificaci&oacute;n en datos de salud o historial cl&iacute;nico (antecedentes, alergias, medicamentos, etc.) <strong>solo es posible v&iacute;a addendum con la misma doble firma m&eacute;dico + paciente</strong>, conservando la versi&oacute;n anterior en el historial. Los datos meramente administrativos (contacto, domicilio) siguen editables siempre por el paciente sin firma adicional. Detalle del mecanismo en las secciones &lsquo;Inmutabilidad&rsquo; y &lsquo;Correcciones COFEPRIS&rsquo;.</div>
+        <div class="note warn" style="border-left-width:6px"><strong><i class="ph ph-lock-key"></i> PUNTO DE BLOQUEO DE LA HC.</strong> Estas dos firmas, juntas, disparan la inmutabilidad de los datos cl&iacute;nicos del expediente. Tras este momento, cualquier modificaci&oacute;n en datos de salud o historial cl&iacute;nico (antecedentes, alergias, medicamentos, etc.) <strong>solo es posible v&iacute;a addendum con la misma doble firma m&eacute;dico + paciente</strong>, conservando la versi&oacute;n anterior en el historial. Los datos meramente administrativos (contacto, domicilio) siguen editables siempre por el paciente sin firma adicional. Detalle del mecanismo en las secciones &lsquo;Inmutabilidad&rsquo; y &lsquo;Correcciones COFEPRIS&rsquo;.</div>
         <div class="note">Desde este momento = PACIENTE. Se activa la clasificaci&oacute;n autom&aacute;tica.</div>
         <div class="note warn">Los testigos firman SOLO el consentimiento informado (10.1.9), no la HC de evaluaci&oacute;n. NOM-004 numeral 10.1.1 exige testigos para la Carta de Consentimiento Informado. La HC se firma solo con m&eacute;dico + paciente.</div>
 
@@ -703,7 +703,7 @@
     </table>
 
     <h2><i class="ph ph-lock-key" style="color:#31BEEF"></i> Inmutabilidad</h2>
-    <div class="note warn" style="margin-bottom:1rem"><strong>&#x1F512; Regla central:</strong> la firma m&eacute;dico + paciente al cierre de la Evaluaci&oacute;n M&eacute;dica <strong>bloquea</strong> los datos cl&iacute;nicos de la HC. A partir de ese momento, cualquier cambio en datos de salud o del historial cl&iacute;nico requiere <strong>addendum con doble firma (m&eacute;dico + paciente)</strong>. Los datos meramente administrativos (contacto, domicilio, etc.) siguen editables siempre por el paciente con audit log.</div>
+    <div class="note warn" style="margin-bottom:1rem"><strong><i class="ph ph-lock-key"></i> Regla central:</strong> la firma m&eacute;dico + paciente al cierre de la Evaluaci&oacute;n M&eacute;dica <strong>bloquea</strong> los datos cl&iacute;nicos de la HC. A partir de ese momento, cualquier cambio en datos de salud o del historial cl&iacute;nico requiere <strong>addendum con doble firma (m&eacute;dico + paciente)</strong>. Los datos meramente administrativos (contacto, domicilio, etc.) siguen editables siempre por el paciente con audit log.</div>
     <table>
       <tr><th>Tipo de dato</th><th>Ejemplos</th><th>Editable</th><th>Mecanismo de cambio</th></tr>
       <tr><td>Datos administrativos / contacto</td><td>Tel&eacute;fono, email, domicilio, contacto familiar, m&eacute;todos de comunicaci&oacute;n</td><td>S&iacute;, siempre, por el paciente</td><td>Edici&oacute;n directa con audit log. No requiere firma</td></tr>
@@ -752,7 +752,7 @@
       <tr><td>Trazabilidad</td><td>Cada captura registra usuario, fecha/hora y dispositivo en el Log de Auditor&iacute;a (NOM-024)</td></tr>
       <tr><td>Acceso por rol</td><td>Sometido al RBAC de datos cl&iacute;nicos (las fotos son parte de la HC)</td></tr>
     </table>
-    <div class="note pending">&#x23F3; ARMC debe definir los sets estandarizados por l&iacute;nea de servicio (cu&aacute;ntas tomas y qu&eacute; &aacute;ngulos para cirug&iacute;a, medicina est&eacute;tica, aparatolog&iacute;a, cosmiatr&iacute;a, tricolog&iacute;a). La superficie de datos est&aacute; declarada en el campo &lsquo;Sets de fotograf&iacute;as por momento&rsquo; de la entidad Protocolo de Revisi&oacute;n; el mecanismo de captura es transversal.</div>
+    <div class="note pending"><i class="ph ph-hourglass-medium"></i> ARMC debe definir los sets estandarizados por l&iacute;nea de servicio (cu&aacute;ntas tomas y qu&eacute; &aacute;ngulos para cirug&iacute;a, medicina est&eacute;tica, aparatolog&iacute;a, cosmiatr&iacute;a, tricolog&iacute;a). La superficie de datos est&aacute; declarada en el campo &lsquo;Sets de fotograf&iacute;as por momento&rsquo; de la entidad Protocolo de Revisi&oacute;n; el mecanismo de captura es transversal.</div>
 
     <h2><i class="ph ph-signature" style="color:#31BEEF"></i> Plantillas de consentimiento informado</h2>
     <p style="color:#A1B8F2;margin-bottom:.5rem">Cada procedimiento de ARMC tiene una plantilla de consentimiento informado predefinida. Se renderiza en iPad/tablet para que el paciente la lea, complete y firme antes del procedimiento. El sistema prellena los campos que ya conoce (paciente, cita, m&eacute;dico) y la fecha del documento, eliminando re-tecleo manual y reduciendo errores. Resuelve la fricci&oacute;n actual de plantillas en papel impresas y rellenadas a mano.</p>
@@ -766,7 +766,7 @@
       <tr><td>Trazabilidad</td><td>Cada firma registra usuario, fecha/hora y dispositivo en el Log de Auditor&iacute;a (NOM-024)</td></tr>
       <tr><td>Acceso por rol</td><td>Sometido al RBAC de datos cl&iacute;nicos (los consentimientos son parte de la HC)</td></tr>
     </table>
-    <div class="note pending">&#x23F3; ARMC debe proporcionar el conjunto de plantillas por procedimiento (texto base + cl&aacute;usulas espec&iacute;ficas). El sistema soporta el rendering, autofill y firma; el contenido textual y su validaci&oacute;n legal corresponden a ARMC.</div>
+    <div class="note pending"><i class="ph ph-hourglass-medium"></i> ARMC debe proporcionar el conjunto de plantillas por procedimiento (texto base + cl&aacute;usulas espec&iacute;ficas). El sistema soporta el rendering, autofill y firma; el contenido textual y su validaci&oacute;n legal corresponden a ARMC.</div>
 
     <h2><i class="ph ph-clock-countdown" style="color:#31BEEF"></i> Retenci&oacute;n de datos</h2>
     <table>
