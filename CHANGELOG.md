@@ -2,6 +2,65 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-06] — v3.3.44
+
+### Absorción del segundo bloque de contenido del carril 2 (modelo de datos ARMC, expansión Paciente + Protocolo Revisión + Bloqueo HC)
+
+Segundo paquete operativo de absorción de contenido del carril 2 sobre la base canónica `chore/fase2-contenido-base-v3.3.43` (abierta tras `v3.3.43`). Cherry-pick lineal con trazabilidad `-x` de **14 SHAs** desde `5e9f67c` hasta `5f882df` en una sola pasada. Todos tocan únicamente `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`. **Sin tocar backend, BD, nginx ni PM2.** Cambio puramente de contenido del modelo de datos ARMC; contratos visibles intactos.
+
+#### Bloque temático absorbido
+
+- **Domicilio binacional:** descomposición de `Domicilio` en campos separados con `País` (modelo binacional mínimo).
+- **Identidad clínica:** `Originario` → `Nacionalidad` como selección binacional; `Fototipo Fitzpatrick` como selector visual con muestras de color.
+- **Fotos clínicas:** captura nativa declarada como mecanismo del sistema; alineación con entidad `Procedimiento`; en `Protocolo de Revisión` placeholder *"Sets de fotografías por momento"* (Opción B).
+- **Antecedentes ampliados:** 11 campos validados contra HC papel ARMC; granularización de `Exploración física`; `Enfermedades previas` como lista dinámica; refinado de 8 sistemas de revisión.
+- **Plantillas de consentimiento:** consentimiento informado en iPad/tablet con autofill desde sistema.
+- **Regla de bloqueo HC + COFEPRIS:** doble firma post-evaluación; visualización destacada; banners clarificados — la firma inmoviliza también los antecedentes.
+- **Higiene visual:** sustitución de 7 iconos unicode introducidos en slices previos por Phosphor.
+
+#### Commits absorbidos (cherry-pick `-x`, orden cronológico)
+
+| Origen carril 2 | Resultado en `dev` | Asunto corto |
+|---|---|---|
+| `5e9f67c` | `b24d5d2` | Domicilio campos separados + País |
+| `95b1ccb` | `8b8527d` | Domicilio binacional mínimo (corrección) |
+| `f54d01e` | `c257d8a` | Fototipo Fitzpatrick selector visual |
+| `484cb5c` | `86a73d9` | Captura nativa fotos clínicas |
+| `1a66810` | `f9c8978` | 11 campos validados HC papel |
+| `f098d77` | `3a30586` | Correctivo captura fotos + Procedimiento |
+| `13ba3de` | `3e0d600` | Sets de fotografías por momento (Opción B) |
+| `31c6337` | `ec3c3aa` | Contraste HC papel — 3 campos + 8 sistemas |
+| `f11d8c7` | `ad2b55e` | Exploración física granular + Enfermedades dinámicas |
+| `4ad1cd9` | `fedfc3f` | Plantillas consentimiento iPad/tablet |
+| `56a4e00` | `798db0c` | Originario → Nacionalidad binacional |
+| `4e13ffe` | `385d434` | Bloqueo HC + doble firma post-evaluación |
+| `9481f53` | `0017824` | Sustituir 7 iconos unicode por Phosphor |
+| `5f882df` | `c1c6ed5` | Banners de bloqueo HC clarificados |
+
+Diff total: 1 archivo, **+161 / -50 líneas** acumuladas en `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`.
+
+#### Paridad y validación
+
+- Validación directa: archivo final en carril repo **byte-a-byte equivalente** al de la punta del worktree v343 (`5f882df`). `diff -q` sin diferencias.
+- Sanity HTML mínimo: balance de `<script>`/`</script>` (2/2) idéntico a la base `36f9953`.
+- Trazabilidad: cada commit conserva el footer `(cherry picked from commit …)` apuntando al SHA original del carril contenido.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este slice
+
+- Sin tocar backend, BD, PM2 ni nginx.
+- Sin abrir limpieza adicional fuera de `modelo-datos.html` (se respeta scope estricto: limpieza preexistente de unicode en otros archivos no entra aquí).
+- Sin tocar el worktree v343 (`web-de-prisma-carril-contenido-v343`); queda como respaldo hasta cerrar verificación visual en DEV.
+- Sin promoción a `main` hasta validación visual humana en `dev.prismaconsul.com`.
+- Sin tocar el worktree viejo `prisma-carril-contenido-next` ni la rama `chore/fase2-contenido-base-v3.3.24` (referencia respaldada en `origin`).
+- Sin reactivar al ejecutor 2 — sigue como pendiente operativo separado.
+
 ## [2026-05-06] — v3.3.43
 
 ### Absorción canónica del primer port de contenido del carril 2 (modelo de datos ARMC)
