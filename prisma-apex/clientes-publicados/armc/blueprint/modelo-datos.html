@@ -43,7 +43,7 @@
     <div class="badge"><i class="ph ph-database"></i> Blueprint de Sistema</div>
     <h1>Modelo de Datos</h1>
     <p class="subtitle">Entidades, campos y relaciones que APEX construir&aacute; para ARMC &mdash; basado en el diagn&oacute;stico de 7 roles</p>
-    <div class="ss"><div class="sc"><div class="sn">10</div><div class="sl">Entidades</div></div><div class="sc"><div class="sn">314</div><div class="sl">Campos definidos</div></div><div class="sc"><div class="sn">4</div><div class="sl">Dolores cubiertos</div></div></div>
+    <div class="ss"><div class="sc"><div class="sn">10</div><div class="sl">Entidades</div></div><div class="sc"><div class="sn">316</div><div class="sl">Campos definidos</div></div><div class="sc"><div class="sn">4</div><div class="sl">Dolores cubiertos</div></div></div>
 
     <!-- ═══════════════════════════════════════ PACIENTE ═══════════════════════════════════════ -->
     <div class="ec open" onclick="this.classList.toggle('open')">
@@ -361,10 +361,10 @@
         </div>
         <div class="note warn" style="border-left-width:6px"><strong><i class="ph ph-lock-key"></i> PUNTO DE BLOQUEO DE LA HC.</strong> Estas dos firmas, juntas, disparan la inmutabilidad de los datos cl&iacute;nicos del expediente. Tras este momento, cualquier modificaci&oacute;n en datos de salud o historial cl&iacute;nico (antecedentes, alergias, medicamentos, etc.) <strong>solo es posible v&iacute;a addendum con la misma doble firma m&eacute;dico + paciente</strong>, conservando la versi&oacute;n anterior en el historial. Los datos meramente administrativos (contacto, domicilio) siguen editables siempre por el paciente sin firma adicional. Detalle del mecanismo en las secciones &lsquo;Inmutabilidad&rsquo; y &lsquo;Correcciones COFEPRIS&rsquo;.</div>
         <div class="note">Desde este momento = PACIENTE. Se activa la clasificaci&oacute;n autom&aacute;tica.</div>
-        <div class="note warn">Los testigos firman SOLO el consentimiento informado (10.1.9), no la HC de evaluaci&oacute;n. NOM-004 numeral 10.1.1 exige testigos para la Carta de Consentimiento Informado. La HC se firma solo con m&eacute;dico + paciente.</div>
+        <div class="note warn">Los testigos firman SOLO el consentimiento informado (10.1.9), nunca la HC de evaluaci&oacute;n. La HC se firma solo con m&eacute;dico + paciente. NOM-004 numeral 10.1.9 contempla la firma de testigos como parte del CI, pero en ARMC son <strong>opcionales</strong> seg&uacute;n juicio cl&iacute;nico del m&eacute;dico. Aplican obligatoriamente cuando el m&eacute;dico lo determine: paciente menor de edad, procedimientos de alto riesgo (cirug&iacute;a m&iacute;nima invasiva, lipo facial l&aacute;ser), paciente con capacidad legal disminuida o casos m&eacute;dico-legales complejos. No aplican en procedimientos est&eacute;ticos rutinarios de bajo riesgo (b&oacute;tox, &aacute;cido hialur&oacute;nico, limpieza facial, peeling, mesoterapia capilar) firmados por adulto competente.</div>
 
         <!-- ── POR PROCEDIMIENTO ── -->
-        <div class="stg stg-proc">Por procedimiento (6 campos por cada uno)</div>
+        <div class="stg stg-proc">Por procedimiento (8 campos por cada uno)</div>
         <div class="fl">
           <div class="f"><span class="fn">Consentimiento informado</span><span class="fy">documento estructurado</span><span class="fo">&mdash; 9 sub-campos NOM-004</span></div>
           <div class="f"><span class="fn">Fotos pre-procedimiento</span><span class="fy">set de im&aacute;genes (captura nativa m&oacute;vil)</span><span class="fo">&mdash; Tomas estandarizadas inmediatamente antes del procedimiento, ligadas al Procedimiento + L&iacute;nea de servicio. Ver secci&oacute;n &lsquo;Captura de fotograf&iacute;as cl&iacute;nicas&rsquo;</span></div>
@@ -372,6 +372,8 @@
           <div class="f"><span class="fn">Nota de evoluci&oacute;n</span><span class="fy">texto largo</span></div>
           <div class="f"><span class="fn">Indicaciones post-procedimiento</span><span class="fy">template por tipo</span></div>
           <div class="f"><span class="fn">Satisfacci&oacute;n del paciente</span><span class="fy">escala 1-10 + texto</span></div>
+          <div class="f"><span class="fn">Testigos requeridos</span><span class="fy">selecci&oacute;n s&iacute; / no</span><span class="fo">&mdash; Decide el m&eacute;dico antes de firmar el CI. Default no para procedimientos est&eacute;ticos rutinarios; s&iacute; para menores, alto riesgo, capacidad disminuida o casos m&eacute;dico-legales complejos</span></div>
+          <div class="f"><span class="fn">Motivo testigos</span><span class="fy">selecci&oacute;n: menor / alto riesgo / capacidad disminuida / m&eacute;dico-legal / otro + texto (condicional s&iacute;)</span><span class="fo">&mdash; Justificaci&oacute;n cl&iacute;nica documentada cuando se requieren testigos</span></div>
         </div>
 
         <!-- ── CONTINUO ── -->
@@ -537,7 +539,7 @@
           <div class="f"><span class="fn">Estado</span><span class="fy">planificado / pre-procedimiento / en_curso / completado / en_seguimiento</span></div>
         </div>
 
-        <div class="ft">Contenido cl&iacute;nico (6)</div>
+        <div class="ft">Contenido cl&iacute;nico (8)</div>
         <div class="fl">
           <div class="f"><span class="fn">10.1 Consentimiento informado</span><span class="fy">documento estructurado (plantilla por procedimiento, firma aut&oacute;grafa en iPad/tablet)</span><span class="fo">&mdash; 9 sub-campos NOM-004. La plantilla prellena Nombre completo, Edad, Procedimiento, Fecha y Hora desde Paciente y Cita. Fecha del documento = d&iacute;a actual. Ver secci&oacute;n &lsquo;Plantillas de consentimiento informado&rsquo;</span></div>
           <div class="f"><span class="fn">10.2 Fotos pre-procedimiento</span><span class="fy">set de im&aacute;genes (captura nativa m&oacute;vil)</span><span class="fo">&mdash; obligatorio. Tomas estandarizadas inmediatamente antes del procedimiento, ligadas a este Procedimiento + L&iacute;nea de servicio heredada. Ver secci&oacute;n &lsquo;Captura de fotograf&iacute;as cl&iacute;nicas&rsquo;</span></div>
@@ -545,6 +547,8 @@
           <div class="f"><span class="fn">10.4 Nota de evoluci&oacute;n</span><span class="fy">texto</span></div>
           <div class="f"><span class="fn">10.5 Indicaciones post-procedimiento</span><span class="fy">template por tipo</span></div>
           <div class="f"><span class="fn">10.6 Satisfacci&oacute;n del paciente</span><span class="fy">escala 1-10 + texto</span></div>
+          <div class="f"><span class="fn">10.7 Testigos requeridos</span><span class="fy">selecci&oacute;n s&iacute; / no</span><span class="fo">&mdash; Decide el m&eacute;dico antes de firmar el CI. Default no para procedimientos est&eacute;ticos rutinarios; s&iacute; para menores, alto riesgo, capacidad disminuida o casos m&eacute;dico-legales complejos. Determina si los sub-campos 10.1.9 son obligatorios u opcionales en este CI</span></div>
+          <div class="f"><span class="fn">10.8 Motivo testigos</span><span class="fy">selecci&oacute;n: menor / alto riesgo / capacidad disminuida / m&eacute;dico-legal / otro + texto (condicional s&iacute;)</span><span class="fo">&mdash; Justificaci&oacute;n cl&iacute;nica documentada cuando se requieren testigos. Trazable en Log de Auditor&iacute;a NOM-024</span></div>
         </div>
 
         <div class="note">Sub-campos del consentimiento informado (10.1.1&ndash;10.1.9 NOM-004):</div>
@@ -558,9 +562,9 @@
           <tr><td>10.1.6</td><td>Eventualidades</td><td>texto</td></tr>
           <tr><td>10.1.7</td><td>Firma del paciente</td><td>firma aut&oacute;grafa digitalizada</td></tr>
           <tr><td>10.1.8</td><td>Firma del m&eacute;dico</td><td>firma aut&oacute;grafa digitalizada</td></tr>
-          <tr><td>10.1.9</td><td>Firma de 2 testigos</td><td>firma aut&oacute;grafa digitalizada &times; 2</td></tr>
+          <tr><td>10.1.9</td><td>Firma de 2 testigos (condicional)</td><td>firma aut&oacute;grafa digitalizada &times; 2 &mdash; obligatorio solo si 10.7 Testigos requeridos = s&iacute;</td></tr>
         </table>
-        <div class="note warn">Testigos (10.1.9): no bloqueante, alerta visual si faltan. NOM-004 numeral 10.1.1 exige testigos para la Carta de Consentimiento Informado.</div>
+        <div class="note warn">Testigos (10.1.9): NOM-004 numeral 10.1.9 contempla la firma de testigos como parte del CI; en ARMC son <strong>opcionales</strong> seg&uacute;n el campo 10.7 Testigos requeridos (decisi&oacute;n del m&eacute;dico). Cuando 10.7 = s&iacute;, los sub-campos 10.1.9 son obligatorios y bloquean la firma del CI hasta completarse. Cuando 10.7 = no, no aplican y el CI se firma con paciente + m&eacute;dico solamente.</div>
 
         <div class="rl">
           <div class="r"><i class="ph ph-arrow-left"></i> Pertenece a <strong>Paciente</strong> (FK obligatorio)</div>
@@ -783,6 +787,7 @@
       <tr><td>Campos auto-rellenados</td><td>Nombre completo del paciente, Edad (auto-calculada), Procedimiento programado, Fecha del procedimiento, Hora del procedimiento, M&eacute;dico responsable, Fecha del documento (= d&iacute;a actual). Todos provienen de las entidades Paciente y Cita</td></tr>
       <tr><td>Campos editables</td><td>Solo el m&eacute;dico puede editar campos prellenados (correcci&oacute;n antes de la firma del paciente). Tras la firma, el documento queda inmutable (ver secci&oacute;n &lsquo;Inmutabilidad&rsquo;)</td></tr>
       <tr><td>Trazabilidad</td><td>Cada firma registra usuario, fecha/hora y dispositivo en el Log de Auditor&iacute;a (NOM-024)</td></tr>
+      <tr><td>Testigos en el CI</td><td><strong>Opcionales por defecto</strong>; requeridos cuando el m&eacute;dico lo determine seg&uacute;n criterios cl&iacute;nicos: paciente menor de edad, procedimientos de alto riesgo (cirug&iacute;a m&iacute;nima invasiva, lipo facial l&aacute;ser), capacidad legal disminuida, casos m&eacute;dico-legales complejos. La decisi&oacute;n se registra en los campos 10.7 Testigos requeridos y 10.8 Motivo testigos del Procedimiento. La plantilla ofrece el campo de testigo desplegable a discreci&oacute;n del operador cl&iacute;nico antes de firmar; si 10.7 = no, el flujo de firma omite directamente los sub-campos 10.1.9</td></tr>
       <tr><td>Acceso por rol</td><td>Sometido al RBAC de datos cl&iacute;nicos (los consentimientos son parte de la HC)</td></tr>
     </table>
     <div class="note pending"><i class="ph ph-hourglass-medium"></i> ARMC debe proporcionar el conjunto de plantillas por procedimiento (texto base + cl&aacute;usulas espec&iacute;ficas). El sistema soporta el rendering, autofill y firma; el contenido textual y su validaci&oacute;n legal corresponden a ARMC.</div>
@@ -822,13 +827,13 @@
     <h2><i class="ph ph-squares-four" style="color:#31BEEF"></i> Cobertura D1-D4</h2>
     <p style="color:#A1B8F2;margin-bottom:1rem">Cada entidad resuelve uno o m&aacute;s dolores diagnosticados</p>
     <div class="cv">
-      <div class="cc cd1"><h3>D1 &mdash; Procesos Internos</h3><div class="ce">Paciente (lifecycle, campos, firmas, RBAC, PDF), Cita (ciclo de vida, 18 campos, tipos), Procedimiento (lifecycle, 13 campos), Inventario, Documento, Log de Auditor&iacute;a (trazabilidad NOM-024)</div><div class="cd">Digitaliza + norma + control de acceso + auditor&iacute;a</div></div>
+      <div class="cc cd1"><h3>D1 &mdash; Procesos Internos</h3><div class="ce">Paciente (lifecycle, campos, firmas, RBAC, PDF), Cita (ciclo de vida, 18 campos, tipos), Procedimiento (lifecycle, 15 campos), Inventario, Documento, Log de Auditor&iacute;a (trazabilidad NOM-024)</div><div class="cd">Digitaliza + norma + control de acceso + auditor&iacute;a</div></div>
       <div class="cc cd2"><h3>D2 &mdash; Seguimiento</h3><div class="ce">Paciente (clasificaci&oacute;n, se&ntilde;ales, historial), Procedimiento (seguimiento), Se&ntilde;al de Inacci&oacute;n (detecci&oacute;n autom&aacute;tica), Protocolo de Revisi&oacute;n (umbrales por procedimiento), Evaluaci&oacute;n Cl&iacute;nica (escalas pre/post)</div><div class="cd">Clasifica + detecta riesgo + act&uacute;a + umbrales</div></div>
       <div class="cc cd3"><h3>D3 &mdash; Comunicaci&oacute;n</h3><div class="ce">Comunicaci&oacute;n, Paciente (engagement, segmentaci&oacute;n), Se&ntilde;al de Inacci&oacute;n &rarr; respuestas autom&aacute;ticas D3</div><div class="cd">Personaliza por categor&iacute;a + engagement + se&ntilde;ales</div></div>
       <div class="cc cd4"><h3>D4 &mdash; Conversi&oacute;n</h3><div class="ce">Paciente (lifecycle Lead&rarr;Paciente, fuente captaci&oacute;n)</div><div class="cd">Captura + traza + mide ROI</div></div>
     </div>
 
-    <div class="note" style="margin-top:2rem">Documento de referencia &mdash; 314 campos en 10 entidades. Las 4 entidades nuevas (Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) soportan el ecosistema de se&ntilde;ales &sect;5B, proceso graduado Inactivo &rarr; Perdido &sect;5B-2, trazabilidad NOM-024 y medici&oacute;n de resultados cl&iacute;nicos (17 escalas). Este modelo alimenta los 25 KPIs, 25 automatizaciones, flujos to-be y fases de implementaci&oacute;n.</div>
+    <div class="note" style="margin-top:2rem">Documento de referencia &mdash; 316 campos en 10 entidades. Las 4 entidades nuevas (Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) soportan el ecosistema de se&ntilde;ales &sect;5B, proceso graduado Inactivo &rarr; Perdido &sect;5B-2, trazabilidad NOM-024 y medici&oacute;n de resultados cl&iacute;nicos (17 escalas). Este modelo alimenta los 25 KPIs, 25 automatizaciones, flujos to-be y fases de implementaci&oacute;n.</div>
   </div>
   <div class="zt"><button onclick="zoomOut()" title="Alejar"><i class="ph ph-minus"></i></button><span id="zl" class="zl">100%</span><button onclick="zoomIn()" title="Acercar"><i class="ph ph-plus"></i></button><button onclick="toggleFs()" title="Pantalla completa"><i class="ph ph-arrows-out"></i></button></div>
   <script>let z=100;function zoomIn(){z=Math.min(z+20,200);az()}function zoomOut(){z=Math.max(z-20,60);az()}function az(){document.body.style.zoom=z/100;document.getElementById('zl').textContent=z+'%'}function toggleFs(){if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{})}</script>
