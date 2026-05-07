@@ -2,6 +2,57 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-07] — v3.3.49
+
+### Absorción del sexto bloque de contenido del carril 2 (modelo de datos ARMC: alta voluntaria + regla unificada de firma documental + subdivisión visual por momento)
+
+Sexto paquete operativo de absorción de contenido del carril 2 sobre la base canónica `chore/fase2-contenido-base-v3.3.48` (abierta tras `v3.3.48`). Cherry-pick lineal con trazabilidad `-x` de **5 SHAs** desde `9240aed` hasta `4386ed0`. Todos tocan únicamente `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`. **Sin tocar backend, BD, nginx ni PM2.**
+
+#### Bloque temático absorbido
+
+- **Alta voluntaria como tipo de Documento:** se añade `alta voluntaria` al selector de tipos de Documento + sección sistema "Plantillas de alta voluntaria" con autofill desde Paciente, Cita y Procedimiento. La nota cierra que el alta voluntaria es propuesta de PRISMA pendiente de validar con ARMC (no se discutió en las 7 entrevistas).
+- **Regla unificada de firma documental:** toda la documentación firmada del paciente cuyo evento ya está planificado — HC de evaluación, CIs por procedimientos planificados, veracidad de antecedentes — se completa el día de la consulta de evaluación. El día del procedimiento no se firma documentación nueva: el sistema solo verifica que las firmas requeridas existan como prerrequisito del check-in. Evidencia ARMC documentada (Brisa, Carlos).
+- **Alta voluntaria como excepción a la regla unificada:** la plantilla se prepara con autofill el día de la evaluación, pero la firma es condicional al ejercicio efectivo del retiro voluntario contra recomendación médica.
+- **Subdivisión visual "Por procedimiento" por momento:** los 8 campos "Por procedimiento" se separan visualmente entre los firmados/decididos el día de la evaluación (3) y los registrados el día del procedimiento (5).
+- **Correctivos del revisor:** alta voluntaria con FK singular por procedimiento (una alta voluntaria por procedimiento, no compartida); tabla "3 consentimientos del paciente" pasa a usar columna canónica "Momento de firma"; testigos de alta voluntaria con regla independiente del campo `10.7 Testigos requeridos` del Procedimiento (default sí en alta voluntaria por naturaleza médico-legal, vs default no en CI por procedimiento estético rutinario).
+
+Balance neto: total de campos sigue en `316` (bloque estructural + redacción; sin cambio en cantidad de campos contables). Cabecera y nota de cierre alineadas en `316`.
+
+#### Commits absorbidos (cherry-pick `-x`, orden cronológico)
+
+| Origen carril 2 | Resultado en `dev` | Asunto corto |
+|---|---|---|
+| `9240aed` | `6c4c3c1` | Alta voluntaria como tipo de Documento + sección sistema |
+| `65f27e3` | `27dcf28` | Regla unificada de firma documental (día evaluación) |
+| `83278d1` | `a458bf6` | Subdivisión visual "Por procedimiento" por momento |
+| `12e3282` | `1fd494c` | Correctivo (alta + tabla canónica + singular) |
+| `4386ed0` | `626ce47` | Correctivo final: alta voluntaria con regla testigos independiente de 10.7 |
+
+Diff total: 1 archivo, **+43 / -13 líneas** acumuladas en `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`.
+
+#### Validación
+
+- Paridad con punta v348 (`4386ed0`) tras los 5 cherry-picks: byte-a-byte equivalente (`diff -q` vacío).
+- Sanity HTML: balance `<script>`/`</script>` 2/2 idéntico a la base.
+- Coherencia interna: cabecera (L46) y nota de cierre del documento ambas en `316` — sin cambio respecto a `v3.3.48`.
+- Marcadores temáticos confirmados en HTML servido: alta voluntaria como tipo + sección sistema; regla unificada de firma documental; alta voluntaria como excepción; tabla "3 consentimientos del paciente" con columna "Momento de firma"; FK singular de alta voluntaria por procedimiento; testigos de alta voluntaria con regla independiente de `10.7`.
+- Trazabilidad: cada commit conserva el footer `(cherry picked from commit …)`.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este slice
+
+- Sin tocar backend, BD, PM2 ni nginx.
+- Sin abrir limpieza adicional fuera de `modelo-datos.html`.
+- Sin tocar el worktree v348 (`web-de-prisma-carril-contenido-v348`); queda como respaldo hasta cerrar verificación visual en DEV.
+- Sin promoción a `main`; solo publicación a `dev`. Promoción sujeta a PASS visual humano.
+- Sin abrir el siguiente frente del ejecutor 2 hasta cerrar absorción + deploy DEV + validación pública + PASS visual sobre PROD.
+
 ## [2026-05-07] — v3.3.48
 
 ### Absorción del quinto bloque de contenido del carril 2 (modelo de datos ARMC: regla de testigos opcionales del CI por juicio clínico)
