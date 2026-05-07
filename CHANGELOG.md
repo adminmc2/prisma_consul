@@ -2,6 +2,56 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-07] — v3.3.47
+
+### Absorción del cuarto bloque de contenido del carril 2 (modelo de datos ARMC: refactor Diagnóstico y plan + Protocolo de Revisión + Terapéutica → Cita)
+
+Cuarto paquete operativo de absorción de contenido del carril 2 sobre la base canónica `chore/fase2-contenido-base-v3.3.46` (abierta tras `v3.3.46`). Cherry-pick lineal con trazabilidad `-x` de **5 SHAs** desde `8f6592f` hasta `d59af80`. Todos tocan únicamente `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`. **Sin tocar backend, BD, nginx ni PM2.**
+
+#### Bloque temático absorbido
+
+- **Refactor "Diagnóstico y plan" (Paciente):** elimina 3 campos no aplicables; `Terapéutica` pasa a lista dinámica multi-línea.
+- **Correctivo del refactor:** atiende dos hallazgos del revisor sobre catálogo y cirugía mayor.
+- **Protocolo de Revisión — catálogo:** se puebla la tabla del blueprint con el catálogo confirmado (5 líneas + procedimientos).
+- **Terapéutica → Cita:** la Terapéutica genera Cita en el momento de la evaluación con agendamiento embebido (`Operador`, `Fecha`, `Hora`).
+- **Renombrado de rol:** "Médico responsable" → "Profesional asignado" en la nota Terapéutica → Cita.
+
+Balance neto del bloque: total de campos pasa de `312` a `314` (cabecera y nota de cierre alineadas).
+
+#### Commits absorbidos (cherry-pick `-x`, orden cronológico)
+
+| Origen carril 2 | Resultado en `dev` | Asunto corto |
+|---|---|---|
+| `8f6592f` | `1e7e91b` | Refactor 'Diagnóstico y plan' (-3 campos + Terapéutica lista dinámica) |
+| `b92da1a` | `30af4dd` | Correctivo sobre 8f6592f (catálogo + cirugía mayor) |
+| `49d4d21` | `4c2e9ba` | Protocolo de Revisión — catálogo (5 líneas + procedimientos) |
+| `59819e3` | `0587465` | Terapéutica → Cita: agendamiento embebido (Operador, Fecha, Hora) |
+| `d59af80` | `3ed411e` | Médico responsable → Profesional asignado |
+
+Diff total: 1 archivo, **+24 / -8 líneas** acumuladas en `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`.
+
+#### Validación
+
+- Paridad con punta v346 (`d59af80`) tras los 5 cherry-picks: byte-a-byte equivalente (`diff -q` vacío).
+- Sanity HTML: balance `<script>`/`</script>` 2/2 idéntico a la base.
+- Coherencia interna: cabecera (L46) y nota de cierre del documento ambas en `314` — sin desviación respecto a la fuente aprobada.
+- Trazabilidad: cada commit conserva el footer `(cherry picked from commit …)`.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este slice
+
+- Sin tocar backend, BD, PM2 ni nginx.
+- Sin abrir limpieza adicional fuera de `modelo-datos.html`.
+- Sin tocar el worktree v346 (`web-de-prisma-carril-contenido-v346`); queda como respaldo hasta cerrar verificación visual en DEV.
+- Sin promoción a `main`; solo publicación a `dev`. Promoción sujeta a PASS visual humano.
+- Sin abrir el siguiente frente del ejecutor 2 hasta cerrar absorción + deploy DEV + validación pública.
+
 ## [2026-05-07] — v3.3.46
 
 ### Absorción del tercer bloque de contenido del carril 2 (modelo de datos ARMC: contacto de emergencia + re-anclaje fotos clínicas + redacción 10.2/10.3)
