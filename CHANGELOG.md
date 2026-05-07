@@ -2,6 +2,53 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-07] — v3.3.48
+
+### Absorción del quinto bloque de contenido del carril 2 (modelo de datos ARMC: regla de testigos opcionales del CI por juicio clínico)
+
+Quinto paquete operativo de absorción de contenido del carril 2 sobre la base canónica `chore/fase2-contenido-base-v3.3.47` (abierta tras `v3.3.47`). Cherry-pick lineal con trazabilidad `-x` de **2 SHAs** desde `1538a3d` hasta `9584dcd`. Ambos tocan únicamente `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`. **Sin tocar backend, BD, nginx ni PM2.**
+
+#### Bloque temático absorbido
+
+- **Regla de testigos opcionales en el CI según juicio clínico del médico:** NOM-004 numeral 10.1.9 contempla la firma de testigos como parte del CI, pero en ARMC son **opcionales** según juicio clínico — aplican obligatoriamente cuando el médico lo determine (paciente menor, alto riesgo, capacidad legal disminuida, médico-legales complejos); no aplican en estética rutinaria firmada por adulto competente.
+- **Nuevos campos en Procedimiento:** `10.7 Testigos requeridos` (selección sí/no, decide el médico antes de firmar el CI) y `10.8 Motivo testigos` (justificación clínica condicional cuando 10.7 = sí).
+- **Transición Pre-procedimiento → En curso** condicionada: el sub-campo `10.1.9` (firma de 2 testigos) es obligatorio adicional solo cuando `10.7 = sí`; antes de habilitar el paso a "En curso", el flujo exige firmas de paciente + médico + (testigos solo si 10.7 = sí).
+- **Trazabilidad NOM-024** del campo `10.8 Motivo testigos` en Log de Auditoría.
+
+Balance neto: total de campos pasa de `314` a `316` (+2 campos: `10.7` y `10.8` en Procedimiento). Cabecera y nota de cierre alineadas en `316`.
+
+#### Commits absorbidos (cherry-pick `-x`, orden cronológico)
+
+| Origen carril 2 | Resultado en `dev` | Asunto corto |
+|---|---|---|
+| `1538a3d` | `a96319a` | Testigos del CI como opcionales según juicio clínico (A + B + C) |
+| `9584dcd` | `fd4c96b` | Correctivo sobre 1538a3d (2 hallazgos medio del revisor) |
+
+Diff total: 1 archivo, **+14 / -9 líneas** acumuladas en `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`.
+
+#### Validación
+
+- Paridad con punta v347 (`9584dcd`) tras los 2 cherry-picks: byte-a-byte equivalente (`diff -q` vacío).
+- Sanity HTML: balance `<script>`/`</script>` 2/2 idéntico a la base.
+- Coherencia interna: cabecera (L46) y nota de cierre del documento ambas en `316` — sin desviación respecto a la fuente aprobada.
+- Marcadores temáticos confirmados en HTML servido: regla de testigos opcionales por juicio clínico; campos `10.7` y `10.8` presentes; transición Pre-procedimiento → En curso condicionada por `10.1.9 obligatorio adicional si 10.7 = sí`.
+- Trazabilidad: cada commit conserva el footer `(cherry picked from commit …)`.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este slice
+
+- Sin tocar backend, BD, PM2 ni nginx.
+- Sin abrir limpieza adicional fuera de `modelo-datos.html`.
+- Sin tocar el worktree v347 (`web-de-prisma-carril-contenido-v347`); queda como respaldo hasta cerrar verificación visual en DEV.
+- Sin promoción a `main`; solo publicación a `dev`. Promoción sujeta a PASS visual humano.
+- Sin abrir el siguiente frente del ejecutor 2 hasta cerrar absorción + deploy DEV + validación pública.
+
 ## [2026-05-07] — v3.3.47
 
 ### Absorción del cuarto bloque de contenido del carril 2 (modelo de datos ARMC: refactor Diagnóstico y plan + Protocolo de Revisión + Terapéutica → Cita)
