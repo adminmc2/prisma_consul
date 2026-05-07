@@ -2,6 +2,38 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-07] — v3.3.54
+
+### Absorción del undécimo bloque de contenido del carril 2 (modelo de datos ARMC: Tipo de interrogatorio + vistas fotográficas + pending Tricología)
+
+Undécimo paquete operativo de absorción de contenido del carril 2 sobre la base canónica `chore/fase2-contenido-base-v3.3.53`. Cherry-pick lineal con trazabilidad `-x` de **3 SHAs** desde `7fef266` hasta `653a708`. Los tres tocan únicamente `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`. **Sin tocar backend, BD, nginx ni PM2. Sin cambio de contadores: 321/321.**
+
+#### Bloque temático absorbido
+
+- **`Tipo de interrogatorio`** (selección directo / indirecto) reposicionado al inicio del bloque Paciente — evaluación médica, alineado con la HC papel ARMC (header del expediente).
+- **Vistas fotográficas** ampliadas incluyendo **tres cuartos derecho** y **tres cuartos izquierdo**.
+- **Note `pending` Tricología** abierta para decisión ARMC, con redacción coherente (sin contradicción 5 vs 4 básicas tras correctivo de `653a708`).
+
+#### Cherry-picks
+
+| Origen (worktree v353) | Resultado en `dev` | Mensaje |
+|---|---|---|
+| `7fef266` | `7ab8885` | mover 'Tipo de interrogatorio' al inicio del bloque Paciente — evaluación médica |
+| `68e8efb` | `7f151bb` | vistas fotográficas — incluir tres cuartos derecho + izquierdo + abrir pending Tricología |
+| `653a708` | `d23d8f1` | correctivo sobre 68e8efb — eliminar contradicción en pending Tricología |
+
+#### Validación previa al bump
+
+- Cabecera `Campos definidos` = `321` ✓
+- Nota de cierre `321 campos` ✓
+- `Tipo de interrogatorio` reposicionado al inicio del bloque Paciente ✓
+- `tres cuartos` presente en vistas fotográficas ✓
+- `Tricología` con note pending coherente ✓
+
+#### Exclusión de scope
+
+- Sin tocar: backend, BD, nginx, PM2, otros entregables del cliente, web pública, Hub salvo bump.
+
 ## [2026-05-07] — v3.3.53
 
 ### Absorción del décimo bloque de contenido del carril 2 (modelo de datos ARMC: refactor Sección 3 Heredofamiliares como lista dinámica por familiar)
