@@ -2,6 +2,39 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-07] — v3.3.52
+
+### Absorción del noveno bloque de contenido del carril 2 (modelo de datos ARMC: Referido por como FK paciente-a-paciente + Total referidos determinista)
+
+Noveno paquete operativo de absorción de contenido del carril 2 sobre la base canónica `chore/fase2-contenido-base-v3.3.51`. Cherry-pick lineal con trazabilidad `-x` de **2 SHAs** desde `cfb7931` hasta `45fcfcd`. Ambos tocan únicamente `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`. **Sin tocar backend, BD, nginx ni PM2. Sin cambio de contadores: 317/317 antes y después.**
+
+#### Bloque temático absorbido
+
+- **`Referido por`** pasa a `FK → Paciente (nullable)` con **alcance restringido a paciente-a-paciente**. Cuando el paciente vino por otra vía (no-paciente, redes, presencial, directo, etc.), el campo queda nullable y la categoría se registra en `Fuente de captación`, que conserva su alcance amplio (13 opciones en 6 categorías, incluyendo `referido`).
+- **`Total referidos`** = conteo determinista de FKs entrantes apuntando al Paciente desde el campo `Referido por` de otros Pacientes. Mide exclusivamente referencias paciente-a-paciente.
+- **Note `pending` UX para identificar al Paciente referente** (debajo del bloque Contadores): tres opciones consideradas (código de referencia auto-generado, autocomplete sobre nombre, captura manual por operador), con decisiones acotadas a ARMC. La estructura de datos (FK + contador) ya queda cerrada; solo la mecánica UX de captura queda abierta.
+
+#### Cherry-picks
+
+| Origen (worktree v351) | Resultado en `dev` | Mensaje |
+|---|---|---|
+| `cfb7931` | `6204880` | mecanismo de código de referencia para Total referidos — propuesta PRISMA pendiente decisión ARMC |
+| `45fcfcd` | `d97f375` | correctivo sobre cfb7931 — atender 2 hallazgos del revisor (Total referidos activo, alcance paciente-a-paciente) |
+
+#### Validación previa al bump
+
+- `diff -q` carpeta principal vs worktree v351: paridad byte-a-byte ✓
+- Cabecera `Campos definidos` = `317` ✓
+- Nota de cierre `Documento de referencia — 317 campos` ✓
+- `Referido por` con `FK → Paciente (nullable)` y `paciente-a-paciente` ✓
+- `Total referidos` con `Conteo determinista de FKs entrantes` ✓
+- `note pending` UX para identificar al Paciente referente ✓
+- `Fuente de captación` conserva alcance amplio incluyendo `referido` ✓
+
+#### Exclusión de scope
+
+- Sin tocar: backend, BD, nginx, PM2, otros entregables del cliente, web pública, Hub salvo bump.
+
 ## [2026-05-07] — v3.3.51
 
 ### Absorción del octavo bloque de contenido del carril 2 (modelo de datos ARMC: reorganización Datos clínicos básicos en Paciente)
