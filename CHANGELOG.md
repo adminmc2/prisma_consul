@@ -2,6 +2,53 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-07] — v3.3.51
+
+### Absorción del octavo bloque de contenido del carril 2 (modelo de datos ARMC: reorganización Datos clínicos básicos en Paciente)
+
+Octavo paquete operativo de absorción de contenido del carril 2 sobre la base canónica `chore/fase2-contenido-base-v3.3.50` (abierta tras `v3.3.50`). Cherry-pick lineal con trazabilidad `-x` de **2 SHAs** desde `d2e016b` hasta `762fca1`. Ambos tocan únicamente `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`. **Sin tocar backend, BD, nginx ni PM2.**
+
+#### Bloque temático absorbido
+
+- **Reorganización del sub-bloque de Paciente:**
+  - `Grupo sanguíneo y RH` con tipado refinado: selección explícita (`A+ / A− / B+ / B− / AB+ / AB− / O+ / O− / desconocido`).
+  - Eliminación del campo redundante `Alergias (resumen)` (la información detallada vive en Antecedentes; el resumen duplicaba sin valor).
+- **Renombrado del sub-bloque:** `Datos biológicos básicos` → `Datos clínicos básicos`. Refleja con más precisión el alcance (datos clínicos identificatorios estables del paciente, no solo biológicos en sentido estricto). Crece en el futuro si aparecen otros datos clínicos identificatorios estables (ej. peso/talla habitual de referencia).
+
+Balance neto: total de campos pasa de `318` a `317` (−1 campo: eliminación de `Alergias (resumen)`; el cambio de `Grupo sanguíneo` a tipado refinado y el renombrado del sub-bloque no alteran el conteo). Cabecera y nota de cierre alineadas en `317`.
+
+#### Commits absorbidos (cherry-pick `-x`, orden cronológico)
+
+| Origen carril 2 | Resultado en `dev` | Asunto corto |
+|---|---|---|
+| `d2e016b` | `f0a4d66` | Grupo sanguíneo a Antecedentes + eliminar Alergias resumen redundante |
+| `762fca1` | `aa740b7` | Renombrar 'Datos biológicos básicos' → 'Datos clínicos básicos' |
+
+Diff total: 1 archivo, **+10 / -7 líneas** acumuladas en `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`.
+
+#### Validación
+
+- Paridad con punta v350 (`762fca1`) tras los 2 cherry-picks: byte-a-byte equivalente (`diff -q` vacío).
+- Sanity HTML: balance `<script>`/`</script>` 2/2 idéntico a la base.
+- Coherencia interna: cabecera (L46) y nota de cierre del documento ambas en `317` — sin desviación.
+- Marcadores temáticos confirmados sobre archivo absorbido: `Datos clínicos básicos` presente, `Datos biológicos básicos` ausente, `Grupo sanguíneo y RH` con tipado refinado (9 opciones A+/A−/B+/B−/AB+/AB−/O+/O−/desconocido), `Alergias (resumen)` ausente.
+- Trazabilidad: cada commit conserva el footer `(cherry picked from commit …)`.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este slice
+
+- Sin tocar backend, BD, PM2 ni nginx.
+- Sin abrir limpieza adicional fuera de `modelo-datos.html`.
+- Sin tocar el worktree v350 (`web-de-prisma-carril-contenido-v350`); queda como respaldo hasta cerrar verificación visual.
+- Sin promoción a `main`; solo publicación a `dev`. Promoción sujeta a PASS visual humano.
+- Sin abrir el siguiente frente del ejecutor 2 hasta cerrar absorción + deploy DEV + validación pública + PASS visual sobre PROD.
+
 ## [2026-05-07] — v3.3.50
 
 ### Absorción del séptimo bloque de contenido del carril 2 (modelo de datos ARMC: historial documental del paciente + soporte legal y COFEPRIS)
