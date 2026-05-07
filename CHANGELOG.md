@@ -2,6 +2,57 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-07] — v3.3.50
+
+### Absorción del séptimo bloque de contenido del carril 2 (modelo de datos ARMC: historial documental del paciente + soporte legal y COFEPRIS)
+
+Séptimo paquete operativo de absorción de contenido del carril 2 sobre la base canónica `chore/fase2-contenido-base-v3.3.49` (abierta tras `v3.3.49`). Cherry-pick lineal con trazabilidad `-x` de **3 SHAs** desde `648d88d` hasta `982a3de`. Todos tocan únicamente `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`. **Sin tocar backend, BD, nginx ni PM2.**
+
+#### Bloque temático absorbido
+
+- **Historial documental del paciente:** nueva sección sistema que documenta la vista agregada (no entidad nueva) construida a partir del Log de Auditoría. Soporte legal (NOM-024) y COFEPRIS. Cross-references desde plantillas CI, alta voluntaria, fotos clínicas y correcciones.
+- **Log de Auditoría — campos nuevos:**
+  - `Paciente afectado` (FK → Paciente, nullable): permite filtrado determinista del historial del paciente sin joins multi-tabla. Null para sesiones (login/logout) y eventos transversales.
+  - `Acción` (enum): añade `firmar` y `aceptar` con distinción clínico-legal explícita — *firmar* = firma autógrafa digitalizada (HC, CI, alta voluntaria, veracidad de antecedentes, notas evolución); *aceptar* = aceptación digital con auditoría (checkboxes + log) para aviso de privacidad u otros documentos cuyo mecanismo normativo no sea firma autógrafa.
+- **Categoría legal del Log** (enum): firma documental / corrección clínica / corrección administrativa / acceso / consentimiento / addendum / captura clínica / sesión / sistema. Permite filtrado para reportes legales y separación de trazas clínico-legales vs. eventos técnicos.
+- **Wording suavizado en Naturaleza y Acceso** del Historial documental: el filtro principal por paciente es determinista y directo (sin joins multi-tabla); los sub-filtros adicionales derivan de `Entidad afectada` y del payload JSON de `Valor anterior / Valor nuevo` y *pueden requerir lectura del JSON o resolución del FK*. La columna "Acceso desde el perfil del Paciente" describe filtros directos + filtro por tipo de documento "cuando aplique".
+- **Correctivos del revisor:** 3 hallazgos sobre Historial documental (atendidos en `1483490`) + 2 hallazgos sobre filtro JSON y verbo `aceptar` (atendidos en `982a3de`).
+
+Balance neto: total de campos pasa de `316` a `318` (+2 campos en Log de Auditoría: `Paciente afectado` + `Categoría legal`; el campo `Acción` ya existía y se extiende su enum). Cabecera y nota de cierre alineadas en `318`.
+
+#### Commits absorbidos (cherry-pick `-x`, orden cronológico)
+
+| Origen carril 2 | Resultado en `dev` | Asunto corto |
+|---|---|---|
+| `648d88d` | `c64bf67` | Historial documental del paciente — soporte legal y COFEPRIS |
+| `1483490` | `8ccfbac` | Correctivo (3 hallazgos del revisor sobre Historial documental) |
+| `982a3de` | `e862081` | Correctivo final (filtro JSON + verbo aceptar) |
+
+Diff total: 1 archivo, **+31 / -10 líneas** acumuladas en `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`.
+
+#### Validación
+
+- Paridad con punta v349 (`982a3de`) tras los 3 cherry-picks: byte-a-byte equivalente (`diff -q` vacío).
+- Sanity HTML: balance `<script>`/`</script>` 2/2 idéntico a la base.
+- Coherencia interna: cabecera (L46) y nota de cierre del documento ambas en `318` — sin desviación.
+- Marcadores temáticos confirmados: campo `Acción` con `firmar` y `aceptar` (línea 670), sección nueva "Historial documental del paciente" (línea 827+), wording suavizado en filas Naturaleza (831) y Acceso (837).
+- Trazabilidad: cada commit conserva el footer `(cherry picked from commit …)`.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este slice
+
+- Sin tocar backend, BD, PM2 ni nginx.
+- Sin abrir limpieza adicional fuera de `modelo-datos.html`.
+- Sin tocar el worktree v349 (`web-de-prisma-carril-contenido-v349`); queda como respaldo hasta cerrar verificación visual.
+- Sin promoción a `main`; solo publicación a `dev`. Pausa en DEV per instrucción.
+- Sin abrir el siguiente frente del ejecutor 2 hasta cerrar absorción + deploy DEV + validación pública + PASS visual sobre PROD.
+
 ## [2026-05-07] — v3.3.49
 
 ### Absorción del sexto bloque de contenido del carril 2 (modelo de datos ARMC: alta voluntaria + regla unificada de firma documental + subdivisión visual por momento)
