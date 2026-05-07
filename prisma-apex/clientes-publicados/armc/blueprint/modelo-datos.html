@@ -43,7 +43,7 @@
     <div class="badge"><i class="ph ph-database"></i> Blueprint de Sistema</div>
     <h1>Modelo de Datos</h1>
     <p class="subtitle">Entidades, campos y relaciones que APEX construir&aacute; para ARMC &mdash; basado en el diagn&oacute;stico de 7 roles</p>
-    <div class="ss"><div class="sc"><div class="sn">10</div><div class="sl">Entidades</div></div><div class="sc"><div class="sn">318</div><div class="sl">Campos definidos</div></div><div class="sc"><div class="sn">4</div><div class="sl">Dolores cubiertos</div></div></div>
+    <div class="ss"><div class="sc"><div class="sn">10</div><div class="sl">Entidades</div></div><div class="sc"><div class="sn">317</div><div class="sl">Campos definidos</div></div><div class="sc"><div class="sn">4</div><div class="sl">Dolores cubiertos</div></div></div>
 
     <!-- ═══════════════════════════════════════ PACIENTE ═══════════════════════════════════════ -->
     <div class="ec open" onclick="this.classList.toggle('open')">
@@ -84,10 +84,10 @@
         <div class="note">No se abre HC. Solo ficha de contacto. Sin cuenta en sistema. Tambi&eacute;n se registran (si se obtienen del chat): nombre, fuente de captaci&oacute;n, motivo de consulta, fecha primer contacto. Opcionales en etapa Lead &mdash; se confirman al registrarse como Usuario.</div>
 
         <!-- ── USUARIO ── -->
-        <div class="stg stg-user">Usuario &mdash; registro (~114 campos)</div>
+        <div class="stg stg-user">Usuario &mdash; registro (~113 campos)</div>
         <div class="note"><strong><i class="ph ph-lock-key-open"></i> ZONA EDITABLE &mdash; antes de la firma de evaluaci&oacute;n.</strong> Mientras el paciente no haya firmado su primera Evaluaci&oacute;n M&eacute;dica con el m&eacute;dico, todos estos datos (perfil, contacto y antecedentes) son modificables por &eacute;l mismo sin firma adicional. Cada cambio queda en audit log. <strong>Tras la firma de evaluaci&oacute;n, los antecedentes quedan inmovilizados</strong> y solo se modifican v&iacute;a addendum con doble firma m&eacute;dico + paciente; los datos administrativos (contacto, domicilio) siguen siempre editables.</div>
 
-        <div class="ftsub">Obligatorios al registrarse (~27)</div>
+        <div class="ftsub">Obligatorios al registrarse (~25)</div>
         <div class="fl">
           <div class="f"><span class="fn">ID Sistema</span><span class="fy">auto</span></div>
           <div class="f"><span class="fn">ID Historia Cl&iacute;nica</span><span class="fy">auto</span></div>
@@ -109,8 +109,6 @@
           <div class="f"><span class="fn">C&oacute;digo postal</span><span class="fy">texto</span><span class="fo">&mdash; formato y validaci&oacute;n se resuelven en implementaci&oacute;n seg&uacute;n Pa&iacute;s</span></div>
           <div class="f"><span class="fn">Contacto de emergencia</span><span class="fy">texto</span><span class="fo">&mdash; Nombre de la persona a contactar en caso de emergencia. Sustituye al previo &lsquo;Familiar responsable&rsquo;: no necesariamente debe ser un familiar</span></div>
           <div class="f"><span class="fn">Tel&eacute;fono contacto de emergencia</span><span class="fy">tel&eacute;fono</span></div>
-          <div class="f"><span class="fn">Grupo sangu&iacute;neo y RH</span><span class="fy">selecci&oacute;n</span></div>
-          <div class="f"><span class="fn">Alergias (resumen)</span><span class="fy">texto</span></div>
           <div class="f"><span class="fn">Tel&eacute;fono principal</span><span class="fy">tel&eacute;fono</span></div>
           <div class="f"><span class="fn">Email</span><span class="fy">email</span></div>
           <div class="f"><span class="fn">Fuente de captaci&oacute;n</span><span class="fy">selecci&oacute;n</span><span class="fo">&mdash; 13 opciones en 6 categor&iacute;as: redes org&aacute;nico, redes pagado, directo, referido, digital, otro</span></div>
@@ -128,8 +126,13 @@
           <div class="f"><span class="fn">Solo comunicaciones cl&iacute;nicas</span><span class="fy">check</span><span class="fo">&mdash; Derecho de Oposici&oacute;n ARCO. Activado = el paciente recibe &uacute;nicamente comunicaciones cl&iacute;nicas (citas, recordatorios, resultados, seguimiento). Se excluyen newsletters, promociones y campa&ntilde;as. Editable en cualquier momento</span></div>
         </div>
 
-        <div class="ftsub">Antecedentes &mdash; opcionales al registro, obligatorios pre-evaluaci&oacute;n (~81 campos)</div>
+        <div class="ftsub">Antecedentes &mdash; opcionales al registro, obligatorios pre-evaluaci&oacute;n (~82 campos)</div>
         <div class="note">Tipados como selecci&oacute;n / checkbox / num&eacute;rico / fecha siempre que el dato sea cl&iacute;nicamente cerrado. Texto libre solo en agentes espec&iacute;ficos, descripciones y campos &ldquo;otra&rdquo;. Habilita contraindicaciones autom&aacute;ticas, c&aacute;lculo de escalas (Charlson) y b&uacute;squedas estructuradas.</div>
+
+        <div class="ftsub">Datos biol&oacute;gicos b&aacute;sicos (1)</div>
+        <div class="fl">
+          <div class="f"><span class="fn">Grupo sangu&iacute;neo y RH</span><span class="fy">selecci&oacute;n: A+ / A- / B+ / B- / AB+ / AB- / O+ / O- / desconocido</span><span class="fo">&mdash; Dato biol&oacute;gico identificatorio del paciente. Sub-bloque previo a las secciones 3-6 (que siguen la numeraci&oacute;n NOM-004). Crece en el futuro si aparecen otros datos biol&oacute;gicos identificatorios estables (ej: peso/talla habitual de referencia)</span></div>
+        </div>
 
         <div class="ftsub">Secci&oacute;n 3 &mdash; Heredofamiliares (matriz 8 &times; 6)</div>
         <div class="fl">
@@ -884,7 +887,7 @@
       <div class="cc cd4"><h3>D4 &mdash; Conversi&oacute;n</h3><div class="ce">Paciente (lifecycle Lead&rarr;Paciente, fuente captaci&oacute;n)</div><div class="cd">Captura + traza + mide ROI</div></div>
     </div>
 
-    <div class="note" style="margin-top:2rem">Documento de referencia &mdash; 318 campos en 10 entidades. Las 4 entidades nuevas (Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) soportan el ecosistema de se&ntilde;ales &sect;5B, proceso graduado Inactivo &rarr; Perdido &sect;5B-2, trazabilidad NOM-024 y medici&oacute;n de resultados cl&iacute;nicos (17 escalas). Este modelo alimenta los 25 KPIs, 25 automatizaciones, flujos to-be y fases de implementaci&oacute;n.</div>
+    <div class="note" style="margin-top:2rem">Documento de referencia &mdash; 317 campos en 10 entidades. Las 4 entidades nuevas (Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) soportan el ecosistema de se&ntilde;ales &sect;5B, proceso graduado Inactivo &rarr; Perdido &sect;5B-2, trazabilidad NOM-024 y medici&oacute;n de resultados cl&iacute;nicos (17 escalas). Este modelo alimenta los 25 KPIs, 25 automatizaciones, flujos to-be y fases de implementaci&oacute;n.</div>
   </div>
   <div class="zt"><button onclick="zoomOut()" title="Alejar"><i class="ph ph-minus"></i></button><span id="zl" class="zl">100%</span><button onclick="zoomIn()" title="Acercar"><i class="ph ph-plus"></i></button><button onclick="toggleFs()" title="Pantalla completa"><i class="ph ph-arrows-out"></i></button></div>
   <script>let z=100;function zoomIn(){z=Math.min(z+20,200);az()}function zoomOut(){z=Math.max(z-20,60);az()}function az(){document.body.style.zoom=z/100;document.getElementById('zl').textContent=z+'%'}function toggleFs(){if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{})}</script>
