@@ -250,6 +250,11 @@
         <div class="stg stg-pac">Paciente &mdash; evaluaci&oacute;n m&eacute;dica (~75 campos)</div>
         <div class="note warn"><strong><i class="ph ph-signature"></i> ZONA QUE SE COMPLETA EL D&Iacute;A DE LA EVALUACI&Oacute;N.</strong> Estos datos los registra el m&eacute;dico durante la consulta. La doble firma (m&eacute;dico + paciente) al final de este bloque <strong>no solo bloquea estos datos: dispara tambi&eacute;n la inmovilizaci&oacute;n de TODO el contenido m&eacute;dico del expediente</strong>, incluidos los Antecedentes (Heredofamiliares, No patol&oacute;gicos, Gineco-obst&eacute;tricos, Personales patol&oacute;gicos &mdash; con enfermedades previas, alergias, medicamentos, etc.) que el paciente hab&iacute;a completado previamente en el bloque &lsquo;Usuario &mdash; registro&rsquo;. Despu&eacute;s de la firma, cualquier modificaci&oacute;n en datos m&eacute;dicos requiere addendum con misma doble firma. Los datos administrativos (contacto, domicilio) siguen editables siempre por el paciente sin firma.</div>
 
+        <div class="ftsub">Tipo de interrogatorio</div>
+        <div class="fl">
+          <div class="f"><span class="fn">Tipo de interrogatorio</span><span class="fy">selecci&oacute;n: directo / indirecto</span><span class="fo">&mdash; Default &ldquo;Directo&rdquo;. El m&eacute;dico cambia a &ldquo;Indirecto&rdquo; solo si un tercero proporcion&oacute; la informaci&oacute;n (menor con tutor, int&eacute;rprete, familiar acompa&ntilde;ante, etc.). No exigido por NOM-004 pero buena pr&aacute;ctica cl&iacute;nica. Posicionado al inicio del bloque para que el m&eacute;dico defina la fuente de la informaci&oacute;n <strong>antes</strong> de capturar el resto de la evaluaci&oacute;n; alineado con la HC papel ARMC (donde el campo aparece en el header del expediente)</span></div>
+        </div>
+
         <div class="ftsub">Evaluaci&oacute;n especializada (screenings por edad)</div>
         <div class="fl">
           <div class="f"><span class="fn">Cataratas</span><span class="fy">screening</span><span class="fo">&mdash; &ge;60 a&ntilde;os</span></div>
@@ -265,11 +270,6 @@
           <div class="f"><span class="fn">Evaluaci&oacute;n facial/corporal/capilar</span><span class="fy">texto estructurado</span></div>
           <div class="f"><span class="fn">Calidad de piel</span><span class="fy">selecci&oacute;n</span></div>
           <div class="f"><span class="fn">Cicatrices existentes</span><span class="fy">texto</span></div>
-        </div>
-
-        <div class="ftsub">Tipo de interrogatorio</div>
-        <div class="fl">
-          <div class="f"><span class="fn">Tipo de interrogatorio</span><span class="fy">selecci&oacute;n: directo / indirecto</span><span class="fo">&mdash; Default &ldquo;Directo&rdquo;. El m&eacute;dico cambia a &ldquo;Indirecto&rdquo; solo si un tercero proporcion&oacute; la informaci&oacute;n (menor con tutor, int&eacute;rprete, etc.). No exigido por NOM-004 pero buena pr&aacute;ctica cl&iacute;nica</span></div>
         </div>
 
         <div class="ftsub">Interrogatorio por aparatos y sistemas (8 sistemas)</div>
