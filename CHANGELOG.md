@@ -2,6 +2,55 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-07] — v3.3.46
+
+### Absorción del tercer bloque de contenido del carril 2 (modelo de datos ARMC: contacto de emergencia + re-anclaje fotos clínicas + redacción 10.2/10.3)
+
+Tercer paquete operativo de absorción de contenido del carril 2 sobre la base canónica `chore/fase2-contenido-base-v3.3.45` (abierta tras `v3.3.45`). Cherry-pick lineal con trazabilidad `-x` de **3 SHAs** desde `3079af6` hasta `1b6d6d2`. Todos tocan únicamente `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`. Se añade un commit propio del carril repo para alinear la cabecera del documento con la nota de cierre. **Sin tocar backend, BD, nginx ni PM2.**
+
+#### Bloque temático absorbido
+
+- **Renombrado de campo en Paciente:** `Familiar responsable` → `Contacto de emergencia`.
+- **Re-anclaje de fotos clínicas:** vinculación de fotos a `Procedimiento` + `Línea de servicio` (en lugar de `Evaluación médica`); refleja el flujo real donde las fotos pertenecen al procedimiento, no a la evaluación inicial.
+- **Alineación de redacción 10.2 / 10.3 (Procedimiento):** ajusta la formulación de subentidades a la nueva semántica.
+
+El re-anclaje de fotos reduce el conteo total de campos de `313` a `312` por la pérdida del campo en Evaluación Médica que pasa al ámbito de Procedimiento sin duplicarse.
+
+#### Commits absorbidos (cherry-pick `-x`, orden cronológico)
+
+| Origen carril 2 | Resultado en `dev` | Asunto corto |
+|---|---|---|
+| `3079af6` | `d4d1c95` | Familiar responsable → Contacto de emergencia |
+| `af759bf` | `cfda2ab` | Re-anclar fotos clínicas a Procedimiento + Línea de servicio |
+| `1b6d6d2` | `49f6789` | Alinear redacción 10.2 / 10.3 a formulación nueva |
+
+#### Patch propio del carril repo
+
+- `2bbe0dc` content(modelo-datos): alinear cabecera "Campos definidos" 313 → 312 con la nota de cierre. Cierra una inconsistencia interna detectada tras la absorción: el bloque del carril 2 ajustó la nota de cierre del documento a `312 campos` pero no actualizó la cabecera, que seguía mostrando `313`. Este commit restaura la coherencia que el slice `v3.3.45` había establecido entre ambos puntos del documento.
+
+Diff total: 1 archivo, **+17 / -14 líneas** acumuladas en `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`.
+
+#### Validación
+
+- Paridad con punta v345 (`1b6d6d2`) tras los 3 cherry-picks: byte-a-byte equivalente (`diff -q` vacío).
+- Sanity HTML: balance `<script>`/`</script>` 2/2 idéntico a la base.
+- Coherencia interna post-patch propio: cabecera (L46) y nota de cierre ambas en `312`.
+
+#### Bump versión visible (4 puntos canónicos)
+
+- `web/index.html` (footer landing)
+- `prisma-apex/index.html` (welcome-version del Hub)
+- `CLAUDE.md` (campo "Versión actual")
+- `CHANGELOG.md` (esta cabecera)
+
+#### Lo que NO entra en este slice
+
+- Sin tocar backend, BD, PM2 ni nginx.
+- Sin abrir limpieza adicional fuera de `modelo-datos.html`.
+- Sin tocar el worktree v345 (`web-de-prisma-carril-contenido-v345`); queda como respaldo hasta cerrar verificación visual en DEV.
+- Sin promoción a `main`; solo publicación a `dev`.
+- Sin reactivar al ejecutor 2 ni decidir frente siguiente — pendiente tras validación visual humana.
+
 ## [2026-05-07] — v3.3.45
 
 ### Patch correctivo de coherencia en modelo-datos.html (total de campos + redacción de captura de fotos)
