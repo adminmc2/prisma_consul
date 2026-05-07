@@ -2,6 +2,39 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-07] — v3.3.53
+
+### Absorción del décimo bloque de contenido del carril 2 (modelo de datos ARMC: refactor Sección 3 Heredofamiliares como lista dinámica por familiar)
+
+Décimo paquete operativo de absorción de contenido del carril 2 sobre la base canónica `chore/fase2-contenido-base-v3.3.52`. Cherry-pick lineal con trazabilidad `-x` de **2 SHAs** desde `c0f57db` hasta `458e563`. Ambos tocan únicamente `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`. **Sin tocar backend, BD, nginx ni PM2. Contadores 317 → 321 (+4 campos).**
+
+#### Bloque temático absorbido
+
+- **Refactor Sección 3 — Heredofamiliares** alineado con la HC papel ARMC: lista dinámica por familiar, una entrada por persona con guía visual de estado vital y 6 categorías de enfermedad.
+- Campo `Parentesco` como selección catálogo (madre / padre / abuelos / hermanos / hijos / tíos / primos / otro) + `Parentesco — especificar` condicional para casos no previstos (sobrino, padrastro, etc.).
+- Campo `Detalle` como **texto único con sugerencias por categoría** (no estructura de tags multivalor): el sistema sugiere enfermedades concretas filtradas por categorías marcadas; el operador acepta o escribe libremente. Decisión consciente del modelado: la relación estructurada categoría → enfermedad concreta no se preserva en el campo (vive solo en el texto); convertible a tags estructurados en slice posterior si lo requiere agregación tipo Charlson familiar.
+- Note `pending` ARMC: catálogo de sugerencias por las 6 categorías (endocrinológicas, cardiovasculares, neoplásicas, gastrointestinales, congénitas, otras) — pendiente carga con respaldo médico.
+
+#### Cherry-picks
+
+| Origen (worktree v352) | Resultado en `dev` | Mensaje |
+|---|---|---|
+| `c0f57db` | `0f8b41c` | refactor Sección 3 Heredofamiliares — lista dinámica por familiar con autocomplete por categoría |
+| `458e563` | `3043c46` | correctivo sobre c0f57db — atender 2 hallazgos del revisor sobre Heredofamiliares (Detalle único + Parentesco otro) |
+
+#### Validación previa al bump
+
+- Cabecera `Campos definidos` = `321` ✓
+- Nota de cierre `Documento de referencia — 321 campos` ✓
+- Sección 3 Heredofamiliares con lista dinámica por familiar ✓
+- `Detalle` como texto único con sugerencias por categoría ✓
+- `Parentesco` con `Parentesco — especificar` condicional ✓
+- Note `pending` catálogo de sugerencias ✓
+
+#### Exclusión de scope
+
+- Sin tocar: backend, BD, nginx, PM2, otros entregables del cliente, web pública, Hub salvo bump.
+
 ## [2026-05-07] — v3.3.52
 
 ### Absorción del noveno bloque de contenido del carril 2 (modelo de datos ARMC: Referido por como FK paciente-a-paciente + Total referidos determinista)
