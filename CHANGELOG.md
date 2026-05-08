@@ -2,6 +2,47 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-08] — v3.3.55
+
+### Absorción del duodécimo bloque de contenido del carril 2 (modelo de datos ARMC: Cita 3 dimensiones + entidad Profesional + Servicio/Pago + reglas operativas)
+
+Duodécimo paquete operativo de absorción de contenido del carril 2 sobre la base canónica `chore/fase2-contenido-base-v3.3.54`. Cherry-pick lineal con trazabilidad `-x` de **9 SHAs** desde `ee9d4f1` hasta `0596fd7`. Los nueve tocan únicamente `prisma-apex/clientes-publicados/armc/blueprint/modelo-datos.html`. **Sin tocar backend, BD, nginx ni PM2. Contadores 321 → 352 (+31 campos); entidades 10 → 13 (+3: Profesional, Servicio, Pago).**
+
+#### Bloque temático absorbido
+
+- **Cita — Impacto 1:** separación en 3 dimensiones (Tipo / Línea / Variante) con variantes A/B/C/D/E de valoración.
+- **Profesional:** nueva entidad genérica con refactor de FK en Cita / Procedimiento / Evaluación + ajuste RBAC e historial documental.
+- **Resolución C07 (parcial) + C08:** cobro 2ª valoración B confirmado; regla agendamiento auto-formulario con fallback Carlos.
+- **Canal agendamiento unificado:** sin canal especializado para obesidad / capilar.
+- **Tricología** sin sub-tipos ni mecánica especial — alineada con la regla unificada.
+- **Caso same-day** (valoración → procedimiento mismo día) declarado explícitamente.
+- **Catálogo de Servicios + entidad Pago** + campo `Servicios facturados` en Cita.
+- **Correctivo final:** Cita header `20 → 21`, categoría legal `cobro` añadida al enum del Log de Auditoría.
+
+#### Cherry-picks
+
+| Origen (worktree v354) | Resultado en `dev` |
+|---|---|
+| `ee9d4f1` | `79ac0c8` |
+| `985d873` | `77a0c2e` |
+| `01b921b` | `4c12938` |
+| `ea2e92a` | `ccebebe` |
+| `6d69829` | `6978b50` |
+| `e8eedb2` | `9b8d905` |
+| `de83c14` | `94b0ca9` |
+| `bdd314c` | `a5a09ff` |
+| `0596fd7` | `7aefffa` |
+
+#### Validación previa al bump
+
+- Cabecera `Campos definidos` = `352` ✓
+- Cabecera `Entidades` = `13` ✓
+- Nota de cierre `352 campos` ✓
+
+#### Exclusión de scope
+
+- Sin tocar: backend, BD, nginx, PM2, otros entregables del cliente, web pública, Hub salvo bump.
+
 ## [2026-05-07] — v3.3.54
 
 ### Absorción del undécimo bloque de contenido del carril 2 (modelo de datos ARMC: Tipo de interrogatorio + vistas fotográficas + pending Tricología)
