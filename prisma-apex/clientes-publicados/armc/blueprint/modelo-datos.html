@@ -43,7 +43,7 @@
     <div class="badge"><i class="ph ph-database"></i> Blueprint de Sistema</div>
     <h1>Modelo de Datos</h1>
     <p class="subtitle">Entidades, campos y relaciones que APEX construir&aacute; para ARMC &mdash; basado en el diagn&oacute;stico de 7 roles</p>
-    <div class="ss"><div class="sc"><div class="sn">10</div><div class="sl">Entidades</div></div><div class="sc"><div class="sn">321</div><div class="sl">Campos definidos</div></div><div class="sc"><div class="sn">4</div><div class="sl">Dolores cubiertos</div></div></div>
+    <div class="ss"><div class="sc"><div class="sn">10</div><div class="sl">Entidades</div></div><div class="sc"><div class="sn">323</div><div class="sl">Campos definidos</div></div><div class="sc"><div class="sn">4</div><div class="sl">Dolores cubiertos</div></div></div>
 
     <!-- ═══════════════════════════════════════ PACIENTE ═══════════════════════════════════════ -->
     <div class="ec open" onclick="this.classList.toggle('open')">
@@ -480,11 +480,13 @@
           <tr><td>Cualquier estado &rarr; Reagendada</td><td>Cambio de Fecha/Hora</td><td>Reagendamientos +1, vuelve a Pendiente</td></tr>
         </table>
 
-        <div class="ft">Campos (18)</div>
+        <div class="ft">Campos (20)</div>
         <div class="fl">
           <div class="f"><span class="fn">ID</span><span class="fy">auto</span></div>
           <div class="f"><span class="fn">Paciente</span><span class="fy">FK &rarr; Paciente</span></div>
-          <div class="f"><span class="fn">Tipo</span><span class="fy">valoraci&oacute;n / procedimiento / seguimiento / cosmiatr&iacute;a / tricolog&iacute;a</span></div>
+          <div class="f"><span class="fn">Tipo de cita</span><span class="fy">selecci&oacute;n: valoraci&oacute;n / procedimiento / seguimiento (revisi&oacute;n post) / sesi&oacute;n recurrente</span><span class="fo">&mdash; Solo momento cl&iacute;nico. Quitados &lsquo;cosmiatr&iacute;a&rsquo; y &lsquo;tricolog&iacute;a&rsquo; del enum porque eran l&iacute;neas de servicio (dimensi&oacute;n distinta), no tipos de cita; ahora viven en el campo &lsquo;L&iacute;nea de servicio&rsquo; debajo</span></div>
+          <div class="f"><span class="fn">L&iacute;nea de servicio</span><span class="fy">selecci&oacute;n: cirug&iacute;a est&eacute;tica m&iacute;nima invasiva / medicina est&eacute;tica / aparatolog&iacute;a / cosmiatr&iacute;a / tricolog&iacute;a (nullable)</span><span class="fo">&mdash; Las 5 l&iacute;neas confirmadas en la 2&ordf; entrevista CEO. Se hereda autom&aacute;ticamente del &lsquo;Procedimiento planificado&rsquo; cuando este existe; en valoraciones exploratorias donde a&uacute;n no se sabe el procedimiento puede ser null</span></div>
+          <div class="f"><span class="fn">Variante de valoraci&oacute;n</span><span class="fy">selecci&oacute;n (condicional Tipo de cita = valoraci&oacute;n)</span><span class="fo">&mdash; A: general gratuita (Marisela / Divani) / B: pre-cirug&iacute;a con externo (1&ordf; Marisela/Divani + 2&ordf; Figueroa/Vargas/Duc&oacute;n) / C: directa Cabrera ($1,950) / D: capilar (Dra. Eli&aacute;n, de pago, monto pendiente) / E: obesidad (Dra. Eli&aacute;n, propuesta a validar con ARMC) / otra (texto fallback). Variantes A/B/C confirmadas por la 2&ordf; entrevista CEO; D confirmada por usuario sobre flujo Tricolog&iacute;a (Eli&aacute;n hace consulta capilar regenerativa de pago); E declarada como propuesta a validar con ARMC. Brisa (cosmiatr&iacute;a / aparatolog&iacute;a) no aporta variante propia &mdash; sus citas no tienen valoraci&oacute;n aparte</span></div>
           <div class="f"><span class="fn">Fecha / Hora</span><span class="fy">datetime</span></div>
           <div class="f"><span class="fn">Duraci&oacute;n estimada</span><span class="fy">minutos</span><span class="fo">&mdash; Auto-sugerida desde PR.10 cuando se selecciona procedimiento planificado. Para evaluaciones: valor por defecto configurable</span></div>
           <div class="f"><span class="fn">Estado</span><span class="fy">pendiente / confirmada / en-consulta / completada / cancelada / no-show</span></div>
@@ -504,13 +506,13 @@
 
         <div class="ft">Tipos de cita</div>
         <table>
-          <tr><th>Tipo</th><th>Formulario pre-consulta</th><th>Procedimiento planificado</th><th>Cita origen</th></tr>
-          <tr><td>Valoraci&oacute;n (evaluaci&oacute;n inicial)</td><td>&#x2705; Obligatorio (secciones 3-6)</td><td>No aplica</td><td>No aplica</td></tr>
-          <tr><td>Procedimiento</td><td>No aplica (ya completado)</td><td>&#x2705; FK a Protocolo</td><td>Puede ser la evaluaci&oacute;n</td></tr>
-          <tr><td>Seguimiento (revisi&oacute;n post-op)</td><td>No aplica</td><td>Heredado de cita origen</td><td>&#x2705; FK a cita de procedimiento</td></tr>
-          <tr><td>Cosmiatr&iacute;a (sesi&oacute;n recurrente)</td><td>No aplica</td><td>&#x2705; FK a Protocolo</td><td>Puede ser sesi&oacute;n anterior</td></tr>
-          <tr><td>Tricolog&iacute;a (sesi&oacute;n recurrente)</td><td>No aplica</td><td>&#x2705; FK a Protocolo</td><td>Puede ser sesi&oacute;n anterior</td></tr>
+          <tr><th>Tipo de cita</th><th>L&iacute;nea de servicio</th><th>Variante de valoraci&oacute;n</th><th>Formulario pre-consulta</th><th>Procedimiento planificado</th><th>Cita origen</th></tr>
+          <tr><td>Valoraci&oacute;n (evaluaci&oacute;n inicial)</td><td>Nullable (exploratoria) o la l&iacute;nea que el lead ya pide</td><td>A / B / C / D / E / otra</td><td><i class="ph ph-check-circle" style="color:#4CAF50"></i> Obligatorio (secciones 3-6)</td><td>Nullable (se decide durante la valoraci&oacute;n &rarr; genera Terap&eacute;utica)</td><td>Nullable; en Variante B la 2&ordf; cita con externo apunta a la 1&ordf; con Marisela/Divani</td></tr>
+          <tr><td>Procedimiento</td><td>Heredada del Procedimiento planificado</td><td>No aplica</td><td>No aplica (ya completado)</td><td><i class="ph ph-check-circle" style="color:#4CAF50"></i> FK a Protocolo</td><td>Puede ser la evaluaci&oacute;n</td></tr>
+          <tr><td>Seguimiento (revisi&oacute;n post)</td><td>Heredada de la cita origen</td><td>No aplica</td><td>No aplica</td><td>Heredado de cita origen</td><td><i class="ph ph-check-circle" style="color:#4CAF50"></i> FK a cita de procedimiento</td></tr>
+          <tr><td>Sesi&oacute;n recurrente</td><td>cosmiatr&iacute;a / tricolog&iacute;a / aparatolog&iacute;a / medicina est&eacute;tica (depende del servicio)</td><td>No aplica</td><td>No aplica</td><td><i class="ph ph-check-circle" style="color:#4CAF50"></i> FK a Protocolo</td><td>Puede ser sesi&oacute;n anterior</td></tr>
         </table>
+        <div class="note pending"><i class="ph ph-hourglass-medium"></i> <strong>Variantes de valoraci&oacute;n &mdash; pendientes con ARMC:</strong> (a) <strong>C07 (ampliado)</strong>: precio de la 2&ordf; valoraci&oacute;n con externo en Variante B (Figueroa/Vargas/Duc&oacute;n) <em>y</em> precio de la consulta capilar regenerativa en Variante D (Eli&aacute;n) &mdash; ambos pendientes de cifrar; (b) <strong>C08 (ampliado)</strong>: qui&eacute;n agenda Variantes B / C / D / E (probable: D y E las agenda Eli&aacute;n directamente seg&uacute;n flujo Tricolog&iacute;a; B y C pendientes); (c) <strong>Variante E (obesidad por Dra. Eli&aacute;n)</strong>: propuesta de modelado a validar con ARMC, consistente con que los leads de obesidad los gestiona Eli&aacute;n al 100% seg&uacute;n flujo Atenci&oacute;n.</div>
 
         <div class="rl">
           <div class="r"><i class="ph ph-arrow-left"></i> Pertenece a <strong>Paciente</strong> (FK obligatorio)</div>
@@ -894,7 +896,7 @@
       <div class="cc cd4"><h3>D4 &mdash; Conversi&oacute;n</h3><div class="ce">Paciente (lifecycle Lead&rarr;Paciente, fuente captaci&oacute;n)</div><div class="cd">Captura + traza + mide ROI</div></div>
     </div>
 
-    <div class="note" style="margin-top:2rem">Documento de referencia &mdash; 321 campos en 10 entidades. Las 4 entidades nuevas (Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) soportan el ecosistema de se&ntilde;ales &sect;5B, proceso graduado Inactivo &rarr; Perdido &sect;5B-2, trazabilidad NOM-024 y medici&oacute;n de resultados cl&iacute;nicos (17 escalas). Este modelo alimenta los 25 KPIs, 25 automatizaciones, flujos to-be y fases de implementaci&oacute;n.</div>
+    <div class="note" style="margin-top:2rem">Documento de referencia &mdash; 323 campos en 10 entidades. Las 4 entidades nuevas (Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) soportan el ecosistema de se&ntilde;ales &sect;5B, proceso graduado Inactivo &rarr; Perdido &sect;5B-2, trazabilidad NOM-024 y medici&oacute;n de resultados cl&iacute;nicos (17 escalas). Este modelo alimenta los 25 KPIs, 25 automatizaciones, flujos to-be y fases de implementaci&oacute;n.</div>
   </div>
   <div class="zt"><button onclick="zoomOut()" title="Alejar"><i class="ph ph-minus"></i></button><span id="zl" class="zl">100%</span><button onclick="zoomIn()" title="Acercar"><i class="ph ph-plus"></i></button><button onclick="toggleFs()" title="Pantalla completa"><i class="ph ph-arrows-out"></i></button></div>
   <script>let z=100;function zoomIn(){z=Math.min(z+20,200);az()}function zoomOut(){z=Math.max(z-20,60);az()}function az(){document.body.style.zoom=z/100;document.getElementById('zl').textContent=z+'%'}function toggleFs(){if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{})}</script>
