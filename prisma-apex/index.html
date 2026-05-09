@@ -782,7 +782,7 @@
       </a>
       <h1 class="welcome-title">PRISMA Hub</h1>
       <p class="welcome-subtitle">Tu espacio seguro</p>
-      <p class="welcome-version">v3.3.55</p>
+      <p class="welcome-version">v3.3.56</p>
       <form class="portal-form" id="loginForm">
         <input type="email" class="portal-input" id="loginEmail" placeholder="Email" autocomplete="email" required>
         <input type="password" class="portal-input" id="loginPassword" placeholder="Contraseña" autocomplete="current-password" required>
@@ -824,6 +824,7 @@
       <button class="panel-tab user-only" data-tab="documentos" onclick="switchTab('documentos')">Documentos</button>
       <button class="panel-tab user-only" data-tab="entrevistas" onclick="switchTab('entrevistas')">Entrevistas</button>
       <button class="panel-tab user-only" data-tab="analisis" onclick="switchTab('analisis')">Análisis de flujos y procesos</button>
+      <button class="panel-tab user-only" data-tab="simulador" onclick="switchTab('simulador')">Simulador UX ARMC</button>
     </div>
 
     <!-- Admin Viewing Banner -->
@@ -1034,6 +1035,11 @@
       </div>
     </div>
 
+    <!-- TAB: Simulador UX ARMC (user) -->
+    <div id="tab-simulador" class="analisis-layer-flex" style="display:none;">
+      <iframe id="simuladorIframe" class="analisis-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+
   </div>
 
   <!-- CREATE USER MODAL -->
@@ -1228,8 +1234,8 @@
       const activeTab = document.querySelector(`.panel-tab[data-tab="${tabName}"]`);
       if (activeTab) activeTab.classList.add('active');
 
-      const flexTabs = ['documentos', 'apex', 'perfil', 'entrevistas', 'analisis'];
-      ['dashboard', 'documentos', 'usuarios', 'apex', 'perfil', 'entrevistas', 'analisis'].forEach(tab => {
+      const flexTabs = ['documentos', 'apex', 'perfil', 'entrevistas', 'analisis', 'simulador'];
+      ['dashboard', 'documentos', 'usuarios', 'apex', 'perfil', 'entrevistas', 'analisis', 'simulador'].forEach(tab => {
         const el = document.getElementById(`tab-${tab}`);
         if (el) el.style.display = tab === tabName ? (flexTabs.includes(tab) ? 'flex' : '') : 'none';
       });
@@ -1241,6 +1247,13 @@
       if (tabName === 'perfil') loadProfile();
       if (tabName === 'entrevistas') loadEntrevistas();
       if (tabName === 'analisis') { analisisShowSections(); loadAnalisis(); }
+      if (tabName === 'simulador') {
+        const sf = document.getElementById('simuladorIframe');
+        if (sf && !sf.src.includes('/publicados/armc/simulador-ux/')) sf.src = '/publicados/armc/simulador-ux/';
+      } else {
+        const sf = document.getElementById('simuladorIframe');
+        if (sf) sf.src = 'about:blank';
+      }
     }
 
     // ── LOGOUT ──
@@ -1519,6 +1532,7 @@
           <button class="ud-tab" onclick="switchUdTab('ud-docs')">Documentos</button>
           <button class="ud-tab" onclick="switchUdTab('ud-apex')">Formulario APEX</button>
           <button class="ud-tab" onclick="switchUdTab('ud-analisis')">Análisis de flujos y procesos</button>
+          <button class="ud-tab" onclick="switchUdTab('ud-simulador')">Simulador UX ARMC</button>
         </div>
 
         <!-- Perfil y proceso -->
@@ -1613,6 +1627,11 @@
             <iframe id="udAnalisisIframe" class="analisis-iframe" style="min-height:600px;" sandbox="allow-scripts allow-same-origin"></iframe>
           </div>
         </div>
+
+        <!-- Simulador UX ARMC -->
+        <div id="ud-simulador" class="ud-content analisis-layer-flex" style="display:none;min-height:600px;">
+          <iframe id="udSimuladorIframe" class="analisis-iframe" style="min-height:600px;" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
       `;
 
       // Wire up dropzone
@@ -1626,18 +1645,29 @@
       document.querySelectorAll('.ud-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.ud-content').forEach(c => c.classList.remove('active'));
       const tab = [...document.querySelectorAll('.ud-tab')].find(t => t.textContent.includes(
-        tabId === 'ud-perfil' ? 'Perfil' : tabId === 'ud-docs' ? 'Documentos' : tabId === 'ud-apex' ? 'APEX' : 'Análisis'
+        tabId === 'ud-perfil' ? 'Perfil' : tabId === 'ud-docs' ? 'Documentos' : tabId === 'ud-apex' ? 'APEX' : tabId === 'ud-simulador' ? 'Simulador' : 'Análisis'
       ));
       if (tab) tab.classList.add('active');
       const content = document.getElementById(tabId);
       if (content) {
         content.classList.add('active');
         if (tabId === 'ud-analisis') { content.style.display = 'flex'; udAnalisisShowSections(); loadUdAnalisis(); }
+        if (tabId === 'ud-simulador') {
+          content.style.display = 'flex';
+          const sf = document.getElementById('udSimuladorIframe');
+          if (sf && !sf.src.includes('/publicados/armc/simulador-ux/')) sf.src = '/publicados/armc/simulador-ux/';
+        }
       }
       // Hide analisis when switching away
       if (tabId !== 'ud-analisis') {
         const analisis = document.getElementById('ud-analisis');
         if (analisis) analisis.style.display = 'none';
+      }
+      if (tabId !== 'ud-simulador') {
+        const sim = document.getElementById('ud-simulador');
+        if (sim) sim.style.display = 'none';
+        const sf = document.getElementById('udSimuladorIframe');
+        if (sf) sf.src = 'about:blank';
       }
     }
 

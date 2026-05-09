@@ -2,6 +2,35 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-09] — v3.3.56
+
+### Frontend — Hub: nuevo tab principal "Simulador UX ARMC" + publicación canónica del simulador
+
+Cambio user-facing en el Hub. Se añade un tab principal nuevo, **`Simulador UX ARMC`**, al lado de `Análisis de flujos y procesos`, tanto en la **vista de usuario** (panel-tabs, [`prisma-apex/index.html`](prisma-apex/index.html)) como en la **vista admin del detalle de usuario** (ud-tabs).
+
+#### Publicación canónica
+
+- Nuevo entregable bajo ruta canónica: [`prisma-apex/clientes-publicados/armc/simulador-ux/index.html`](prisma-apex/clientes-publicados/armc/simulador-ux/index.html). Servido públicamente como `/publicados/armc/simulador-ux/`.
+- Origen: snapshot del prototipo aprobado en el worktree `feature/simulador-ux` (no expuesto). El worktree queda como surface de evolución; la publicación es independiente.
+- Fuente Phosphor consumida vía `/shared/fonts/phosphor/phosphor.css` (ajuste de path al nuevo nivel canónico).
+
+#### Reescritura del shell visible
+
+- `<title>` → `Simulador UX ARMC — PRISMA` (antes `Simulador Lógico de UX/DB - PRISMA`).
+- `<h1>` del header → `Simulador UX ARMC` (antes `Simulador Lógico del Flujo Clínico`).
+- Los subflujos modelados (Atención, Quirúrgico, etc., con todo el grafo de nodos `nodesData`) se conservan **idénticos** al snapshot aprobado.
+
+#### Wiring del Hub
+
+- Tab `simulador` añadido a `flexTabs` y a la iteración de tabs en `switchTab`.
+- Iframe `simuladorIframe` se carga **lazy** (solo al activar el tab) y se reinicia a `about:blank` al cambiar de tab para evitar mantener el grafo en memoria.
+- Mismo patrón replicado en `switchUdTab` para `ud-simulador` (admin viendo detalle de usuario).
+- Sin modificación del backend, BD, nginx ni PM2.
+
+#### Bump
+
+- `web/index.html` footer, `prisma-apex/index.html` `.welcome-version`, `CLAUDE.md` "Versión actual", esta entrada de `CHANGELOG.md`.
+
 ## [2026-05-08] — v3.3.55
 
 ### Absorción del duodécimo bloque de contenido del carril 2 (modelo de datos ARMC: Cita 3 dimensiones + entidad Profesional + Servicio/Pago + reglas operativas)
