@@ -1,0 +1,41 @@
+{
+  "capa": 2,
+  "titulo": "Diccionario Operativo y Payloads",
+  "descripcion": "Contrato de datos del flujo operativo ARMC: respuesta automática en WhatsApp, escalado a atención humana, convergencia al Súper Formulario.",
+  "eventos": [
+    {
+      "event_type": "LEAD_CAPTURED",
+      "descripcion": "Lead ingresa por WhatsApp",
+      "payload_ejemplo": {
+        "canal_origen": "WHATSAPP",
+        "nombre": "Ana Maria",
+        "telefono": "+525512345678",
+        "interes": "PRECIO",
+        "timestamp": "2026-05-10T14:32:00Z"
+      }
+    },
+    {
+      "event_type": "AUTO_RESPONSE_SENT",
+      "descripcion": "Sistema responde automáticamente según interés",
+      "payload_ejemplo": {
+        "decision_bucket": "PRECIO",
+        "template_id": "armc_precio_base_v1",
+        "satisfaccion": "PENDING"
+      }
+    },
+    {
+      "event_type": "HUMAN_SUPPORT_REQUESTED",
+      "descripcion": "Escalado a agente humano si no satisfecho",
+      "payload_ejemplo": {
+        "motivo": "NO_SATISFECHO_AUTO_RESPONSE",
+        "agent_assigned": true
+      }
+    }
+  ],
+  "roadmap": [
+    "Gabio integration (posterior)",
+    "Súper Formulario convergence (vigente)"
+  ],
+  "status": "DRAFT_EXECUTOR3",
+  "last_updated": "2026-05-10"
+}
