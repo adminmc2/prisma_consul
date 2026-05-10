@@ -107,8 +107,8 @@
 
     <script>
         // --- ZOOM ---
-        let zoomLevel = 1;
-        const ZOOM_MIN = 0.3, ZOOM_MAX = 2;
+        var zoomLevel = 1;
+        var ZOOM_MIN = 0.3, ZOOM_MAX = 2;
         function applyZoom() {
             const c = document.getElementById('canvas');
             if (c) c.style.transform = `scale(${zoomLevel})`;
@@ -288,7 +288,7 @@
             let startY = e.clientY;
             
             const onMouseMove = (moveEvent) => {
-                const scale = 1; // Por si luego hay zoom
+                const scale = (typeof zoomLevel === 'number' && zoomLevel > 0) ? zoomLevel : 1;
                 const dx = (moveEvent.clientX - startX) / scale;
                 const dy = (moveEvent.clientY - startY) / scale;
                 data.x += dx;

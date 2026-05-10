@@ -2,6 +2,28 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-10] — v3.3.59
+
+### Fix — Simulador UX ARMC: drag de nodos compensa zoom + shell flexible en móvil
+
+Atiende los dos hallazgos medios del revisor sobre el slice `v3.3.58`. **Sin cambios funcionales más allá de los dos fixes**; sin tocar contenido, BD, backend ni nginx.
+
+#### Fix 1 — drag de nodos respeta el zoom (`capa-1-ux/index.html`)
+
+- El handler de arrastre estilo Miro tenía `const scale = 1` hardcodeado con un comentario "por si luego hay zoom". Tras introducir el zoom real en `v3.3.58`, los deltas dejaban de corresponder con la escala visual: al hacer zoom y arrastrar un nodo, el desplazamiento se desincronizaba del cursor.
+- Cambio: `scale` ahora se lee dinámicamente de `zoomLevel` (con fallback a `1` si no está definido). El nodo se mueve exactamente con el cursor a cualquier nivel de zoom.
+- `let zoomLevel` → `var zoomLevel` para garantizar acceso global cross-script (asignación al objeto window).
+
+#### Fix 2 — shell del simulador robusto en móvil (`simulador-ux/index.html`)
+
+- El `<main>` usaba `height: calc(100vh - 57px)` asumiendo header de 57 px. Como el header tiene `flex-wrap: wrap` (tabs y título envuelven en pantallas estrechas), el header podía superar esos 57 px y dejar parte del iframe o del placeholder recortado fuera del viewport sin scroll exterior.
+- Cambio: layout flexbox real — `body` con `display: flex; flex-direction: column`, header `flex: 0 0 auto`, main `flex: 1 1 auto; min-height: 0`. El alto del main se calcula automáticamente sin importar cuántas líneas tome el header.
+- Soporte `100dvh` además de `100vh` para barras de UI dinámicas en navegadores móviles.
+
+#### Bump
+
+- `web/index.html`, `prisma-apex/index.html`, `CLAUDE.md` y `CHANGELOG.md` a `v3.3.59`.
+
 ## [2026-05-10] — v3.3.58
 
 ### Frontend — Simulador UX ARMC: shell con 3 capas (tema oscuro Hub) + zoom funcional en Capa 1
