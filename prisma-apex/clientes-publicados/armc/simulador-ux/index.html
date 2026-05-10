@@ -1,415 +1,77 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador UX ARMC — PRISMA</title>
-    <link rel="stylesheet" href="../../../../shared/fonts/phosphor/phosphor.css">
-    <style>
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f8; overflow: hidden; color: #333; display: flex; flex-direction: column; height: 100vh;}
-        header { background: #fff; padding: 15px 25px; border-bottom: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        header h1 { margin: 0; font-size: 18px; color: #101B2C; }
-        .controls button { padding: 8px 15px; border: none; background: #101B2C; color: white; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .controls button:hover { background: #1a2a44; }
-        
-        main { flex: 1; display: flex; overflow: hidden; position: relative; }
-        
-        /* Contenedor infinito */
-        #canvas-wrapper { flex: 1; overflow: auto; position: relative; background: radial-gradient(circle, #e0e0e0 1px, transparent 1px); background-size: 20px 20px; }
-        #canvas { min-width: 8000px; min-height: 8000px; position: relative; }
-        
-        /* Capa SVG para las líneas */
-        svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .link { fill: none; stroke: #cbd5e1; stroke-width: 1.5px; transition: stroke 0.3s, stroke-width 0.3s; }
-        .link.active { stroke: #31BEEF; stroke-width: 2.5px; filter: drop-shadow(0 0 4px rgba(49,190,239,0.5)); }
-        .link.error { stroke: #e74c3c; stroke-width: 4px; stroke-dasharray: 6,6; }
-
-        /* Nodos HTML */
-        .node { position: absolute; width: 260px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #e1e4e8; z-index: 2; transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; }
-        .node.active { border-color: #31BEEF; box-shadow: 0 0 0 2px rgba(49,190,239,0.2), 0 8px 25px rgba(0,0,0,0.1); transform: scale(1.02); }
-        .node.disabled { opacity: 0.6; filter: grayscale(100%); transition: opacity 0.3s; }
-        
-        .node-header { background: #101B2C; color: white; padding: 10px 15px; border-radius: 7px 7px 0 0; font-size: 14px; font-weight: bold; display: flex; justify-content: space-between; }
-        .node-id { font-size: 10px; color: #31BEEF; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 12px; }
-        
-        .node-body { padding: 15px; flex: 1; }
-        .node-key-badge { display: inline-block; background: #eef2f5; color: #5c6ac4; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 11px; margin-bottom: 12px; border: 1px solid #d1d5db; }
-        
-        /* Opciones / Botones interactivos */
-        .options-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-        .option-btn { background: #f8f9fa; border: 1px solid #ddd; padding: 10px 15px; border-radius: 6px; text-align: left; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #444; z-index: 3; position: relative; }
-        .option-btn:hover { background: #eef2f5; border-color: #cbd5e1; transform: translateX(2px); }
-        .option-btn.selected { background: #31BEEF; color: white; border-color: #1b9ac8; font-weight: bold; }
-        
-        /* Panel de Logs / Consola lateral */
-        #console-panel { width: 350px; background: #1e1e1e; color: #d4d4d4; border-left: 1px solid #333; display: flex; flex-direction: column; z-index: 10; }
-        .console-header { padding: 15px; background: #252526; border-bottom: 1px solid #444; font-weight: bold; font-family: monospace; font-size: 14px; display: flex; justify-content: space-between; }
-        .console-header span:last-child { cursor: pointer; color: #31BEEF; font-size: 12px; }
-        #logs { flex: 1; overflow-y: auto; padding: 10px; font-family: 'Consolas', 'Monaco', monospace; font-size: 12px; }
-        .log-entry { margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed #333; line-height: 1.4; }
-        .log-time { color: #888; font-size: 10px; margin-right: 5px; }
-        .log-info { color: #dcdcaa; }
-        .log-success { color: #b5cea8; }
-        .log-warning { color: #ce9178; }
-        .log-error { color: #f44747; }
-        .log-db { color: #569cd6; margin-top: 4px; display: block; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 3px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador UX ARMC — PRISMA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../../shared/fonts/phosphor/phosphor.css">
+  <style>
+    :root {
+      --prisma-navy: #101B2C;
+      --bg-primary: #1a2535;
+      --tech-cyan: #31BEEF;
+      --soft-blue: #A1B8F2;
+      --clinical-white: #FAF9F6;
+      --border-subtle: rgba(161, 184, 242, 0.18);
+    }
+    * { box-sizing: border-box; }
+    body, html { margin: 0; padding: 0; height: 100%; font-family: 'Source Sans 3', sans-serif; background: var(--prisma-navy); color: var(--clinical-white); overflow: hidden; }
+    header.sim-header { background: var(--bg-primary); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); gap: 16px; flex-wrap: wrap; }
+    .sim-header h1 { font-family: 'Quicksand', sans-serif; margin: 0; font-size: 1.05rem; font-weight: 600; color: var(--clinical-white); display: flex; align-items: center; gap: 10px; letter-spacing: 0.2px; }
+    .sim-header h1 i { color: var(--tech-cyan); font-size: 1.25rem; }
+    .sim-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .sim-tab { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--soft-blue); border: 1px solid var(--border-subtle); padding: 7px 16px; border-radius: 4px 18px 18px 4px; cursor: pointer; font-family: 'Quicksand', sans-serif; font-size: 0.82rem; font-weight: 600; transition: all 0.18s ease; }
+    .sim-tab:hover:not(.active) { color: var(--clinical-white); border-color: var(--soft-blue); }
+    .sim-tab.active { background: var(--tech-cyan); color: var(--prisma-navy); border-color: var(--tech-cyan); }
+    .sim-tab i { font-size: 1rem; }
+    main.sim-main { height: calc(100vh - 57px); display: block; background: var(--prisma-navy); }
+    .view { width: 100%; height: 100%; display: none; }
+    .view.active { display: block; }
+    .view iframe { width: 100%; height: 100%; border: none; background: var(--prisma-navy); }
+    .view-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 2rem; }
+    .view-placeholder i { font-size: 2.6rem; color: var(--tech-cyan); margin-bottom: 1rem; }
+    .view-placeholder h2 { font-family: 'Quicksand', sans-serif; color: var(--clinical-white); font-size: 1.4rem; font-weight: 600; margin: 0 0 0.6rem; }
+    .view-placeholder p { color: var(--soft-blue); max-width: 540px; line-height: 1.55; font-size: 0.95rem; }
+  </style>
 </head>
 <body>
-    <header>
-        <div>
-            <h1>Simulador UX ARMC</h1>
-            <div style="font-size: 12px; color: #666; margin-top: 4px;">Navega el flujo tomando decisiones. La consola simula el impacto en BD.</div>
-        </div>
-        <div class="controls">
-            <button onclick="resetSimulation()"><i class="ph ph-arrow-counter-clockwise"></i> Reiniciar Simulación</button>
-        </div>
-    </header>
+  <header class="sim-header">
+    <h1><i class="ph ph-intersect"></i> Simulador UX ARMC</h1>
+    <div class="sim-tabs" role="tablist">
+      <button class="sim-tab active" data-view="1" onclick="switchView('1')"><i class="ph ph-tree-structure"></i> Capa 1: UX</button>
+      <button class="sim-tab" data-view="2" onclick="switchView('2')"><i class="ph ph-book-bookmark"></i> Capa 2: Diccionario</button>
+      <button class="sim-tab" data-view="3" onclick="switchView('3')"><i class="ph ph-database"></i> Capa 3: BD (SQL)</button>
+    </div>
+  </header>
 
-    <main>
-        <div id="canvas-wrapper">
-            <div id="canvas">
-                <svg id="svg-paths">
-                    <defs>
-                        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#cbd5e1" class="arrow-path"/>
-                        </marker>
-                        <marker id="arrow-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#31BEEF" class="arrow-path"/>
-                        </marker>
-                        <marker id="arrow-error" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#e74c3c" class="arrow-path"/>
-                        </marker>
-                    </defs>
-                </svg>
-                <div id="nodes-container"></div>
-            </div>
-        </div>
-        <aside id="console-panel">
-            <div class="console-header">
-                <span>Terminal del Sistema</span>
-                <span onclick="clearLogs()">[Limpiar]</span>
-            </div>
-            <div id="logs"></div>
-        </aside>
-    </main>
+  <main class="sim-main">
+    <div id="view-1" class="view active">
+      <iframe src="./capa-1-ux/index.html" title="Capa 1: UX"></iframe>
+    </div>
+    <div id="view-2" class="view">
+      <div class="view-placeholder">
+        <i class="ph ph-barricade"></i>
+        <h2>Capa 2 — Diccionario</h2>
+        <p>Documentación del cableado, llaves del sistema y variables de pago/estado específicas de ARMC. Se publicará una vez aprobada la Capa 1.</p>
+      </div>
+    </div>
+    <div id="view-3" class="view">
+      <div class="view-placeholder">
+        <i class="ph ph-barricade"></i>
+        <h2>Capa 3 — BD (SQL)</h2>
+        <p>Modelo de base de datos sobre los flujos definitivos del blueprint ARMC. Se publicará una vez aprobada la Capa 1.</p>
+      </div>
+    </div>
+  </main>
 
-    <script>
-        // --- BASE DE DATOS LÓGICA (EL MAPA DEL FLUJO ARMC) ---
-        const nodesData = {
-    'lead_capture': {
-        title: 'Lead', key: 'lead_new', x: 100, y: 400,
-        description: 'Contacto inicial por WhatsApp/Instagram. Se dispara aviso de privacidad.',
-        options: [
-            { id: 'opt_info_only', label: 'Solo pide info', targetId: 'lead_stagnant', dbAction: 'Marca Lead, sin avance' },
-            { id: 'opt_wants_appt', label: 'Desea agendar', targetId: 'user_created', dbAction: 'Convierte Lead a Usuario' }
-        ]
-    },
-    'lead_stagnant': { title: 'Lead Estancado (Señal S1)', key: 'lead_s1', x: 700, y: 100, description: 'Flujo detenido sin conversión a Usuario.', options: [] },
-    
-    'user_created': {
-        title: 'Usuario', key: 'user_created', x: 700, y: 400,
-        description: 'El paciente acepta dar sus datos y agendar valoración.',
-        options: [
-            { id: 'opt_schedule_eval', label: 'Agendar Valoración', targetId: 'eval_pending', dbAction: 'INSERT INTO armc_citas' }
-        ]
-    },
-    
-    'eval_pending': {
-        title: 'Evaluación agendada', key: 'eval_pending', x: 1300, y: 400,
-        description: 'Se agenda cita con Cirujano o Cosmiatra.',
-        options: [
-            { id: 'opt_cron_hc', label: 'Cronjob: 48h antes', targetId: 'cron_hc', dbAction: 'Leer si HC está pre-llenado' },
-            { id: 'opt_cron_confirm', label: 'Cronjob: 24h antes', targetId: 'cron_confirm', dbAction: 'Enviar recordatorio WhatsApp' },
-            { id: 'opt_patient_arrives', label: 'Paciente acude a cita', targetId: 'medical_eval', dbAction: 'Actualizar status: Presente' }
-        ]
-    },
-    
-    'cron_hc': { title: 'Alerta de HC', key: 'sys_cron_hc', x: 1900, y: 100, description: 'Pide al paciente llenar HC online.', options: [] },
-    'cron_confirm': { title: 'Confirmación Cita', key: 'sys_cron_conf', x: 1900, y: 400, description: 'Si no responde, genera Señal S2.', options: [] },
-    
-    'medical_eval': {
-        title: 'Evaluación Médica', key: 'eval_progress', x: 1900, y: 700,
-        description: 'El cirujano hace la valoración y establece el plan.',
-        options: [
-            { id: 'opt_firmar', label: 'Firma Médica (Tableta)', targetId: 'patient_locked', dbAction: 'Regla Hielo: UPDATE is_locked=TRUE' },
-            { id: 'opt_rechazo', label: 'No apto para cirugía', targetId: 'eval_rejected', dbAction: 'Cerrar ciclo' }
-        ]
-    },
-
-    'eval_rejected': { title: 'Evaluación Cerrada', key: 'eval_closed', x: 2500, y: 1000, description: 'Fin del flujo.', options: [] },
-
-    'patient_locked': {
-        title: 'Paciente (HC Bloqueada)', key: 'hc_locked', x: 2500, y: 700,
-        description: 'Cumplimiento NOM-004. Modificaciones solo por Addendum. Entra a Quirófano/Tratamiento.',
-        options: [
-            { id: 'opt_prep', label: 'Pasar a Quirófano', targetId: 'surgery_prep', dbAction: 'Generar token temporal de cirugía' }
-        ]
-    },
-
-    // --- ROL: CIRUJANO (Gabriel / Divani) ---
-    'surgery_prep': {
-        title: 'Preparación Pre-Quirúrgica', key: 'med_prep', x: 2500, y: 1200,
-        description: 'Óscar prepara material. Anestesia infiltrada.',
-        options: [
-            { id: 'opt_surgery_proc', label: 'Iniciar Procedimiento', targetId: 'surgery_proc', dbAction: 'Registra hora de inicio en bitácora' }
-        ]
-    },
-
-    'surgery_proc': {
-        title: 'Cirugía en Proceso', key: 'med_surgery', x: 3100, y: 1200,
-        description: 'Cirugía por Gabriel / Divani. Fotos intra-operatorias tomadas.',
-        options: [
-            { id: 'opt_surgery_end', label: 'Finalizar Cirugía', targetId: 'post_op_followup', dbAction: 'Registra hora de fin, actualiza inventario' }
-        ]
-    },
-
-    'post_op_followup': {
-        title: 'Seguimiento Post-Op', key: 'auto_followup', x: 3100, y: 700,
-        description: 'APEX programa evaluación de revisión a los +3, +7 y +30 días.',
-        options: [
-            { id: 'opt_end', label: 'Alta Médica', targetId: 'flow_complete', dbAction: 'Cerrar etapa activa' }
-        ]
-    },
-    
-    'flow_complete': { title: 'Paciente', key: 'patient_active', x: 3700, y: 700, description: 'Fin del ciclo principal. Puede retornar.', options: [] }
-};
-
-        const container = document.getElementById('nodes-container');
-        const svgPath = document.getElementById('svg-paths');
-        const logsBox = document.getElementById('logs');
-        let currentActiveNode = 'lead_capture';
-        let activePaths = []; // Guardar paths iluminados
-
-        // --- SISTEMA DE LOGS ---
-        function log(message, type = 'info', dbAction = '') {
-            const time = new Date().toLocaleTimeString('es-ES', { hour12: false });
-            const div = document.createElement('div');
-            div.className = 'log-entry';
-            let colorCls = type === 'success' ? 'log-success' : type === 'error' ? 'log-error' : type === 'warning' ? 'log-warning' : 'log-info';
-            
-            let html = `<span class="log-time">[${time}]</span> <span class="${colorCls}">${message}</span>`;
-            if (dbAction) {
-                html += `<span class="log-db">➤ DB SIMULATION: ${dbAction}</span>`;
-            }
-            div.innerHTML = html;
-            logsBox.appendChild(div);
-            logsBox.scrollTop = logsBox.scrollHeight;
-        }
-
-        function clearLogs() { logsBox.innerHTML = ''; }
-
-        
-        function getIconForNode(key) {
-            if (key.includes('lead')) return 'ph ph-user-plus';
-            if (key.includes('cron') || key.includes('sys')) return 'ph ph-robot';
-            if (key.includes('eval')) return 'ph ph-stethoscope';
-            if (key.includes('locked')) return 'ph ph-lock-key';
-            if (key.includes('op')) return 'ph ph-bandaids';
-            if (key.includes('active')) return 'ph ph-check-circle';
-            return 'ph ph-intersect';
-        }
-        
-        // --- RENDERIZADO DE NODOS HTML ---
-        function renderNodes() {
-            container.innerHTML = '';
-            
-            Object.entries(nodesData).forEach(([nodeId, data]) => {
-                const nodeEl = document.createElement('div');
-                nodeEl.className = 'node';
-                nodeEl.id = `node-${nodeId}`;
-                nodeEl.style.left = data.x + 'px';
-                nodeEl.style.top = data.y + 'px';
-
-                let optionsHtml = '';
-                if (data.options && data.options.length > 0) {
-                    optionsHtml = '<div class="options-list">';
-                    data.options.forEach(opt => {
-                        optionsHtml += `<button class="option-btn" id="btn-${opt.id}" onclick="handleOptionClick('${nodeId}', '${opt.id}', '${opt.targetId}', '${opt.dbAction || ''}')">
-                            ${opt.label}
-                            <i class="ph ph-arrow-right"></i>
-                        </button>`;
-                    });
-                    optionsHtml += '</div>';
-                } else {
-                    optionsHtml = '<div style="color: #999; font-size: 12px; margin-top: 15px; text-align: center; border-top: 1px dashed #eee; padding-top:10px;">(Punto final de este flujo)</div>';
-                }
-
-                nodeEl.innerHTML = `
-                    <div class="node-header">
-                        <span><i class="${getIconForNode(data.key)}" style="margin-right: 6px; font-size: 1.1em; vertical-align: middle;"></i> ${data.title}</span>
-                        <span class="node-id">#${nodeId}</span>
-                    </div>
-                    <div class="node-body">
-                        <div class="node-key-badge">key: ${data.key}</div>
-                        <div style="font-size: 13px; color: #666; line-height: 1.4;">${data.description}</div>
-                        ${optionsHtml}
-                    </div>
-                `;
-                // DRAGGABLE LOGIC (Estilo Miro)
-        nodeEl.querySelector('.node-header').style.cursor = 'grab';
-        nodeEl.querySelector('.node-header').addEventListener('mousedown', function(e) {
-            e.preventDefault();
-            this.style.cursor = 'grabbing';
-            let startX = e.clientX;
-            let startY = e.clientY;
-            
-            const onMouseMove = (moveEvent) => {
-                const scale = 1; // Por si luego hay zoom
-                const dx = (moveEvent.clientX - startX) / scale;
-                const dy = (moveEvent.clientY - startY) / scale;
-                data.x += dx;
-                data.y += dy;
-                nodeEl.style.left = data.x + 'px';
-                nodeEl.style.top = data.y + 'px';
-                startX = moveEvent.clientX;
-                startY = moveEvent.clientY;
-                drawLines(); // redibuja flechas en tiempo real
-            };
-            
-            const onMouseUp = () => {
-                this.style.cursor = 'grab';
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-            };
-            
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
-        });
-        
-        container.appendChild(nodeEl);
-            });
-        }
-
-        // --- RENDERIZADO DE LÍNEAS SVG ---
-        function drawLines() {
-            const svgContent = [];
-            
-            Object.entries(nodesData).forEach(([nodeId, data]) => {
-                if (!data.options) return;
-                
-                data.options.forEach(opt => {
-                    const btn = document.getElementById(`btn-${opt.id}`);
-                    const targetNode = document.getElementById(`node-${opt.targetId}`);
-                    
-                    if (btn && targetNode) {
-                        // Calcular coordenadas relativas al canvas
-                        const btnRect = btn.getBoundingClientRect();
-                        const canvasRect = svgPath.getBoundingClientRect();
-                        
-                        // Punto de salida (derecha del botón)
-                        const startX = (btnRect.right - canvasRect.left) + 2;
-                        const startY = (btnRect.top - canvasRect.top) + (btnRect.height / 2);
-                        
-                        // Punto de llegada (izquierda del nodo destino)
-                        const targetRect = targetNode.getBoundingClientRect();
-                        const endX = (targetRect.left - canvasRect.left) - 5;
-                        const endY = (targetRect.top - canvasRect.top) + 20; // 20px offset from top of node wrapper
-                        
-                        // Crear curva Bezier
-                        const curveFactor = 80;
-                        const d = `M ${startX} ${startY} C ${startX + curveFactor} ${startY}, ${endX - curveFactor} ${endY}, ${endX} ${endY}`;
-                        
-                        // Asignar ID único a la línea para iluminarla luego
-                        const lineId = `path-${opt.id}-to-${opt.targetId}`;
-                        svgContent.push(`<path id="${lineId}" class="link" d="${d}" marker-end="url(#arrow)"></path>`);
-                    }
-                });
-            });
-            
-            // Refrescar innerHTML del SVG dejando los defs intactos
-            const defs = svgPath.querySelector('defs').outerHTML;
-            svgPath.innerHTML = defs + svgContent.join('');
-        }
-
-        // --- LÓGICA DE SIMULACIÓN E INTERACTIVIDAD ---
-        function handleOptionClick(sourceNodeId, optionId, targetId, dbAction) {
-            log(`Usuario eligió opción: [${optionId}]`, 'info', dbAction);
-            
-            // Validaciones visuales (marcar opción y ruta como activas)
-            const btn = document.getElementById(`btn-${optionId}`);
-            btn.classList.add('selected');
-            
-            const targetNodeData = nodesData[targetId];
-            
-            // Verificar si la conexión existe o está rota
-            const pathId = `path-${optionId}-to-${targetId}`;
-            const pathEl = document.getElementById(pathId);
-            
-            if (!document.getElementById(`node-${targetId}`)) {
-                log(`ERROR CRÍTICO: RUTA FALLIDA. El nodo destino '${targetId}' no existe en el mapa.`, 'error');
-                if (pathEl) {
-                    pathEl.classList.add('error');
-                    pathEl.setAttribute('marker-end', 'url(#arrow-error)');
-                }
-                return;
-            }
-
-            // Iluminar la línea
-            if (pathEl) {
-                pathEl.classList.add('active');
-                pathEl.setAttribute('marker-end', 'url(#arrow-active)');
-                activePaths.push(pathEl);
-            }
-
-            // Mover el foco activo
-            focusNode(targetId);
-            
-            log(`↳ Transición exitosa a: ${targetNodeData.title} (Key DB esperada: ${targetNodeData.key})`, 'success');
-        }
-
-        function focusNode(nodeId) {
-            // Apagar todos los nodos
-            document.querySelectorAll('.node').forEach(n => {
-                n.classList.remove('active');
-                n.classList.add('disabled');
-            });
-            
-            const current = document.getElementById(`node-${nodeId}`);
-            if (current) {
-                current.classList.remove('disabled');
-                current.classList.add('active');
-                
-                // Hacer scroll suave hacia el nodo si está fuera de vista
-                const wrapper = document.getElementById('canvas-wrapper');
-                const scrollX = current.offsetLeft - 100;
-                const scrollY = current.offsetTop - (wrapper.clientHeight / 2);
-                wrapper.scrollTo({ left: scrollX, top: scrollY, behavior: 'smooth' });
-            }
-        }
-
-        function resetSimulation() {
-            clearLogs();
-            log('Sistema reiniciado. Esperando acción del usuario en Inicio.', 'warning');
-            
-            // Reset botones
-            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-            
-            // Reset líneas
-            activePaths.forEach(p => {
-                p.classList.remove('active', 'error');
-                p.setAttribute('marker-end', 'url(#arrow)');
-            });
-            activePaths = [];
-            
-            // Reset Nodos y poner foco en inicio
-            document.querySelectorAll('.node').forEach(n => n.classList.remove('disabled', 'active'));
-            focusNode('lead_capture');
-        }
-
-        // --- INICIALIZACIÓN ---
-        window.onload = () => {
-            renderNodes();
-            // Truco: esperar al siguiente frame para que las posiciones absolutas se calculen antes de pintar SVG
-            setTimeout(() => {
-                drawLines();
-                resetSimulation(); // Arranca todo
-            }, 50);
-        };
-        
-        // Redibujar al redimensionar la ventana si algo se desencaja
-        window.onresize = () => setTimeout(drawLines, 50);
-
-    </script>
+  <script>
+    function switchView(id) {
+      document.querySelectorAll('.sim-tab').forEach(b => b.classList.toggle('active', b.dataset.view === id));
+      document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + id));
+    }
+  </script>
 </body>
 </html>

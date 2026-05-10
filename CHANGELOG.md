@@ -2,6 +2,36 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-10] — v3.3.58
+
+### Frontend — Simulador UX ARMC: shell con 3 capas (tema oscuro Hub) + zoom funcional en Capa 1
+
+Correctivo y completado de la publicación canónica del simulador. En `v3.3.56` se publicó por error solo el contenido de la Capa 1 (`web/revision/simulador-ux/index.html` del worktree, 415 líneas), omitiendo el shell exterior con las tres capas que sí existía en `docs/prototipos/simulador-ux/index.html`. Este slice corrige la omisión y añade dos features explícitamente solicitadas: un shell **adaptado al tema oscuro del Hub** (sin contraste alto contra el resto del sitio) y **zoom interactivo** en el grafo del flujo.
+
+#### Reorganización canónica
+
+- `prisma-apex/clientes-publicados/armc/simulador-ux/index.html` → ahora es el **shell** con las 3 tabs (Capa 1: UX / Capa 2: Diccionario / Capa 3: BD SQL).
+- `prisma-apex/clientes-publicados/armc/simulador-ux/capa-1-ux/index.html` → contenido del flujo clínico, embebido como iframe desde el shell. Movido vía `git mv` desde la ruta anterior para conservar historia.
+
+#### Shell — diseño adaptado al Hub
+
+- Paleta: navy `#101B2C`, panel `#1a2535`, acento `tech-cyan #31BEEF`, soft-blue `#A1B8F2`, texto `clinical-white #FAF9F6`. Coincide con la del Hub.
+- Tipografías Quicksand (encabezados) + Source Sans 3 (cuerpo).
+- Tabs con `border-radius: 4px 18px 18px 4px` (patrón canónico PRISMA), activo en cyan, hover sutil. Sin contraste alto contra el iframe interno.
+- Capas 2 y 3 con placeholders "en construcción" (icono `ph-barricade`).
+
+#### Zoom en Capa 1
+
+- `#canvas` con `transform-origin: 0 0` + `transition: transform 0.1s ease-out`.
+- Toolbar fijo abajo-izquierda: `−` / `%` / `+` / Reset (`ph-arrows-out`).
+- Atajo `Ctrl/⌘ + rueda` con `preventDefault`. Rango `0.3×` a `2×`, paso `0.1×`.
+- Pan sigue por scroll nativo del wrapper.
+
+#### Exclusión de scope
+
+- Grafo del flujo clínico (nodos, lógica, BD simulada): **idéntico** al snapshot del ejecutor 3.
+- Capas 2 y 3: siguen siendo responsabilidad del carril contenido.
+
 ## [2026-05-10] — v3.3.57
 
 ### Infraestructura / Documentación — incidente regional Movistar ↔ Cloudflare documentado
