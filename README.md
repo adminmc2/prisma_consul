@@ -94,6 +94,15 @@ git push origin main      # Push a GitHub
 ssh prisma@<IP> "cd ~/web-de-prisma && git pull origin main && cd server && npm install && pm2 restart prisma-consul"
 ```
 
+## Incidencia operativa conocida (2026-05-09)
+
+Se registró un incidente regional entre **Movistar/Telefónica (AS3352)** y el prefijo anycast de **Cloudflare** que estaba sirviendo `prismaconsul.com` y `dev.prismaconsul.com`.
+
+- El patrón correcto es: **DNS resuelve bien, Cloudflare edge hace timeout, origen IONOS responde 200 directo**.
+- Eso significa que el problema puede ser de **ruta ISP ↔ Cloudflare**, no del repo, del VPS o del certificado.
+- Si el sitio abre desde otros países/redes pero falla desde una ruta concreta en España, revisar primero conectividad a Cloudflare antes de tocar la aplicación.
+- El detalle completo del diagnóstico, evidencias y mitigaciones operativas vive en `CLAUDE.md`.
+
 ## Licencia
 
 Propiedad de PRISMA Consul. Todos los derechos reservados.

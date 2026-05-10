@@ -2,6 +2,32 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-10] — v3.3.57
+
+### Infraestructura / Documentación — incidente regional Movistar ↔ Cloudflare documentado
+
+Se documenta en las fuentes canónicas del repo el incidente de conectividad detectado el 2026-05-09 entre salidas Movistar/Telefónica en España y el prefijo anycast de Cloudflare que estaba sirviendo `prismaconsul.com` y `dev.prismaconsul.com`. Este patch es **solo documental**: no cambia runtime, backend, nginx, PM2, BD ni Cloudflare desde el repo.
+
+#### Diagnóstico verificado que queda registrado
+
+- DNS resolvía correctamente ambos hostnames a Cloudflare (`188.114.96.5`, `188.114.97.5`).
+- TCP/443 a esas IPs hacía timeout antes del handshake TLS desde la salida afectada.
+- El origen IONOS `212.227.251.125` respondía `HTTP/1.1 200 OK` al forzar el mismo hostname, descartando caída del VPS.
+- `mtr` / `traceroute` situaron la pérdida dentro de `AS3352` (Telefónica) antes de llegar a `AS13335` (Cloudflare).
+- `Cloudflare WARP` confirmó workaround por cambio de ruta, pero solo a nivel de dispositivo.
+
+#### Qué deja explícito la documentación
+
+- No era un bug del repo, ni del frontend, ni del backend, ni del certificado Let's Encrypt, ni de `cron`.
+- El riesgo es **regional / por operador** mientras el proxy de Cloudflare siga sirviendo el dominio desde el subrango afectado.
+- Las mitigaciones operativas correctas pasan por cambiar la ruta (`WARP` / VPN) o cambiar el serving (`Pause Cloudflare`, `DNS only`, o reasignación de IP anycast), no por tocar la app.
+
+#### Documentación actualizada
+
+- `CLAUDE.md`: incidente, evidencias, no-causas, mitigaciones y cautela para una salida completa de Cloudflare.
+- `README.md`: nota rápida para distinguir una caída real del sitio frente a una incidencia de ruta ISP ↔ Cloudflare.
+- Bump de versión visible en `web/index.html`, `prisma-apex/index.html`, `CLAUDE.md` y `CHANGELOG.md`.
+
 ## [2026-05-09] — v3.3.56
 
 ### Frontend — Hub: nuevo tab principal "Simulador UX ARMC" + publicación canónica del simulador

@@ -323,6 +323,24 @@ Los nameservers del dominio están en **Cloudflare** (migrados desde IONOS para 
 
 **Importante:** Cualquier nuevo subdominio debe crearse en Cloudflare, no en IONOS. El panel DNS de IONOS ya no gestiona este dominio.
 
+### Incidencia conocida — Movistar/Telefónica ↔ Cloudflare (2026-05-09)
+
+- **Síntoma observado:** desde algunas salidas Movistar/Telefónica en España, `prismaconsul.com` y `dev.prismaconsul.com` podían quedar en timeout o mostrar mensajes tipo "página temporalmente inactiva o trasladada", mientras desde otros países o rutas sí cargaban.
+- **Diagnóstico verificado:**
+  1. DNS resolvía correctamente ambos hostnames a Cloudflare (`188.114.96.5`, `188.114.97.5`).
+  2. TCP/443 a esas IPs anycast hacía timeout antes de TLS desde la salida afectada.
+  3. El origen IONOS `212.227.251.125` respondía `HTTP/1.1 200 OK` al forzar el hostname, así que el VPS y nginx seguían vivos.
+  4. `mtr` / `traceroute` se perdían dentro de `AS3352` (Telefónica) antes de llegar a `AS13335` (Cloudflare).
+  5. `Cloudflare WARP` funcionaba porque cambiaba la ruta, no porque corrigiera la app ni el servidor.
+- **Qué NO era:** no era un bug del repo, no era un problema del certificado Let's Encrypt, no era una caída general de Cloudflare, no era `cron`, no era un fallo exclusivo de Chrome o Safari.
+- **Impacto operativo:** cualquier usuario detrás de la misma ruta/operador podía experimentar el mismo timeout mientras el proxy de Cloudflare siguiera saliendo por el subrango afectado.
+- **Mitigaciones operativas correctas:**
+  1. Validación inmediata: probar `Cloudflare WARP` o VPN para confirmar que el problema es de ruta.
+  2. Mitigación server-side temporal: `Pause Cloudflare on Site` o poner `@`, `www` y `dev` en `DNS only` si hay que devolver servicio a usuarios afectados.
+  3. Mitigación de baja garantía: toggle `Proxied` off → on para forzar posible reasignación de IP anycast.
+  4. Si se sale completamente de Cloudflare, **primero** replicar toda la zona DNS en IONOS (A, CNAME, MX, TXT, `_domainconnect`, etc.) y **después** cambiar nameservers.
+- **Regla práctica para futuras incidencias:** si el origen directo responde `200` pero Cloudflare edge hace timeout desde una región concreta, tratarlo primero como incidente de red ISP ↔ Cloudflare, no como caída de PRISMA.
+
 ### Securización (COMPLETADO)
 
 1. Usuario `prisma` con sudo (root SSH desactivado)
@@ -360,7 +378,7 @@ La versión actual se muestra en el footer de `web/index.html`. Se usa **Version
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.56`
+**Versión actual:** `v3.3.57`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `web/index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)
