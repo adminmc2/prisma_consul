@@ -77,16 +77,65 @@
     <p><strong>Status:</strong> En desarrollo por Executor 3</p>
     <p>Esta capa describe el esquema de base de datos PostgreSQL en Neon que soporta el flujo operativo de ARMC: tablas de leads, eventos, interacciones, y estados.</p>
     
-    <h3>Tablas Principales</h3>
-    <p>Descripción de tablas, índices, relaciones y constraints que modelan el flujo end-to-end.</p>
-    
-    <h3>Ejemplos SQL</h3>
-    <p>Queries de ejemplo para auditoría, reportes y análisis de flujo.</p>
-    
-    <!-- Executor 3: Desarrollar contenido aquí -->
-    <p style="margin-top: 3rem; padding: 1rem; background: rgba(49, 190, 239, 0.1); border-left: 3px solid var(--tech-cyan);">
-      <em>Placeholder — Contenido a inyectar desde Executor 3</em>
-    </p>
+    <h3>Tabla: armc_leads</h3>
+    <p>Registro de leads ingresados por cualquier canal (WhatsApp, formulario web, etc.).</p>
+    <pre><code>CREATE TABLE armc_leads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  canal_origen VARCHAR(50) NOT NULL, -- 'WHATSAPP', 'WEB_FORM', etc.
+  nombre VARCHAR(255) NOT NULL,
+  telefono VARCHAR(20) NOT NULL,
+  email VARCHAR(255),
+  interes_principal VARCHAR(100), -- 'PRECIO', 'PROCEDIMIENTO', 'TIEMPO_RECUPERACION'
+  comentario_inicial TEXT,
+  estado_actual VARCHAR(50), -- 'NUEVO', 'EN_CONVERSA', 'USUARIO_CREADO', 'ESTANCADO'
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);</code></pre>
+
+    <h3>Tabla: armc_events</h3>
+    <p>Auditoría de eventos del flujo. Cada transición, respuesta automática y escalado se registra aquí.</p>
+    <pre><code>CREATE TABLE armc_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  lead_id UUID NOT NULL REFERENCES armc_leads(id) ON DELETE CASCADE,
+  event_type VARCHAR(100) NOT NULL, 
+  -- LEAD_CAPTURED, AUTO_RESPONSE_SENT, HUMAN_SUPPORT_REQUESTED, SUPER_FORM_COMPLETED
+  payload JSONB NOT NULL, -- Contexto completo del evento
+  support_mode VARCHAR(30), -- 'AUTOMATIC_ONLY', 'HUMAN_ESCALATED', 'GABIO_ROADMAP'
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);</code></pre>
+
+    <h3>Tabla: armc_conversations</h3>
+    <p>Historial de interacciones (automáticas y humanas) por lead.</p>
+    <pre><code>CREATE TABLE armc_conversations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  lead_id UUID NOT NULL REFERENCES armc_leads(id) ON DELETE CASCADE,
+  agent_id UUID, -- NULL si es respuesta automática
+  decision_bucket VARCHAR(100), -- 'PRECIO', 'PROCEDIMIENTO', etc.
+  template_used VARCHAR(100), -- ej: 'armc_precio_base_v1'
+  satisfaccion VARCHAR(50), -- 'PENDING', 'SATISFIED', 'ESCALATED'
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);</code></pre>
+
+    <h3>Índices de Performance</h3>
+    <pre><code>CREATE INDEX idx_leads_created_at ON armc_leads(created_at DESC);
+CREATE INDEX idx_events_lead ON armc_events(lead_id);
+CREATE INDEX idx_events_type ON armc_events(event_type);
+CREATE INDEX idx_conversations_satisfaccion ON armc_conversations(satisfaccion);</code></pre>
+
+    <h3>Queries Base para Auditoría</h3>
+    <pre><code>-- Leads no convertidos (estancados)
+SELECT id, nombre, interes_principal, created_at
+FROM armc_leads
+WHERE estado_actual = 'ESTANCADO'
+ORDER BY created_at DESC;
+
+-- Leads escalados a humano
+SELECT l.id, l.nombre, e.created_at, c.agent_id
+FROM armc_leads l
+JOIN armc_events e ON l.id = e.lead_id
+JOIN armc_conversations c ON l.id = c.lead_id
+WHERE e.event_type = 'HUMAN_SUPPORT_REQUESTED';</code></pre>
   </div>
 </body>
 </html>
