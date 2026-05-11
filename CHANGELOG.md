@@ -2,6 +2,12 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-11] — v3.3.61
+
+### Bump visible tras refactor Capa 2 + Capa 3 del simulador UX ARMC en dev
+
+Bump asociado a la publicación en `dev` del commit `1658986` (cherry-pick `-x` del SHA aprobado `854bc6d`: refactor estructural de las Capas 2 y 3 del simulador con patrón sidebar + detalle + búsqueda). Actualiza la versión a `v3.3.61` en los 4 puntos canónicos: footer de `web/index.html`, `.welcome-version` de `prisma-apex/index.html`, "Versión actual" de `CLAUDE.md` y esta entrada de `CHANGELOG.md`. Sin tocar producción, sin merge a `main`.
+
 ## [2026-05-11] — Refactor estructural del Diccionario y SQL del simulador UX ARMC (sin cambio de versión visible)
 
 ### Frontend — Capa 2 y Capa 3 con patrón sidebar + detalle + búsqueda
