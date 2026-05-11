@@ -2,6 +2,12 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-11] — v3.3.62
+
+### Bump visible tras absorción del SHA b20c742 en dev (acotación + Mapa + cross-links)
+
+Bump asociado a la publicación en `dev` del commit `df99e23` (cherry-pick `-x` del SHA aprobado `b20c742`: acotación del simulador al alcance verificado, nueva vista Mapa de trazabilidad y cross-links entre capas). Actualiza la versión a `v3.3.62` en los 4 puntos canónicos. Aprobación del revisor estructural/técnica; la revisión de contenido modelado sigue abierta. Sin tocar producción, sin merge a `main`.
+
 ## [2026-05-11] — v3.3.61
 
 ### Bump visible tras refactor Capa 2 + Capa 3 del simulador UX ARMC en dev
