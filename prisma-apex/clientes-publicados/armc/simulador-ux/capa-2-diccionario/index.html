@@ -77,60 +77,13 @@
     <p><strong>Status:</strong> En desarrollo por Executor 3</p>
     <p>Esta capa define el contrato de datos del flujo vigente: respuesta automática en WhatsApp según elección del usuario; si no queda satisfecho, escalado a atención humana con contexto completo; y convergencia final al Súper Formulario.</p>
     
-    <h3>1. Lead Captured — Ingreso inicial</h3>
-    <p>Lead ingresa por WhatsApp con consulta inicial sobre un procedimiento o precio.</p>
-    <pre><code>{
-  "event_type": "LEAD_CAPTURED",
-  "canal_origen": "WHATSAPP",
-  "nombre": "Ana Maria",
-  "telefono": "+525512345678",
-  "interes_principal": "PRECIO",
-  "comentario_inicial": "Me interesa una valoración para rinomodelación"
-}</code></pre>
-
-    <h3>2. Auto Response Sent — Respuesta automática</h3>
-    <p>Sistema responde automáticamente según bucket de interés (PRECIO, PROCEDIMIENTO, etc.). Template predefinido enviado por WhatsApp.</p>
-    <pre><code>{
-  "event_type": "AUTO_RESPONSE_SENT",
-  "decision_bucket": "PRECIO",
-  "template_id": "armc_precio_base_v1",
-  "canal": "WHATSAPP",
-  "satisfaccion": "PENDING"
-}</code></pre>
-
-    <h3>3. Human Support Requested — Escalado humano</h3>
-    <p>Si lead no queda satisfecho con respuesta automática, se escala a agente humano con contexto completo.</p>
-    <pre><code>{
-  "event_type": "HUMAN_SUPPORT_REQUESTED",
-  "motivo": "NO_SATISFECHO_AUTO_RESPONSE",
-  "contexto_transferido": {
-    "resumen_conversacion": "Solicita más detalle sobre riesgos y recuperación",
-    "template_previa": "armc_precio_base_v1"
-  },
-  "operacion_actual": "ATENCION_HUMANA"
-}</code></pre>
-
-    <h3>4. Super Form Completed — Conversión a usuario</h3>
-    <p>Lead completa súper formulario con datos preclinicos. Transición Lead → Usuario + cita agendada.</p>
-    <pre><code>{
-  "event_type": "SUPER_FORM_COMPLETED",
-  "mutacion_estado": "LEAD_TO_USER",
-  "preclinical_intake": {
-    "alergias": "Penicilina",
-    "antecedentes": "Sin cirugías previas",
-    "riesgos_reportados": "Sensibilidad a anestésicos"
-  },
-  "appointment": {
-    "status": "AGENDADA",
-    "fecha_sugerida": "2026-05-20T10:00:00-06:00"
-  }
-}</code></pre>
-
-    <h3>Roadmap Futuro</h3>
-    <ul style="margin-left: 2rem; margin-top: 1rem;">
-      <li><strong>Gabio IA:</strong> Integración como agente conversacional avanzado (Fase 2, bajo solicitud explícita)</li>
-      <li><strong>Seguimiento post-cirugia:</strong> Signals de revisión automática (+3d, +7d, +30d)</li>
-    </ul>
+    <h3>Eventos Operativos (Lead → Conversión)</h3>
+    <p>Los eventos definidos en data.json (ver archivo en este directorio) modelen el flujo completo desde captura inicial hasta cierre.</p>
+    
+    <!-- Executor 3: Desarrollar contenido aquí -->
+    <p style="margin-top: 3rem; padding: 1rem; background: rgba(49, 190, 239, 0.1); border-left: 3px solid var(--tech-cyan);">
+      <em>Placeholder — Contenido a inyectar desde Executor 3</em>
+    </p>
   </div>
 </body>
 </html>

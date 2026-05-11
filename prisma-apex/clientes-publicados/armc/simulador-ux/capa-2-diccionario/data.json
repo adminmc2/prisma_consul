@@ -5,78 +5,37 @@
   "eventos": [
     {
       "event_type": "LEAD_CAPTURED",
-      "descripcion": "Lead ingresa por WhatsApp con consulta inicial",
-      "triggers": ["Mensaje WhatsApp de cliente potencial"],
+      "descripcion": "Lead ingresa por WhatsApp",
       "payload_ejemplo": {
         "canal_origen": "WHATSAPP",
         "nombre": "Ana Maria",
         "telefono": "+525512345678",
-        "interes_principal": "PRECIO",
-        "comentario_inicial": "Me interesa una valoración para rinomodelación",
+        "interes": "PRECIO",
         "timestamp": "2026-05-10T14:32:00Z"
       }
     },
     {
       "event_type": "AUTO_RESPONSE_SENT",
-      "descripcion": "Sistema responde automáticamente según interés detectado",
-      "triggers": ["LEAD_CAPTURED completado sin escalado inmediato"],
-      "buckets_soportados": ["PRECIO", "PROCEDIMIENTO", "TIEMPO_RECUPERACION"],
+      "descripcion": "Sistema responde automáticamente según interés",
       "payload_ejemplo": {
         "decision_bucket": "PRECIO",
         "template_id": "armc_precio_base_v1",
-        "canal": "WHATSAPP",
-        "satisfaccion": "PENDING",
-        "timestamp": "2026-05-10T14:33:00Z"
+        "satisfaccion": "PENDING"
       }
     },
     {
       "event_type": "HUMAN_SUPPORT_REQUESTED",
-      "descripcion": "Lead no queda satisfecho y se escala a agente humano",
-      "triggers": ["Lead responde a AUTO_RESPONSE_SENT con dudas adicionales"],
+      "descripcion": "Escalado a agente humano si no satisfecho",
       "payload_ejemplo": {
         "motivo": "NO_SATISFECHO_AUTO_RESPONSE",
-        "contexto_transferido": {
-          "resumen_conversacion": "Solicita más detalle sobre riesgos y recuperación",
-          "template_previa": "armc_precio_base_v1",
-          "respuesta_concreta_wa": "Precio base + tiempos de recuperación + siguiente paso"
-        },
-        "operacion_actual": "ATENCION_HUMANA",
-        "agent_assigned": true,
-        "timestamp": "2026-05-10T14:45:00Z"
-      }
-    },
-    {
-      "event_type": "SUPER_FORM_COMPLETED",
-      "descripcion": "Lead completa súper formulario y se convierte en Usuario",
-      "triggers": ["Lead acepta agendar valoración + llena intake preclinico"],
-      "payload_ejemplo": {
-        "mutacion_estado": "LEAD_TO_USER",
-        "preclinical_intake": {
-          "alergias": "Penicilina",
-          "antecedentes": "Sin cirugías previas",
-          "riesgos_reportados": "Sensibilidad a anestésicos locales"
-        },
-        "appointment": {
-          "status": "AGENDADA",
-          "fecha_sugerida": "2026-05-20T10:00:00-06:00",
-          "specialist_assigned": "Cirujano (por determinar)"
-        },
-        "timestamp": "2026-05-10T15:00:00Z"
+        "agent_assigned": true
       }
     }
   ],
   "roadmap": [
-    "Gabio integration (posterior, Fase 2)",
-    "Súper Formulario convergence (vigente)",
-    "Signals de revisión post-cirugía (+3d, +7d, +30d)",
-    "Integración WhatsApp API oficial (en evaluación)"
+    "Gabio integration (posterior)",
+    "Súper Formulario convergence (vigente)"
   ],
-  "constraints": {
-    "support_modes": ["AUTOMATIC_ONLY", "HUMAN_ESCALATED", "GABIO_ROADMAP"],
-    "canales_soportados": ["WHATSAPP", "WEB_FORM", "INSTAGRAM"],
-    "templates_defecto": ["armc_precio_base_v1", "armc_procedimiento_base_v1"]
-  },
   "status": "DRAFT_EXECUTOR3",
-  "last_updated": "2026-05-10",
-  "maintainer": "Executor 3"
+  "last_updated": "2026-05-10"
 }

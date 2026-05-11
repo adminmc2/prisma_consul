@@ -128,89 +128,90 @@
     </script>
 
     <script>
-        // --- MAPA OPERATIVO Capa 1 (alineado con Capa 2 y Capa 3) ---
+        // --- BASE DE DATOS LÓGICA (EL MAPA DEL FLUJO ARMC) ---
         const nodesData = {
-    'lead_captured': {
-        title: 'Lead Captured', key: 'LEAD_CAPTURED', x: 120, y: 420,
-        description: 'Ingreso inicial por WhatsApp. Se crea registro en armc_leads y evento LEAD_CAPTURED.',
+    'lead_capture': {
+        title: 'Lead', key: 'lead_new', x: 100, y: 400,
+        description: 'Contacto inicial por WhatsApp/Instagram. Se dispara aviso de privacidad.',
         options: [
-            {
-                id: 'opt_send_auto_response',
-                label: 'Enviar respuesta automática',
-                targetId: 'auto_response_sent',
-                dbAction: "INSERT armc_events(event_type='LEAD_CAPTURED'); INSERT armc_events(event_type='AUTO_RESPONSE_SENT')"
-            }
+            { id: 'opt_info_only', label: 'Solo pide info', targetId: 'lead_stagnant', dbAction: 'Marca Lead, sin avance' },
+            { id: 'opt_wants_appt', label: 'Desea agendar', targetId: 'user_created', dbAction: 'Convierte Lead a Usuario' }
         ]
     },
-
-    'auto_response_sent': {
-        title: 'Auto Response Sent', key: 'AUTO_RESPONSE_SENT', x: 820, y: 420,
-        description: 'Template de WhatsApp según bucket (PRECIO, PROCEDIMIENTO, TIEMPO_RECUPERACION).',
-        options: [
-            {
-                id: 'opt_lead_satisfied',
-                label: 'Lead satisfecho y acepta continuar',
-                targetId: 'super_form_completed',
-                dbAction: "INSERT armc_conversations(satisfaccion='SATISFIED')"
-            },
-            {
-                id: 'opt_request_human_support',
-                label: 'Lead pide aclaración humana',
-                targetId: 'human_support_requested',
-                dbAction: "INSERT armc_events(event_type='HUMAN_SUPPORT_REQUESTED', support_mode='HUMAN_ESCALATED')"
-            }
-        ]
-    },
-
-    'human_support_requested': {
-        title: 'Human Support Requested', key: 'HUMAN_SUPPORT_REQUESTED', x: 1520, y: 220,
-        description: 'Escalado a agente humano con contexto transferido de la conversación automática.',
-        options: [
-            {
-                id: 'opt_human_resolves',
-                label: 'Agente humano resuelve y pasa a formulario',
-                targetId: 'super_form_completed',
-                dbAction: "INSERT armc_conversations(agent_id=<uuid>, satisfaccion='ESCALATED')"
-            },
-            {
-                id: 'opt_human_no_progress',
-                label: 'Sin avance (seguimiento pendiente)',
-                targetId: 'lead_followup_pending',
-                dbAction: "UPDATE armc_leads SET estado_actual='ESTANCADO'"
-            }
-        ]
-    },
-
-    'lead_followup_pending': {
-        title: 'Lead Follow-up Pending', key: 'LEAD_PENDING', x: 2220, y: 120,
-        description: 'Lead queda en seguimiento comercial sin completar el súper formulario.',
-        options: []
-    },
-
-    'super_form_completed': {
-        title: 'Super Form Completed', key: 'SUPER_FORM_COMPLETED', x: 2220, y: 520,
-        description: 'Lead completa intake preclínico y se agenda valoración. Mutación Lead -> Usuario.',
-        options: [
-            {
-                id: 'opt_close_cycle',
-                label: 'Cerrar ciclo operativo',
-                targetId: 'user_created',
-                dbAction: "INSERT armc_events(event_type='SUPER_FORM_COMPLETED'); UPDATE armc_leads SET estado_actual='USUARIO_CREADO'"
-            }
-        ]
-    },
-
+    'lead_stagnant': { title: 'Lead Estancado (Señal S1)', key: 'lead_s1', x: 700, y: 100, description: 'Flujo detenido sin conversión a Usuario.', options: [] },
+    
     'user_created': {
-        title: 'Usuario Creado', key: 'USER_READY', x: 2920, y: 520,
-        description: 'Fin del flujo de captación. Usuario listo para siguientes etapas de atención clínica.',
-        options: []
-    }
+        title: 'Usuario', key: 'user_created', x: 700, y: 400,
+        description: 'El paciente acepta dar sus datos y agendar valoración.',
+        options: [
+            { id: 'opt_schedule_eval', label: 'Agendar Valoración', targetId: 'eval_pending', dbAction: 'INSERT INTO armc_citas' }
+        ]
+    },
+    
+    'eval_pending': {
+        title: 'Evaluación agendada', key: 'eval_pending', x: 1300, y: 400,
+        description: 'Se agenda cita con Cirujano o Cosmiatra.',
+        options: [
+            { id: 'opt_cron_hc', label: 'Cronjob: 48h antes', targetId: 'cron_hc', dbAction: 'Leer si HC está pre-llenado' },
+            { id: 'opt_cron_confirm', label: 'Cronjob: 24h antes', targetId: 'cron_confirm', dbAction: 'Enviar recordatorio WhatsApp' },
+            { id: 'opt_patient_arrives', label: 'Paciente acude a cita', targetId: 'medical_eval', dbAction: 'Actualizar status: Presente' }
+        ]
+    },
+    
+    'cron_hc': { title: 'Alerta de HC', key: 'sys_cron_hc', x: 1900, y: 100, description: 'Pide al paciente llenar HC online.', options: [] },
+    'cron_confirm': { title: 'Confirmación Cita', key: 'sys_cron_conf', x: 1900, y: 400, description: 'Si no responde, genera Señal S2.', options: [] },
+    
+    'medical_eval': {
+        title: 'Evaluación Médica', key: 'eval_progress', x: 1900, y: 700,
+        description: 'El cirujano hace la valoración y establece el plan.',
+        options: [
+            { id: 'opt_firmar', label: 'Firma Médica (Tableta)', targetId: 'patient_locked', dbAction: 'Regla Hielo: UPDATE is_locked=TRUE' },
+            { id: 'opt_rechazo', label: 'No apto para cirugía', targetId: 'eval_rejected', dbAction: 'Cerrar ciclo' }
+        ]
+    },
+
+    'eval_rejected': { title: 'Evaluación Cerrada', key: 'eval_closed', x: 2500, y: 1000, description: 'Fin del flujo.', options: [] },
+
+    'patient_locked': {
+        title: 'Paciente (HC Bloqueada)', key: 'hc_locked', x: 2500, y: 700,
+        description: 'Cumplimiento NOM-004. Modificaciones solo por Addendum. Entra a Quirófano/Tratamiento.',
+        options: [
+            { id: 'opt_prep', label: 'Pasar a Quirófano', targetId: 'surgery_prep', dbAction: 'Generar token temporal de cirugía' }
+        ]
+    },
+
+    // --- ROL: CIRUJANO (Gabriel / Divani) ---
+    'surgery_prep': {
+        title: 'Preparación Pre-Quirúrgica', key: 'med_prep', x: 2500, y: 1200,
+        description: 'Óscar prepara material. Anestesia infiltrada.',
+        options: [
+            { id: 'opt_surgery_proc', label: 'Iniciar Procedimiento', targetId: 'surgery_proc', dbAction: 'Registra hora de inicio en bitácora' }
+        ]
+    },
+
+    'surgery_proc': {
+        title: 'Cirugía en Proceso', key: 'med_surgery', x: 3100, y: 1200,
+        description: 'Cirugía por Gabriel / Divani. Fotos intra-operatorias tomadas.',
+        options: [
+            { id: 'opt_surgery_end', label: 'Finalizar Cirugía', targetId: 'post_op_followup', dbAction: 'Registra hora de fin, actualiza inventario' }
+        ]
+    },
+
+    'post_op_followup': {
+        title: 'Seguimiento Post-Op', key: 'auto_followup', x: 3100, y: 700,
+        description: 'APEX programa evaluación de revisión a los +3, +7 y +30 días.',
+        options: [
+            { id: 'opt_end', label: 'Alta Médica', targetId: 'flow_complete', dbAction: 'Cerrar etapa activa' }
+        ]
+    },
+    
+    'flow_complete': { title: 'Paciente', key: 'patient_active', x: 3700, y: 700, description: 'Fin del ciclo principal. Puede retornar.', options: [] }
 };
 
         const container = document.getElementById('nodes-container');
         const svgPath = document.getElementById('svg-paths');
         const logsBox = document.getElementById('logs');
-        let currentActiveNode = 'lead_captured';
+        let currentActiveNode = 'lead_capture';
         let activePaths = []; // Guardar paths iluminados
 
         // --- SISTEMA DE LOGS ---
@@ -233,11 +234,12 @@
 
         
         function getIconForNode(key) {
-            if (key.includes('LEAD')) return 'ph ph-user-plus';
-            if (key.includes('AUTO')) return 'ph ph-robot';
-            if (key.includes('HUMAN')) return 'ph ph-headset';
-            if (key.includes('SUPER')) return 'ph ph-clipboard-text';
-            if (key.includes('USER')) return 'ph ph-check-circle';
+            if (key.includes('lead')) return 'ph ph-user-plus';
+            if (key.includes('cron') || key.includes('sys')) return 'ph ph-robot';
+            if (key.includes('eval')) return 'ph ph-stethoscope';
+            if (key.includes('locked')) return 'ph ph-lock-key';
+            if (key.includes('op')) return 'ph ph-bandaids';
+            if (key.includes('active')) return 'ph ph-check-circle';
             return 'ph ph-intersect';
         }
         
@@ -425,7 +427,7 @@
             
             // Reset Nodos y poner foco en inicio
             document.querySelectorAll('.node').forEach(n => n.classList.remove('disabled', 'active'));
-            focusNode('lead_captured');
+            focusNode('lead_capture');
         }
 
         // --- INICIALIZACIÓN ---
