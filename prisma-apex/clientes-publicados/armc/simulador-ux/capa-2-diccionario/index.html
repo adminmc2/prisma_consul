@@ -1,89 +1,421 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Capa 2 — Diccionario Operativo ARMC</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --prisma-navy: #101B2C;
-      --bg-primary: #1a2535;
-      --tech-cyan: #31BEEF;
-      --clinical-white: #FAF9F6;
-      --border-subtle: #2a3d52;
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Source Sans 3', sans-serif;
-      background: var(--bg-primary);
-      color: var(--clinical-white);
-      line-height: 1.6;
-    }
-    
-    .container {
-      padding: 2rem;
-      max-width: 900px;
-      margin: 0 auto;
-      overflow-y: auto;
-      height: 100vh;
-    }
-    
-    h2 {
-      color: var(--tech-cyan);
-      border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 0.5rem;
-      font-family: 'Quicksand', sans-serif;
-      margin-bottom: 1.5rem;
-    }
-    
-    h3 {
-      color: var(--clinical-white);
-      margin-top: 2rem;
-      font-family: 'Quicksand', sans-serif;
-      margin-bottom: 0.75rem;
-    }
-    
-    pre {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 1.5rem;
-      border-radius: 6px;
-      overflow-x: auto;
-      font-family: 'Courier New', monospace;
-      color: #A1B8F2;
-      font-size: 0.9rem;
-      border: 1px solid var(--border-subtle);
-      white-space: pre-wrap;
-      margin-bottom: 1.5rem;
-    }
-    
-    p {
-      margin-bottom: 1rem;
-      color: var(--clinical-white);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capa 2 — Diccionario Operativo ARMC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --prisma-navy: #101B2C;
+            --bg-primary: #172436;
+            --tech-cyan: #31BEEF;
+            --soft-blue: #A1B8F2;
+            --clinical-white: #FAF9F6;
+            --border: rgba(161, 184, 242, 0.18);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Source Sans 3', sans-serif;
+            background: linear-gradient(180deg, #101B2C, #172436);
+            color: var(--clinical-white);
+        }
+
+        .page {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 32px 24px 48px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: var(--tech-cyan);
+        }
+
+        .subtitle {
+            margin: 12px 0 0;
+            max-width: 820px;
+            color: #d5dfec;
+            font-size: 1rem;
+            line-height: 1.55;
+        }
+
+        .hero-grid,
+        .line-grid,
+        .options-grid,
+        .forms-grid,
+        .events-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .hero-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            margin: 28px 0 38px;
+        }
+
+        .hero-card,
+        .line-card,
+        .option-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
+        }
+
+        .hero-card {
+            padding: 18px 20px;
+        }
+
+        .hero-card strong {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--tech-cyan);
+            font-size: 1.05rem;
+        }
+
+        .hero-card p,
+        .line-card p,
+        .option-card p {
+            margin: 0;
+            color: #d7e3f2;
+            line-height: 1.5;
+        }
+
+        .section-title {
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            color: var(--tech-cyan);
+        }
+
+        .line-grid {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            margin-bottom: 38px;
+        }
+
+        .line-card {
+            padding: 16px;
+        }
+
+        .line-card h3 {
+            margin-bottom: 8px;
+            font-size: 0.98rem;
+        }
+
+        .options-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .option-card {
+            padding: 18px;
+        }
+
+        .forms-grid {
+            grid-template-columns: 1fr;
+            margin-top: 18px;
+        }
+
+        .events-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            margin-top: 18px;
+        }
+
+        .form-card {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
+        }
+
+        .event-card {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
+        }
+
+        .form-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0 14px;
+        }
+
+        .form-meta span {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(49, 190, 239, 0.1);
+            border: 1px solid rgba(49, 190, 239, 0.18);
+            color: var(--tech-cyan);
+            font-size: 0.76rem;
+            font-weight: 700;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .form-panel {
+            padding: 14px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(161, 184, 242, 0.14);
+        }
+
+        .form-panel h3 {
+            margin-bottom: 10px;
+            font-size: 0.92rem;
+            color: var(--soft-blue);
+        }
+
+        .form-list {
+            margin: 0;
+            padding-left: 18px;
+            color: #d7e3f2;
+        }
+
+        .form-list li + li {
+            margin-top: 8px;
+        }
+
+        .form-list small {
+            display: block;
+            margin-top: 4px;
+            color: #b7c7dd;
+            line-height: 1.45;
+        }
+
+        .option-number {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(49, 190, 239, 0.14);
+            color: var(--tech-cyan);
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .option-card h3 {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .line-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0 10px;
+        }
+
+        .line-tag {
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: rgba(161, 184, 242, 0.12);
+            border: 1px solid rgba(161, 184, 242, 0.2);
+            color: var(--soft-blue);
+            font-size: 0.76rem;
+            font-weight: 600;
+        }
+
+        .helper-note {
+            margin-top: 28px;
+            padding: 16px 18px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: rgba(49, 190, 239, 0.07);
+        }
+
+        .helper-note strong {
+            color: var(--tech-cyan);
+        }
+
+        @media (max-width: 1100px) {
+            .hero-grid,
+            .options-grid,
+            .line-grid,
+            .form-grid,
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Capa 2 — Diccionario Operativo y Payloads</h2>
-    <p><strong>Status:</strong> En desarrollo por Executor 3</p>
-    <p>Esta capa define el contrato de datos del flujo vigente: respuesta automática en WhatsApp según elección del usuario; si no queda satisfecho, escalado a atención humana con contexto completo; y convergencia final al Súper Formulario.</p>
-    
-    <h3>Eventos Operativos (Lead → Conversión)</h3>
-    <p>Los eventos definidos en data.json (ver archivo en este directorio) modelen el flujo completo desde captura inicial hasta cierre.</p>
-    
-    <!-- Executor 3: Desarrollar contenido aquí -->
-    <p style="margin-top: 3rem; padding: 1rem; background: rgba(49, 190, 239, 0.1); border-left: 3px solid var(--tech-cyan);">
-      <em>Placeholder — Contenido a inyectar desde Executor 3</em>
-    </p>
-  </div>
+    <div class="page">
+        <h1>Capa 2 — Diccionario Operativo ARMC</h1>
+        <p class="subtitle">Fuente operativa para el Lead Capture: 25 demandas exactas, formularios, reglas de captura, líneas de servicio detectadas y tratamientos orientativos. La nota libre no clasifica por sí sola; amplía el contexto del lead.</p>
+
+        <div class="hero-grid">
+            <article class="hero-card">
+                <strong>25 demandas exactas</strong>
+                <p>Son las frases que el lead usa para describir qué quiere resolver o lograr. Son la base de la captura inicial.</p>
+            </article>
+            <article class="hero-card">
+                <strong>Detección de línea</strong>
+                <p>Cada opción dispara una o varias líneas de servicio. Esa detección alimenta la respuesta automática y la priorización humana.</p>
+            </article>
+            <article class="hero-card">
+                <strong>Nota libre</strong>
+                <p>La nota sirve para matices, objeciones o detalles clínicos/comerciales. No reemplaza las 25 opciones; las complementa.</p>
+            </article>
+            <article class="hero-card">
+                <strong>Catálogo canónico</strong>
+                <p><strong>catalogos.catalogo_25</strong> referencia la colección <strong>opciones</strong> y fija el punto de verdad para cualquier consumidor del diccionario.</p>
+            </article>
+        </div>
+
+        <h2 class="section-title">Líneas de servicio</h2>
+        <div class="line-grid" id="lineas-container"></div>
+
+        <h2 class="section-title">Opciones de demanda</h2>
+        <div class="options-grid" id="opciones-container"></div>
+
+        <h2 class="section-title">Formularios y componentes de captura</h2>
+        <div class="forms-grid" id="formularios-container"></div>
+
+        <h2 class="section-title">Eventos y payloads mínimos</h2>
+        <div class="events-grid" id="eventos-container"></div>
+
+        <div class="helper-note">
+            <strong>Uso operativo:</strong> la Capa 1 simula decisiones. La Capa 2 especifica catálogos, formularios, reglas, eventos, payloads mínimos y cómo todo eso se traduce a persistencia.
+        </div>
+    </div>
+
+    <script>
+        async function loadData() {
+            const response = await fetch('./data.json');
+            if (!response.ok) {
+                throw new Error('No se pudo cargar data.json');
+            }
+            return response.json();
+        }
+
+        function renderLines(lineas) {
+            const container = document.getElementById('lineas-container');
+            container.innerHTML = '';
+            lineas.forEach((linea) => {
+                const card = document.createElement('article');
+                card.className = 'line-card';
+                card.innerHTML = '<h3>' + linea.nombre + '</h3><p>' + linea.descripcion + '</p>';
+                container.appendChild(card);
+            });
+        }
+
+        function renderOptions(opciones) {
+            const container = document.getElementById('opciones-container');
+            container.innerHTML = '';
+            opciones.forEach((opcion) => {
+                const tags = opcion.lineas_servicio.map((linea) => '<span class="line-tag">' + linea + '</span>').join('');
+                const card = document.createElement('article');
+                card.className = 'option-card';
+                card.innerHTML =
+                    '<span class="option-number">Opción ' + opcion.id + '</span>' +
+                    '<h3>' + opcion.frase + '</h3>' +
+                    '<div class="line-tags">' + tags + '</div>' +
+                    '<p><strong>Tratamientos orientativos:</strong> ' + opcion.tratamientos + '</p>';
+                container.appendChild(card);
+            });
+        }
+
+        function renderForms(formularios) {
+            const container = document.getElementById('formularios-container');
+            container.innerHTML = '';
+
+            formularios.forEach((formulario) => {
+                const campos = formulario.campos.map((campo) => {
+                    const obligatorio = campo.obligatorio ? 'Obligatorio' : 'Opcional';
+                    const fuente = campo.fuente ? ' · fuente: ' + campo.fuente : '';
+                    const valor = campo.valor ? ' · valor: ' + campo.valor : '';
+                    return '<li><strong>' + campo.nombre + '</strong> · ' + campo.tipo + ' · ' + obligatorio + fuente + valor + '<small>' + campo.descripcion + '</small></li>';
+                }).join('');
+
+                const reglas = formulario.reglas.map((regla) => '<li>' + regla + '</li>').join('');
+                const derivados = formulario.derivados.map((derivado) => '<li><strong>' + derivado.nombre + '</strong><small>' + derivado.descripcion + ' Origen: ' + derivado.origen + '.</small></li>').join('');
+                const mapeo = '<li><strong>Tabla principal:</strong> ' + formulario.mapeo_bd.tabla_principal + '</li>' +
+                    '<li><strong>Columnas:</strong> ' + formulario.mapeo_bd.columnas.join(', ') + '</li>' +
+                    '<li><strong>Eventos:</strong> ' + formulario.mapeo_bd.eventos.join(', ') + '</li>' +
+                    (formulario.mapeo_bd.observaciones ? formulario.mapeo_bd.observaciones.map((observacion) => '<li><strong>Nota:</strong> ' + observacion + '</li>').join('') : '');
+
+                const card = document.createElement('article');
+                card.className = 'form-card';
+                card.innerHTML =
+                    '<span class="option-number">Formulario</span>' +
+                    '<h3>' + formulario.nombre + '</h3>' +
+                    '<p>' + formulario.objetivo + '</p>' +
+                    '<div class="form-meta">' +
+                        '<span>Canal: ' + (formulario.canal_entrada || 'N/A') + '</span>' +
+                        '<span>Paso: ' + formulario.momento_flujo + '</span>' +
+                        '<span>Evento: ' + formulario.dispara_evento + '</span>' +
+                        '<span>Salida: ' + formulario.salida_operativa + '</span>' +
+                    '</div>' +
+                    '<div class="form-grid">' +
+                        '<div class="form-panel"><h3>Campos</h3><ul class="form-list">' + campos + '</ul></div>' +
+                        '<div class="form-panel"><h3>Reglas</h3><ul class="form-list">' + reglas + '</ul></div>' +
+                        '<div class="form-panel"><h3>Derivados</h3><ul class="form-list">' + derivados + '</ul></div>' +
+                        '<div class="form-panel"><h3>Mapeo a BD</h3><ul class="form-list">' + mapeo + '</ul></div>' +
+                    '</div>';
+                container.appendChild(card);
+            });
+        }
+
+        function renderEvents(eventos) {
+            const container = document.getElementById('eventos-container');
+            container.innerHTML = '';
+
+            eventos.forEach((evento) => {
+                const payloadMinimo = evento.payload_minimo.map((campo) => '<li>' + campo + '</li>').join('');
+                const payloadOpcional = evento.payload_opcional.map((campo) => '<li>' + campo + '</li>').join('');
+                const card = document.createElement('article');
+                card.className = 'event-card';
+                card.innerHTML =
+                    '<span class="option-number">Evento</span>' +
+                    '<h3>' + evento.id + '</h3>' +
+                    '<p>' + evento.descripcion + '</p>' +
+                    '<div class="form-meta">' +
+                        '<span>Paso: ' + evento.paso + '</span>' +
+                        '<span>Origen: ' + evento.origen + '</span>' +
+                        '<span>Destino: ' + evento.destino + '</span>' +
+                    '</div>' +
+                    '<div class="form-grid">' +
+                        '<div class="form-panel"><h3>Payload mínimo</h3><ul class="form-list">' + payloadMinimo + '</ul></div>' +
+                        '<div class="form-panel"><h3>Payload opcional</h3><ul class="form-list">' + payloadOpcional + '</ul></div>' +
+                    '</div>';
+                container.appendChild(card);
+            });
+        }
+
+        loadData()
+            .then((data) => {
+                renderLines(data.lineas_servicio);
+                renderOptions(data.opciones);
+                renderForms(data.formularios || []);
+                renderEvents(data.eventos || []);
+            })
+            .catch((error) => {
+                document.getElementById('opciones-container').innerHTML = '<p>No se pudo renderizar el diccionario: ' + error.message + '</p>';
+                document.getElementById('formularios-container').innerHTML = '';
+                document.getElementById('eventos-container').innerHTML = '';
+            });
+    </script>
 </body>
 </html>

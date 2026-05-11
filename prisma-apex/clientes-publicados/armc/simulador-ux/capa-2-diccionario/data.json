@@ -1,41 +1,316 @@
 {
-  "capa": 2,
-  "titulo": "Diccionario Operativo y Payloads",
-  "descripcion": "Contrato de datos del flujo operativo ARMC: respuesta automática en WhatsApp, escalado a atención humana, convergencia al Súper Formulario.",
-  "eventos": [
+  "catalogos": {
+    "catalogo_25": {
+      "descripcion": "Referencia canonica al catalogo de 25 demandas exactas usado por lead_capture.",
+      "coleccion": "opciones",
+      "selector": "opciones[*]",
+      "campos": ["id", "frase", "lineas_servicio", "tratamientos"]
+    }
+  },
+  "opciones": [
     {
-      "event_type": "LEAD_CAPTURED",
-      "descripcion": "Lead ingresa por WhatsApp",
-      "payload_ejemplo": {
-        "canal_origen": "WHATSAPP",
-        "nombre": "Ana Maria",
-        "telefono": "+525512345678",
-        "interes": "PRECIO",
-        "timestamp": "2026-05-10T14:32:00Z"
-      }
+      "id": 1,
+      "frase": "Quiero parecer más joven o mantenerme joven",
+      "lineas_servicio": ["Cirugía Mínima Invasiva", "Medicina Estética", "Aparatología"],
+      "tratamientos": "Toxina botulínica, bioestimuladores, rellenos, HIFU, radiofrecuencia, láser, peeling, lifting"
     },
     {
-      "event_type": "AUTO_RESPONSE_SENT",
-      "descripcion": "Sistema responde automáticamente según interés",
-      "payload_ejemplo": {
-        "decision_bucket": "PRECIO",
-        "template_id": "armc_precio_base_v1",
-        "satisfaccion": "PENDING"
-      }
+      "id": 2,
+      "frase": "Quiero mejorar mi mirada (arrugas, bolsas u ojeras)",
+      "lineas_servicio": ["Cirugía Mínima Invasiva", "Medicina Estética"],
+      "tratamientos": "Toxina botulínica, relleno de ojeras, blefaroplastia, foxy eyes"
     },
     {
-      "event_type": "HUMAN_SUPPORT_REQUESTED",
-      "descripcion": "Escalado a agente humano si no satisfecho",
-      "payload_ejemplo": {
-        "motivo": "NO_SATISFECHO_AUTO_RESPONSE",
-        "agent_assigned": true
+      "id": 3,
+      "frase": "Quiero más volumen, definición o armonía en mi rostro",
+      "lineas_servicio": ["Cirugía Mínima Invasiva", "Medicina Estética"],
+      "tratamientos": "Rellenos (pómulos, mentón, mandíbula), armonización facial, bichectomía"
+    },
+    {
+      "id": 4,
+      "frase": "Quiero mejorar o perfilar mi nariz",
+      "lineas_servicio": ["Cirugía Mínima Invasiva", "Medicina Estética"],
+      "tratamientos": "Rinomodelación con ácido hialurónico, rinoplastia"
+    },
+    {
+      "id": 5,
+      "frase": "Quiero más volumen o definición en mis labios",
+      "lineas_servicio": ["Cirugía Mínima Invasiva", "Medicina Estética"],
+      "tratamientos": "Diseño y aumento de labios, lift lips, toxina en labio"
+    },
+    {
+      "id": 6,
+      "frase": "Quiero un lifting facial",
+      "lineas_servicio": ["Cirugía Mínima Invasiva", "Aparatología"],
+      "tratamientos": "Endolifting láser, minilifting, HIFU, hilos tensores, lifting quirúrgico"
+    },
+    {
+      "id": 7,
+      "frase": "Quiero reducir grasa localizada en cara y/o cuello",
+      "lineas_servicio": ["Cirugía Mínima Invasiva", "Medicina Estética"],
+      "tratamientos": "Lipoenzimas, liposucción facial láser, mesoterapia, bichectomía"
+    },
+    {
+      "id": 8,
+      "frase": "Quiero reducir grasa corporal y transformar mi figura",
+      "lineas_servicio": ["Cirugía Mínima Invasiva", "Medicina Estética"],
+      "tratamientos": "Liposucción, abdominoplastia, braquioplastia, lipoenzimas, mesoterapia corporal"
+    },
+    {
+      "id": 9,
+      "frase": "Quiero aumentar volumen corporal (glúteos, piernas, pectorales, bíceps u otras zonas)",
+      "lineas_servicio": ["Cirugía Mínima Invasiva", "Medicina Estética"],
+      "tratamientos": "Rellenos con ácido hialurónico, lipotransferencia, implantes, bioplastia"
+    },
+    {
+      "id": 10,
+      "frase": "Quiero tensar o reafirmar mi piel",
+      "lineas_servicio": ["Aparatología", "Cosmiatría"],
+      "tratamientos": "HIFU, radiofrecuencia fraccionada, ultrasonido, bioestimuladores, láser CO2"
+    },
+    {
+      "id": 11,
+      "frase": "Quiero mejorar la calidad, textura y cuidado de mi piel",
+      "lineas_servicio": ["Aparatología", "Cosmiatría"],
+      "tratamientos": "Peelings, mesoterapia, bioestimuladores, limpiezas profundas, hidratación"
+    },
+    {
+      "id": 12,
+      "frase": "Tengo manchas, melasma o tono de piel disparejo",
+      "lineas_servicio": ["Cosmiatría", "Aparatología"],
+      "tratamientos": "Láser picosegundos, peelings, mesoterapia, manejo de melasma"
+    },
+    {
+      "id": 13,
+      "frase": "Tengo acné activo o poros abiertos que quiero tratar",
+      "lineas_servicio": ["Cosmiatría", "Aparatología"],
+      "tratamientos": "Manejo de acné, peelings, láser, cosmiatría especializada"
+    },
+    {
+      "id": 14,
+      "frase": "Tengo cicatrices que quiero reducir (acné, quirúrgicas o accidente)",
+      "lineas_servicio": ["Cirugía Mínima Invasiva", "Aparatología", "Cosmiatría"],
+      "tratamientos": "Láser CO2 fraccionado, radiofrecuencia con microagujas, peelings"
+    },
+    {
+      "id": 15,
+      "frase": "Tengo estrías que quiero mejorar",
+      "lineas_servicio": ["Aparatología"],
+      "tratamientos": "Láser CO2, radiofrecuencia con microagujas, bioestimuladores"
+    },
+    {
+      "id": 16,
+      "frase": "Tengo quemaduras o daño severo por el sol",
+      "lineas_servicio": ["Cirugía Mínima Invasiva", "Aparatología", "Cosmiatría"],
+      "tratamientos": "Láser CO2, láser picosegundos, peelings, bioestimuladores, injertos"
+    },
+    {
+      "id": 17,
+      "frase": "Tengo fibrosis, durezas o secuelas post-cirugía",
+      "lineas_servicio": ["Cosmiatría", "Aparatología"],
+      "tratamientos": "Ultrasonido terapéutico, radiofrecuencia, masajes especializados, drenaje linfático"
+    },
+    {
+      "id": 18,
+      "frase": "Quiero eliminar vello de forma permanente",
+      "lineas_servicio": ["Aparatología"],
+      "tratamientos": "Depilación láser diodo facial y corporal"
+    },
+    {
+      "id": 19,
+      "frase": "Quiero eliminar tatuajes o marcas en la piel",
+      "lineas_servicio": ["Aparatología"],
+      "tratamientos": "Láser picosegundos, láser Q-switched"
+    },
+    {
+      "id": 20,
+      "frase": "Me preocupa la caída o densidad de mi cabello",
+      "lineas_servicio": ["Tricología"],
+      "tratamientos": "Mesoterapia capilar, PRP capilar, implante capilar, valoración tricológica"
+    },
+    {
+      "id": 21,
+      "frase": "Tengo sudoración excesiva en axilas, manos o pies",
+      "lineas_servicio": ["Medicina Estética"],
+      "tratamientos": "Toxina botulínica para hiperhidrosis"
+    },
+    {
+      "id": 22,
+      "frase": "Quiero un plan de control de peso o manejo de obesidad",
+      "lineas_servicio": ["Medicina Estética"],
+      "tratamientos": "Consulta médica con enfoque en obesidad, programa integral"
+    },
+    {
+      "id": 23,
+      "frase": "Quiero mejorar la apariencia de mis orejas",
+      "lineas_servicio": ["Cirugía Mínima Invasiva"],
+      "tratamientos": "Otoplastia"
+    },
+    {
+      "id": 24,
+      "frase": "Quiero una rutina de mantenimiento profesional de mi piel",
+      "lineas_servicio": ["Cosmiatría"],
+      "tratamientos": "Limpieza facial, hidratación, exfoliación, protocolos personalizados"
+    },
+    {
+      "id": 25,
+      "frase": "Tengo otra inquietud o no encuentro lo que busco",
+      "lineas_servicio": ["Cirugía Mínima Invasiva", "Medicina Estética", "Aparatología", "Cosmiatría", "Tricología"],
+      "tratamientos": "Valoración médica general para diagnóstico y orientación"
+    }
+  ],
+  "lineas_servicio": [
+    {
+      "nombre": "Cirugía Mínima Invasiva",
+      "descripcion": "Procedimientos quirúrgicos con recuperación reducida"
+    },
+    {
+      "nombre": "Medicina Estética",
+      "descripcion": "Tratamientos no quirúrgicos: toxina, ácido hialurónico, bioestimuladores"
+    },
+    {
+      "nombre": "Aparatología",
+      "descripcion": "Tecnología láser, radiofrecuencia y ultrasonido"
+    },
+    {
+      "nombre": "Cosmiatría",
+      "descripcion": "Cuidado y mantenimiento profesional de la piel"
+    },
+    {
+      "nombre": "Tricología",
+      "descripcion": "Diagnóstico y tratamiento capilar"
+    }
+  ],
+  "formularios": [
+    {
+      "id": "lead_capture",
+      "nombre": "Lead Capture",
+      "momento_flujo": "lead_captured",
+      "canal_entrada": "WHATSAPP",
+      "objetivo": "Clasificar la intención inicial del lead sin romper el flujo conversacional ni forzar todavía un formulario visual completo en el simulador.",
+      "dispara_evento": "LEAD_CAPTURED",
+      "salida_operativa": "AUTO_RESPONSE_SENT",
+      "campos": [
+        {
+          "nombre": "canal_origen",
+          "tipo": "enum_fijo",
+          "obligatorio": true,
+          "valor": "WHATSAPP",
+          "fuente": "sistema.canal_entrada",
+          "descripcion": "Fija el origen del lead en este flujo de entrada y permite que la persistencia cierre aunque la captura arranque desde WhatsApp."
+        },
+        {
+          "nombre": "nombre",
+          "tipo": "texto_corto",
+          "obligatorio": false,
+          "descripcion": "Dato de enriquecimiento opcional en la captura inicial. Puede llegar en el mismo contacto o completarse despues."
+        },
+        {
+          "nombre": "email",
+          "tipo": "email",
+          "obligatorio": false,
+          "descripcion": "No bloquea la clasificacion inicial por WhatsApp. Se guarda cuando el lead lo comparte o en seguimiento posterior."
+        },
+        {
+          "nombre": "telefono",
+          "tipo": "telefono",
+          "obligatorio": false,
+          "fuente": "metadata_canal",
+          "descripcion": "Se registra si el canal ya aporta telefono util o si el agente lo obtiene durante el intercambio."
+        },
+        {
+          "nombre": "opciones_seleccionadas",
+          "tipo": "multiseleccion",
+          "obligatorio": true,
+          "fuente": "catalogos.catalogo_25",
+          "descripcion": "Permite elegir una o varias demandas exactas del catálogo operativo."
+        },
+        {
+          "nombre": "nota",
+          "tipo": "texto_libre",
+          "obligatorio": false,
+          "descripcion": "Recoge contexto adicional del lead sin sustituir la clasificación principal."
+        }
+      ],
+      "derivados": [
+        {
+          "nombre": "lineas_servicio_detectadas",
+          "origen": "regla de mapeo desde opciones_seleccionadas",
+          "descripcion": "Se calcula automáticamente a partir de las demandas seleccionadas."
+        }
+      ],
+      "reglas": [
+        "canal_origen se fija como WHATSAPP en este flujo de entrada.",
+        "Debe existir al menos una demanda seleccionada para clasificar la intención.",
+        "La nota libre nunca sustituye las demandas exactas; solo amplía el contexto.",
+        "Nombre y email pueden llegar nulos en la captura inicial y completarse después sin invalidar la fila del lead.",
+        "Las líneas de servicio se derivan automáticamente a partir de las opciones elegidas."
+      ],
+      "mapeo_bd": {
+        "tabla_principal": "armc_leads",
+        "columnas": ["canal_origen", "nombre", "email", "telefono", "opciones_seleccionadas", "nota", "lineas_servicio_detectadas", "estado_actual"],
+        "eventos": ["LEAD_CAPTURED", "AUTO_RESPONSE_SENT"],
+        "observaciones": [
+          "armc_leads acepta nombre y email nulos durante el intake inicial por WhatsApp.",
+          "El evento LEAD_CAPTURED persiste la clasificación inicial antes del enriquecimiento comercial o clínico."
+        ]
       }
     }
   ],
-  "roadmap": [
-    "Gabio integration (posterior)",
-    "Súper Formulario convergence (vigente)"
-  ],
-  "status": "DRAFT_EXECUTOR3",
-  "last_updated": "2026-05-10"
+  "eventos": [
+    {
+      "id": "LEAD_CAPTURED",
+      "paso": "lead_captured",
+      "descripcion": "Persistencia inicial de la intención estructurada del lead entrante por WhatsApp.",
+      "payload_minimo": ["canal_origen", "opciones_seleccionadas", "lineas_servicio_detectadas", "estado_actual"],
+      "payload_opcional": ["nombre", "email", "telefono", "nota"],
+      "origen": "formulario lead_capture",
+      "destino": "armc_leads + armc_events"
+    },
+    {
+      "id": "AUTO_RESPONSE_SENT",
+      "paso": "auto_response_sent",
+      "descripcion": "Respuesta automática enviada usando la clasificación inicial del lead.",
+      "payload_minimo": ["lead_id", "canal_origen", "lineas_servicio_detectadas", "estado_actual"],
+      "payload_opcional": ["template_id", "motivo_priorizacion"],
+      "origen": "automatización posterior al lead_capture",
+      "destino": "armc_events"
+    },
+    {
+      "id": "HUMAN_SUPPORT_REQUESTED",
+      "paso": "human_support_requested",
+      "descripcion": "Escalado a humano cuando la respuesta automática no despeja la duda del lead.",
+      "payload_minimo": ["lead_id", "motivo_escalado", "estado_actual"],
+      "payload_opcional": ["resumen_conversacion", "agente_id"],
+      "origen": "decisión posterior a AUTO_RESPONSE_SENT",
+      "destino": "armc_events + armc_conversations"
+    },
+    {
+      "id": "LEAD_FOLLOWUP_PENDING",
+      "paso": "lead_followup_pending",
+      "descripcion": "Estado de seguimiento comercial cuando no hay cierre inmediato.",
+      "payload_minimo": ["lead_id", "estado_actual"],
+      "payload_opcional": ["proxima_accion", "motivo_estancamiento"],
+      "origen": "decisión del agente humano",
+      "destino": "armc_leads + armc_events"
+    },
+    {
+      "id": "SUPER_FORM_COMPLETED",
+      "paso": "super_form_completed",
+      "descripcion": "Registro de que el intake preclinico posterior se completó.",
+      "payload_minimo": ["lead_id", "estado_actual"],
+      "payload_opcional": ["agenda_valoracion", "resumen_preclinico"],
+      "origen": "paso posterior al escalado o a la respuesta automática",
+      "destino": "armc_events"
+    },
+    {
+      "id": "USUARIO_CREADO",
+      "paso": "user_created",
+      "descripcion": "Conversión final del lead a usuario operativo dentro del circuito siguiente.",
+      "payload_minimo": ["lead_id", "estado_actual"],
+      "payload_opcional": ["usuario_id", "fecha_conversion"],
+      "origen": "cierre del intake preclinico",
+      "destino": "armc_events"
+    }
+  ]
 }

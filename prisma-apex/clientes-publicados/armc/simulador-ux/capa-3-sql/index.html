@@ -1,92 +1,221 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Capa 3 — Modelo de Datos SQL ARMC</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --prisma-navy: #101B2C;
-      --bg-primary: #1a2535;
-      --tech-cyan: #31BEEF;
-      --clinical-white: #FAF9F6;
-      --border-subtle: #2a3d52;
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Source Sans 3', sans-serif;
-      background: var(--bg-primary);
-      color: var(--clinical-white);
-      line-height: 1.6;
-    }
-    
-    .container {
-      padding: 2rem;
-      max-width: 900px;
-      margin: 0 auto;
-      overflow-y: auto;
-      height: 100vh;
-    }
-    
-    h2 {
-      color: var(--tech-cyan);
-      border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 0.5rem;
-      font-family: 'Quicksand', sans-serif;
-      margin-bottom: 1.5rem;
-    }
-    
-    h3 {
-      color: var(--clinical-white);
-      margin-top: 2rem;
-      font-family: 'Quicksand', sans-serif;
-      margin-bottom: 0.75rem;
-    }
-    
-    pre {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 1.5rem;
-      border-radius: 6px;
-      overflow-x: auto;
-      font-family: 'Courier New', monospace;
-      color: #A1B8F2;
-      font-size: 0.9rem;
-      border: 1px solid var(--border-subtle);
-      white-space: pre-wrap;
-      margin-bottom: 1.5rem;
-    }
-    
-    p {
-      margin-bottom: 1rem;
-      color: var(--clinical-white);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capa 3 — Esquema SQL ARMC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --prisma-navy: #101B2C;
+            --bg-primary: #172436;
+            --tech-cyan: #31BEEF;
+            --soft-blue: #A1B8F2;
+            --clinical-white: #FAF9F6;
+            --border: rgba(161, 184, 242, 0.18);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Source Sans 3', sans-serif;
+            background: linear-gradient(180deg, #101B2C, #172436);
+            color: var(--clinical-white);
+        }
+
+        .page {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 32px 24px 48px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: 0;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        h1 {
+            color: var(--tech-cyan);
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            margin-top: 12px;
+            max-width: 860px;
+            color: #d6dfeb;
+            line-height: 1.55;
+        }
+
+        .cards,
+        .metrics {
+            display: grid;
+            gap: 16px;
+        }
+
+        .metrics {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            margin: 26px 0 36px;
+        }
+
+        .metric,
+        .table-card,
+        .schema-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
+        }
+
+        .metric {
+            padding: 18px 20px;
+        }
+
+        .metric strong {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--tech-cyan);
+        }
+
+        .metric p,
+        .table-card p {
+            margin: 0;
+            color: #d7e3f2;
+            line-height: 1.5;
+        }
+
+        .section-title {
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            color: var(--tech-cyan);
+        }
+
+        .cards {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            margin-bottom: 36px;
+        }
+
+        .table-card {
+            padding: 18px;
+        }
+
+        .table-card h3 {
+            margin-bottom: 10px;
+            color: var(--soft-blue);
+        }
+
+        .table-card ul {
+            margin: 12px 0 0 18px;
+            padding: 0;
+            color: #d7e3f2;
+        }
+
+        .table-card li + li {
+            margin-top: 6px;
+        }
+
+        .schema-box {
+            padding: 20px;
+        }
+
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+            font-size: 0.82rem;
+            line-height: 1.55;
+            color: #bfe6ff;
+        }
+
+        @media (max-width: 1100px) {
+            .metrics,
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Capa 3 — Modelo de Datos SQL</h2>
-    <p><strong>Status:</strong> En desarrollo por Executor 3</p>
-    <p>Esta capa describe el esquema de base de datos PostgreSQL en Neon que soporta el flujo operativo de ARMC: tablas de leads, eventos, interacciones, y estados.</p>
-    
-    <h3>Tablas Principales</h3>
-    <p>Descripción de tablas, índices, relaciones y constraints que modelan el flujo end-to-end.</p>
-    
-    <h3>Ejemplos SQL</h3>
-    <p>Queries de ejemplo para auditoría, reportes y análisis de flujo.</p>
-    
-    <!-- Executor 3: Desarrollar contenido aquí -->
-    <p style="margin-top: 3rem; padding: 1rem; background: rgba(49, 190, 239, 0.1); border-left: 3px solid var(--tech-cyan);">
-      <em>Placeholder — Contenido a inyectar desde Executor 3</em>
-    </p>
-  </div>
+    <div class="page">
+        <h1>Capa 3 — Esquema PostgreSQL ARMC</h1>
+        <p class="subtitle">Modelo relacional del flujo Lead Capture: almacenamiento de demandas seleccionadas, líneas detectadas, nota libre, auditoría de eventos y captura incremental de identidad cuando el lead entra por WhatsApp.</p>
+
+        <div class="metrics">
+            <article class="metric">
+                <strong>3 tablas núcleo</strong>
+                <p><code>armc_leads</code>, <code>armc_events</code> y <code>armc_conversations</code> sostienen el funnel operativo completo.</p>
+            </article>
+            <article class="metric">
+                <strong>Estado alterno explícito</strong>
+                <p>Se incorpora <code>LEAD_FOLLOWUP_PENDING</code> para no perder seguimiento comercial cuando no hay conversión inmediata.</p>
+            </article>
+            <article class="metric">
+                <strong>Identidad incremental</strong>
+                <p><code>canal_origen</code> y la intención estructurada nacen en la captura inicial; <code>nombre</code> y <code>email</code> pueden completarse después.</p>
+            </article>
+        </div>
+
+        <h2 class="section-title">Tablas del modelo</h2>
+        <div class="cards">
+            <article class="table-card">
+                <h3>armc_leads</h3>
+                <p>Registro maestro del lead y su clasificación inicial.</p>
+                <ul>
+                    <li><code>canal_origen</code> obligatorio</li>
+                    <li><code>nombre</code> y <code>email</code> opcionales al inicio</li>
+                    <li><code>telefono</code> opcional si el canal ya lo aporta</li>
+                    <li><code>opciones_seleccionadas INT[]</code></li>
+                    <li><code>lineas_servicio_detectadas VARCHAR[]</code></li>
+                    <li><code>nota TEXT</code></li>
+                    <li><code>estado_actual</code> con 6 estados</li>
+                </ul>
+            </article>
+            <article class="table-card">
+                <h3>armc_events</h3>
+                <p>Bitácora inmutable del flujo para auditoría y analítica.</p>
+                <ul>
+                    <li>Eventos desde <code>LEAD_CAPTURED</code></li>
+                    <li>Incluye <code>LEAD_FOLLOWUP_PENDING</code></li>
+                    <li><code>payload JSONB</code> para contexto completo</li>
+                </ul>
+            </article>
+            <article class="table-card">
+                <h3>armc_conversations</h3>
+                <p>Historial de interacciones humanas y automáticas.</p>
+                <ul>
+                    <li><code>agente_id</code> opcional</li>
+                    <li><code>tipo_interaccion</code></li>
+                    <li><code>satisfaccion</code> del intercambio</li>
+                </ul>
+            </article>
+        </div>
+
+        <h2 class="section-title">DDL completo</h2>
+        <div class="schema-box">
+            <pre id="schema-content">Cargando esquema...</pre>
+        </div>
+    </div>
+
+    <script>
+        fetch('./schema.sql')
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar schema.sql');
+                }
+                return response.text();
+            })
+            .then((sql) => {
+                document.getElementById('schema-content').textContent = sql;
+            })
+            .catch((error) => {
+                document.getElementById('schema-content').textContent = 'Error: ' + error.message;
+            });
+    </script>
 </body>
 </html>

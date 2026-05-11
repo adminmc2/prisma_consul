@@ -2,6 +2,36 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-11] — Ajuste interno del simulador UX ARMC (sin cambio de versión visible)
+
+### Frontend / Documentación — Simulador UX ARMC: justificación por capas + formularios especificados en el diccionario
+
+Se corrige la desviación conceptual introducida al intentar meter el formulario de Lead Capture dentro del grafo de la Capa 1. El simulador vuelve a separar correctamente visualización de decisiones, contrato operativo y persistencia. Sin cambios en backend, nginx, PM2 ni base de datos real.
+
+#### Justificación documental del diseño
+
+- `prisma-apex/clientes-publicados/armc/simulador-ux/README.md` ahora explica por qué Capa 1 solo simula decisiones, por qué Capa 2 absorbe formularios/componentes como especificación y por qué Capa 3 no reemplaza el contrato operativo.
+- Se deja explícita la decisión de no abrir una capa nueva para formularios: en este simulador, los formularios pertenecen al diccionario operativo.
+
+#### Capa 1 corregida
+
+- `prisma-apex/clientes-publicados/armc/simulador-ux/capa-1-ux/index.html`: el copy deja de apuntar a una capa inventada y remite el detalle de formularios al diccionario de Capa 2.
+- El nodo `lead_captured` vuelve a representar una decisión del flujo, no una UI de entrada de datos embebida.
+- El paso de formulario/intake queda modelado como estado del flujo, no como pantalla renderizada dentro del grafo.
+- Las cadenas `dbAction` del grafo se endurecen para reflejar `lead_id` y `payload` cuando simulan escrituras sobre `armc_events` y `armc_conversations`.
+
+#### Capa 2 enriquecida
+
+- `prisma-apex/clientes-publicados/armc/simulador-ux/capa-2-diccionario/data.json`: se añade la sección `formularios` con la especificación formal de `lead_capture`.
+- La definición incluye campos, obligatoriedad, reglas, derivados y mapeo a `armc_leads` y a los eventos del flujo.
+- `prisma-apex/clientes-publicados/armc/simulador-ux/capa-2-diccionario/index.html` renderiza esa nueva sección para que el formulario exista como contrato operativo dentro del diccionario.
+- `prisma-apex/clientes-publicados/armc/simulador-ux/README.md` elimina referencias stale a placeholders y describe el estado real de edición de las capas 2 y 3.
+
+#### Versionado
+
+- Se revierte el bump visible y la referencia operativa del slice queda en `v3.3.59` hasta aprobación explícita del revisor.
+- El cambio queda documentado en changelog sin publicar una nueva versión visible del proyecto.
+
 ## [2026-05-10] — v3.3.59
 
 ### Fix — Simulador UX ARMC: drag de nodos compensa zoom + shell flexible en móvil
