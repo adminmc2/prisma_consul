@@ -263,7 +263,7 @@
 <body>
     <div class="page">
         <h1>Capa 2 — Diccionario Operativo ARMC</h1>
-        <p class="subtitle">Fuente operativa para el Lead Capture: 25 demandas exactas, formularios, reglas de captura, líneas de servicio detectadas y tratamientos orientativos. La nota libre no clasifica por sí sola; amplía el contexto del lead.</p>
+        <p class="subtitle">Fuente operativa para Lead Capture y Super Form Completed: 25 demandas exactas, formularios, reglas de captura, cierre preclinico, eventos y tratamientos orientativos. La nota libre no clasifica por sí sola; amplía el contexto del lead.</p>
 
         <div class="hero-grid">
             <article class="hero-card">
@@ -352,6 +352,7 @@
                 const reglas = formulario.reglas.map((regla) => '<li>' + regla + '</li>').join('');
                 const derivados = formulario.derivados.map((derivado) => '<li><strong>' + derivado.nombre + '</strong><small>' + derivado.descripcion + ' Origen: ' + derivado.origen + '.</small></li>').join('');
                 const mapeo = '<li><strong>Tabla principal:</strong> ' + formulario.mapeo_bd.tabla_principal + '</li>' +
+                    (formulario.mapeo_bd.tabla_secundaria ? '<li><strong>Tabla secundaria:</strong> ' + formulario.mapeo_bd.tabla_secundaria + '</li>' : '') +
                     '<li><strong>Columnas:</strong> ' + formulario.mapeo_bd.columnas.join(', ') + '</li>' +
                     '<li><strong>Eventos:</strong> ' + formulario.mapeo_bd.eventos.join(', ') + '</li>' +
                     (formulario.mapeo_bd.observaciones ? formulario.mapeo_bd.observaciones.map((observacion) => '<li><strong>Nota:</strong> ' + observacion + '</li>').join('') : '');

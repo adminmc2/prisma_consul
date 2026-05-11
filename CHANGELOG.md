@@ -26,6 +26,14 @@ Se corrige la desviación conceptual introducida al intentar meter el formulario
 - La definición incluye campos, obligatoriedad, reglas, derivados y mapeo a `armc_leads` y a los eventos del flujo.
 - `prisma-apex/clientes-publicados/armc/simulador-ux/capa-2-diccionario/index.html` renderiza esa nueva sección para que el formulario exista como contrato operativo dentro del diccionario.
 - `prisma-apex/clientes-publicados/armc/simulador-ux/README.md` elimina referencias stale a placeholders y describe el estado real de edición de las capas 2 y 3.
+- `prisma-apex/clientes-publicados/armc/simulador-ux/capa-2-diccionario/data.json` incorpora ahora también el contrato formal de `super_form_completed`, con reglas de cierre preclinico, derivados y mapeo a `armc_events` + `armc_leads`.
+- `prisma-apex/clientes-publicados/armc/simulador-ux/capa-2-diccionario/index.html` muestra la tabla secundaria cuando un formulario reparte persistencia entre más de un objeto.
+
+#### Coherencia de flujo
+
+- `prisma-apex/clientes-publicados/armc/simulador-ux/capa-1-ux/index.html` alinea el nodo `super_form_completed` con el nuevo contrato y endurece la simulación textual para reflejar los eventos `SUPER_FORM_COMPLETED` y `USUARIO_CREADO`.
+- El arranque de Capa 1 se redefine como entrada común del lead con dos canales visibles (`Formulario de contacto web` y `WhatsApp`) y dos estados de recepción separados (`Contacto web recibido` y `Contacto por WhatsApp recibido`).
+- Se elimina del grafo visible el lenguaje meta de documentación interna y se documentan reglas permanentes de copy, naming y layout en `prisma-apex/clientes-publicados/armc/simulador-ux/README.md` para evitar nuevas regresiones de tono o solapamiento visual.
 
 #### Versionado
 

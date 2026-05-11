@@ -54,7 +54,39 @@ simulador-ux/
 - Si una etapa del flujo depende de un formulario real, en la Capa 1 solo se representa como estado o transición: qué activa ese paso, qué contexto mínimo arrastra y qué decisión provoca al salir.
 - El detalle del formulario, sus campos, validaciones, copy, payloads y estructura operativa debe vivir en la Capa 2 como parte del diccionario operativo.
 - La Capa 2 debe seguir documentando también los eventos y sus payloads mínimos; no se reemplazan por la vista de formularios.
+- Primer elemento ya definido: el arranque de Capa 1 se representa como `Entrada del lead` con dos acciones visibles (`Formulario de contacto web` y `WhatsApp`).
+- Prohibido modificar ese primer elemento, su copy o sus dos salidas iniciales sin instrucción explícita del usuario.
 - Error ya cometido y documentado: meter el formulario de Lead Capture dentro del nodo inicial degradó el simulador y rompió el patrón de decisión simple. No repetir.
+
+### Regla de Copy para Capa 1
+
+- El texto visible de Capa 1 debe sonar a simulación operativa normal, no a documentación interna del sistema.
+- No usar en nodos o botones frases meta como `el contrato se define en Capa 2`, `pendiente de definición`, `convergencia posterior` o equivalentes.
+- No mostrar instrucciones internas de gobierno o freeze dentro del grafo visible. Esas reglas viven en README, review o documentación auxiliar, no en los nodos.
+- Los títulos de nodos deben nombrar estados observables del flujo, no discusiones de modelado. Ejemplos válidos: `Contacto web recibido`, `Contacto por WhatsApp recibido`.
+- Los botones deben nombrar el canal o la acción visible con copy breve. Ejemplos válidos: `Formulario de contacto web`, `WhatsApp`.
+- Las descripciones deben explicar qué pasó en el flujo en lenguaje de negocio simple. Evitar justificaciones arquitectónicas dentro del propio nodo.
+
+### Regla de Naming para Capa 1
+
+- `canal` se usa para medios de entrada como web o WhatsApp.
+- `formulario` se usa para el mecanismo de captura, por ejemplo `Formulario de contacto web`.
+- `estado` se usa para nombrar el punto del flujo representado por un nodo, por ejemplo `Contacto web recibido`.
+- No usar `capa` para nombrar rutas, canales, formularios o estados.
+
+### Regla de Layout para Capa 1
+
+- Cada nodo nuevo debe colocarse con separación suficiente para que no tape tarjetas, botones, terminal copy ni líneas del grafo.
+- Antes de cerrar un ajuste de copy o estructura, validar visualmente la vista aislada de Capa 1 con zoom 100%.
+- Si una nueva bifurcación hace que dos nodos se monten, primero se corrige el layout y después se da por bueno el texto.
+
+### Checklist mínimo antes de cerrar un cambio en Capa 1
+
+- El nodo inicial y sus salidas siguen usando copy profesional y visible para negocio.
+- No queda lenguaje meta o de documentación interna dentro del grafo.
+- Los nombres de canales, formularios y estados están diferenciados correctamente.
+- La separación visual entre nodos evita solapamientos.
+- El flujo aislado de Capa 1 carga sin errores y refleja el texto final aprobado.
 
 ### ✅ Executor 3 PUEDE EDITAR:
 

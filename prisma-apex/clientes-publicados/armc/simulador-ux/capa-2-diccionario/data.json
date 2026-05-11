@@ -255,6 +255,77 @@
           "El evento LEAD_CAPTURED persiste la clasificación inicial antes del enriquecimiento comercial o clínico."
         ]
       }
+    },
+    {
+      "id": "super_form_completed",
+      "nombre": "Super Form Completed",
+      "momento_flujo": "super_form_completed",
+      "canal_entrada": "OPERACION_INTERNA",
+      "objetivo": "Formalizar el intake preclinico final, dejar trazabilidad del cierre operativo y habilitar la mutacion del lead a usuario.",
+      "dispara_evento": "SUPER_FORM_COMPLETED",
+      "salida_operativa": "USUARIO_CREADO",
+      "campos": [
+        {
+          "nombre": "lead_id",
+          "tipo": "uuid_contexto",
+          "obligatorio": true,
+          "fuente": "contexto_flujo.lead_id",
+          "descripcion": "Identifica el lead ya capturado sobre el que se completa el intake preclinico."
+        },
+        {
+          "nombre": "resumen_preclinico",
+          "tipo": "texto_largo",
+          "obligatorio": true,
+          "descripcion": "Resumen clinico-operativo que justifica el cierre del intake y prepara la valoracion."
+        },
+        {
+          "nombre": "agenda_valoracion",
+          "tipo": "agenda_datetime",
+          "obligatorio": true,
+          "descripcion": "Fecha, hora o slot acordado para la valoracion siguiente."
+        },
+        {
+          "nombre": "canal_seguimiento",
+          "tipo": "enum",
+          "obligatorio": false,
+          "fuente": "politica_operativa",
+          "descripcion": "Canal preferido para confirmar o reprogramar la valoracion posterior."
+        },
+        {
+          "nombre": "observaciones_cierre",
+          "tipo": "texto_largo",
+          "obligatorio": false,
+          "descripcion": "Observaciones finales del agente antes de mutar el lead a usuario."
+        }
+      ],
+      "derivados": [
+        {
+          "nombre": "estado_siguiente",
+          "origen": "regla fija post-formulario",
+          "descripcion": "Se fija en USUARIO_CREADO cuando el intake preclinico queda completo."
+        },
+        {
+          "nombre": "ultima_interaccion",
+          "origen": "timestamp de confirmacion del super form",
+          "descripcion": "Marca la ultima interaccion operativa que se persiste en armc_leads."
+        }
+      ],
+      "reglas": [
+        "lead_id debe existir y venir de un lead ya capturado en armc_leads.",
+        "No se considera completado el intake sin resumen_preclinico y agenda_valoracion.",
+        "El evento SUPER_FORM_COMPLETED debe persistirse antes de mutar estado_actual a USUARIO_CREADO.",
+        "canal_seguimiento y observaciones_cierre amplian contexto, pero no sustituyen el resumen_preclinico."
+      ],
+      "mapeo_bd": {
+        "tabla_principal": "armc_events",
+        "tabla_secundaria": "armc_leads",
+        "columnas": ["lead_id", "event_type", "payload", "estado_actual", "ultima_interaccion"],
+        "eventos": ["SUPER_FORM_COMPLETED", "USUARIO_CREADO"],
+        "observaciones": [
+          "El detalle del intake preclinico se serializa en payload JSONB de armc_events.",
+          "armc_leads solo actualiza estado_actual y ultima_interaccion; este slice no introduce columnas nuevas."
+        ]
+      }
     }
   ],
   "eventos": [
@@ -297,20 +368,20 @@
     {
       "id": "SUPER_FORM_COMPLETED",
       "paso": "super_form_completed",
-      "descripcion": "Registro de que el intake preclinico posterior se completó.",
-      "payload_minimo": ["lead_id", "estado_actual"],
-      "payload_opcional": ["agenda_valoracion", "resumen_preclinico"],
-      "origen": "paso posterior al escalado o a la respuesta automática",
-      "destino": "armc_events"
+      "descripcion": "Registro de que el intake preclinico posterior se completó y dejó lista la mutacion a usuario.",
+      "payload_minimo": ["lead_id", "resumen_preclinico", "agenda_valoracion", "estado_actual"],
+      "payload_opcional": ["canal_seguimiento", "observaciones_cierre", "ultima_interaccion"],
+      "origen": "formulario super_form_completed",
+      "destino": "armc_events + armc_leads"
     },
     {
       "id": "USUARIO_CREADO",
       "paso": "user_created",
       "descripcion": "Conversión final del lead a usuario operativo dentro del circuito siguiente.",
-      "payload_minimo": ["lead_id", "estado_actual"],
-      "payload_opcional": ["usuario_id", "fecha_conversion"],
-      "origen": "cierre del intake preclinico",
-      "destino": "armc_events"
+      "payload_minimo": ["lead_id", "estado_actual", "ultima_interaccion"],
+      "payload_opcional": ["usuario_id", "agenda_valoracion", "canal_seguimiento"],
+      "origen": "salida del formulario super_form_completed",
+      "destino": "armc_events + armc_leads"
     }
   ]
 }

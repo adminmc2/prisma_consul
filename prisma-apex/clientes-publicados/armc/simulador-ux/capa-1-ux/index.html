@@ -102,8 +102,8 @@
 
         #canvas {
             position: relative;
-            min-width: 3000px;
-            min-height: 1500px;
+            min-width: 3600px;
+            min-height: 1800px;
             transform-origin: 0 0;
             transition: transform 0.1s ease-out;
         }
@@ -442,34 +442,72 @@
 
     <script>
         const nodesData = {
-            lead_captured: {
-                title: 'Lead Captured',
-                key: 'LEAD_CAPTURED',
+            lead_entry_channel: {
+                title: 'Entrada del lead',
+                key: 'LEAD_ENTRY_CHANNEL',
                 x: 120,
                 y: 420,
                 width: 390,
-                description: 'Ingreso inicial por WhatsApp. En esta capa solo se simula la decisión de capturar intención; el formulario se especifica en el diccionario y no se embebe dentro del grafo.',
+                description: 'El flujo comienza cuando se recibe un nuevo lead por uno de los canales habilitados.',
                 dataPoints: [
-                    'Canal origen fijado: WhatsApp',
-                    'Datos de contacto opcionales si ya existen',
-                    'Catálogo de 25 demandas exactas',
-                    'Nota libre opcional',
-                    'Líneas de servicio detectadas'
+                    'Formulario de contacto web',
+                    'WhatsApp',
+                    'Canal de entrada identificado',
+                    'Derivación al flujo correspondiente'
                 ],
-                note: 'La captura estructurada se define en el diccionario operativo. Aquí solo se representa que esa clasificación sucede antes de responder y que nombre/email pueden completarse después.',
                 actions: [
                     {
-                        id: 'register-structured-intent',
-                        label: 'Registrar intención estructurada y enviar respuesta automática',
-                        targetId: 'auto_response_sent',
-                        dbAction: "INSERT armc_leads(canal_origen='WHATSAPP', nombre=[nombre?], email=[email?], telefono=[telefono?], opciones_seleccionadas=[ids_opciones], nota=[texto_libre], lineas_servicio_detectadas=[lineas_detectadas], estado_actual='AUTO_RESPONSE_SENT') RETURNING id AS lead_id; INSERT armc_events(lead_id=[lead_id], event_type='LEAD_CAPTURED', payload={canal_origen:'WHATSAPP', opciones_seleccionadas:[ids_opciones], lineas_servicio_detectadas:[lineas_detectadas], estado_actual:'AUTO_RESPONSE_SENT', nota:[texto_libre?]}); INSERT armc_events(lead_id=[lead_id], event_type='AUTO_RESPONSE_SENT', payload={canal_origen:'WHATSAPP', lineas_servicio_detectadas:[lineas_detectadas], template_id:[template_wa], estado_actual:'AUTO_RESPONSE_SENT'});"
+                        id: 'route-entry-web',
+                        label: 'Formulario de contacto web',
+                        targetId: 'web_contact_form_received',
+                        dbAction: 'Sin persistencia todavía: se representa la recepción del lead desde el formulario de contacto web.'
+                    },
+                    {
+                        id: 'route-entry-whatsapp',
+                        label: 'WhatsApp',
+                        targetId: 'lead_capture_whatsapp',
+                        dbAction: 'Sin persistencia todavía: se fija solo la bifurcación visual por canal WhatsApp.'
                     }
                 ]
+            },
+            web_contact_form_received: {
+                title: 'Contacto web recibido',
+                key: 'WEB_CONTACT_FORM_RECEIVED',
+                x: 900,
+                y: 110,
+                width: 340,
+                description: 'Se registra un contacto entrante desde la web con los datos básicos del lead.',
+                dataPoints: [
+                    'Canal origen: WEB_FORM',
+                    'Origen: formulario de contacto web',
+                    'Datos básicos recibidos',
+                    'Ingreso al flujo inicial'
+                ],
+                note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
+                terminalCopy: 'Contacto web recibido.',
+                actions: []
+            },
+            lead_capture_whatsapp: {
+                title: 'Contacto por WhatsApp recibido',
+                key: 'LEAD_CAPTURE_WHATSAPP',
+                x: 900,
+                y: 860,
+                width: 340,
+                description: 'Se registra un contacto entrante por WhatsApp con el contexto inicial disponible.',
+                dataPoints: [
+                    'Canal origen: WHATSAPP',
+                    'Origen: conversación de WhatsApp',
+                    'Contexto inicial recibido',
+                    'Ingreso al flujo inicial'
+                ],
+                note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
+                terminalCopy: 'Contacto por WhatsApp recibido.',
+                actions: []
             },
             auto_response_sent: {
                 title: 'Auto Response Sent',
                 key: 'AUTO_RESPONSE_SENT',
-                x: 860,
+                x: 1460,
                 y: 420,
                 width: 360,
                 description: 'El sistema responde con un template guiado por la intención ya clasificada. El lead decide si avanza o si necesita humano.',
@@ -496,7 +534,7 @@
             human_support_requested: {
                 title: 'Human Support Requested',
                 key: 'HUMAN_SUPPORT_REQUESTED',
-                x: 1520,
+                x: 2140,
                 y: 220,
                 width: 360,
                 description: 'Escalado a humano con el contexto ya resumido. El agente decide si logra destrabar el caso o si queda seguimiento pendiente.',
@@ -523,29 +561,29 @@
             super_form_completed: {
                 title: 'Super Form Completed',
                 key: 'SUPER_FORM_COMPLETED',
-                x: 1520,
+                x: 2140,
                 y: 620,
                 width: 360,
                 description: 'El lead completa el intake preclínico fuera de esta capa. Aquí solo se representa la transición desde interés a conversión operativa.',
                 dataPoints: [
-                    'Intake preclínico completo',
-                    'Agenda de valoración',
+                    'Resumen preclínico validado',
+                    'Agenda de valoración confirmada',
                     'Listo para mutación a usuario'
                 ],
-                note: 'Su estructura detallada se documenta en el diccionario cuando corresponda. El grafo solo muestra cuándo se entra y cuándo se sale de ese paso.',
+                note: 'Su estructura detallada ya se documenta en el diccionario operativo de Capa 2. El grafo solo muestra cuándo se entra y cuándo se sale de ese paso.',
                 actions: [
                     {
                         id: 'create-user',
                         label: 'Cerrar ciclo operativo y crear usuario',
                         targetId: 'user_created',
-                        dbAction: "INSERT armc_events(lead_id=[lead_id], event_type='SUPER_FORM_COMPLETED', payload={agenda_valoracion:[agenda?], resumen_preclinico:[resumen?], estado_actual:'SUPER_FORM_COMPLETED'}); UPDATE armc_leads SET estado_actual='USUARIO_CREADO' WHERE id=[lead_id];"
+                        dbAction: "INSERT armc_events(lead_id=[lead_id], event_type='SUPER_FORM_COMPLETED', payload={resumen_preclinico:[resumen_preclinico], agenda_valoracion:[agenda_valoracion], canal_seguimiento:[canal_seguimiento?], observaciones_cierre:[observaciones_cierre?], estado_actual:'SUPER_FORM_COMPLETED'}); INSERT armc_events(lead_id=[lead_id], event_type='USUARIO_CREADO', payload={ultima_interaccion:[timestamp], agenda_valoracion:[agenda_valoracion], canal_seguimiento:[canal_seguimiento?], estado_actual:'USUARIO_CREADO'}); UPDATE armc_leads SET estado_actual='USUARIO_CREADO', ultima_interaccion=[timestamp] WHERE id=[lead_id];"
                     }
                 ]
             },
             lead_followup_pending: {
                 title: 'Lead Follow-up Pending',
                 key: 'LEAD_FOLLOWUP_PENDING',
-                x: 2200,
+                x: 2820,
                 y: 220,
                 width: 320,
                 description: 'El caso queda vivo en seguimiento comercial posterior sin conversión inmediata.',
@@ -559,7 +597,7 @@
             user_created: {
                 title: 'Usuario Creado',
                 key: 'USUARIO_CREADO',
-                x: 2200,
+                x: 2820,
                 y: 620,
                 width: 320,
                 description: 'Fin del flujo de captación. El lead ya entra al circuito operativo siguiente como usuario.',
@@ -710,7 +748,7 @@
             if (!data.actions.length) {
                 const terminal = document.createElement('div');
                 terminal.className = 'terminal-copy';
-                terminal.textContent = '(Punto final de este flujo)';
+                terminal.textContent = data.terminalCopy || '(Punto final de este flujo)';
                 body.appendChild(terminal);
                 return;
             }
@@ -839,8 +877,8 @@
             clearLogs();
             renderNodes();
             drawLines();
-            focusNode('lead_captured');
-            log('Sistema reiniciado. Capa 1 vuelve al modo simulador: solo decisiones y transiciones.', 'warning');
+            focusNode('lead_entry_channel');
+            log('Sistema reiniciado. Capa 1 vuelve al modo simulador con arranque por canal web y WhatsApp.', 'warning');
         }
 
         document.addEventListener('wheel', (event) => {
