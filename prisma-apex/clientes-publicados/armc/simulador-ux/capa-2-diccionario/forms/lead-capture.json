@@ -1,0 +1,24 @@
+{
+  "id": "lead_capture",
+  "nombre": "Lead Capture",
+  "canal": "WHATSAPP",
+  "paso": "lead_captured",
+  "dispara_evento": "LEAD_CAPTURED",
+  "salida": "AUTO_RESPONSE_SENT",
+  "campos": [
+    { "nombre": "canal_origen", "tipo": "enum", "obligatorio": true, "valor": "WHATSAPP", "fuente": "sistema" },
+    { "nombre": "nombre", "tipo": "texto_corto", "obligatorio": false },
+    { "nombre": "email", "tipo": "email", "obligatorio": false },
+    { "nombre": "telefono", "tipo": "telefono", "obligatorio": false, "fuente": "metadata_canal" },
+    { "nombre": "opciones_seleccionadas", "tipo": "multiseleccion", "obligatorio": true, "fuente": "catalogo-demandas" },
+    { "nombre": "nota", "tipo": "texto_libre", "obligatorio": false }
+  ],
+  "derivados": [
+    { "nombre": "lineas_servicio_detectadas", "origen": "opciones_seleccionadas → catalogo-demandas.lineas_servicio" }
+  ],
+  "reglas": [
+    "Al menos una opción seleccionada.",
+    "canal_origen fijo en WHATSAPP.",
+    "nombre y email pueden completarse en seguimiento posterior."
+  ]
+}

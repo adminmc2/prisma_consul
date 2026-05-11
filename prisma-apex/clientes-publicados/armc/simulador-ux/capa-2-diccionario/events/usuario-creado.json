@@ -1,0 +1,8 @@
+{
+  "id": "USUARIO_CREADO",
+  "paso": "user_created",
+  "origen": "cierre de super_form_completed",
+  "destino": ["armc_events", "armc_leads"],
+  "payload_minimo": ["lead_id", "estado_actual", "ultima_interaccion"],
+  "payload_opcional": ["usuario_id", "agenda_valoracion", "canal_seguimiento"]
+}

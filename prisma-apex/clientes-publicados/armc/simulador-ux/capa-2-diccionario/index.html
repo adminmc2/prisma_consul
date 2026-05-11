@@ -6,417 +6,576 @@
     <title>Capa 2 — Diccionario Operativo ARMC</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../../../shared/fonts/phosphor/phosphor.css">
     <style>
         :root {
             --prisma-navy: #101B2C;
             --bg-primary: #172436;
+            --bg-side: #0f1724;
             --tech-cyan: #31BEEF;
             --soft-blue: #A1B8F2;
             --clinical-white: #FAF9F6;
+            --muted: #93A6BF;
             --border: rgba(161, 184, 242, 0.18);
+            --hover: rgba(49, 190, 239, 0.08);
+            --active: rgba(49, 190, 239, 0.18);
         }
-
         * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; height: 100%; background: var(--prisma-navy); color: var(--clinical-white); font-family: 'Source Sans 3', sans-serif; }
+        body { display: flex; height: 100vh; overflow: hidden; }
 
-        body {
-            margin: 0;
-            font-family: 'Source Sans 3', sans-serif;
-            background: linear-gradient(180deg, #101B2C, #172436);
+        aside.sidebar {
+            width: 280px;
+            flex: 0 0 280px;
+            background: var(--bg-side);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .side-head {
+            padding: 16px 16px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .side-head h2 {
+            margin: 0 0 10px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.95rem;
+            color: var(--tech-cyan);
+            font-weight: 700;
+        }
+        .search-box {
+            position: relative;
+        }
+        .search-box i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+        }
+        .search-box input {
+            width: 100%;
+            padding: 8px 10px 8px 32px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--clinical-white);
+            font-family: inherit;
+            font-size: 0.86rem;
+            outline: none;
+        }
+        .search-box input:focus { border-color: var(--tech-cyan); }
+
+        .side-tree {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0 20px;
+        }
+        .cat {
+            padding: 0;
+        }
+        .cat-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--soft-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            user-select: none;
+        }
+        .cat-head:hover { color: var(--clinical-white); }
+        .cat-head .chev { font-size: 0.85rem; transition: transform 0.18s; }
+        .cat.collapsed .chev { transform: rotate(-90deg); }
+        .cat.collapsed .cat-items { display: none; }
+        .cat-count { margin-left: auto; color: var(--muted); font-weight: 600; font-size: 0.74rem; }
+        .cat-items { padding: 2px 0 8px; }
+        .item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px 7px 32px;
+            font-size: 0.86rem;
+            color: #d7e3f2;
+            cursor: pointer;
+            border-left: 2px solid transparent;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+        }
+        .item:hover { background: var(--hover); }
+        .item.active {
+            background: var(--active);
+            border-left-color: var(--tech-cyan);
             color: var(--clinical-white);
         }
+        .item i { font-size: 0.9rem; color: var(--muted); }
+        .item.active i { color: var(--tech-cyan); }
 
-        .page {
-            max-width: 1320px;
-            margin: 0 auto;
-            padding: 32px 24px 48px;
+        main.detail {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 36px 48px;
         }
-
-        h1,
-        h2,
-        h3 {
-            font-family: 'Quicksand', sans-serif;
-            margin: 0;
-        }
-
-        h1 {
-            font-size: 2rem;
-            color: var(--tech-cyan);
-        }
-
-        .subtitle {
-            margin: 12px 0 0;
-            max-width: 820px;
-            color: #d5dfec;
-            font-size: 1rem;
-            line-height: 1.55;
-        }
-
-        .hero-grid,
-        .line-grid,
-        .options-grid,
-        .forms-grid,
-        .events-grid {
-            display: grid;
-            gap: 16px;
-        }
-
-        .hero-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            margin: 28px 0 38px;
-        }
-
-        .hero-card,
-        .line-card,
-        .option-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
-        }
-
-        .hero-card {
-            padding: 18px 20px;
-        }
-
-        .hero-card strong {
-            display: block;
-            margin-bottom: 6px;
-            color: var(--tech-cyan);
-            font-size: 1.05rem;
-        }
-
-        .hero-card p,
-        .line-card p,
-        .option-card p {
-            margin: 0;
-            color: #d7e3f2;
-            line-height: 1.5;
-        }
-
-        .section-title {
+        .detail-head {
             margin-bottom: 18px;
-            padding-bottom: 10px;
+            padding-bottom: 14px;
             border-bottom: 1px solid var(--border);
+        }
+        .detail-kicker {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.74rem;
+            font-weight: 700;
             color: var(--tech-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
-
-        .line-grid {
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            margin-bottom: 38px;
+        .detail-title {
+            margin: 6px 0 12px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.6rem;
+            color: var(--clinical-white);
         }
-
-        .line-card {
-            padding: 16px;
-        }
-
-        .line-card h3 {
-            margin-bottom: 8px;
-            font-size: 0.98rem;
-        }
-
-        .options-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .option-card {
-            padding: 18px;
-        }
-
-        .forms-grid {
-            grid-template-columns: 1fr;
-            margin-top: 18px;
-        }
-
-        .events-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            margin-top: 18px;
-        }
-
-        .form-card {
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
-        }
-
-        .event-card {
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
-        }
-
-        .form-meta {
+        .chips {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin: 12px 0 14px;
+            gap: 6px;
         }
-
-        .form-meta span {
+        .chip {
             padding: 4px 10px;
             border-radius: 999px;
             background: rgba(49, 190, 239, 0.1);
-            border: 1px solid rgba(49, 190, 239, 0.18);
+            border: 1px solid rgba(49, 190, 239, 0.2);
             color: var(--tech-cyan);
-            font-size: 0.76rem;
-            font-weight: 700;
+            font-size: 0.74rem;
+            font-weight: 600;
+            font-family: ui-monospace, SFMono-Regular, monospace;
         }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-            margin-top: 14px;
-        }
-
-        .form-panel {
-            padding: 14px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.025);
-            border: 1px solid rgba(161, 184, 242, 0.14);
-        }
-
-        .form-panel h3 {
-            margin-bottom: 10px;
-            font-size: 0.92rem;
+        .chip.soft {
+            background: rgba(161, 184, 242, 0.08);
+            border-color: rgba(161, 184, 242, 0.2);
             color: var(--soft-blue);
         }
 
-        .form-list {
+        section.block { margin-top: 26px; }
+        section.block h3 {
+            margin: 0 0 12px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.84rem;
+            color: var(--tech-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        table.data {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+        table.data th, table.data td {
+            text-align: left;
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(161,184,242,0.1);
+            vertical-align: top;
+        }
+        table.data th {
+            color: var(--soft-blue);
+            font-weight: 600;
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        table.data td { color: #d7e3f2; }
+        table.data tbody tr:hover { background: rgba(255,255,255,0.02); }
+        table.data code {
+            font-family: ui-monospace, SFMono-Regular, monospace;
+            background: rgba(255,255,255,0.04);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.84rem;
+            color: var(--tech-cyan);
+        }
+        .yes { color: #9ad29a; font-weight: 600; }
+        .no { color: var(--muted); }
+
+        ul.simple {
             margin: 0;
             padding-left: 18px;
             color: #d7e3f2;
+            font-size: 0.9rem;
+            line-height: 1.55;
         }
+        ul.simple li + li { margin-top: 4px; }
 
-        .form-list li + li {
-            margin-top: 8px;
-        }
-
-        .form-list small {
-            display: block;
-            margin-top: 4px;
-            color: #b7c7dd;
-            line-height: 1.45;
-        }
-
-        .option-number {
-            display: inline-block;
-            margin-bottom: 10px;
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: rgba(49, 190, 239, 0.14);
-            color: var(--tech-cyan);
-            font-size: 0.76rem;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-        }
-
-        .option-card h3 {
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .line-tags {
+        .panel-filter {
+            margin: 0 0 12px;
             display: flex;
-            flex-wrap: wrap;
             gap: 8px;
-            margin: 12px 0 10px;
+            align-items: center;
+        }
+        .panel-filter input {
+            flex: 1;
+            padding: 7px 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--clinical-white);
+            font-family: inherit;
+            font-size: 0.88rem;
+            outline: none;
+        }
+        .panel-filter input:focus { border-color: var(--tech-cyan); }
+        .panel-filter .count { color: var(--muted); font-size: 0.82rem; }
+
+        .empty {
+            color: var(--muted);
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9rem;
         }
 
-        .line-tag {
-            padding: 4px 9px;
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
             border-radius: 999px;
-            background: rgba(161, 184, 242, 0.12);
+            background: rgba(161, 184, 242, 0.1);
             border: 1px solid rgba(161, 184, 242, 0.2);
             color: var(--soft-blue);
-            font-size: 0.76rem;
-            font-weight: 600;
+            font-size: 0.72rem;
+            margin: 2px 4px 2px 0;
         }
 
-        .helper-note {
-            margin-top: 28px;
-            padding: 16px 18px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            background: rgba(49, 190, 239, 0.07);
-        }
-
-        .helper-note strong {
-            color: var(--tech-cyan);
-        }
-
-        @media (max-width: 1100px) {
-            .hero-grid,
-            .options-grid,
-            .line-grid,
-            .form-grid,
-            .events-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            aside.sidebar { width: 100%; flex: 0 0 auto; max-height: 40vh; }
         }
     </style>
 </head>
 <body>
-    <div class="page">
-        <h1>Capa 2 — Diccionario Operativo ARMC</h1>
-        <p class="subtitle">Fuente operativa para Lead Capture y Super Form Completed: 25 demandas exactas, formularios, reglas de captura, cierre preclinico, eventos y tratamientos orientativos. La nota libre no clasifica por sí sola; amplía el contexto del lead.</p>
-
-        <div class="hero-grid">
-            <article class="hero-card">
-                <strong>25 demandas exactas</strong>
-                <p>Son las frases que el lead usa para describir qué quiere resolver o lograr. Son la base de la captura inicial.</p>
-            </article>
-            <article class="hero-card">
-                <strong>Detección de línea</strong>
-                <p>Cada opción dispara una o varias líneas de servicio. Esa detección alimenta la respuesta automática y la priorización humana.</p>
-            </article>
-            <article class="hero-card">
-                <strong>Nota libre</strong>
-                <p>La nota sirve para matices, objeciones o detalles clínicos/comerciales. No reemplaza las 25 opciones; las complementa.</p>
-            </article>
-            <article class="hero-card">
-                <strong>Catálogo canónico</strong>
-                <p><strong>catalogos.catalogo_25</strong> referencia la colección <strong>opciones</strong> y fija el punto de verdad para cualquier consumidor del diccionario.</p>
-            </article>
+    <aside class="sidebar">
+        <div class="side-head">
+            <h2><i class="ph ph-book-bookmark"></i> Diccionario ARMC</h2>
+            <div class="search-box">
+                <i class="ph ph-magnifying-glass"></i>
+                <input id="search" type="text" placeholder="Buscar…" autocomplete="off">
+            </div>
         </div>
+        <nav class="side-tree" id="tree"></nav>
+    </aside>
 
-        <h2 class="section-title">Líneas de servicio</h2>
-        <div class="line-grid" id="lineas-container"></div>
-
-        <h2 class="section-title">Opciones de demanda</h2>
-        <div class="options-grid" id="opciones-container"></div>
-
-        <h2 class="section-title">Formularios y componentes de captura</h2>
-        <div class="forms-grid" id="formularios-container"></div>
-
-        <h2 class="section-title">Eventos y payloads mínimos</h2>
-        <div class="events-grid" id="eventos-container"></div>
-
-        <div class="helper-note">
-            <strong>Uso operativo:</strong> la Capa 1 simula decisiones. La Capa 2 especifica catálogos, formularios, reglas, eventos, payloads mínimos y cómo todo eso se traduce a persistencia.
-        </div>
-    </div>
+    <main class="detail" id="detail">
+        <div class="empty">Cargando…</div>
+    </main>
 
     <script>
-        async function loadData() {
-            const response = await fetch('./data.json');
-            if (!response.ok) {
-                throw new Error('No se pudo cargar data.json');
-            }
-            return response.json();
+        const FORM_FILES = ['lead-capture', 'super-form-completed'];
+        const EVENT_FILES = ['lead-captured', 'auto-response-sent', 'human-support-requested', 'lead-followup-pending', 'super-form-completed', 'usuario-creado'];
+
+        const state = {
+            catalogo: null,
+            forms: [],
+            events: [],
+            mappings: null,
+            tree: [],
+            activeId: null,
+            collapsed: new Set(),
+            search: ''
+        };
+
+        async function loadJSON(p) {
+            const r = await fetch(p);
+            if (!r.ok) throw new Error(p);
+            return r.json();
         }
 
-        function renderLines(lineas) {
-            const container = document.getElementById('lineas-container');
-            container.innerHTML = '';
-            lineas.forEach((linea) => {
-                const card = document.createElement('article');
-                card.className = 'line-card';
-                card.innerHTML = '<h3>' + linea.nombre + '</h3><p>' + linea.descripcion + '</p>';
-                container.appendChild(card);
+        function escapeHtml(s) {
+            return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+        }
+
+        function buildTree() {
+            const cats = [];
+
+            cats.push({
+                id: 'cat-catalogo',
+                label: 'Catálogo',
+                icon: 'ph-list-bullets',
+                items: [
+                    { id: 'catalogo-demandas', label: 'Demandas (25)', icon: 'ph-target', kind: 'demandas' },
+                    { id: 'catalogo-lineas', label: 'Líneas de servicio (5)', icon: 'ph-stack', kind: 'lineas' }
+                ]
             });
-        }
 
-        function renderOptions(opciones) {
-            const container = document.getElementById('opciones-container');
-            container.innerHTML = '';
-            opciones.forEach((opcion) => {
-                const tags = opcion.lineas_servicio.map((linea) => '<span class="line-tag">' + linea + '</span>').join('');
-                const card = document.createElement('article');
-                card.className = 'option-card';
-                card.innerHTML =
-                    '<span class="option-number">Opción ' + opcion.id + '</span>' +
-                    '<h3>' + opcion.frase + '</h3>' +
-                    '<div class="line-tags">' + tags + '</div>' +
-                    '<p><strong>Tratamientos orientativos:</strong> ' + opcion.tratamientos + '</p>';
-                container.appendChild(card);
+            cats.push({
+                id: 'cat-forms',
+                label: 'Formularios',
+                icon: 'ph-clipboard-text',
+                items: state.forms.map(f => ({ id: 'form-' + f.id, label: f.id, icon: 'ph-clipboard-text', kind: 'form', payload: f }))
             });
+
+            cats.push({
+                id: 'cat-events',
+                label: 'Eventos',
+                icon: 'ph-lightning',
+                items: state.events.map(e => ({ id: 'event-' + e.id, label: e.id, icon: 'ph-lightning', kind: 'event', payload: e }))
+            });
+
+            cats.push({
+                id: 'cat-mappings',
+                label: 'Mapeos',
+                icon: 'ph-database',
+                items: [
+                    { id: 'mappings-forms', label: 'Formularios → BD', icon: 'ph-arrow-right', kind: 'mappings-forms' },
+                    { id: 'mappings-events', label: 'Eventos → BD', icon: 'ph-arrow-right', kind: 'mappings-events' }
+                ]
+            });
+
+            state.tree = cats;
         }
 
-        function renderForms(formularios) {
-            const container = document.getElementById('formularios-container');
-            container.innerHTML = '';
+        function matchesSearch(label) {
+            if (!state.search) return true;
+            return label.toLowerCase().includes(state.search.toLowerCase());
+        }
 
-            formularios.forEach((formulario) => {
-                const campos = formulario.campos.map((campo) => {
-                    const obligatorio = campo.obligatorio ? 'Obligatorio' : 'Opcional';
-                    const fuente = campo.fuente ? ' · fuente: ' + campo.fuente : '';
-                    const valor = campo.valor ? ' · valor: ' + campo.valor : '';
-                    return '<li><strong>' + campo.nombre + '</strong> · ' + campo.tipo + ' · ' + obligatorio + fuente + valor + '<small>' + campo.descripcion + '</small></li>';
+        function renderTree() {
+            const tree = document.getElementById('tree');
+            tree.innerHTML = state.tree.map(cat => {
+                const items = cat.items.filter(it => matchesSearch(it.label));
+                if (state.search && items.length === 0) return '';
+                const collapsed = state.collapsed.has(cat.id) ? 'collapsed' : '';
+                const itemsHtml = items.map(it => {
+                    const active = state.activeId === it.id ? 'active' : '';
+                    return `<div class="item ${active}" data-id="${it.id}"><i class="ph ${it.icon}"></i><span>${escapeHtml(it.label)}</span></div>`;
                 }).join('');
+                return `
+                    <div class="cat ${collapsed}" data-cat="${cat.id}">
+                        <div class="cat-head"><i class="ph ph-caret-down chev"></i><i class="ph ${cat.icon}"></i><span>${cat.label}</span><span class="cat-count">${cat.items.length}</span></div>
+                        <div class="cat-items">${itemsHtml}</div>
+                    </div>
+                `;
+            }).join('');
 
-                const reglas = formulario.reglas.map((regla) => '<li>' + regla + '</li>').join('');
-                const derivados = formulario.derivados.map((derivado) => '<li><strong>' + derivado.nombre + '</strong><small>' + derivado.descripcion + ' Origen: ' + derivado.origen + '.</small></li>').join('');
-                const mapeo = '<li><strong>Tabla principal:</strong> ' + formulario.mapeo_bd.tabla_principal + '</li>' +
-                    (formulario.mapeo_bd.tabla_secundaria ? '<li><strong>Tabla secundaria:</strong> ' + formulario.mapeo_bd.tabla_secundaria + '</li>' : '') +
-                    '<li><strong>Columnas:</strong> ' + formulario.mapeo_bd.columnas.join(', ') + '</li>' +
-                    '<li><strong>Eventos:</strong> ' + formulario.mapeo_bd.eventos.join(', ') + '</li>' +
-                    (formulario.mapeo_bd.observaciones ? formulario.mapeo_bd.observaciones.map((observacion) => '<li><strong>Nota:</strong> ' + observacion + '</li>').join('') : '');
-
-                const card = document.createElement('article');
-                card.className = 'form-card';
-                card.innerHTML =
-                    '<span class="option-number">Formulario</span>' +
-                    '<h3>' + formulario.nombre + '</h3>' +
-                    '<p>' + formulario.objetivo + '</p>' +
-                    '<div class="form-meta">' +
-                        '<span>Canal: ' + (formulario.canal_entrada || 'N/A') + '</span>' +
-                        '<span>Paso: ' + formulario.momento_flujo + '</span>' +
-                        '<span>Evento: ' + formulario.dispara_evento + '</span>' +
-                        '<span>Salida: ' + formulario.salida_operativa + '</span>' +
-                    '</div>' +
-                    '<div class="form-grid">' +
-                        '<div class="form-panel"><h3>Campos</h3><ul class="form-list">' + campos + '</ul></div>' +
-                        '<div class="form-panel"><h3>Reglas</h3><ul class="form-list">' + reglas + '</ul></div>' +
-                        '<div class="form-panel"><h3>Derivados</h3><ul class="form-list">' + derivados + '</ul></div>' +
-                        '<div class="form-panel"><h3>Mapeo a BD</h3><ul class="form-list">' + mapeo + '</ul></div>' +
-                    '</div>';
-                container.appendChild(card);
+            tree.querySelectorAll('.cat-head').forEach(el => {
+                el.addEventListener('click', () => {
+                    const id = el.parentElement.dataset.cat;
+                    if (state.collapsed.has(id)) state.collapsed.delete(id);
+                    else state.collapsed.add(id);
+                    renderTree();
+                });
+            });
+            tree.querySelectorAll('.item').forEach(el => {
+                el.addEventListener('click', () => {
+                    state.activeId = el.dataset.id;
+                    renderTree();
+                    renderDetail();
+                });
             });
         }
 
-        function renderEvents(eventos) {
-            const container = document.getElementById('eventos-container');
-            container.innerHTML = '';
-
-            eventos.forEach((evento) => {
-                const payloadMinimo = evento.payload_minimo.map((campo) => '<li>' + campo + '</li>').join('');
-                const payloadOpcional = evento.payload_opcional.map((campo) => '<li>' + campo + '</li>').join('');
-                const card = document.createElement('article');
-                card.className = 'event-card';
-                card.innerHTML =
-                    '<span class="option-number">Evento</span>' +
-                    '<h3>' + evento.id + '</h3>' +
-                    '<p>' + evento.descripcion + '</p>' +
-                    '<div class="form-meta">' +
-                        '<span>Paso: ' + evento.paso + '</span>' +
-                        '<span>Origen: ' + evento.origen + '</span>' +
-                        '<span>Destino: ' + evento.destino + '</span>' +
-                    '</div>' +
-                    '<div class="form-grid">' +
-                        '<div class="form-panel"><h3>Payload mínimo</h3><ul class="form-list">' + payloadMinimo + '</ul></div>' +
-                        '<div class="form-panel"><h3>Payload opcional</h3><ul class="form-list">' + payloadOpcional + '</ul></div>' +
-                    '</div>';
-                container.appendChild(card);
-            });
+        function findItem(id) {
+            for (const c of state.tree) {
+                for (const it of c.items) {
+                    if (it.id === id) return it;
+                }
+            }
+            return null;
         }
 
-        loadData()
-            .then((data) => {
-                renderLines(data.lineas_servicio);
-                renderOptions(data.opciones);
-                renderForms(data.formularios || []);
-                renderEvents(data.eventos || []);
-            })
-            .catch((error) => {
-                document.getElementById('opciones-container').innerHTML = '<p>No se pudo renderizar el diccionario: ' + error.message + '</p>';
-                document.getElementById('formularios-container').innerHTML = '';
-                document.getElementById('eventos-container').innerHTML = '';
-            });
+        function renderDetail() {
+            const detail = document.getElementById('detail');
+            const it = findItem(state.activeId);
+            if (!it) { detail.innerHTML = '<div class="empty">Selecciona un item del menú lateral.</div>'; return; }
+
+            if (it.kind === 'demandas') return renderDemandas(detail);
+            if (it.kind === 'lineas') return renderLineas(detail);
+            if (it.kind === 'form') return renderForm(detail, it.payload);
+            if (it.kind === 'event') return renderEvent(detail, it.payload);
+            if (it.kind === 'mappings-forms') return renderMappingsForms(detail);
+            if (it.kind === 'mappings-events') return renderMappingsEvents(detail);
+        }
+
+        function header(kicker, title, chips = []) {
+            return `
+                <div class="detail-head">
+                    <div class="detail-kicker">${kicker}</div>
+                    <h1 class="detail-title">${escapeHtml(title)}</h1>
+                    <div class="chips">${chips.map(c => `<span class="chip ${c.soft ? 'soft' : ''}">${escapeHtml(c.label)}</span>`).join('')}</div>
+                </div>
+            `;
+        }
+
+        function renderDemandas(host) {
+            const rows = state.catalogo.opciones;
+            host.innerHTML = header('Catálogo', 'Demandas (25)', [{ label: 'fuente: catalogo-demandas.json', soft: true }]) + `
+                <div class="panel-filter">
+                    <input id="demandas-filter" placeholder="Filtrar por frase o línea de servicio…" autocomplete="off">
+                    <span class="count" id="demandas-count">${rows.length} / ${rows.length}</span>
+                </div>
+                <table class="data"><thead><tr><th>#</th><th>Frase</th><th>Líneas</th><th>Tratamientos</th></tr></thead><tbody id="demandas-body"></tbody></table>
+            `;
+            const body = document.getElementById('demandas-body');
+            const count = document.getElementById('demandas-count');
+            const draw = (q) => {
+                const filtered = rows.filter(r => {
+                    if (!q) return true;
+                    const t = q.toLowerCase();
+                    return r.frase.toLowerCase().includes(t) || r.lineas_servicio.some(l => l.toLowerCase().includes(t));
+                });
+                body.innerHTML = filtered.map(r => `
+                    <tr>
+                        <td><code>${r.id}</code></td>
+                        <td>${escapeHtml(r.frase)}</td>
+                        <td>${r.lineas_servicio.map(l => `<span class="tag">${escapeHtml(l)}</span>`).join('')}</td>
+                        <td style="color:#b7c7dd;font-size:0.84rem">${escapeHtml(r.tratamientos)}</td>
+                    </tr>
+                `).join('') || '<tr><td colspan="4" class="empty">Sin resultados</td></tr>';
+                count.textContent = `${filtered.length} / ${rows.length}`;
+            };
+            draw('');
+            document.getElementById('demandas-filter').addEventListener('input', e => draw(e.target.value));
+        }
+
+        function renderLineas(host) {
+            const lineas = state.catalogo.lineas_servicio;
+            host.innerHTML = header('Catálogo', 'Líneas de servicio (5)', [{ label: 'fuente: catalogo-demandas.json', soft: true }]) + `
+                <table class="data"><thead><tr><th>Línea</th><th>Descripción</th></tr></thead><tbody>
+                ${lineas.map(l => `<tr><td><code>${escapeHtml(l.nombre)}</code></td><td>${escapeHtml(l.descripcion)}</td></tr>`).join('')}
+                </tbody></table>
+            `;
+        }
+
+        function renderForm(host, f) {
+            const chips = [
+                { label: 'canal: ' + f.canal },
+                { label: 'paso: ' + f.paso, soft: true },
+                { label: 'evento: ' + f.dispara_evento },
+                { label: 'salida: ' + f.salida, soft: true }
+            ];
+            const persist = state.mappings.forms[f.id];
+            host.innerHTML = header('Formulario', f.nombre, chips) + `
+                <section class="block">
+                    <h3>Campos</h3>
+                    <table class="data"><thead><tr><th>Nombre</th><th>Tipo</th><th>Obligatorio</th><th>Fuente / Valor</th></tr></thead><tbody>
+                    ${f.campos.map(c => `
+                        <tr>
+                            <td><code>${escapeHtml(c.nombre)}</code></td>
+                            <td>${escapeHtml(c.tipo)}</td>
+                            <td>${c.obligatorio ? '<span class="yes">sí</span>' : '<span class="no">no</span>'}</td>
+                            <td>${c.fuente ? `fuente: <code>${escapeHtml(c.fuente)}</code>` : ''}${c.valor ? ` valor: <code>${escapeHtml(c.valor)}</code>` : ''}</td>
+                        </tr>
+                    `).join('')}
+                    </tbody></table>
+                </section>
+                ${f.derivados && f.derivados.length ? `
+                    <section class="block">
+                        <h3>Derivados</h3>
+                        <table class="data"><thead><tr><th>Nombre</th><th>Origen</th></tr></thead><tbody>
+                        ${f.derivados.map(d => `<tr><td><code>${escapeHtml(d.nombre)}</code></td><td>${escapeHtml(d.origen)}</td></tr>`).join('')}
+                        </tbody></table>
+                    </section>
+                ` : ''}
+                ${f.reglas && f.reglas.length ? `
+                    <section class="block">
+                        <h3>Reglas</h3>
+                        <ul class="simple">${f.reglas.map(r => `<li>${escapeHtml(r)}</li>`).join('')}</ul>
+                    </section>
+                ` : ''}
+                ${persist ? `
+                    <section class="block">
+                        <h3>Persistencia</h3>
+                        <table class="data"><tbody>
+                        <tr><th style="width:200px">Tabla principal</th><td><code>${escapeHtml(persist.tabla_principal)}</code></td></tr>
+                        ${persist.tabla_secundaria ? `<tr><th>Tabla secundaria</th><td><code>${escapeHtml(persist.tabla_secundaria)}</code></td></tr>` : ''}
+                        <tr><th>Columnas</th><td>${persist.columnas.map(c => `<code>${escapeHtml(c)}</code>`).join(' ')}</td></tr>
+                        <tr><th>Eventos asociados</th><td>${persist.eventos.map(e => `<span class="tag">${escapeHtml(e)}</span>`).join('')}</td></tr>
+                        </tbody></table>
+                    </section>
+                ` : ''}
+            `;
+        }
+
+        function renderEvent(host, e) {
+            const chips = [
+                { label: 'paso: ' + e.paso, soft: true },
+                { label: 'origen: ' + e.origen }
+            ];
+            host.innerHTML = header('Evento', e.id, chips) + `
+                <section class="block">
+                    <h3>Destino</h3>
+                    <div>${e.destino.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
+                </section>
+                <section class="block">
+                    <h3>Payload mínimo</h3>
+                    <ul class="simple">${e.payload_minimo.map(p => `<li><code>${escapeHtml(p)}</code></li>`).join('')}</ul>
+                </section>
+                ${e.payload_opcional && e.payload_opcional.length ? `
+                    <section class="block">
+                        <h3>Payload opcional</h3>
+                        <ul class="simple">${e.payload_opcional.map(p => `<li><code>${escapeHtml(p)}</code></li>`).join('')}</ul>
+                    </section>
+                ` : ''}
+            `;
+        }
+
+        function renderMappingsForms(host) {
+            const entries = Object.entries(state.mappings.forms);
+            host.innerHTML = header('Mapeos', 'Formularios → Base de datos', [{ label: 'fuente: mappings.json', soft: true }]) + `
+                <table class="data"><thead><tr><th>Formulario</th><th>Tabla principal</th><th>Tabla secundaria</th><th>Eventos</th></tr></thead><tbody>
+                ${entries.map(([id, def]) => `
+                    <tr>
+                        <td><code>${escapeHtml(id)}</code></td>
+                        <td><code>${escapeHtml(def.tabla_principal)}</code></td>
+                        <td>${def.tabla_secundaria ? `<code>${escapeHtml(def.tabla_secundaria)}</code>` : '<span class="no">—</span>'}</td>
+                        <td>${def.eventos.map(e => `<span class="tag">${escapeHtml(e)}</span>`).join('')}</td>
+                    </tr>
+                `).join('')}
+                </tbody></table>
+            `;
+        }
+
+        function renderMappingsEvents(host) {
+            const entries = Object.entries(state.mappings.events);
+            host.innerHTML = header('Mapeos', 'Eventos → Base de datos', [{ label: 'fuente: mappings.json', soft: true }]) + `
+                <table class="data"><thead><tr><th>Evento</th><th>Tablas</th></tr></thead><tbody>
+                ${entries.map(([id, def]) => `
+                    <tr>
+                        <td><code>${escapeHtml(id)}</code></td>
+                        <td>${def.tablas.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</td>
+                    </tr>
+                `).join('')}
+                </tbody></table>
+            `;
+        }
+
+        document.getElementById('search').addEventListener('input', (e) => {
+            state.search = e.target.value;
+            renderTree();
+        });
+
+        (async () => {
+            try {
+                const [catalogo, mappings] = await Promise.all([
+                    loadJSON('./catalogo-demandas.json'),
+                    loadJSON('./mappings.json')
+                ]);
+                const forms = await Promise.all(FORM_FILES.map(n => loadJSON('./forms/' + n + '.json')));
+                const events = await Promise.all(EVENT_FILES.map(n => loadJSON('./events/' + n + '.json')));
+                state.catalogo = catalogo;
+                state.mappings = mappings;
+                state.forms = forms;
+                state.events = events;
+                buildTree();
+                state.activeId = 'catalogo-demandas';
+                renderTree();
+                renderDetail();
+            } catch (err) {
+                document.getElementById('detail').innerHTML = `<div class="empty" style="color:#e56b6f">Error cargando datos: ${err.message}</div>`;
+            }
+        })();
     </script>
 </body>
 </html>

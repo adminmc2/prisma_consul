@@ -1,0 +1,8 @@
+{
+  "id": "AUTO_RESPONSE_SENT",
+  "paso": "auto_response_sent",
+  "origen": "automatización posterior a LEAD_CAPTURED",
+  "destino": ["armc_events"],
+  "payload_minimo": ["lead_id", "canal_origen", "lineas_servicio_detectadas", "estado_actual"],
+  "payload_opcional": ["template_id", "motivo_priorizacion"]
+}

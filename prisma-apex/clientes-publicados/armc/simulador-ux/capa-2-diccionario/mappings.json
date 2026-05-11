@@ -1,0 +1,23 @@
+{
+  "forms": {
+    "lead_capture": {
+      "tabla_principal": "armc_leads",
+      "columnas": ["canal_origen", "nombre", "email", "telefono", "opciones_seleccionadas", "nota", "lineas_servicio_detectadas", "estado_actual"],
+      "eventos": ["LEAD_CAPTURED", "AUTO_RESPONSE_SENT"]
+    },
+    "super_form_completed": {
+      "tabla_principal": "armc_events",
+      "tabla_secundaria": "armc_leads",
+      "columnas": ["lead_id", "event_type", "payload", "estado_actual", "ultima_interaccion"],
+      "eventos": ["SUPER_FORM_COMPLETED", "USUARIO_CREADO"]
+    }
+  },
+  "events": {
+    "LEAD_CAPTURED": { "tablas": ["armc_leads", "armc_events"] },
+    "AUTO_RESPONSE_SENT": { "tablas": ["armc_events"] },
+    "HUMAN_SUPPORT_REQUESTED": { "tablas": ["armc_events", "armc_conversations"] },
+    "LEAD_FOLLOWUP_PENDING": { "tablas": ["armc_leads", "armc_events"] },
+    "SUPER_FORM_COMPLETED": { "tablas": ["armc_events", "armc_leads"] },
+    "USUARIO_CREADO": { "tablas": ["armc_events", "armc_leads"] }
+  }
+}

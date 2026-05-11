@@ -1,205 +1,83 @@
 # Simulador UX — ARMC
 
-**Status:** En desarrollo | **Versión:** v3.3.59 | **Responsable:** Executor 3
+Visualización en tres capas del flujo operativo de captación y conversión de leads en ARMC.
 
----
+## Capas
 
-## Propósito
+| Capa | Carpeta | Propósito |
+|---|---|---|
+| 1 — UX | `capa-1-ux/` | Grafo de estados y transiciones. Simula decisiones, no captura datos. |
+| 2 — Diccionario | `capa-2-diccionario/` | Catálogos, contratos de formularios, eventos, mapeo a persistencia. |
+| 3 — SQL | `capa-3-sql/` | Esquema PostgreSQL canónico + diccionario de datos. |
 
-Presentación interactiva del flujo operativo de ARMC con 3 capas:
-
-1. **Capa 1 — UX (Grafo):** Visualización interactiva del flujo con nodos, relaciones, zoom y estado visible de la simulación.
-2. **Capa 2 — Diccionario:** Catálogos, formularios, eventos, payloads mínimos y contratos de datos.
-3. **Capa 3 — SQL:** Esquema de base de datos PostgreSQL que respalda el flujo.
-
-## Justificación de la Arquitectura
-
-1. **Capa 1 existe para simular decisiones, no para capturar datos en detalle.**
-   El valor del grafo es mostrar estados, alternativas y transiciones. Si un nodo aloja formularios completos, deja de ser simulador y se convierte en una UI embebida difícil de leer, comparar y validar.
-2. **Capa 2 existe para describir el contrato operativo del sistema.**
-   Aquí viven las claves, procesos, formularios, componentes, reglas, derivados, eventos y mapeos. En este tipo de simulación, un formulario pertenece al diccionario como especificación, no al grafo como interfaz renderizada.
-3. **Capa 3 existe para persistencia.**
-   La base de datos explica qué se guarda, no cómo se comporta la interacción. SQL por sí solo no sustituye reglas de validación, dependencias entre campos, copy, condiciones de salida ni eventos operativos.
-4. **Decisión adoptada para este simulador.**
-   No se crea una capa nueva para formularios. Cuando un formulario sea relevante para el flujo, su definición se registra en Capa 2 y Capa 1 solo muestra cuándo se entra, qué decisión lo activa y a qué estado conduce su salida.
-5. **Alcance contractual actual de Capa 2.**
-   Capa 2 no sustituye el diccionario de eventos por uno de formularios. El alcance vigente incluye catálogos, formularios, eventos, payloads mínimos y mapeos a persistencia.
-
----
-
-## Estructura de Directorios
+## Estructura
 
 ```
 simulador-ux/
-├── README.md                            ← Este archivo
-├── index.html                           ← Shell (tabs, layout) — editar solo si cambia navegación/layout
+├── README.md
+├── index.html                          ← Shell con tabs (no editar)
 ├── capa-1-ux/
-│   └── index.html                       ← Grafo interactivo — editable
+│   └── index.html                      ← Grafo interactivo
 ├── capa-2-diccionario/
-│   ├── index.html                       ← Contenedor Capa 2 (editable)
-│   └── data.json                        ← Catálogos + formularios + eventos (editable)
+│   ├── index.html                      ← Renderizador
+│   ├── catalogo-demandas.json          ← 25 demandas + líneas de servicio
+│   ├── forms/
+│   │   ├── lead-capture.json
+│   │   └── super-form-completed.json
+│   ├── events/
+│   │   ├── lead-captured.json
+│   │   ├── auto-response-sent.json
+│   │   ├── human-support-requested.json
+│   │   ├── lead-followup-pending.json
+│   │   ├── super-form-completed.json
+│   │   └── usuario-creado.json
+│   └── mappings.json                   ← form/evento → tabla/columna
 └── capa-3-sql/
-    ├── index.html                       ← Contenedor Capa 3 (editable)
-    └── schema.sql                       ← Esquema BD (editable)
+    ├── index.html                      ← Renderizador (DDL + diccionario)
+    ├── schema.sql                      ← DDL canónico
+    └── data-dictionary.md              ← Una fila por columna
 ```
 
----
+## Convenciones
 
-## Reglas de Contribución
+- **Un archivo, una responsabilidad.** Catálogo, formularios, eventos y mapeos viven separados.
+- **Sin prosa dentro de los contratos JSON.** Los archivos describen estructura técnica. La narrativa va a este README.
+- **Capa 1 muestra estados y decisiones.** No incrusta formularios ni grids de captura.
+- **Capa 2 es contrato.** Cada formulario tiene id, canal, campos, derivados, reglas. Cada evento tiene id, payload mínimo/opcional, origen y destino.
+- **Capa 3 es persistencia.** El esquema SQL es la verdad; el `data-dictionary.md` es la referencia humana.
+- **El catálogo es referencia reutilizable.** Las 25 demandas no viven dentro del formulario que las consume; viven en `catalogo-demandas.json` y el campo del formulario apunta a ese catálogo (`fuente: "catalogo-demandas"`). Mismo patrón que países, categorías o cualquier dimensión en producto real.
 
-## Regla de Diseño para Capa 1
+## Navegación
 
-- La Capa 1 es un simulador de UX basado en grafo de estados y decisiones.
-- La Capa 1 no debe incrustar formularios completos, grids de captura extensos ni UI de data entry dentro de un nodo.
-- Si una etapa del flujo depende de un formulario real, en la Capa 1 solo se representa como estado o transición: qué activa ese paso, qué contexto mínimo arrastra y qué decisión provoca al salir.
-- El detalle del formulario, sus campos, validaciones, copy, payloads y estructura operativa debe vivir en la Capa 2 como parte del diccionario operativo.
-- La Capa 2 debe seguir documentando también los eventos y sus payloads mínimos; no se reemplazan por la vista de formularios.
-- Primer elemento ya definido: el arranque de Capa 1 se representa como `Entrada del lead` con dos acciones visibles (`Formulario de contacto web` y `WhatsApp`).
-- Prohibido modificar ese primer elemento, su copy o sus dos salidas iniciales sin instrucción explícita del usuario.
-- Error ya cometido y documentado: meter el formulario de Lead Capture dentro del nodo inicial degradó el simulador y rompió el patrón de decisión simple. No repetir.
+Capa 2 y Capa 3 usan el patrón **sidebar + detalle + búsqueda** estándar del sector (EventCatalog, dbt docs, dbdocs, Stoplight, Backstage):
 
-### Regla de Copy para Capa 1
+- Sidebar lateral con categorías colapsables.
+- Buscador en cabecera del sidebar; filtra todos los items en tiempo real.
+- Panel central renderiza solo el item seleccionado.
+- Listas largas (catálogo de demandas, índices) se muestran como tablas compactas con filtro propio.
 
-- El texto visible de Capa 1 debe sonar a simulación operativa normal, no a documentación interna del sistema.
-- No usar en nodos o botones frases meta como `el contrato se define en Capa 2`, `pendiente de definición`, `convergencia posterior` o equivalentes.
-- No mostrar instrucciones internas de gobierno o freeze dentro del grafo visible. Esas reglas viven en README, review o documentación auxiliar, no en los nodos.
-- Los títulos de nodos deben nombrar estados observables del flujo, no discusiones de modelado. Ejemplos válidos: `Contacto web recibido`, `Contacto por WhatsApp recibido`.
-- Los botones deben nombrar el canal o la acción visible con copy breve. Ejemplos válidos: `Formulario de contacto web`, `WhatsApp`.
-- Las descripciones deben explicar qué pasó en el flujo en lenguaje de negocio simple. Evitar justificaciones arquitectónicas dentro del propio nodo.
+No hay framework ni build step: HTML + JS plano que consume los JSON existentes.
 
-### Regla de Naming para Capa 1
+## Glosario
 
-- `canal` se usa para medios de entrada como web o WhatsApp.
-- `formulario` se usa para el mecanismo de captura, por ejemplo `Formulario de contacto web`.
-- `estado` se usa para nombrar el punto del flujo representado por un nodo, por ejemplo `Contacto web recibido`.
-- No usar `capa` para nombrar rutas, canales, formularios o estados.
+- **Lead:** persona que entra al flujo por web o WhatsApp.
+- **Captura:** registro inicial del lead con sus datos de contacto y demandas seleccionadas.
+- **Demanda:** una de las 25 frases del catálogo (`catalogo-demandas.json`).
+- **Línea de servicio:** agrupación clínica/operativa derivada de las demandas.
+- **Evento:** transición observable del lead. Se persiste en `armc_events`.
+- **Intake preclínico:** cierre operativo previo a la valoración (`super_form_completed`).
 
-### Regla de Layout para Capa 1
+## Desarrollo local
 
-- Cada nodo nuevo debe colocarse con separación suficiente para que no tape tarjetas, botones, terminal copy ni líneas del grafo.
-- Antes de cerrar un ajuste de copy o estructura, validar visualmente la vista aislada de Capa 1 con zoom 100%.
-- Si una nueva bifurcación hace que dos nodos se monten, primero se corrige el layout y después se da por bueno el texto.
-
-### Checklist mínimo antes de cerrar un cambio en Capa 1
-
-- El nodo inicial y sus salidas siguen usando copy profesional y visible para negocio.
-- No queda lenguaje meta o de documentación interna dentro del grafo.
-- Los nombres de canales, formularios y estados están diferenciados correctamente.
-- La separación visual entre nodos evita solapamientos.
-- El flujo aislado de Capa 1 carga sin errores y refleja el texto final aprobado.
-
-### ✅ Executor 3 PUEDE EDITAR:
-
-- **`capa-1-ux/index.html`** — Simulación interactiva de la Capa 1 (copy, flujo visible, estados, nodos y comportamiento de la experiencia).
-- **`capa-2-diccionario/index.html`** — Contenido HTML de la Capa 2 (catálogos, formularios, eventos, payloads).
-- **`capa-2-diccionario/data.json`** — Estructura de catálogos, formularios y eventos operativos.
-- **`capa-3-sql/index.html`** — Contenido HTML de la Capa 3 (descripciones, ejemplos).
-- **`capa-3-sql/schema.sql`** — Definiciones de tablas SQL.
-- **Este README** — Documentación y guía.
-
-### ❌ Executor 3 NO PUEDE EDITAR:
-
-- **`index.html`** (Shell) — Contiene la navegación entre capas, layout flexbox y el contenedor general. Solo se toca si el cambio afecta al shell completo.
-
----
-
-## Flujo de Trabajo
-
-### Desarrollo Local (Executor 3)
-
-Trabajas en el worktree dedicado `web-de-prisma-simulador-executor3`:
+Servir la carpeta del simulador con cualquier HTTP server:
 
 ```bash
-cd /Users/armandocruz/Documents/PRISMA\ CONSUL/PHARMA/web-de-prisma-simulador-executor3
-git checkout chore/contenido-simulador-v3.3.59  # Rama de trabajo
+cd prisma-apex/clientes-publicados/armc/simulador-ux
+python3 -m http.server 8766
 ```
 
-### Editar Contenido
+Acceso: `http://127.0.0.1:8766/index.html`
 
-1. **Capa 1 (UX / Grafo):**
-   - Abre `prisma-apex/clientes-publicados/armc/simulador-ux/capa-1-ux/index.html`
-   - Ajusta copy, flujo visible y comportamiento interactivo de la simulación
-   - Mantén coherencia con el shell y verifica que zoom, drag y estado visible sigan funcionando
+## Carril de trabajo
 
-2. **Capa 2 (Diccionario):**
-   - Abre `prisma-apex/clientes-publicados/armc/simulador-ux/capa-2-diccionario/index.html`
-   - Ajusta el contenido HTML existente para mantener alineados catálogos, formularios, eventos y payloads mínimos
-   - Actualiza `data.json` con catálogos, formularios, eventos, payloads mínimos y mapeos
-
-3. **Capa 3 (SQL):**
-   - Abre `prisma-apex/clientes-publicados/armc/simulador-ux/capa-3-sql/index.html`
-   - Ajusta el contenido HTML existente (descripciones, métricas y lectura del DDL) para que refleje el estado real del esquema
-   - Actualiza `schema.sql` con DDL real
-
-### Verificar Localmente
-
-```bash
-cd /Users/armandocruz/Documents/PRISMA\ CONSUL/PHARMA/web-de-prisma-simulador-executor3
-node server/server.js  # Iniciar servidor Express local
-```
-
-Accede a:
-- **Simulador completo:** `http://localhost:3000/publicados/armc/simulador-ux`
-- **Capa 1 (aislada):** `http://localhost:3000/publicados/armc/simulador-ux/capa-1-ux`
-- **Capa 2 (aislada):** `http://localhost:3000/publicados/armc/simulador-ux/capa-2-diccionario`
-- **Capa 3 (aislada):** `http://localhost:3000/publicados/armc/simulador-ux/capa-3-sql`
-
-### Commit y Handoff
-
-Cuando termines una sección:
-
-```bash
-git add prisma-apex/clientes-publicados/armc/simulador-ux/capa-1-ux
-git add prisma-apex/clientes-publicados/armc/simulador-ux/capa-2-diccionario
-git add prisma-apex/clientes-publicados/armc/simulador-ux/capa-3-sql
-git commit -m "feat: simulador UX ARMC — trabajo en capas 1, 2 y 3 v3.3.59"
-git log --oneline -5  # Obtén el SHA del commit
-```
-
-Comunica al revisor:
-- SHA del commit completado
-- Qué contenido incluye (Capa 1, Capa 2, Capa 3, o combinación)
-- Cualquier cambio en estructura o dependencias
-
----
-
-## Versionado
-
-El simulador sigue referenciado en la versión principal vigente (`v3.3.59`) hasta nueva aprobación del revisor.
-
-**No cambiar la versión** sin aprobación del revisor. La versión se actualiza cuando:
-- Se publica en `main` (producción)
-- Se cierra un sprint completo
-- Hay cambios significativos en la arquitectura o funcionalidad
-
----
-
-## Troubleshooting
-
-### Shell no carga / Tabs no funcionan
-- **Causa:** `index.html` fue editado incorrectamente.
-- **Solución:** Revertir desde Git: `git checkout index.html`
-
-### Capa 1 / Capa 2 / Capa 3 quedan en blanco
-- **Causa:** `capa-1-ux/index.html`, `capa-2-diccionario/index.html` o `capa-3-sql/index.html` tiene HTML inválido.
-- **Verificación:** Abre la consola del navegador (F12) — busca errores de sintaxis.
-
-### Zoom, drag o última acción dejan de reflejarse
-- **Causa:** Se tocó la lógica interactiva de `capa-1-ux/index.html` y el wiring visual dejó de estar alineado.
-- **Verificación:** Recarga la Capa 1 aislada y comprueba que el flujo responde antes de revisar el shell.
-
-### Los estilos no se aplican
-- **Causa:** Faltan las fuentes de Google Fonts o hay conflicto de CSS.
-- **Verificación:** Inspecciona el archivo CSS incrustado — debe incluir `@import url('...')`
-
----
-
-## Contacto
-
-- **Revisor:** Para aprobar/integrar cambios a `main`
-- **Executor 1 (Carril Repo):** Para cambios en el shell o infraestructura
-- **Executor 2 (Carril Contenido):** Para integración con modelo de dominio
-
----
-
-**Última actualización:** 2026-05-11 | **Preparado por:** Revisor | **Vigente para:** v3.3.59+
+Edición sobre el worktree `web-de-prisma-simulador-executor3`, rama `chore/contenido-simulador-v3.3.60`. La integración a `dev` la decide el revisor.

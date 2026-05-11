@@ -2,6 +2,47 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-11] — Refactor estructural del Diccionario y SQL del simulador UX ARMC (sin cambio de versión visible)
+
+### Frontend — Capa 2 y Capa 3 con patrón sidebar + detalle + búsqueda
+
+El simulador UX ARMC pasa de un render plano (todo el contenido apilado en una sola página) a un patrón de navegación profesional alineado con EventCatalog, dbt docs, dbdocs, Stoplight y Backstage: sidebar lateral con categorías colapsables, buscador global, panel central que renderiza solo el item seleccionado.
+
+#### Reorganización de archivos en Capa 2
+
+- Eliminado `prisma-apex/clientes-publicados/armc/simulador-ux/capa-2-diccionario/data.json` (monolito anterior).
+- Nuevo `capa-2-diccionario/catalogo-demandas.json`: catálogo de las 25 demandas + 5 líneas de servicio, como referencia reutilizable.
+- Nueva carpeta `capa-2-diccionario/forms/` con un archivo por formulario (`lead-capture.json`, `super-form-completed.json`). Estructura técnica sin prosa: id, canal, paso, campos, derivados, reglas.
+- Nueva carpeta `capa-2-diccionario/events/` con un archivo por evento (`lead-captured.json`, `auto-response-sent.json`, `human-support-requested.json`, `lead-followup-pending.json`, `super-form-completed.json`, `usuario-creado.json`).
+- Nuevo `capa-2-diccionario/mappings.json`: única fuente de verdad para form → tabla y evento → tabla. Reemplaza los bloques `mapeo_bd` duplicados dentro de cada formulario.
+
+#### Reorganización en Capa 3
+
+- Nuevo `capa-3-sql/data-dictionary.md`: diccionario humano de columnas por tabla, complemento del DDL en `schema.sql`. Sigue el patrón de dbdocs / dbt docs.
+
+#### Renderizadores reescritos
+
+- `capa-2-diccionario/index.html`: layout sidebar + detalle. 4 categorías en el sidebar (Catálogo, Formularios, Eventos, Mapeos). Búsqueda en tiempo real. Demandas como tabla compacta con filtro propio.
+- `capa-3-sql/index.html`: layout sidebar + detalle. Categorías Tablas, Índices, Referencia. Cada tabla muestra columnas (desde `data-dictionary.md`), índices asociados (parseados de `schema.sql`) y DDL recortado.
+
+#### Shell del simulador
+
+- `prisma-apex/clientes-publicados/armc/simulador-ux/index.html`: tabs de Capa 2 y Capa 3 cableados a las páginas reales (antes apuntaban a placeholders "Se publicará una vez aprobada la Capa 1").
+
+#### Documentación
+
+- `prisma-apex/clientes-publicados/armc/simulador-ux/README.md` reescrito: estructura del proyecto, convenciones por capa, glosario operativo. Eliminada la prosa larga sobre reglas de copy/naming/layout (queda implícita en las convenciones). Añadida sección "Navegación" que documenta el patrón sidebar + detalle y referencia las herramientas del sector que lo usan.
+
+#### Capa 1
+
+- `capa-1-ux/index.html`: ajuste menor previo al refactor — limpieza de vocabulario en `dataPoints` del nodo de entrada (`Canal disponible: …`, `Estado: pendiente de selección de canal`, `Sin persistencia hasta la selección`). Sin cambios estructurales.
+
+#### Justificación
+
+- Volcar 25 tarjetas grandes + formularios + eventos + mapeos en una sola página plana no escala y no se corresponde con cómo se documentan estos sistemas en producto real.
+- Separar catálogo, formularios, eventos y mapeos en archivos individuales habilita revisión atómica, evita merge conflicts entre slices independientes y permite que el render se alimente del mismo modelo que usan las herramientas estándar del sector.
+- Sin frameworks ni build step: HTML + JS plano consume los JSON existentes.
+
 ## [2026-05-11] — v3.3.60
 
 ### Bump visible tras consolidación del simulador UX ARMC en dev

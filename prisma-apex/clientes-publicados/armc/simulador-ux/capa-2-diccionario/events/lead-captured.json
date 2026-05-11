@@ -1,0 +1,8 @@
+{
+  "id": "LEAD_CAPTURED",
+  "paso": "lead_captured",
+  "origen": "lead_capture",
+  "destino": ["armc_leads", "armc_events"],
+  "payload_minimo": ["canal_origen", "opciones_seleccionadas", "lineas_servicio_detectadas", "estado_actual"],
+  "payload_opcional": ["nombre", "email", "telefono", "nota"]
+}

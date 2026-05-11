@@ -6,216 +6,360 @@
     <title>Capa 3 — Esquema SQL ARMC</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../../../shared/fonts/phosphor/phosphor.css">
     <style>
         :root {
             --prisma-navy: #101B2C;
             --bg-primary: #172436;
+            --bg-side: #0f1724;
             --tech-cyan: #31BEEF;
             --soft-blue: #A1B8F2;
             --clinical-white: #FAF9F6;
+            --muted: #93A6BF;
             --border: rgba(161, 184, 242, 0.18);
+            --hover: rgba(49, 190, 239, 0.08);
+            --active: rgba(49, 190, 239, 0.18);
         }
-
         * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; height: 100%; background: var(--prisma-navy); color: var(--clinical-white); font-family: 'Source Sans 3', sans-serif; }
+        body { display: flex; height: 100vh; overflow: hidden; }
 
-        body {
+        aside.sidebar { width: 280px; flex: 0 0 280px; background: var(--bg-side); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+        .side-head { padding: 16px 16px 12px; border-bottom: 1px solid var(--border); }
+        .side-head h2 { margin: 0 0 10px; font-family: 'Quicksand', sans-serif; font-size: 0.95rem; color: var(--tech-cyan); font-weight: 700; }
+        .search-box { position: relative; }
+        .search-box i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+        .search-box input { width: 100%; padding: 8px 10px 8px 32px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; color: var(--clinical-white); font-family: inherit; font-size: 0.86rem; outline: none; }
+        .search-box input:focus { border-color: var(--tech-cyan); }
+
+        .side-tree { flex: 1; overflow-y: auto; padding: 10px 0 20px; }
+        .cat-head { display: flex; align-items: center; gap: 8px; padding: 8px 16px; cursor: pointer; font-family: 'Quicksand', sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--soft-blue); text-transform: uppercase; letter-spacing: 0.05em; user-select: none; }
+        .cat-head:hover { color: var(--clinical-white); }
+        .cat-head .chev { transition: transform 0.18s; }
+        .cat.collapsed .chev { transform: rotate(-90deg); }
+        .cat.collapsed .cat-items { display: none; }
+        .cat-count { margin-left: auto; color: var(--muted); font-weight: 600; font-size: 0.74rem; }
+        .item { display: flex; align-items: center; gap: 8px; padding: 7px 16px 7px 32px; font-size: 0.86rem; color: #d7e3f2; cursor: pointer; border-left: 2px solid transparent; font-family: ui-monospace, SFMono-Regular, monospace; }
+        .item:hover { background: var(--hover); }
+        .item.active { background: var(--active); border-left-color: var(--tech-cyan); color: var(--clinical-white); }
+        .item i { font-size: 0.9rem; color: var(--muted); }
+        .item.active i { color: var(--tech-cyan); }
+
+        main.detail { flex: 1; overflow-y: auto; padding: 28px 36px 48px; }
+        .detail-head { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+        .detail-kicker { font-family: 'Quicksand', sans-serif; font-size: 0.74rem; font-weight: 700; color: var(--tech-cyan); text-transform: uppercase; letter-spacing: 0.06em; }
+        .detail-title { margin: 6px 0 12px; font-family: 'Quicksand', sans-serif; font-size: 1.6rem; color: var(--clinical-white); }
+        .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+        .chip { padding: 4px 10px; border-radius: 999px; background: rgba(49, 190, 239, 0.1); border: 1px solid rgba(49, 190, 239, 0.2); color: var(--tech-cyan); font-size: 0.74rem; font-weight: 600; font-family: ui-monospace, SFMono-Regular, monospace; }
+        .chip.soft { background: rgba(161, 184, 242, 0.08); border-color: rgba(161, 184, 242, 0.2); color: var(--soft-blue); }
+
+        section.block { margin-top: 26px; }
+        section.block h3 { margin: 0 0 12px; font-family: 'Quicksand', sans-serif; font-size: 0.84rem; color: var(--tech-cyan); text-transform: uppercase; letter-spacing: 0.06em; }
+
+        table.data { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        table.data th, table.data td { text-align: left; padding: 8px 12px; border-bottom: 1px solid rgba(161,184,242,0.1); vertical-align: top; }
+        table.data th { color: var(--soft-blue); font-weight: 600; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.04em; }
+        table.data td { color: #d7e3f2; }
+        table.data tbody tr:hover { background: rgba(255,255,255,0.02); }
+        table.data code { font-family: ui-monospace, SFMono-Regular, monospace; background: rgba(255,255,255,0.04); padding: 1px 6px; border-radius: 4px; font-size: 0.84rem; color: var(--tech-cyan); }
+        .yes { color: #9ad29a; font-weight: 600; }
+        .no { color: var(--muted); }
+
+        ul.simple { margin: 0; padding-left: 18px; color: #d7e3f2; font-size: 0.9rem; line-height: 1.55; }
+        ul.simple li + li { margin-top: 4px; }
+
+        pre.ddl {
             margin: 0;
-            font-family: 'Source Sans 3', sans-serif;
-            background: linear-gradient(180deg, #101B2C, #172436);
-            color: var(--clinical-white);
-        }
-
-        .page {
-            max-width: 1320px;
-            margin: 0 auto;
-            padding: 32px 24px 48px;
-        }
-
-        h1,
-        h2,
-        h3 {
-            margin: 0;
-            font-family: 'Quicksand', sans-serif;
-        }
-
-        h1 {
-            color: var(--tech-cyan);
-            font-size: 2rem;
-        }
-
-        .subtitle {
-            margin-top: 12px;
-            max-width: 860px;
-            color: #d6dfeb;
-            line-height: 1.55;
-        }
-
-        .cards,
-        .metrics {
-            display: grid;
-            gap: 16px;
-        }
-
-        .metrics {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            margin: 26px 0 36px;
-        }
-
-        .metric,
-        .table-card,
-        .schema-box {
-            background: rgba(255, 255, 255, 0.03);
+            padding: 16px 18px;
+            background: rgba(15, 23, 36, 0.7);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
-        }
-
-        .metric {
-            padding: 18px 20px;
-        }
-
-        .metric strong {
-            display: block;
-            margin-bottom: 6px;
-            color: var(--tech-cyan);
-        }
-
-        .metric p,
-        .table-card p {
-            margin: 0;
-            color: #d7e3f2;
-            line-height: 1.5;
-        }
-
-        .section-title {
-            margin-bottom: 18px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border);
-            color: var(--tech-cyan);
-        }
-
-        .cards {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            margin-bottom: 36px;
-        }
-
-        .table-card {
-            padding: 18px;
-        }
-
-        .table-card h3 {
-            margin-bottom: 10px;
-            color: var(--soft-blue);
-        }
-
-        .table-card ul {
-            margin: 12px 0 0 18px;
-            padding: 0;
-            color: #d7e3f2;
-        }
-
-        .table-card li + li {
-            margin-top: 6px;
-        }
-
-        .schema-box {
-            padding: 20px;
-        }
-
-        pre {
-            margin: 0;
-            white-space: pre-wrap;
-            word-break: break-word;
+            border-radius: 10px;
+            overflow-x: auto;
             font-family: ui-monospace, SFMono-Regular, monospace;
             font-size: 0.82rem;
             line-height: 1.55;
             color: #bfe6ff;
+            white-space: pre;
         }
 
-        @media (max-width: 1100px) {
-            .metrics,
-            .cards {
-                grid-template-columns: 1fr;
-            }
+        .empty { color: var(--muted); padding: 20px; text-align: center; font-size: 0.9rem; }
+
+        @media (max-width: 900px) {
+            body { flex-direction: column; }
+            aside.sidebar { width: 100%; flex: 0 0 auto; max-height: 40vh; }
         }
     </style>
 </head>
 <body>
-    <div class="page">
-        <h1>Capa 3 — Esquema PostgreSQL ARMC</h1>
-        <p class="subtitle">Modelo relacional del flujo Lead Capture: almacenamiento de demandas seleccionadas, líneas detectadas, nota libre, auditoría de eventos y captura incremental de identidad cuando el lead entra por WhatsApp.</p>
-
-        <div class="metrics">
-            <article class="metric">
-                <strong>3 tablas núcleo</strong>
-                <p><code>armc_leads</code>, <code>armc_events</code> y <code>armc_conversations</code> sostienen el funnel operativo completo.</p>
-            </article>
-            <article class="metric">
-                <strong>Estado alterno explícito</strong>
-                <p>Se incorpora <code>LEAD_FOLLOWUP_PENDING</code> para no perder seguimiento comercial cuando no hay conversión inmediata.</p>
-            </article>
-            <article class="metric">
-                <strong>Identidad incremental</strong>
-                <p><code>canal_origen</code> y la intención estructurada nacen en la captura inicial; <code>nombre</code> y <code>email</code> pueden completarse después.</p>
-            </article>
+    <aside class="sidebar">
+        <div class="side-head">
+            <h2><i class="ph ph-database"></i> Esquema SQL</h2>
+            <div class="search-box">
+                <i class="ph ph-magnifying-glass"></i>
+                <input id="search" type="text" placeholder="Buscar tabla, columna…" autocomplete="off">
+            </div>
         </div>
+        <nav class="side-tree" id="tree"></nav>
+    </aside>
 
-        <h2 class="section-title">Tablas del modelo</h2>
-        <div class="cards">
-            <article class="table-card">
-                <h3>armc_leads</h3>
-                <p>Registro maestro del lead y su clasificación inicial.</p>
-                <ul>
-                    <li><code>canal_origen</code> obligatorio</li>
-                    <li><code>nombre</code> y <code>email</code> opcionales al inicio</li>
-                    <li><code>telefono</code> opcional si el canal ya lo aporta</li>
-                    <li><code>opciones_seleccionadas INT[]</code></li>
-                    <li><code>lineas_servicio_detectadas VARCHAR[]</code></li>
-                    <li><code>nota TEXT</code></li>
-                    <li><code>estado_actual</code> con 6 estados</li>
-                </ul>
-            </article>
-            <article class="table-card">
-                <h3>armc_events</h3>
-                <p>Bitácora inmutable del flujo para auditoría y analítica.</p>
-                <ul>
-                    <li>Eventos desde <code>LEAD_CAPTURED</code></li>
-                    <li>Incluye <code>LEAD_FOLLOWUP_PENDING</code></li>
-                    <li><code>payload JSONB</code> para contexto completo</li>
-                </ul>
-            </article>
-            <article class="table-card">
-                <h3>armc_conversations</h3>
-                <p>Historial de interacciones humanas y automáticas.</p>
-                <ul>
-                    <li><code>agente_id</code> opcional</li>
-                    <li><code>tipo_interaccion</code></li>
-                    <li><code>satisfaccion</code> del intercambio</li>
-                </ul>
-            </article>
-        </div>
-
-        <h2 class="section-title">DDL completo</h2>
-        <div class="schema-box">
-            <pre id="schema-content">Cargando esquema...</pre>
-        </div>
-    </div>
+    <main class="detail" id="detail">
+        <div class="empty">Cargando…</div>
+    </main>
 
     <script>
-        fetch('./schema.sql')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('No se pudo cargar schema.sql');
+        const state = {
+            schemaSql: '',
+            tables: [],         // [{name, ddl, columns:[{col,tipo,nulo,default,desc}], constraints:[]}]
+            indices: [],        // [{name, table, column}]
+            activeId: null,
+            collapsed: new Set(),
+            search: ''
+        };
+
+        function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+        // ---------- Parse data-dictionary.md ----------
+        function parseDictionary(md) {
+            const tables = {};
+            let currentTable = null;
+            let inTable = false;
+            let pendingHeaders = null;
+            const lines = md.split('\n');
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const tableMatch = line.match(/^##\s+`?([a-z_]+)`?\s*$/);
+                if (tableMatch && !line.includes('Diccionario')) {
+                    currentTable = tableMatch[1];
+                    tables[currentTable] = { columns: [], notes: [] };
+                    inTable = false;
+                    continue;
                 }
-                return response.text();
-            })
-            .then((sql) => {
-                document.getElementById('schema-content').textContent = sql;
-            })
-            .catch((error) => {
-                document.getElementById('schema-content').textContent = 'Error: ' + error.message;
+                if (line.match(/^##\s+Índices/) || line.match(/^##\s+Indices/)) {
+                    currentTable = '__indices__';
+                    tables[currentTable] = { columns: [], notes: [] };
+                    inTable = false;
+                    continue;
+                }
+                if (!currentTable) continue;
+                if (line.startsWith('|') && lines[i+1] && /^\|[\s:-]+\|/.test(lines[i+1])) {
+                    pendingHeaders = line.split('|').slice(1, -1).map(c => c.trim());
+                    i++; // skip separator
+                    inTable = true;
+                    continue;
+                }
+                if (inTable && line.startsWith('|')) {
+                    const cells = line.split('|').slice(1, -1).map(c => c.trim());
+                    tables[currentTable].columns.push(cells);
+                    continue;
+                }
+                if (inTable && !line.startsWith('|')) {
+                    inTable = false;
+                }
+                if (line.startsWith('**')) {
+                    tables[currentTable].notes.push(line.replace(/\*\*/g, ''));
+                }
+            }
+            return tables;
+        }
+
+        // ---------- Parse schema.sql ----------
+        function parseSchema(sql) {
+            const tables = [];
+            const indices = [];
+            const tableRegex = /CREATE\s+TABLE\s+(\w+)\s*\(([\s\S]*?)\);/gi;
+            let m;
+            while ((m = tableRegex.exec(sql)) !== null) {
+                tables.push({ name: m[1], ddl: m[0] });
+            }
+            const indexRegex = /CREATE\s+INDEX\s+(\w+)\s+ON\s+(\w+)\s*\(([^)]+)\)/gi;
+            while ((m = indexRegex.exec(sql)) !== null) {
+                indices.push({ name: m[1], table: m[2], column: m[3].trim() });
+            }
+            return { tables, indices };
+        }
+
+        // ---------- Build tree ----------
+        function buildTree() {
+            return [
+                {
+                    id: 'cat-tables',
+                    label: 'Tablas',
+                    icon: 'ph-table',
+                    items: state.tables.map(t => ({ id: 'table-' + t.name, label: t.name, icon: 'ph-table', kind: 'table', payload: t }))
+                },
+                {
+                    id: 'cat-indices',
+                    label: 'Índices',
+                    icon: 'ph-list-magnifying-glass',
+                    items: [{ id: 'all-indices', label: 'Todos los índices', icon: 'ph-list-magnifying-glass', kind: 'indices' }]
+                },
+                {
+                    id: 'cat-ref',
+                    label: 'Referencia',
+                    icon: 'ph-code',
+                    items: [{ id: 'full-ddl', label: 'DDL completo', icon: 'ph-code', kind: 'ddl-full' }]
+                }
+            ];
+        }
+
+        function matchesSearch(label) {
+            if (!state.search) return true;
+            return label.toLowerCase().includes(state.search.toLowerCase());
+        }
+
+        function renderTree() {
+            const tree = document.getElementById('tree');
+            const cats = buildTree();
+            tree.innerHTML = cats.map(cat => {
+                const items = cat.items.filter(it => matchesSearch(it.label));
+                if (state.search && items.length === 0) return '';
+                const collapsed = state.collapsed.has(cat.id) ? 'collapsed' : '';
+                const itemsHtml = items.map(it => {
+                    const active = state.activeId === it.id ? 'active' : '';
+                    return `<div class="item ${active}" data-id="${it.id}"><i class="ph ${it.icon}"></i><span>${escapeHtml(it.label)}</span></div>`;
+                }).join('');
+                return `
+                    <div class="cat ${collapsed}" data-cat="${cat.id}">
+                        <div class="cat-head"><i class="ph ph-caret-down chev"></i><i class="ph ${cat.icon}"></i><span>${cat.label}</span><span class="cat-count">${cat.items.length}</span></div>
+                        <div class="cat-items">${itemsHtml}</div>
+                    </div>
+                `;
+            }).join('');
+
+            tree.querySelectorAll('.cat-head').forEach(el => {
+                el.addEventListener('click', () => {
+                    const id = el.parentElement.dataset.cat;
+                    if (state.collapsed.has(id)) state.collapsed.delete(id);
+                    else state.collapsed.add(id);
+                    renderTree();
+                });
             });
+            tree._cats = cats;
+            tree.querySelectorAll('.item').forEach(el => {
+                el.addEventListener('click', () => {
+                    state.activeId = el.dataset.id;
+                    renderTree();
+                    renderDetail();
+                });
+            });
+        }
+
+        function findItem(id) {
+            const cats = buildTree();
+            for (const c of cats) for (const it of c.items) if (it.id === id) return it;
+            return null;
+        }
+
+        function header(kicker, title, chips = []) {
+            return `
+                <div class="detail-head">
+                    <div class="detail-kicker">${kicker}</div>
+                    <h1 class="detail-title">${escapeHtml(title)}</h1>
+                    <div class="chips">${chips.map(c => `<span class="chip ${c.soft ? 'soft' : ''}">${escapeHtml(c.label)}</span>`).join('')}</div>
+                </div>
+            `;
+        }
+
+        function renderDetail() {
+            const host = document.getElementById('detail');
+            const it = findItem(state.activeId);
+            if (!it) { host.innerHTML = '<div class="empty">Selecciona un item del menú lateral.</div>'; return; }
+            if (it.kind === 'table') return renderTable(host, it.payload);
+            if (it.kind === 'indices') return renderIndices(host);
+            if (it.kind === 'ddl-full') return renderFullDDL(host);
+        }
+
+        function renderTable(host, t) {
+            const dict = state.dictionary[t.name];
+            const tableIndices = state.indices.filter(idx => idx.table === t.name);
+            const colCount = dict ? dict.columns.length : 0;
+            const idxCount = tableIndices.length;
+
+            const colsHtml = dict && dict.columns.length ? `
+                <table class="data">
+                    <thead><tr><th>Columna</th><th>Tipo</th><th>Nulo</th><th>Dominio / Default</th><th>Descripción</th></tr></thead>
+                    <tbody>${dict.columns.map(c => `
+                        <tr>
+                            <td>${c[0].replace(/`([^`]+)`/g, '<code>$1</code>')}</td>
+                            <td>${escapeHtml(c[1] || '')}</td>
+                            <td>${c[2] === 'NO' ? '<span class="yes">NO NULL</span>' : '<span class="no">nullable</span>'}</td>
+                            <td>${(c[3] || '').replace(/`([^`]+)`/g, '<code>$1</code>')}</td>
+                            <td style="color:#b7c7dd;font-size:0.84rem">${(c[4] || '').replace(/`([^`]+)`/g, '<code>$1</code>')}</td>
+                        </tr>
+                    `).join('')}</tbody>
+                </table>
+            ` : '<div class="empty">Sin columnas documentadas.</div>';
+
+            const idxHtml = tableIndices.length ? `
+                <table class="data">
+                    <thead><tr><th>Índice</th><th>Columna</th></tr></thead>
+                    <tbody>${tableIndices.map(i => `<tr><td><code>${escapeHtml(i.name)}</code></td><td><code>${escapeHtml(i.column)}</code></td></tr>`).join('')}</tbody>
+                </table>
+            ` : '<div class="empty">Sin índices definidos para esta tabla.</div>';
+
+            const notesHtml = dict && dict.notes.length ? `
+                <ul class="simple">${dict.notes.map(n => `<li>${n.replace(/`([^`]+)`/g, '<code>$1</code>')}</li>`).join('')}</ul>
+            ` : '';
+
+            host.innerHTML = header('Tabla', t.name, [
+                { label: `${colCount} columnas` },
+                { label: `${idxCount} índices`, soft: true }
+            ]) + `
+                <section class="block">
+                    <h3>Columnas</h3>
+                    ${colsHtml}
+                </section>
+                ${notesHtml ? `<section class="block"><h3>Notas</h3>${notesHtml}</section>` : ''}
+                <section class="block">
+                    <h3>Índices</h3>
+                    ${idxHtml}
+                </section>
+                <section class="block">
+                    <h3>DDL</h3>
+                    <pre class="ddl">${escapeHtml(t.ddl)};</pre>
+                </section>
+            `;
+        }
+
+        function renderIndices(host) {
+            host.innerHTML = header('Índices', 'Todos los índices', [{ label: `${state.indices.length} índices`, soft: true }]) + `
+                <table class="data">
+                    <thead><tr><th>Índice</th><th>Tabla</th><th>Columna</th></tr></thead>
+                    <tbody>${state.indices.map(i => `<tr><td><code>${escapeHtml(i.name)}</code></td><td><code>${escapeHtml(i.table)}</code></td><td><code>${escapeHtml(i.column)}</code></td></tr>`).join('')}</tbody>
+                </table>
+            `;
+        }
+
+        function renderFullDDL(host) {
+            host.innerHTML = header('Referencia', 'DDL completo', [{ label: 'fuente: schema.sql', soft: true }]) + `
+                <pre class="ddl">${escapeHtml(state.schemaSql)}</pre>
+            `;
+        }
+
+        document.getElementById('search').addEventListener('input', (e) => {
+            state.search = e.target.value;
+            renderTree();
+        });
+
+        (async () => {
+            try {
+                const [sqlRes, mdRes] = await Promise.all([
+                    fetch('./schema.sql').then(r => r.text()),
+                    fetch('./data-dictionary.md').then(r => r.text())
+                ]);
+                state.schemaSql = sqlRes;
+                const parsed = parseSchema(sqlRes);
+                state.tables = parsed.tables;
+                state.indices = parsed.indices;
+                state.dictionary = parseDictionary(mdRes);
+                state.activeId = 'table-armc_leads';
+                renderTree();
+                renderDetail();
+            } catch (err) {
+                document.getElementById('detail').innerHTML = `<div class="empty" style="color:#e56b6f">Error cargando datos: ${err.message}</div>`;
+            }
+        })();
     </script>
 </body>
 </html>
