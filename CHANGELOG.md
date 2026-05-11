@@ -2,6 +2,12 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-11] — v3.3.60
+
+### Bump visible tras consolidación del simulador UX ARMC en dev
+
+Bump asociado a la publicación en `dev` del commit `b2dd58b` (consolidación de la última versión editada del simulador UX ARMC desde la candidata reconstruida). Actualiza la versión a `v3.3.60` en los 4 puntos canónicos: footer de `web/index.html`, `.welcome-version` de `prisma-apex/index.html`, "Versión actual" de `CLAUDE.md` y esta entrada de `CHANGELOG.md`. Sin tocar producción, sin merge a `main`.
+
 ## [2026-05-11] — Ajuste interno del simulador UX ARMC (sin cambio de versión visible)
 
 ### Frontend / Documentación — Simulador UX ARMC: justificación por capas + formularios especificados en el diccionario
