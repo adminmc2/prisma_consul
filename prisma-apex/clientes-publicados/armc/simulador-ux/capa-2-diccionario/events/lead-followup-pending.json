@@ -1,8 +1,0 @@
-{
-  "id": "LEAD_FOLLOWUP_PENDING",
-  "paso": "lead_followup_pending",
-  "origen": "decisión del agente humano",
-  "destino": ["armc_leads", "armc_events"],
-  "payload_minimo": ["lead_id", "estado_actual"],
-  "payload_opcional": ["proxima_accion", "motivo_estancamiento"]
-}

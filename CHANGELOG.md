@@ -8,6 +8,46 @@ Registro de cambios relevantes del proyecto PRISMA Consul.
 
 Bump asociado a la publicación en `dev` del commit `1658986` (cherry-pick `-x` del SHA aprobado `854bc6d`: refactor estructural de las Capas 2 y 3 del simulador con patrón sidebar + detalle + búsqueda). Actualiza la versión a `v3.3.61` en los 4 puntos canónicos: footer de `web/index.html`, `.welcome-version` de `prisma-apex/index.html`, "Versión actual" de `CLAUDE.md` y esta entrada de `CHANGELOG.md`. Sin tocar producción, sin merge a `main`.
 
+## [2026-05-11] — Simulador UX ARMC: acotación a alcance verificado + cross-links + Mapa de trazabilidad (sin cambio de versión visible)
+
+### Frontend — Limpieza de contenido no verificado y nueva vista de trazabilidad
+
+Se acota el simulador exclusivamente a las piezas verificadas del flujo de captación: tres nodos en Capa 1 y los contratos/tablas que los soportan. Se añade una cuarta vista (`Mapa`) y cross-links entre las tres capas para que el revisor pueda navegar el sistema como un conjunto coherente, no como documentos sueltos.
+
+#### Capa 1 — Trimming a alcance verificado
+
+- `capa-1-ux/index.html`: eliminados 5 nodos no verificados (`auto_response_sent`, `human_support_requested`, `super_form_completed`, `lead_followup_pending`, `user_created`). Quedan solo los 3 nodos de entrada (`lead_entry_channel`, `web_contact_form_received`, `lead_capture_whatsapp`).
+- Añadido soporte para `crossLinks` en los nodos: cada nodo con contrato muestra un botón "Ver contrato en Capa 2" que dispara `postMessage` al shell.
+- `web_contact_form_received` y `lead_capture_whatsapp` ahora enlazan a sus respectivos contratos en Capa 2.
+
+#### Capa 2 — Trimming + nuevo contrato + cross-links
+
+- Eliminados archivos no verificados: `forms/super-form-completed.json`, `events/auto-response-sent.json`, `events/human-support-requested.json`, `events/lead-followup-pending.json`, `events/super-form-completed.json`, `events/usuario-creado.json`.
+- Nuevo `forms/web-contact-form.json`: contrato del formulario de contacto web (campos `lead_id`, `canal_origen`, `nombre`, `apellido_paterno`, `apellido_materno`, `email`, `telefono`, `opciones_seleccionadas`, `nota`). Todos los campos obligatorios excepto `nota`.
+- `mappings.json` actualizado a solo `web_contact_form` y `lead_capture` → `armc_leads` / `LEAD_CAPTURED` → `armc_leads + armc_events`.
+- Renderizador de Capa 2 añade un bloque "Trazabilidad" con chips clickables: `← Capa 1: <nodo>` y `→ Capa 3: <tabla>`. Listener `postMessage` para selección remota desde otras vistas.
+
+#### Capa 3 — Trimming + nueva sección "Usado por"
+
+- `schema.sql`: tabla `armc_conversations` eliminada (no usada por contratos verificados). Enum `canal_origen` reducido a `WEB_FORM, WHATSAPP`. Enum `estado_actual` y `event_type` reducidos a `LEAD_CAPTURED`. Eliminado índice `idx_armc_conversations_lead_id`.
+- `data-dictionary.md` recortado en paralelo.
+- Renderizador de Capa 3 carga ahora `mappings.json` y añade en cada tabla una sección "Usado por" con chips clickables a los formularios/eventos de Capa 2. Listener `postMessage` para selección remota.
+
+#### Mapa — Nueva vista de trazabilidad
+
+- Nuevo archivo `mapa/index.html`: matriz horizontal con una fila por estado verificado de Capa 1. Cada fila muestra el contrato en Capa 2 y las tablas en Capa 3. Cada celda es un botón clickable que salta a su capa correspondiente.
+- Shell del simulador (`simulador-ux/index.html`) añade cuarta pestaña "Mapa" e implementa el enrutador `postMessage` entre iframes.
+
+#### Documentación
+
+- `README.md` reescrito: estructura del proyecto, alcance verificado, convenciones, navegación con cross-links, glosario. Conserva regla "solo lo verificado" como convención de trabajo.
+
+#### Justificación
+
+- Mantener nodos, contratos o tablas no verificadas en el simulador genera ruido y confusión al revisar. Cada slice debe reflejar exactamente lo confirmado, ni más ni menos.
+- Sin la matriz de trazabilidad y los cross-links, las tres capas se leían como documentos sueltos sin hilo conductor. El patrón aplicado replica lo que hacen EventCatalog, dbt docs, Stoplight y Backstage en sus sistemas reales.
+- Toda la información de conexión ya estaba modelada en los JSON (`paso`, `mappings`); solo faltaba que los renderizadores la mostraran como links navegables.
+
 ## [2026-05-11] — Refactor estructural del Diccionario y SQL del simulador UX ARMC (sin cambio de versión visible)
 
 ### Frontend — Capa 2 y Capa 3 con patrón sidebar + detalle + búsqueda

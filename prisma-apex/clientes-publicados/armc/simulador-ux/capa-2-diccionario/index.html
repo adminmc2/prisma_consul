@@ -272,8 +272,8 @@
     </main>
 
     <script>
-        const FORM_FILES = ['lead-capture', 'super-form-completed'];
-        const EVENT_FILES = ['lead-captured', 'auto-response-sent', 'human-support-requested', 'lead-followup-pending', 'super-form-completed', 'usuario-creado'];
+        const FORM_FILES = ['web-contact-form', 'lead-capture'];
+        const EVENT_FILES = ['lead-captured'];
 
         const state = {
             catalogo: null,
@@ -448,6 +448,16 @@
             `;
         }
 
+        function navChip(label, tab, itemId, soft) {
+            return `<button type="button" class="chip ${soft ? 'soft' : ''}" style="cursor:pointer;font:inherit" onclick="goTo(${tab}, '${itemId}')"><i class="ph ph-arrow-square-out" style="margin-right:4px;font-size:0.78rem"></i>${escapeHtml(label)}</button>`;
+        }
+
+        function goTo(tab, itemId) {
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'navigate', tab: tab, itemId: itemId }, '*');
+            }
+        }
+
         function renderForm(host, f) {
             const chips = [
                 { label: 'canal: ' + f.canal },
@@ -456,7 +466,18 @@
                 { label: 'salida: ' + f.salida, soft: true }
             ];
             const persist = state.mappings.forms[f.id];
+            const traceLinks = [
+                navChip('← Capa 1: ' + f.paso, 1, 'node-' + f.paso, false)
+            ];
+            if (persist) {
+                traceLinks.push(navChip('→ Capa 3: ' + persist.tabla_principal, 3, 'table-' + persist.tabla_principal, true));
+            }
             host.innerHTML = header('Formulario', f.nombre, chips) + `
+                <section class="block">
+                    <h3>Trazabilidad</h3>
+                    <div class="chips">${traceLinks.join('')}</div>
+                </section>`;
+            host.innerHTML += `
                 <section class="block">
                     <h3>Campos</h3>
                     <table class="data"><thead><tr><th>Nombre</th><th>Tipo</th><th>Obligatorio</th><th>Fuente / Valor</th></tr></thead><tbody>
@@ -503,7 +524,17 @@
                 { label: 'paso: ' + e.paso, soft: true },
                 { label: 'origen: ' + e.origen }
             ];
+            const eventMap = state.mappings.events[e.id];
+            const traceLinks = [navChip('← Capa 1: ' + e.paso, 1, 'node-' + e.paso, false)];
+            if (eventMap && eventMap.tablas) {
+                eventMap.tablas.forEach(t => traceLinks.push(navChip('→ Capa 3: ' + t, 3, 'table-' + t, true)));
+            }
             host.innerHTML = header('Evento', e.id, chips) + `
+                <section class="block">
+                    <h3>Trazabilidad</h3>
+                    <div class="chips">${traceLinks.join('')}</div>
+                </section>`;
+            host.innerHTML += `
                 <section class="block">
                     <h3>Destino</h3>
                     <div>${e.destino.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
@@ -554,6 +585,17 @@
         document.getElementById('search').addEventListener('input', (e) => {
             state.search = e.target.value;
             renderTree();
+        });
+
+        // Listen for cross-tab select messages from shell
+        window.addEventListener('message', (e) => {
+            const msg = e.data;
+            if (!msg || msg.type !== 'select' || !msg.itemId) return;
+            if (findItem(msg.itemId)) {
+                state.activeId = msg.itemId;
+                renderTree();
+                renderDetail();
+            }
         });
 
         (async () => {

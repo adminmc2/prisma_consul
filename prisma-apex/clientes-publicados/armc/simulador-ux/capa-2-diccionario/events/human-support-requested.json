@@ -1,8 +1,0 @@
-{
-  "id": "HUMAN_SUPPORT_REQUESTED",
-  "paso": "human_support_requested",
-  "origen": "decisión posterior a AUTO_RESPONSE_SENT",
-  "destino": ["armc_events", "armc_conversations"],
-  "payload_minimo": ["lead_id", "motivo_escalado", "estado_actual"],
-  "payload_opcional": ["resumen_conversacion", "agente_id"]
-}

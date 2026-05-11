@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de trazabilidad — Simulador UX ARMC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../../../shared/fonts/phosphor/phosphor.css">
+    <style>
+        :root {
+            --prisma-navy: #101B2C;
+            --tech-cyan: #31BEEF;
+            --soft-blue: #A1B8F2;
+            --clinical-white: #FAF9F6;
+            --muted: #93A6BF;
+            --border: rgba(161, 184, 242, 0.18);
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; min-height: 100%; background: var(--prisma-navy); color: var(--clinical-white); font-family: 'Source Sans 3', sans-serif; }
+        .page { max-width: 1400px; margin: 0 auto; padding: 28px 32px 48px; }
+        h1 { font-family: 'Quicksand', sans-serif; font-size: 1.6rem; color: var(--tech-cyan); margin: 0 0 6px; }
+        .lede { color: var(--soft-blue); margin: 0 0 22px; font-size: 0.92rem; line-height: 1.5; max-width: 820px; }
+        .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+        .legend .item { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; font-size: 0.82rem; color: var(--soft-blue); }
+        .legend .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot.c1 { background: #31BEEF; }
+        .dot.c2 { background: #A1B8F2; }
+        .dot.c3 { background: #9ad29a; }
+        table.matrix { width: 100%; border-collapse: collapse; font-size: 0.88rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        table.matrix th, table.matrix td { text-align: left; padding: 14px 16px; border-bottom: 1px solid rgba(161,184,242,0.1); vertical-align: top; }
+        table.matrix thead th { background: rgba(49, 190, 239, 0.06); color: var(--tech-cyan); font-family: 'Quicksand', sans-serif; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
+        table.matrix tbody tr:hover { background: rgba(255,255,255,0.02); }
+        .col-c1 { width: 28%; }
+        .col-c2 { width: 28%; }
+        .col-c3 { width: 28%; }
+        .col-note { width: 16%; color: var(--muted); font-size: 0.84rem; }
+        .nav-btn { background: rgba(49, 190, 239, 0.08); border: 1px solid rgba(49, 190, 239, 0.25); color: var(--tech-cyan); padding: 6px 12px; border-radius: 999px; cursor: pointer; font: inherit; font-size: 0.78rem; font-family: ui-monospace, SFMono-Regular, monospace; display: inline-flex; align-items: center; gap: 6px; margin: 2px 4px 2px 0; }
+        .nav-btn:hover { background: rgba(49, 190, 239, 0.16); }
+        .nav-btn.soft { background: rgba(161, 184, 242, 0.08); border-color: rgba(161, 184, 242, 0.25); color: var(--soft-blue); }
+        .nav-btn.soft:hover { background: rgba(161, 184, 242, 0.16); }
+        .none { color: var(--muted); font-style: italic; font-size: 0.84rem; }
+        h2.section { margin: 28px 0 12px; font-family: 'Quicksand', sans-serif; font-size: 0.92rem; color: var(--tech-cyan); text-transform: uppercase; letter-spacing: 0.06em; }
+        .note { padding: 12px 14px; background: rgba(49, 190, 239, 0.06); border: 1px solid rgba(49, 190, 239, 0.18); border-radius: 10px; color: #d7e3f2; font-size: 0.88rem; line-height: 1.55; }
+        code { font-family: ui-monospace, SFMono-Regular, monospace; background: rgba(255,255,255,0.04); padding: 2px 7px; border-radius: 4px; color: var(--tech-cyan); font-size: 0.84rem; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <h1><i class="ph ph-flow-arrow" style="color:var(--tech-cyan)"></i> Mapa de trazabilidad</h1>
+        <p class="lede">Una fila por estado verificado del flujo. Lee de izquierda a derecha: estado de UX (Capa 1) → contrato operativo (Capa 2) → persistencia (Capa 3). Click en cualquier botón para saltar al item en su capa.</p>
+
+        <div class="legend">
+            <span class="item"><span class="dot c1"></span> Capa 1 — Estados de UX</span>
+            <span class="item"><span class="dot c2"></span> Capa 2 — Formularios y eventos</span>
+            <span class="item"><span class="dot c3"></span> Capa 3 — Tablas SQL</span>
+        </div>
+
+        <h2 class="section">Flujo verificado</h2>
+        <table class="matrix">
+            <thead>
+                <tr>
+                    <th class="col-c1">Capa 1 (estado)</th>
+                    <th class="col-c2">Capa 2 (formulario · evento)</th>
+                    <th class="col-c3">Capa 3 (persistencia)</th>
+                    <th class="col-note">Nota</th>
+                </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+        </table>
+
+        <h2 class="section">Cómo leer este mapa</h2>
+        <div class="note">
+            Esta matriz muestra solo lo verificado a fecha de hoy: tres estados de Capa 1 y el contrato <code>lead_capture</code> que persiste en <code>armc_leads</code> + <code>armc_events</code>. Los estados visualizados en Capa 1 sin contrato (como <code>lead_entry_channel</code>) son construcciones puramente visuales y no aparecen en Capa 2 ni Capa 3. A medida que se verifiquen nuevas piezas del flujo, se añadirán filas a esta matriz.
+        </div>
+    </div>
+
+    <script>
+        const ROWS = [
+            {
+                c1: 'lead_entry_channel',
+                c1_label: 'Entrada del lead',
+                c2_form: null,
+                c2_event: null,
+                c3: [],
+                note: 'Dispatcher visual. Sin datos ni evento.'
+            },
+            {
+                c1: 'web_contact_form_received',
+                c1_label: 'Contacto web recibido',
+                c2_form: 'web_contact_form',
+                c2_event: 'LEAD_CAPTURED',
+                c3: ['armc_leads', 'armc_events'],
+                note: 'Captura por formulario web con todos los campos obligatorios.'
+            },
+            {
+                c1: 'lead_capture_whatsapp',
+                c1_label: 'Contacto por WhatsApp recibido',
+                c2_form: 'lead_capture',
+                c2_event: 'LEAD_CAPTURED',
+                c3: ['armc_leads', 'armc_events'],
+                note: 'Captura por WhatsApp con clasificación de demandas.'
+            }
+        ];
+
+        function goTo(tab, itemId) {
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'navigate', tab: tab, itemId: itemId }, '*');
+            }
+        }
+
+        function btn(label, tab, itemId, soft) {
+            return `<button type="button" class="nav-btn ${soft ? 'soft' : ''}" onclick="goTo(${tab}, '${itemId}')"><i class="ph ph-arrow-square-out"></i>${label}</button>`;
+        }
+
+        document.getElementById('rows').innerHTML = ROWS.map(r => {
+            const c1 = btn(r.c1, 1, 'node-' + r.c1, false);
+            const c2parts = [];
+            if (r.c2_form) c2parts.push(btn(r.c2_form, 2, 'form-' + r.c2_form, false));
+            if (r.c2_event) c2parts.push(btn(r.c2_event, 2, 'event-' + r.c2_event, true));
+            const c2 = c2parts.length ? c2parts.join('') : '<span class="none">— sin contrato —</span>';
+            const c3 = r.c3.length ? r.c3.map(t => btn(t, 3, 'table-' + t, true)).join('') : '<span class="none">— sin persistencia —</span>';
+            return `<tr><td>${c1}<div style="color:var(--muted);font-size:0.78rem;margin-top:4px">${r.c1_label}</div></td><td>${c2}</td><td>${c3}</td><td>${r.note}</td></tr>`;
+        }).join('');
+    </script>
+</body>
+</html>

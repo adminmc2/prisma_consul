@@ -45,6 +45,7 @@
       <button class="sim-tab active" data-view="1" onclick="switchView('1')"><i class="ph ph-tree-structure"></i> Capa 1: UX</button>
       <button class="sim-tab" data-view="2" onclick="switchView('2')"><i class="ph ph-book-bookmark"></i> Capa 2: Diccionario</button>
       <button class="sim-tab" data-view="3" onclick="switchView('3')"><i class="ph ph-database"></i> Capa 3: BD (SQL)</button>
+      <button class="sim-tab" data-view="4" onclick="switchView('4')"><i class="ph ph-flow-arrow"></i> Mapa</button>
     </div>
   </header>
 
@@ -58,6 +59,9 @@
     <div id="view-3" class="view">
       <iframe src="./capa-3-sql/index.html" title="Capa 3: BD (SQL)"></iframe>
     </div>
+    <div id="view-4" class="view">
+      <iframe src="./mapa/index.html" title="Mapa"></iframe>
+    </div>
   </main>
 
   <script>
@@ -65,6 +69,18 @@
       document.querySelectorAll('.sim-tab').forEach(b => b.classList.toggle('active', b.dataset.view === id));
       document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + id));
     }
+
+    // Cross-layer navigation via postMessage
+    window.addEventListener('message', (e) => {
+      const msg = e.data;
+      if (!msg || msg.type !== 'navigate') return;
+      const tab = String(msg.tab);
+      switchView(tab);
+      setTimeout(() => {
+        const ifr = document.querySelector('#view-' + tab + ' iframe');
+        if (ifr && ifr.contentWindow) ifr.contentWindow.postMessage({ type: 'select', itemId: msg.itemId }, '*');
+      }, 80);
+    });
   </script>
 </body>
 </html>

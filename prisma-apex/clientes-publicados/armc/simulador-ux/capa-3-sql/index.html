@@ -110,12 +110,23 @@
     <script>
         const state = {
             schemaSql: '',
-            tables: [],         // [{name, ddl, columns:[{col,tipo,nulo,default,desc}], constraints:[]}]
-            indices: [],        // [{name, table, column}]
+            tables: [],
+            indices: [],
+            dictionary: {},
+            mappings: null,
             activeId: null,
             collapsed: new Set(),
             search: ''
         };
+
+        function goTo(tab, itemId) {
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'navigate', tab: tab, itemId: itemId }, '*');
+            }
+        }
+        function navChip(label, tab, itemId, soft) {
+            return `<button type="button" class="chip ${soft ? 'soft' : ''}" style="cursor:pointer;font:inherit" onclick="goTo(${tab}, '${itemId}')"><i class="ph ph-arrow-square-out" style="margin-right:4px;font-size:0.78rem"></i>${label}</button>`;
+        }
 
         function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
@@ -302,10 +313,30 @@
                 <ul class="simple">${dict.notes.map(n => `<li>${n.replace(/`([^`]+)`/g, '<code>$1</code>')}</li>`).join('')}</ul>
             ` : '';
 
+            // "Usado por": derive from mappings.json — forms whose persist tables include this table, and events whose tablas include this table.
+            const usedByForms = [];
+            const usedByEvents = [];
+            if (state.mappings) {
+                Object.entries(state.mappings.forms || {}).forEach(([fid, def]) => {
+                    if (def.tabla_principal === t.name || def.tabla_secundaria === t.name) usedByForms.push(fid);
+                });
+                Object.entries(state.mappings.events || {}).forEach(([eid, def]) => {
+                    if ((def.tablas || []).includes(t.name)) usedByEvents.push(eid);
+                });
+            }
+            const usedByHtml = (usedByForms.length || usedByEvents.length) ? `
+                <section class="block">
+                    <h3>Usado por</h3>
+                    <div class="chips">
+                        ${usedByForms.map(f => navChip('← Form: ' + f, 2, 'form-' + f, false)).join('')}
+                        ${usedByEvents.map(ev => navChip('← Evento: ' + ev, 2, 'event-' + ev, true)).join('')}
+                    </div>
+                </section>` : '';
+
             host.innerHTML = header('Tabla', t.name, [
                 { label: `${colCount} columnas` },
                 { label: `${idxCount} índices`, soft: true }
-            ]) + `
+            ]) + usedByHtml + `
                 <section class="block">
                     <h3>Columnas</h3>
                     ${colsHtml}
@@ -342,17 +373,30 @@
             renderTree();
         });
 
+        // Listen for cross-tab select messages from shell
+        window.addEventListener('message', (e) => {
+            const msg = e.data;
+            if (!msg || msg.type !== 'select' || !msg.itemId) return;
+            if (findItem(msg.itemId)) {
+                state.activeId = msg.itemId;
+                renderTree();
+                renderDetail();
+            }
+        });
+
         (async () => {
             try {
-                const [sqlRes, mdRes] = await Promise.all([
+                const [sqlRes, mdRes, mappingsRes] = await Promise.all([
                     fetch('./schema.sql').then(r => r.text()),
-                    fetch('./data-dictionary.md').then(r => r.text())
+                    fetch('./data-dictionary.md').then(r => r.text()),
+                    fetch('../capa-2-diccionario/mappings.json').then(r => r.ok ? r.json() : null).catch(() => null)
                 ]);
                 state.schemaSql = sqlRes;
                 const parsed = parseSchema(sqlRes);
                 state.tables = parsed.tables;
                 state.indices = parsed.indices;
                 state.dictionary = parseDictionary(mdRes);
+                state.mappings = mappingsRes;
                 state.activeId = 'table-armc_leads';
                 renderTree();
                 renderDetail();

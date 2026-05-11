@@ -1,0 +1,27 @@
+{
+  "id": "web_contact_form",
+  "nombre": "Formulario de contacto web",
+  "canal": "WEB_FORM",
+  "paso": "web_contact_form_received",
+  "dispara_evento": "LEAD_CAPTURED",
+  "salida": "LEAD_CAPTURED",
+  "campos": [
+    { "nombre": "lead_id", "tipo": "uuid", "obligatorio": true, "fuente": "sistema" },
+    { "nombre": "canal_origen", "tipo": "enum", "obligatorio": true, "valor": "WEB_FORM", "fuente": "sistema" },
+    { "nombre": "nombre", "tipo": "texto_corto", "obligatorio": true },
+    { "nombre": "apellido_paterno", "tipo": "texto_corto", "obligatorio": true },
+    { "nombre": "apellido_materno", "tipo": "texto_corto", "obligatorio": true },
+    { "nombre": "email", "tipo": "email", "obligatorio": true },
+    { "nombre": "telefono", "tipo": "telefono", "obligatorio": true },
+    { "nombre": "opciones_seleccionadas", "tipo": "multiseleccion", "obligatorio": true, "fuente": "catalogo-demandas" },
+    { "nombre": "nota", "tipo": "texto_libre", "obligatorio": false }
+  ],
+  "derivados": [
+    { "nombre": "lineas_servicio_detectadas", "origen": "opciones_seleccionadas → catalogo-demandas.lineas_servicio" }
+  ],
+  "reglas": [
+    "Todos los campos son obligatorios excepto nota.",
+    "canal_origen fijo en WEB_FORM.",
+    "Al menos una opción seleccionada."
+  ]
+}

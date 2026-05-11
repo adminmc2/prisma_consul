@@ -1,8 +1,0 @@
-{
-  "id": "SUPER_FORM_COMPLETED",
-  "paso": "super_form_completed",
-  "origen": "super_form_completed",
-  "destino": ["armc_events", "armc_leads"],
-  "payload_minimo": ["lead_id", "resumen_preclinico", "agenda_valoracion", "estado_actual"],
-  "payload_opcional": ["canal_seguimiento", "observaciones_cierre", "ultima_interaccion"]
-}

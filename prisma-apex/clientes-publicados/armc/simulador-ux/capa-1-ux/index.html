@@ -485,6 +485,9 @@
                 ],
                 note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
                 terminalCopy: 'Contacto web recibido.',
+                crossLinks: [
+                    { label: 'Ver contrato web_contact_form en Capa 2', tab: 2, itemId: 'form-web_contact_form' }
+                ],
                 actions: []
             },
             lead_capture_whatsapp: {
@@ -502,112 +505,11 @@
                 ],
                 note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
                 terminalCopy: 'Contacto por WhatsApp recibido.',
-                actions: []
-            },
-            auto_response_sent: {
-                title: 'Auto Response Sent',
-                key: 'AUTO_RESPONSE_SENT',
-                x: 1460,
-                y: 420,
-                width: 360,
-                description: 'El sistema responde con un template guiado por la intención ya clasificada. El lead decide si avanza o si necesita humano.',
-                dataPoints: [
-                    'Template WA según intención',
-                    'Contexto mínimo de demanda',
-                    'Siguiente paso recomendado'
-                ],
-                actions: [
-                    {
-                        id: 'lead-satisfied',
-                        label: 'Lead satisfecho y acepta continuar',
-                        targetId: 'super_form_completed',
-                        dbAction: "INSERT armc_conversations(lead_id=[lead_id], tipo_interaccion='AUTO_RESPONSE', contenido=[template_wa], satisfaccion='SATISFIED');"
-                    },
-                    {
-                        id: 'request-human-support',
-                        label: 'Lead pide aclaración humana',
-                        targetId: 'human_support_requested',
-                        dbAction: "INSERT armc_events(lead_id=[lead_id], event_type='HUMAN_SUPPORT_REQUESTED', payload={motivo_escalado:[motivo], resumen_conversacion:[resumen?], estado_actual:'HUMAN_SUPPORT_REQUESTED'});"
-                    }
-                ]
-            },
-            human_support_requested: {
-                title: 'Human Support Requested',
-                key: 'HUMAN_SUPPORT_REQUESTED',
-                x: 2140,
-                y: 220,
-                width: 360,
-                description: 'Escalado a humano con el contexto ya resumido. El agente decide si logra destrabar el caso o si queda seguimiento pendiente.',
-                dataPoints: [
-                    'Resumen de intención',
-                    'Respuesta previa enviada',
-                    'Motivo de escalado'
-                ],
-                actions: [
-                    {
-                        id: 'human-resolves',
-                        label: 'Agente humano resuelve y pasa a intake preclinico',
-                        targetId: 'super_form_completed',
-                        dbAction: "INSERT armc_conversations(lead_id=[lead_id], agente_id=[agente_id], tipo_interaccion='HUMAN_ESCALATION', contenido=[resumen_resolucion], satisfaccion='ESCALATED');"
-                    },
-                    {
-                        id: 'followup-pending',
-                        label: 'Sin avance, queda seguimiento pendiente',
-                        targetId: 'lead_followup_pending',
-                        dbAction: "UPDATE armc_leads SET estado_actual='LEAD_FOLLOWUP_PENDING';"
-                    }
-                ]
-            },
-            super_form_completed: {
-                title: 'Super Form Completed',
-                key: 'SUPER_FORM_COMPLETED',
-                x: 2140,
-                y: 620,
-                width: 360,
-                description: 'El lead completa el intake preclínico fuera de esta capa. Aquí solo se representa la transición desde interés a conversión operativa.',
-                dataPoints: [
-                    'Resumen preclínico validado',
-                    'Agenda de valoración confirmada',
-                    'Listo para mutación a usuario'
-                ],
-                note: 'Su estructura detallada ya se documenta en el diccionario operativo de Capa 2. El grafo solo muestra cuándo se entra y cuándo se sale de ese paso.',
-                actions: [
-                    {
-                        id: 'create-user',
-                        label: 'Cerrar ciclo operativo y crear usuario',
-                        targetId: 'user_created',
-                        dbAction: "INSERT armc_events(lead_id=[lead_id], event_type='SUPER_FORM_COMPLETED', payload={resumen_preclinico:[resumen_preclinico], agenda_valoracion:[agenda_valoracion], canal_seguimiento:[canal_seguimiento?], observaciones_cierre:[observaciones_cierre?], estado_actual:'SUPER_FORM_COMPLETED'}); INSERT armc_events(lead_id=[lead_id], event_type='USUARIO_CREADO', payload={ultima_interaccion:[timestamp], agenda_valoracion:[agenda_valoracion], canal_seguimiento:[canal_seguimiento?], estado_actual:'USUARIO_CREADO'}); UPDATE armc_leads SET estado_actual='USUARIO_CREADO', ultima_interaccion=[timestamp] WHERE id=[lead_id];"
-                    }
-                ]
-            },
-            lead_followup_pending: {
-                title: 'Lead Follow-up Pending',
-                key: 'LEAD_FOLLOWUP_PENDING',
-                x: 2820,
-                y: 220,
-                width: 320,
-                description: 'El caso queda vivo en seguimiento comercial posterior sin conversión inmediata.',
-                dataPoints: [
-                    'Pendiente de contacto',
-                    'Seguimiento comercial',
-                    'No convertido todavía'
+                crossLinks: [
+                    { label: 'Ver contrato lead_capture en Capa 2', tab: 2, itemId: 'form-lead_capture' }
                 ],
                 actions: []
             },
-            user_created: {
-                title: 'Usuario Creado',
-                key: 'USUARIO_CREADO',
-                x: 2820,
-                y: 620,
-                width: 320,
-                description: 'Fin del flujo de captación. El lead ya entra al circuito operativo siguiente como usuario.',
-                dataPoints: [
-                    'Conversión completada',
-                    'Usuario operativo',
-                    'Fin del simulador'
-                ],
-                actions: []
-            }
         };
 
         const container = document.getElementById('nodes-container');
@@ -744,12 +646,32 @@
             return button;
         }
 
+        function renderCrossLinks(body, data) {
+            if (!data.crossLinks || !data.crossLinks.length) return;
+            const wrap = document.createElement('div');
+            wrap.style.cssText = 'margin-top:12px;display:flex;flex-direction:column;gap:6px';
+            data.crossLinks.forEach((cl) => {
+                const a = document.createElement('button');
+                a.type = 'button';
+                a.style.cssText = 'background:rgba(49,190,239,0.08);border:1px solid rgba(49,190,239,0.3);color:var(--tech-cyan);padding:8px 12px;border-radius:8px;cursor:pointer;font:inherit;font-size:0.82rem;text-align:left;display:flex;align-items:center;gap:8px';
+                a.innerHTML = '<i class="ph ph-arrow-square-out"></i><span>' + escapeHtml(cl.label) + '</span>';
+                a.addEventListener('click', () => {
+                    if (window.parent && window.parent !== window) {
+                        window.parent.postMessage({ type: 'navigate', tab: cl.tab, itemId: cl.itemId }, '*');
+                    }
+                });
+                wrap.appendChild(a);
+            });
+            body.appendChild(wrap);
+        }
+
         function renderActions(body, nodeId, data) {
             if (!data.actions.length) {
                 const terminal = document.createElement('div');
                 terminal.className = 'terminal-copy';
                 terminal.textContent = data.terminalCopy || '(Punto final de este flujo)';
                 body.appendChild(terminal);
+                renderCrossLinks(body, data);
                 return;
             }
 
@@ -759,6 +681,7 @@
                 list.appendChild(createActionButton(nodeId, action));
             });
             body.appendChild(list);
+            renderCrossLinks(body, data);
         }
 
         function renderNodes() {
@@ -889,6 +812,15 @@
 
         window.addEventListener('resize', () => {
             setTimeout(drawLines, 50);
+        });
+
+        // Listen for cross-tab select messages from shell (focus a node)
+        window.addEventListener('message', (e) => {
+            const msg = e.data;
+            if (!msg || msg.type !== 'select' || !msg.itemId) return;
+            // itemId format expected: "node-<nodeId>"
+            const m = String(msg.itemId).match(/^node-(.+)$/);
+            if (m && nodesData[m[1]]) focusNode(m[1]);
         });
 
         window.onload = () => {
