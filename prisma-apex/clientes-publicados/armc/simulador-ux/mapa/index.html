@@ -49,7 +49,7 @@
 <body>
     <div class="page">
         <h1><i class="ph ph-flow-arrow" style="color:var(--tech-cyan)"></i> Mapa de trazabilidad</h1>
-        <p class="lede">Una fila por estado verificado del flujo. Lee de izquierda a derecha: estado de UX (Capa 1) → contrato operativo (Capa 2) → persistencia (Capa 3). Click en cualquier botón para saltar al item en su capa.</p>
+        <p class="lede">Una fila por estado verificado del flujo. Los formularios web y WhatsApp son input: recogen los datos del lead. La persistencia (evento + escritura en BD) ocurre una sola vez, en el nodo de convergencia <code>lead_captured</code>. Click en cualquier botón para saltar al item en su capa.</p>
 
         <div class="legend">
             <span class="item"><span class="dot c1"></span> Capa 1 — Estados de UX</span>
@@ -72,7 +72,7 @@
 
         <h2 class="section">Cómo leer este mapa</h2>
         <div class="note">
-            Esta matriz muestra solo lo verificado a fecha de hoy: tres estados de Capa 1 y el contrato <code>lead_capture</code> que persiste en <code>armc_leads</code> + <code>armc_events</code>. Los estados visualizados en Capa 1 sin contrato (como <code>lead_entry_channel</code>) son construcciones puramente visuales y no aparecen en Capa 2 ni Capa 3. A medida que se verifiquen nuevas piezas del flujo, se añadirán filas a esta matriz.
+            Esta matriz muestra los cuatro estados verificados de Capa 1. Los dos formularios (<code>web_contact_form</code> y <code>lead_capture</code>) son input por canal: recogen datos del lead pero no persisten todavía. La emisión del evento <code>LEAD_CAPTURED</code> y la escritura en <code>armc_leads</code> + <code>armc_events</code> ocurren una sola vez por lead, en el nodo de convergencia <code>lead_captured</code>. Los estados visualizados sin contrato (como <code>lead_entry_channel</code>) son construcciones puramente visuales. A medida que se verifiquen nuevas piezas del flujo, se añadirán filas a esta matriz.
         </div>
     </div>
 
@@ -90,17 +90,25 @@
                 c1: 'web_contact_form_received',
                 c1_label: 'Contacto web recibido',
                 c2_form: 'web_contact_form',
-                c2_event: 'LEAD_CAPTURED',
-                c3: ['armc_leads', 'armc_events'],
-                note: 'Captura por formulario web con todos los campos obligatorios.'
+                c2_event: null,
+                c3: [],
+                note: 'Input por canal web. La persistencia ocurre al converger en lead_captured.'
             },
             {
                 c1: 'lead_capture_whatsapp',
                 c1_label: 'Contacto por WhatsApp recibido',
                 c2_form: 'lead_capture',
+                c2_event: null,
+                c3: [],
+                note: 'Input por canal WhatsApp. La persistencia ocurre al converger en lead_captured.'
+            },
+            {
+                c1: 'lead_captured',
+                c1_label: 'Lead capturado (convergencia)',
+                c2_form: null,
                 c2_event: 'LEAD_CAPTURED',
                 c3: ['armc_leads', 'armc_events'],
-                note: 'Captura por WhatsApp con clasificación de demandas.'
+                note: 'Punto único de persistencia. Emite el evento y escribe en BD.'
             }
         ];
 

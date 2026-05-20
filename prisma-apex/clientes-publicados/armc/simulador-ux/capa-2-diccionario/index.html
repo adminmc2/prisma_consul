@@ -465,6 +465,7 @@
                 { label: 'evento: ' + f.dispara_evento },
                 { label: 'salida: ' + f.salida, soft: true }
             ];
+            if (f.version) chips.push({ label: 'v' + f.version, soft: true });
             const persist = state.mappings.forms[f.id];
             const traceLinks = [
                 navChip('← Capa 1: ' + f.paso, 1, 'node-' + f.paso, false)
@@ -479,18 +480,33 @@
                 </section>`;
             host.innerHTML += `
                 <section class="block">
-                    <h3>Campos</h3>
-                    <table class="data"><thead><tr><th>Nombre</th><th>Tipo</th><th>Obligatorio</th><th>Fuente / Valor</th></tr></thead><tbody>
-                    ${f.campos.map(c => `
-                        <tr>
-                            <td><code>${escapeHtml(c.nombre)}</code></td>
-                            <td>${escapeHtml(c.tipo)}</td>
-                            <td>${c.obligatorio ? '<span class="yes">sí</span>' : '<span class="no">no</span>'}</td>
-                            <td>${c.fuente ? `fuente: <code>${escapeHtml(c.fuente)}</code>` : ''}${c.valor ? ` valor: <code>${escapeHtml(c.valor)}</code>` : ''}</td>
-                        </tr>
-                    `).join('')}
+                    <h3>Campos (input de captura)</h3>
+                    <table class="data"><thead><tr><th>Nombre</th><th>Tipo</th><th>Obligatorio</th><th>Restricciones</th><th>Ejemplo</th></tr></thead><tbody>
+                    ${f.campos.map(c => {
+                        const restr = [];
+                        if (c.min !== undefined) restr.push('min: ' + c.min);
+                        if (c.max !== undefined) restr.push('max: ' + c.max);
+                        if (c.min_items !== undefined) restr.push('min items: ' + c.min_items);
+                        if (c.max_items !== undefined) restr.push('max items: ' + c.max_items);
+                        if (c.pattern) restr.push('pattern: <code>' + escapeHtml(c.pattern) + '</code>');
+                        if (c.nullable) restr.push('nullable');
+                        if (c.fuente) restr.push('fuente: <code>' + escapeHtml(c.fuente) + '</code>');
+                        return '<tr><td><code>' + escapeHtml(c.nombre) + '</code></td>' +
+                            '<td>' + escapeHtml(c.tipo) + '</td>' +
+                            '<td>' + (c.obligatorio ? '<span class="yes">sí</span>' : '<span class="no">no</span>') + '</td>' +
+                            '<td style="font-size:0.82rem;color:#b7c7dd">' + (restr.join(' · ') || '—') + '</td>' +
+                            '<td style="font-size:0.82rem;color:#b7c7dd">' + (c.ejemplo !== undefined ? '<code>' + escapeHtml(JSON.stringify(c.ejemplo)) + '</code>' : '—') + '</td></tr>';
+                    }).join('')}
                     </tbody></table>
                 </section>
+                ${f.genera && f.genera.length ? `
+                    <section class="block">
+                        <h3>Genera (atributos asignados por el sistema)</h3>
+                        <table class="data"><thead><tr><th>Nombre</th><th>Tipo</th><th>Descripción</th></tr></thead><tbody>
+                        ${f.genera.map(g => `<tr><td><code>${escapeHtml(g.nombre)}</code></td><td>${escapeHtml(g.tipo)}</td><td style="color:#b7c7dd;font-size:0.86rem">${escapeHtml(g.descripcion || '')}</td></tr>`).join('')}
+                        </tbody></table>
+                    </section>
+                ` : ''}
                 ${f.derivados && f.derivados.length ? `
                     <section class="block">
                         <h3>Derivados</h3>
@@ -520,12 +536,15 @@
         }
 
         function renderEvent(host, e) {
+            const origenStr = Array.isArray(e.origen) ? e.origen.join(', ') : e.origen;
             const chips = [
                 { label: 'paso: ' + e.paso, soft: true },
-                { label: 'origen: ' + e.origen }
+                { label: 'origen: ' + origenStr }
             ];
             const eventMap = state.mappings.events[e.id];
             const traceLinks = [navChip('← Capa 1: ' + e.paso, 1, 'node-' + e.paso, false)];
+            const origenArr = Array.isArray(e.origen) ? e.origen : (e.origen ? [e.origen] : []);
+            origenArr.forEach(o => traceLinks.push(navChip('↑ Form: ' + o, 2, 'form-' + o, false)));
             if (eventMap && eventMap.tablas) {
                 eventMap.tablas.forEach(t => traceLinks.push(navChip('→ Capa 3: ' + t, 3, 'table-' + t, true)));
             }

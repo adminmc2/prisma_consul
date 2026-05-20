@@ -19,6 +19,7 @@ CREATE TABLE armc_leads (
     estado_actual VARCHAR(50) NOT NULL DEFAULT 'LEAD_CAPTURED' CHECK (
         estado_actual IN ('LEAD_CAPTURED')
     ),
+    fecha_primer_contacto TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

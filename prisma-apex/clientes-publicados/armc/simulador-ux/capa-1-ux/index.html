@@ -484,11 +484,17 @@
                     'Ingreso al flujo inicial'
                 ],
                 note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
-                terminalCopy: 'Contacto web recibido.',
                 crossLinks: [
                     { label: 'Ver contrato web_contact_form en Capa 2', tab: 2, itemId: 'form-web_contact_form' }
                 ],
-                actions: []
+                actions: [
+                    {
+                        id: 'register-lead-web',
+                        label: 'Registrar lead capturado',
+                        targetId: 'lead_captured',
+                        dbAction: "INSERT armc_leads(canal_origen='WEB_FORM', ...) RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CAPTURED');"
+                    }
+                ]
             },
             lead_capture_whatsapp: {
                 title: 'Contacto por WhatsApp recibido',
@@ -504,9 +510,36 @@
                     'Ingreso al flujo inicial'
                 ],
                 note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
-                terminalCopy: 'Contacto por WhatsApp recibido.',
                 crossLinks: [
                     { label: 'Ver contrato lead_capture en Capa 2', tab: 2, itemId: 'form-lead_capture' }
+                ],
+                actions: [
+                    {
+                        id: 'register-lead-whatsapp',
+                        label: 'Registrar lead capturado',
+                        targetId: 'lead_captured',
+                        dbAction: "INSERT armc_leads(canal_origen='WHATSAPP', ...) RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CAPTURED');"
+                    }
+                ]
+            },
+            lead_captured: {
+                title: 'Lead capturado',
+                key: 'LEAD_CAPTURED',
+                x: 1700,
+                y: 480,
+                width: 360,
+                description: 'Convergencia: el lead queda registrado en el sistema con un id único, independientemente del canal de entrada.',
+                dataPoints: [
+                    'id único asignado por el sistema',
+                    'estado: LEAD_CAPTURED',
+                    'canal_origen preservado',
+                    'fecha_primer_contacto registrada',
+                    'evento LEAD_CAPTURED emitido'
+                ],
+                terminalCopy: 'Lead capturado en el sistema.',
+                crossLinks: [
+                    { label: 'Ver evento LEAD_CAPTURED en Capa 2', tab: 2, itemId: 'event-LEAD_CAPTURED' },
+                    { label: 'Ver tabla armc_leads en Capa 3', tab: 3, itemId: 'table-armc_leads' }
                 ],
                 actions: []
             },
@@ -530,10 +563,9 @@
         }
 
         function log(message, type = 'info', dbAction = '') {
-            const time = new Date().toLocaleTimeString('es-ES', { hour12: false });
             const div = document.createElement('div');
             const toneClass = type === 'success' ? 'log-success' : type === 'error' ? 'log-error' : type === 'warning' ? 'log-warning' : 'log-info';
-            let html = '<span class="log-time">[' + time + ']</span><span class="' + toneClass + '">' + escapeHtml(message) + '</span>';
+            let html = '<span class="' + toneClass + '">' + escapeHtml(message) + '</span>';
             if (dbAction) {
                 html += '<span class="log-db">' + escapeHtml(dbAction) + '</span>';
             }

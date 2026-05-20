@@ -15,9 +15,9 @@ Visualización en cuatro vistas del flujo de captación y persistencia de leads 
 
 A fecha actual solo está modelado lo verificado:
 
-- **Capa 1:** tres nodos — `lead_entry_channel` (entrada), `web_contact_form_received` (rama web), `lead_capture_whatsapp` (rama WhatsApp).
-- **Capa 2:** dos formularios (`web_contact_form`, `lead_capture`) y un evento (`LEAD_CAPTURED`).
-- **Capa 3:** dos tablas (`armc_leads`, `armc_events`) con enums limitados al estado `LEAD_CAPTURED`.
+- **Capa 1:** cuatro nodos — `lead_entry_channel` (entrada), `web_contact_form_received` (rama web, input), `lead_capture_whatsapp` (rama WhatsApp, input), `lead_captured` (convergencia técnica: donde se emite el evento y persisten los datos).
+- **Capa 2:** dos formularios (`web_contact_form`, `lead_capture`) que actúan como input, y un evento (`LEAD_CAPTURED`) emitido al converger.
+- **Capa 3:** dos tablas (`armc_leads`, `armc_events`) con enums limitados al estado `LEAD_CAPTURED`. La escritura ocurre una sola vez por lead, en el momento de convergencia.
 
 Las piezas posteriores del flujo (respuesta automática, escalado humano, intake preclínico, etc.) se añadirán a medida que se verifiquen. No se mantienen piezas especulativas en las capas.
 
@@ -55,6 +55,9 @@ simulador-ux/
 - **Capa 2 es contrato.** Cada formulario tiene id, canal, campos, derivados, reglas. Cada evento tiene id, payload mínimo/opcional, origen y destino.
 - **Capa 3 es persistencia.** El esquema SQL es la verdad; el `data-dictionary.md` es la referencia humana.
 - **El catálogo es referencia reutilizable.** Las 25 demandas viven en `catalogo-demandas.json` y los formularios apuntan a él (`fuente: "catalogo-demandas"`). Mismo patrón que países, categorías o cualquier dimensión en producto real.
+- **`campos` vs `genera` en los contratos:**
+  - **`campos`** = input de captura que llega al sistema junto con el envío del formulario. Puede provenir del usuario (datos tecleados) o del propio canal (ej. el teléfono que WhatsApp aporta automáticamente). En todos los casos viaja en el payload del envío. Equivale a `writeOnly` en OpenAPI/JSON Schema.
+  - **`genera`** = atributos que el sistema asigna **después** de recibir el formulario (`id`, `fecha_primer_contacto`, `canal_origen`). No son input; son metadato de la fila persistida. Equivale a `readOnly` en OpenAPI/JSON Schema.
 
 ## Navegación
 

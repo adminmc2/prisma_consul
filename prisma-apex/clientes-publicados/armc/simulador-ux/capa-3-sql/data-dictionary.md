@@ -19,6 +19,7 @@ Alcance verificado: solo las tablas necesarias para la captura del lead (acción
 | `lineas_servicio_detectadas` | VARCHAR(100)[] | NO | `ARRAY[]` | Derivado de `opciones_seleccionadas`. |
 | `nota` | TEXT | SÍ | — | Observaciones libres del lead. |
 | `estado_actual` | VARCHAR(50) | NO | `LEAD_CAPTURED` | Estado actual del lead en el flujo. |
+| `fecha_primer_contacto` | TIMESTAMPTZ | NO | `NOW()` | Fecha y hora del primer contacto del lead con ARMC. Se asigna automáticamente al crear la fila. |
 | `created_at` | TIMESTAMPTZ | SÍ | `NOW()` | Fecha de creación. |
 | `updated_at` | TIMESTAMPTZ | SÍ | `NOW()` | Fecha de última modificación. |
 

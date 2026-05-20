@@ -1,8 +1,8 @@
 {
   "id": "LEAD_CAPTURED",
   "paso": "lead_captured",
-  "origen": "lead_capture",
+  "origen": ["web_contact_form", "lead_capture"],
   "destino": ["armc_leads", "armc_events"],
-  "payload_minimo": ["canal_origen", "opciones_seleccionadas", "lineas_servicio_detectadas", "estado_actual"],
-  "payload_opcional": ["nombre", "email", "telefono", "nota"]
+  "payload_minimo": ["id", "canal_origen", "opciones_seleccionadas", "lineas_servicio_detectadas", "estado_actual", "fecha_primer_contacto"],
+  "payload_opcional": ["nombre", "apellido_paterno", "apellido_materno", "email", "telefono", "nota"]
 }

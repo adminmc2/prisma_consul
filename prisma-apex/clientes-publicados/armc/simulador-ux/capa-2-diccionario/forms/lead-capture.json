@@ -1,24 +1,32 @@
 {
   "id": "lead_capture",
   "nombre": "Lead Capture",
+  "version": "1.0.0",
   "canal": "WHATSAPP",
-  "paso": "lead_captured",
+  "paso": "lead_capture_whatsapp",
   "dispara_evento": "LEAD_CAPTURED",
   "salida": "AUTO_RESPONSE_SENT",
   "campos": [
-    { "nombre": "canal_origen", "tipo": "enum", "obligatorio": true, "valor": "WHATSAPP", "fuente": "sistema" },
-    { "nombre": "nombre", "tipo": "texto_corto", "obligatorio": false },
-    { "nombre": "email", "tipo": "email", "obligatorio": false },
-    { "nombre": "telefono", "tipo": "telefono", "obligatorio": false, "fuente": "metadata_canal" },
-    { "nombre": "opciones_seleccionadas", "tipo": "multiseleccion", "obligatorio": true, "fuente": "catalogo-demandas" },
-    { "nombre": "nota", "tipo": "texto_libre", "obligatorio": false }
+    { "nombre": "nombre", "tipo": "texto_corto", "obligatorio": true, "min": 1, "max": 120, "ejemplo": "María" },
+    { "nombre": "apellido_paterno", "tipo": "texto_corto", "obligatorio": true, "min": 1, "max": 120, "ejemplo": "García" },
+    { "nombre": "apellido_materno", "tipo": "texto_corto", "obligatorio": true, "min": 1, "max": 120, "ejemplo": "López" },
+    { "nombre": "email", "tipo": "email", "obligatorio": false, "nullable": true, "max": 255, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "ejemplo": "maria.garcia@example.com" },
+    { "nombre": "telefono", "tipo": "telefono", "obligatorio": true, "fuente": "metadata_canal", "max": 20, "pattern": "^\\+?[0-9 ]{8,20}$", "ejemplo": "+52 55 1234 5678" },
+    { "nombre": "opciones_seleccionadas", "tipo": "multiseleccion", "obligatorio": true, "fuente": "catalogo-demandas", "min_items": 1, "max_items": 25, "ejemplo": [1, 7] },
+    { "nombre": "nota", "tipo": "texto_libre", "obligatorio": false, "max": 2000, "nullable": true, "ejemplo": "Me interesa una valoración antes de fin de mes." }
+  ],
+  "genera": [
+    { "nombre": "id", "tipo": "uuid", "descripcion": "Identificador único e inmutable del subject. Lo asigna el sistema al crear la fila y se mantiene sin cambios durante toda la vida del lead." },
+    { "nombre": "canal_origen", "tipo": "enum", "valor": "WHATSAPP", "descripcion": "Asignado automáticamente por el sistema según el contexto del contrato." },
+    { "nombre": "fecha_primer_contacto", "tipo": "datetime", "descripcion": "Marca temporal asignada automáticamente por el sistema en el instante de crear la fila." }
   ],
   "derivados": [
     { "nombre": "lineas_servicio_detectadas", "origen": "opciones_seleccionadas → catalogo-demandas.lineas_servicio" }
   ],
   "reglas": [
-    "Al menos una opción seleccionada.",
-    "canal_origen fijo en WHATSAPP.",
-    "nombre y email pueden completarse en seguimiento posterior."
+    "Mismos campos que web_contact_form; cambia la forma de capturar (conversación vs. formulario).",
+    "email es opcional en este canal; puede completarse en seguimiento posterior.",
+    "telefono lo aporta el propio canal (metadata_canal), no requiere tecleo del usuario.",
+    "Al menos una opción seleccionada del catálogo (mínimo 1, máximo 25)."
   ]
 }
