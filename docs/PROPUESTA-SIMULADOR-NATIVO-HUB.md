@@ -102,14 +102,18 @@ través de la pestaña del Hub.
 Transición propuesta en dos fases:
 
 - **Fase de coexistencia.** Mientras se construye y verifica la versión nativa, la ruta
-  `/publicados/armc/simulador-ux/` se mantiene viva y **congelada** (sin nuevos cambios), para
-  no romper nada hasta tener la nativa validada.
+  `/publicados/armc/simulador-ux/` se mantiene **temporalmente accesible y congelada** (sin
+  nuevos cambios), porque la versión iframe todavía vigente se carga desde ahí. Es un estado
+  transitorio, no el estado final.
 - **Fase de retirada.** Verificada la versión nativa en el Hub, la ruta antigua se retira con
   un **redirect 301** a `/hub` (coherente con el patrón legacy ya usado en el proyecto:
   `/portal/analisis/...` → redirect 301). No se deja la ruta sirviendo contenido duplicado.
 
-**Decisión cerrada:** el simulador interno queda accesible **solo tras login del Hub**. No
-mantiene URL pública directa; se accede únicamente desde la pestaña del Hub autenticado.
+**Decisión cerrada (estado final):** terminada la transición, el simulador interno queda
+accesible **solo tras login del Hub**, sin URL pública directa. Durante la fase de
+coexistencia la ruta legacy sigue temporalmente accesible (estado transitorio descrito
+arriba); tras la fase de retirada deja de existir como acceso público y, si se conserva, es
+únicamente como **alias técnico interno** de assets (sección 6), no como entrada al simulador.
 
 ## 6. Contrato de assets durante la transición
 
@@ -159,11 +163,14 @@ Propuesta para el módulo nativo:
   (`#tab-simulador` y `#ud-simulador`). No se duplica código ni contenido.
 - **Composición sobre la misma base.** Ambas superficies comparten las 4 capas, los datos y la
   lógica de render. Lo que cambia es el contenedor host, no el módulo.
-- **Diferencias de shell/layout — decisión cerrada:** admin y usuario ven el simulador
-  **idéntico**. No hay chrome adicional en el contexto admin. El módulo nativo se monta igual
-  en ambas superficies; lo único que varía es el contenedor host y, si hace falta, un
-  parámetro de altura/layout para ajustarse al hueco (`#tab-simulador` ocupa pestaña completa;
-  `#ud-simulador` vive en la ficha de usuario). Sin lógica divergente.
+- **Diferencias de shell/layout — decisión cerrada:** el **módulo del simulador** es
+  **idéntico** en ambas superficies — mismas 4 capas, mismos datos, misma lógica de render,
+  sin lógica divergente dentro del módulo. Lo que cambia es solo el contenedor host y, si hace
+  falta, un parámetro de altura/layout (`#tab-simulador` ocupa pestaña completa;
+  `#ud-simulador` vive en la ficha de usuario). Esta decisión afecta **al módulo**, no al
+  shell del Hub: el Hub conserva su chrome contextual propio de "admin viendo como cliente"
+  alrededor del módulo cuando el simulador se abre desde la ficha de usuario. Ese indicador es
+  del shell del Hub, no del simulador, y no se elimina.
 
 ## 8. Separación en tres líneas de trabajo
 
