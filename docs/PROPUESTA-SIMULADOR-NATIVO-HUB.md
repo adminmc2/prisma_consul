@@ -108,8 +108,8 @@ Transición propuesta en dos fases:
   un **redirect 301** a `/hub` (coherente con el patrón legacy ya usado en el proyecto:
   `/portal/analisis/...` → redirect 301). No se deja la ruta sirviendo contenido duplicado.
 
-Decisión a confirmar por el revisor: si el simulador interno debe quedar **solo** tras login
-de Hub (lo natural para un módulo interno) o admitir algún acceso directo.
+**Decisión cerrada:** el simulador interno queda accesible **solo tras login del Hub**. No
+mantiene URL pública directa; se accede únicamente desde la pestaña del Hub autenticado.
 
 ## 6. Contrato de assets durante la transición
 
@@ -135,8 +135,11 @@ definida. La propuesta:
   versión iframe se retire. Se elimina el alias junto con la ruta pública (sección 5, fase de
   retirada).
 
-Decisión a confirmar por el revisor: ruta interna definitiva de los assets y si el alias se
-implementa a nivel de nginx, de Express o de copia física temporal.
+**Decisión cerrada:** el alias temporal se implementa **a nivel de Express** — una ruta en el
+código del servidor que mantiene `/publicados/armc/simulador-ux/...` resolviendo a los assets
+durante la transición. Queda versionado en el repo, es reversible desde código y no exige
+intervención manual en el servidor. Se elimina junto con la ruta pública (sección 5, fase de
+retirada).
 
 ## 7. Superficies consumidoras del simulador
 
@@ -156,12 +159,11 @@ Propuesta para el módulo nativo:
   (`#tab-simulador` y `#ud-simulador`). No se duplica código ni contenido.
 - **Composición sobre la misma base.** Ambas superficies comparten las 4 capas, los datos y la
   lógica de render. Lo que cambia es el contenedor host, no el módulo.
-- **Diferencias de shell/layout a confirmar:** hoy el montaje admin (`#ud-simulador`) fuerza
-  `min-height:600px` y vive dentro de la ficha de usuario; el montaje de usuario
-  (`#tab-simulador`) ocupa la pestaña completa. La propuesta es que el módulo nativo acepte
-  un parámetro de layout/altura, de modo que la misma base se adapte a ambos hosts sin lógica
-  divergente. El revisor debe confirmar si admin y usuario deben verse idénticos o si el
-  contexto admin requiere algún chrome adicional (p. ej. indicación de "viendo como cliente").
+- **Diferencias de shell/layout — decisión cerrada:** admin y usuario ven el simulador
+  **idéntico**. No hay chrome adicional en el contexto admin. El módulo nativo se monta igual
+  en ambas superficies; lo único que varía es el contenedor host y, si hace falta, un
+  parámetro de altura/layout para ajustarse al hueco (`#tab-simulador` ocupa pestaña completa;
+  `#ud-simulador` vive en la ficha de usuario). Sin lógica divergente.
 
 ## 8. Separación en tres líneas de trabajo
 
@@ -181,8 +183,9 @@ Reglas de secuencia recomendadas:
   (sección 6), porque mover antes de refactorizar rompería la carga actual del Hub.
 - **B no se mezcla con C.** El refactor de arquitectura no añade nodos nuevos; el poblado
   funcional se reanuda solo cuando B esté cerrado y verificado.
-- **B puede requerir varios slices** (p. ej. un slice por capa, o shell + capas por separado).
-  Eso se decide al abrir B, no aquí.
+- **B se entrega fragmentado por capa — decisión cerrada.** El refactor no es un slice único:
+  se divide en slices pequeños (p. ej. shell primero, luego cada capa), cada uno con su SHA
+  revisable y reversible por separado. El reparto exacto de slices se concreta al abrir B.
 
 ## 9. Riesgos y puntos para revisión del revisor
 
@@ -191,13 +194,11 @@ Reglas de secuencia recomendadas:
   propia. El revisor debe validar el enfoque de aislamiento.
 - **Aislamiento de JS.** Cada capa tiene su propio script global; al nativizar hay riesgo de
   colisión de nombres. Mitigación: encapsular cada capa en módulo/namespace.
-- **Volumen del refactor.** ~2.051 líneas de HTML de capa más el shell. Confirmar si B se
-  entrega como un slice único o fragmentado por capa.
-- **Ruta pública.** Decisión pendiente sobre acceso (sección 5): ¿solo tras login de Hub?
-- **Contrato de assets.** Decisión pendiente sobre ruta interna definitiva y mecanismo del
-  alias temporal (sección 6): ¿nginx, Express o copia física?
-- **Superficies consumidoras.** Decisión pendiente (sección 7): ¿admin y usuario ven el
-  simulador idéntico, o el contexto admin requiere chrome adicional?
+- **Volumen del refactor.** ~2.051 líneas de HTML de capa más el shell. **Cerrado:** B se
+  entrega fragmentado por capa (sección 8).
+- **Decisiones operativas — cerradas.** Quedan resueltas las cuatro pendientes: acceso solo
+  tras login del Hub (sección 5); alias de assets a nivel de Express (sección 6); admin y
+  usuario ven el simulador idéntico (sección 7); refactor B fragmentado por capa (sección 8).
 - **Contratos y boundaries.** Esta propuesta **no altera** los contratos del simulador
   (`forms/`, `events/`, `mappings.json`) ni los boundaries cerrados en B1/B2. El refactor B es
   de presentación/arquitectura, no de modelo de dominio. Si durante B aparece necesidad de
