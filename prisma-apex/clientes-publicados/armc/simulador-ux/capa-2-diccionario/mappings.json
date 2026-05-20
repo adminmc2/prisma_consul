@@ -2,12 +2,12 @@
   "forms": {
     "web_contact_form": {
       "tabla_principal": "armc_leads",
-      "columnas": ["canal_origen", "nombre", "apellido_paterno", "apellido_materno", "email", "telefono", "opciones_seleccionadas", "nota", "lineas_servicio_detectadas", "estado_actual"],
+      "columnas": ["canal_origen", "nombre", "apellido_paterno", "apellido_materno", "email", "telefono", "opciones_seleccionadas", "nota", "lineas_servicio_detectadas", "estado_actual", "fecha_primer_contacto"],
       "eventos": ["LEAD_CAPTURED"]
     },
     "lead_capture": {
       "tabla_principal": "armc_leads",
-      "columnas": ["canal_origen", "nombre", "email", "telefono", "opciones_seleccionadas", "nota", "lineas_servicio_detectadas", "estado_actual"],
+      "columnas": ["canal_origen", "nombre", "apellido_paterno", "apellido_materno", "email", "telefono", "opciones_seleccionadas", "nota", "lineas_servicio_detectadas", "estado_actual", "fecha_primer_contacto"],
       "eventos": ["LEAD_CAPTURED"]
     }
   },
