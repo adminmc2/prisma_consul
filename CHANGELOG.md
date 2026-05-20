@@ -2,6 +2,30 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-20] — v3.3.63
+
+### Integración del simulador UX ARMC en dev — reconstrucción en 3 slices limpios (pase 3 + B1 + B2)
+
+Integra en `dev` el trabajo auditado del simulador UX ARMC, reconstruido desde el estado del worktree del ejecutor 3 en tres commits con trazabilidad lógica separada (la mezcla original `55f95b5`+`340f8f7` combinaba pase 3, B1 y B2 en el mismo conjunto de archivos).
+
+#### Slices integrados (orden)
+
+| Commit | Slice | Contenido |
+|---|---|---|
+| `f17f7b7` | **pase 3** | Unificación de campos entre contratos, `version`, constraints (`min`/`max`/`pattern`/`min_items`/`max_items`/`nullable`), bloque `genera`, renderer base (columnas Restricciones/Ejemplo, sección Genera, `origen` como array, chip de `version`). 9 archivos. No toca la decisión de boundary. |
+| `9a26a65` | **B1** | `mappings.json`: `forms.lead_capture.columnas` alineado con el shape persistido (`apellido_paterno`, `apellido_materno`, `fecha_primer_contacto`); converge con `web_contact_form`. |
+| `fac4b04` | **B2** | Quita el acoplamiento downstream de los contratos de formulario: elimina `dispara_evento` y `salida` de `web-contact-form.json` y `lead-capture.json`; los chips `evento`/`salida` del renderer pasan a condicionales. El evento `LEAD_CAPTURED` pertenece al nodo de convergencia `lead_captured`. |
+
+#### Validación previa a la integración
+
+- El tip reconstruido reproduce **byte a byte** el estado auditado del worktree del ejecutor 3 (10 archivos).
+- `pase 3` no contiene ninguna pieza de B1 ni B2; los campos de boundary quedan idénticos a la base `9837306` (contexto, no modificación).
+- Integración por fast-forward sobre `9837306`.
+
+#### Bump
+
+- Bump a `v3.3.63` en los 4 puntos canónicos. Sin tocar producción, sin merge a `main`.
+
 ## [2026-05-11] — v3.3.62
 
 ### Bump visible tras absorción del SHA b20c742 en dev (acotación + Mapa + cross-links)
