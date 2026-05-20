@@ -1719,12 +1719,18 @@
 
     // Navegación cross-layer: las capas emiten postMessage 'navigate'; el shell
     // nativo del Hub conmuta la subpestaña y reenvía 'select' a la capa destino.
+    // El shell destino se resuelve por el iframe emisor (e.source), no por orden
+    // del DOM: con usuario y admin montados a la vez, un mensaje debe afectar solo
+    // a su propia superficie.
     window.addEventListener('message', (e) => {
       const msg = e.data;
       if (!msg || msg.type !== 'navigate') return;
       const capaMap = { '1': 'capa-1-ux', '2': 'capa-2-diccionario', '3': 'capa-3-sql', '4': 'mapa' };
       const capaId = capaMap[String(msg.tab)] || String(msg.tab);
-      const host = document.querySelector('#tab-simulador .simulador-shell, #ud-simulador .simulador-shell');
+      let host = null;
+      document.querySelectorAll('.simulador-shell .sim-frame').forEach(f => {
+        if (!host && f.contentWindow === e.source) host = f.closest('.simulador-shell');
+      });
       if (!host) return;
       simShowCapa(host, capaId);
       setTimeout(() => {
