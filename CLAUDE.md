@@ -100,6 +100,7 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 │           ├── diagramas/      # 7 flujos por rol + template
 │           ├── diagnostico/    # Resumen, fricciones, matriz, embudo, cadena causal
 │           ├── blueprint/      # Modelo datos, flujos to-be, automatizaciones, fases, KPIs
+│           ├── simulador-ux/   # Módulo INTERNO del Hub en construcción (no entregable público). Reclasificado en pase A; destino futuro prisma-apex/core/simulador-ux/, movimiento físico en línea B — ver docs/PROPUESTA-SIMULADOR-NATIVO-HUB.md
 │           └── css/
 ├── shared/                     # Recursos compartidos entre apps (Subpaso 2.5, v3.3.37)
 │   └── fonts/

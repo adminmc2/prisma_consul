@@ -2,6 +2,12 @@
 
 Visualización en cuatro vistas del flujo de captación y persistencia de leads en ARMC.
 
+> **Estatus: módulo interno del Hub en construcción** — no es un entregable público estable
+> cerrado. Reclasificado en el pase A (carril contenido). Su paso a superficie nativa del Hub
+> (eliminación de iframes) y el movimiento físico a `prisma-apex/core/simulador-ux/` se
+> ejecutan en la línea B del refactor, todavía no abierta. Definición técnica completa en
+> `docs/PROPUESTA-SIMULADOR-NATIVO-HUB.md`.
+
 ## Vistas
 
 | Vista | Carpeta | Propósito |
