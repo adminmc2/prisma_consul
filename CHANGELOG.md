@@ -2,6 +2,18 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-20] — v3.3.67
+
+### Diagnóstico temporal — colores de depuración también en la vista admin del simulador
+
+Extiende el diagnóstico de `v3.3.66` a la **vista admin del detalle de usuario** (`ud-simulador` / `udSimuladorIframe`), que en `v3.3.66` se quedó sin colorear (solo se coloreó la vista de usuario `tab-simulador`). Ahora:
+
+- `#ud-simulador` (contenedor admin) → **naranja**
+- `#udSimuladorIframe` (iframe admin) → **azul**
+- Capas internas del shell (magenta/verde/cyan) ya coloreadas en `v3.3.66`.
+
+Diagnóstico temporal; se revierte junto con `v3.3.66` en el slice de corrección. Sin tocar producción.
+
 ## [2026-05-20] — v3.3.66
 
 ### Diagnóstico temporal — colores de depuración en las capas del simulador
