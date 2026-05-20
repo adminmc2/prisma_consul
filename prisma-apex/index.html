@@ -639,6 +639,18 @@
     .analisis-viewer-title { font-family: var(--font-heading); font-size: 0.9rem; color: var(--clinical-white); font-weight: 600; }
     .analisis-iframe { flex: 1; width: 100%; border: none; background: var(--prisma-navy); min-height: 0; }
 
+    /* ── Simulador UX — shell nativo del Hub (B1) ── */
+    .simulador-shell { display: flex; flex-direction: column; flex: 1; min-height: 0; height: 100%; background: var(--prisma-navy); }
+    .sim-subtabs { flex: 0 0 auto; display: flex; gap: 6px; flex-wrap: wrap; padding: 12px 24px; background: var(--bg-primary); border-bottom: 1px solid var(--border-color); }
+    .sim-subtab { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--soft-blue); border: 1px solid var(--border-color); padding: 7px 16px; border-radius: 4px 18px 18px 4px; cursor: pointer; font-family: var(--font-heading); font-size: 0.82rem; font-weight: 600; transition: all 0.18s ease; }
+    .sim-subtab:hover:not(.active) { color: var(--clinical-white); border-color: var(--soft-blue); }
+    .sim-subtab.active { background: var(--tech-cyan); color: var(--prisma-navy); border-color: var(--tech-cyan); }
+    .sim-subtab i { font-size: 1rem; }
+    .sim-panels { flex: 1 1 auto; min-height: 0; position: relative; }
+    .sim-panel { display: none; width: 100%; height: 100%; }
+    .sim-panel.active { display: block; }
+    .sim-frame { width: 100%; height: 100%; border: none; background: var(--prisma-navy); display: block; }
+
     /* ── Responsive ── */
     @media (max-width: 900px) {
       .panel-body { grid-template-columns: 1fr; }
@@ -1035,10 +1047,8 @@
       </div>
     </div>
 
-    <!-- TAB: Simulador UX ARMC (user) -->
-    <div id="tab-simulador" class="analisis-layer-flex" style="display:none;background:var(--prisma-navy);">
-      <iframe id="simuladorIframe" class="analisis-iframe" sandbox="allow-scripts allow-same-origin" allow="fullscreen" allowfullscreen></iframe>
-    </div>
+    <!-- TAB: Simulador UX ARMC (user) — shell nativo (B1, sin iframe de nivel 1) -->
+    <div id="tab-simulador" class="analisis-layer-flex" style="display:none;background:var(--prisma-navy);"></div>
 
   </div>
 
@@ -1247,13 +1257,7 @@
       if (tabName === 'perfil') loadProfile();
       if (tabName === 'entrevistas') loadEntrevistas();
       if (tabName === 'analisis') { analisisShowSections(); loadAnalisis(); }
-      if (tabName === 'simulador') {
-        const sf = document.getElementById('simuladorIframe');
-        if (sf && !sf.src.includes('/publicados/armc/simulador-ux/')) sf.src = '/publicados/armc/simulador-ux/?cb=' + Date.now();
-      } else {
-        const sf = document.getElementById('simuladorIframe');
-        if (sf) sf.src = 'about:blank';
-      }
+      if (tabName === 'simulador') mountSimuladorShell('tab-simulador');
     }
 
     // ── LOGOUT ──
@@ -1628,10 +1632,8 @@
           </div>
         </div>
 
-        <!-- Simulador UX ARMC -->
-        <div id="ud-simulador" class="ud-content analisis-layer-flex" style="display:none;min-height:600px;background:var(--prisma-navy);">
-          <iframe id="udSimuladorIframe" class="analisis-iframe" style="min-height:600px;" sandbox="allow-scripts allow-same-origin" allow="fullscreen" allowfullscreen></iframe>
-        </div>
+        <!-- Simulador UX ARMC — shell nativo (B1, sin iframe de nivel 1) -->
+        <div id="ud-simulador" class="ud-content analisis-layer-flex" style="display:none;min-height:600px;background:var(--prisma-navy);"></div>
       `;
 
       // Wire up dropzone
@@ -1654,8 +1656,7 @@
         if (tabId === 'ud-analisis') { content.style.display = 'flex'; udAnalisisShowSections(); loadUdAnalisis(); }
         if (tabId === 'ud-simulador') {
           content.style.display = 'flex';
-          const sf = document.getElementById('udSimuladorIframe');
-          if (sf && !sf.src.includes('/publicados/armc/simulador-ux/')) sf.src = '/publicados/armc/simulador-ux/?cb=' + Date.now();
+          mountSimuladorShell('ud-simulador');
         }
       }
       // Hide analisis when switching away
@@ -1666,10 +1667,71 @@
       if (tabId !== 'ud-simulador') {
         const sim = document.getElementById('ud-simulador');
         if (sim) sim.style.display = 'none';
-        const sf = document.getElementById('udSimuladorIframe');
-        if (sf) sf.src = 'about:blank';
       }
     }
+
+    // ── SIMULADOR UX — shell nativo del Hub (B1) ──
+    // Sustituye el iframe de nivel 1 (shell simulador-ux/index.html). Las 4 capas
+    // siguen cargándose vía iframe de nivel 2 desde la ruta legacy, sin tocar su
+    // lógica interna (refactor por capa = slices B posteriores).
+    const SIM_CAPAS = [
+      { id: 'capa-1-ux',          label: 'Capa 1: UX',          icon: 'ph-tree-structure' },
+      { id: 'capa-2-diccionario', label: 'Capa 2: Diccionario', icon: 'ph-book-bookmark' },
+      { id: 'capa-3-sql',         label: 'Capa 3: BD (SQL)',    icon: 'ph-database' },
+      { id: 'mapa',               label: 'Mapa',                icon: 'ph-flow-arrow' }
+    ];
+
+    function mountSimuladorShell(hostId) {
+      const host = document.getElementById(hostId);
+      if (!host || host.dataset.simMounted === '1') return;
+      host.dataset.simMounted = '1';
+      const tabs = SIM_CAPAS.map((c, i) =>
+        `<button type="button" class="sim-subtab${i === 0 ? ' active' : ''}" data-capa="${c.id}">` +
+        `<i class="ph ${c.icon}"></i> ${c.label}</button>`
+      ).join('');
+      const panels = SIM_CAPAS.map((c, i) =>
+        `<div class="sim-panel${i === 0 ? ' active' : ''}" data-capa="${c.id}">` +
+        `<iframe class="sim-frame" title="${c.label}" sandbox="allow-scripts allow-same-origin" allow="fullscreen" allowfullscreen></iframe></div>`
+      ).join('');
+      host.innerHTML =
+        `<div class="simulador-shell">` +
+        `<div class="sim-subtabs" role="tablist">${tabs}</div>` +
+        `<div class="sim-panels">${panels}</div></div>`;
+      host.querySelectorAll('.sim-subtab').forEach(btn => {
+        btn.addEventListener('click', () => simShowCapa(host, btn.dataset.capa));
+      });
+      simShowCapa(host, SIM_CAPAS[0].id);
+    }
+
+    function simShowCapa(host, capaId) {
+      host.querySelectorAll('.sim-subtab').forEach(b => b.classList.toggle('active', b.dataset.capa === capaId));
+      host.querySelectorAll('.sim-panel').forEach(p => {
+        const on = p.dataset.capa === capaId;
+        p.classList.toggle('active', on);
+        if (on) {
+          const ifr = p.querySelector('iframe.sim-frame');
+          if (ifr && !ifr.getAttribute('src')) {
+            ifr.setAttribute('src', '/publicados/armc/simulador-ux/' + capaId + '/index.html?cb=' + Date.now());
+          }
+        }
+      });
+    }
+
+    // Navegación cross-layer: las capas emiten postMessage 'navigate'; el shell
+    // nativo del Hub conmuta la subpestaña y reenvía 'select' a la capa destino.
+    window.addEventListener('message', (e) => {
+      const msg = e.data;
+      if (!msg || msg.type !== 'navigate') return;
+      const capaMap = { '1': 'capa-1-ux', '2': 'capa-2-diccionario', '3': 'capa-3-sql', '4': 'mapa' };
+      const capaId = capaMap[String(msg.tab)] || String(msg.tab);
+      const host = document.querySelector('#tab-simulador .simulador-shell, #ud-simulador .simulador-shell');
+      if (!host) return;
+      simShowCapa(host, capaId);
+      setTimeout(() => {
+        const panel = host.querySelector('.sim-panel[data-capa="' + capaId + '"] iframe.sim-frame');
+        if (panel && panel.contentWindow) panel.contentWindow.postMessage({ type: 'select', itemId: msg.itemId }, '*');
+      }, 120);
+    });
 
     // ── Admin User Detail: Dropzone ──
     function initUdDropzone() {
