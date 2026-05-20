@@ -19,7 +19,6 @@
     }
     * { box-sizing: border-box; }
     body, html { margin: 0; padding: 0; height: 100%; font-family: 'Source Sans 3', sans-serif; background: var(--prisma-navy); color: var(--clinical-white); }
-    body { outline: 3px solid #ff00ff; outline-offset: -9px; } /* DEBUG: shell body = borde MAGENTA */
     body { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; overflow: hidden; }
     header.sim-header { flex: 0 0 auto; background: var(--bg-primary); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); gap: 16px; flex-wrap: wrap; }
     .sim-header h1 { font-family: 'Quicksand', sans-serif; margin: 0; font-size: 1.05rem; font-weight: 600; color: var(--clinical-white); display: flex; align-items: center; gap: 10px; letter-spacing: 0.2px; }
@@ -29,7 +28,7 @@
     .sim-tab:hover:not(.active) { color: var(--clinical-white); border-color: var(--soft-blue); }
     .sim-tab.active { background: var(--tech-cyan); color: var(--prisma-navy); border-color: var(--tech-cyan); }
     .sim-tab i { font-size: 1rem; }
-    main.sim-main { flex: 1 1 auto; min-height: 0; display: block; background: var(--prisma-navy); outline: 3px solid #00ff00; outline-offset: -12px; } /* DEBUG: shell main = borde VERDE */
+    main.sim-main { flex: 1 1 auto; min-height: 0; display: block; background: var(--prisma-navy); }
     .view { width: 100%; height: 100%; display: none; }
     .view.active { display: block; }
     .view iframe { width: 100%; height: 100%; border: none; background: var(--prisma-navy); }
