@@ -4,8 +4,6 @@
   "version": "1.0.0",
   "canal": "WEB_FORM",
   "paso": "web_contact_form_received",
-  "dispara_evento": "LEAD_CAPTURED",
-  "salida": "LEAD_CAPTURED",
   "campos": [
     { "nombre": "nombre", "tipo": "texto_corto", "obligatorio": true, "min": 1, "max": 120, "ejemplo": "María" },
     { "nombre": "apellido_paterno", "tipo": "texto_corto", "obligatorio": true, "min": 1, "max": 120, "ejemplo": "García" },

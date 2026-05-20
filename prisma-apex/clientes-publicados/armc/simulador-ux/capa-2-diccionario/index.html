@@ -461,10 +461,10 @@
         function renderForm(host, f) {
             const chips = [
                 { label: 'canal: ' + f.canal },
-                { label: 'paso: ' + f.paso, soft: true },
-                { label: 'evento: ' + f.dispara_evento },
-                { label: 'salida: ' + f.salida, soft: true }
+                { label: 'paso: ' + f.paso, soft: true }
             ];
+            if (f.dispara_evento) chips.push({ label: 'evento: ' + f.dispara_evento });
+            if (f.salida) chips.push({ label: 'salida: ' + f.salida, soft: true });
             if (f.version) chips.push({ label: 'v' + f.version, soft: true });
             const persist = state.mappings.forms[f.id];
             const traceLinks = [

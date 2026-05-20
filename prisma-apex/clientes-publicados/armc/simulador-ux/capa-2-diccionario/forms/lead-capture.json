@@ -4,8 +4,6 @@
   "version": "1.0.0",
   "canal": "WHATSAPP",
   "paso": "lead_capture_whatsapp",
-  "dispara_evento": "LEAD_CAPTURED",
-  "salida": "AUTO_RESPONSE_SENT",
   "campos": [
     { "nombre": "nombre", "tipo": "texto_corto", "obligatorio": true, "min": 1, "max": 120, "ejemplo": "María" },
     { "nombre": "apellido_paterno", "tipo": "texto_corto", "obligatorio": true, "min": 1, "max": 120, "ejemplo": "García" },
