@@ -2,6 +2,27 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-20] — v3.3.64
+
+### Frontend — Simulador UX ARMC: pan libre en Capa 1 + scrollbars coherentes en las 4 vistas
+
+Corrige un problema estético/UX del simulador embebido en el Hub: la barra de scroll nativa del sistema operativo (intrusiva, sin coherencia con el tema oscuro) y la imposibilidad de desplazarse libremente por el lienzo.
+
+#### Pan libre en Capa 1 (`capa-1-ux/index.html`)
+
+- Nuevo arrastre-para-desplazar (estilo Miro): `mousedown` sobre zona vacía del lienzo y arrastrar mueve la vista vía `scrollLeft`/`scrollTop`. Cursor `grab` / `grabbing`.
+- El arrastre de nodos no se ve afectado: sigue capturado por `.node-header`; el pan se inhibe si el `mousedown` cae sobre un `.node`.
+- Compatible con el zoom existente (`Ctrl/⌘ + rueda`, toolbar).
+
+#### Scrollbars coherentes con el tema (4 vistas)
+
+- `capa-1-ux`, `capa-2-diccionario`, `capa-3-sql` y `mapa`: la barra de scroll nativa se sustituye por una barra fina, oscura y discreta (`::-webkit-scrollbar` + `scrollbar-width`/`scrollbar-color`), coherente con la paleta navy/soft-blue del resto del simulador y del Hub.
+- Las 4 vistas del simulador comparten ahora el mismo lenguaje de scroll.
+
+#### Bump
+
+- Bump a `v3.3.64` en los 4 puntos canónicos. Sin tocar producción, sin merge a `main`.
+
 ## [2026-05-20] — v3.3.63
 
 ### Integración del simulador UX ARMC en dev — reconstrucción en 3 slices limpios (pase 3 + B1 + B2)

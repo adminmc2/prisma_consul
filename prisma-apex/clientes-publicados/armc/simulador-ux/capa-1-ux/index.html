@@ -94,11 +94,26 @@
             position: relative;
             flex: 1;
             overflow: auto;
+            cursor: grab;
             background:
                 radial-gradient(circle at 1px 1px, rgba(161, 184, 242, 0.12) 1px, transparent 0),
                 linear-gradient(180deg, rgba(16, 27, 44, 0.96), rgba(26, 37, 53, 0.96));
             background-size: 26px 26px, auto;
         }
+        #canvas-wrapper.panning { cursor: grabbing; }
+
+        /* Scrollbar fino y coherente con el tema (sustituye la barra nativa del SO) */
+        #canvas-wrapper::-webkit-scrollbar { width: 10px; height: 10px; }
+        #canvas-wrapper::-webkit-scrollbar-track { background: transparent; }
+        #canvas-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(161, 184, 242, 0.22);
+            border-radius: 999px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+        #canvas-wrapper::-webkit-scrollbar-thumb:hover { background: rgba(161, 184, 242, 0.4); background-clip: padding-box; }
+        #canvas-wrapper::-webkit-scrollbar-corner { background: transparent; }
+        #canvas-wrapper { scrollbar-width: thin; scrollbar-color: rgba(161,184,242,0.28) transparent; }
 
         #canvas {
             position: relative;
@@ -841,6 +856,35 @@
             event.preventDefault();
             zoomBy(event.deltaY < 0 ? 0.1 : -0.1);
         }, { passive: false });
+
+        // Pan libre: arrastrar el fondo del lienzo desplaza la vista (estilo Miro).
+        // Solo se activa sobre zona vacía; el arrastre de nodos sigue capturado por .node-header.
+        (() => {
+            const wrapper = document.getElementById('canvas-wrapper');
+            if (!wrapper) return;
+            wrapper.addEventListener('mousedown', (event) => {
+                if (event.button !== 0) return;
+                if (event.target.closest('.node')) return;
+                event.preventDefault();
+                wrapper.classList.add('panning');
+                const startX = event.clientX;
+                const startY = event.clientY;
+                const startLeft = wrapper.scrollLeft;
+                const startTop = wrapper.scrollTop;
+
+                const onMove = (moveEvent) => {
+                    wrapper.scrollLeft = startLeft - (moveEvent.clientX - startX);
+                    wrapper.scrollTop = startTop - (moveEvent.clientY - startY);
+                };
+                const onUp = () => {
+                    wrapper.classList.remove('panning');
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                };
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onUp);
+            });
+        })();
 
         window.addEventListener('resize', () => {
             setTimeout(drawLines, 50);

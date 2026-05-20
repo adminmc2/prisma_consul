@@ -22,6 +22,13 @@
             --active: rgba(49, 190, 239, 0.18);
         }
         * { box-sizing: border-box; }
+        /* Scrollbar fino y coherente con el tema del simulador */
+        *::-webkit-scrollbar { width: 10px; height: 10px; }
+        *::-webkit-scrollbar-track { background: transparent; }
+        *::-webkit-scrollbar-thumb { background: rgba(161,184,242,0.22); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+        *::-webkit-scrollbar-thumb:hover { background: rgba(161,184,242,0.4); background-clip: padding-box; }
+        *::-webkit-scrollbar-corner { background: transparent; }
+        * { scrollbar-width: thin; scrollbar-color: rgba(161,184,242,0.28) transparent; }
         html, body { margin: 0; padding: 0; height: 100%; background: var(--prisma-navy); color: var(--clinical-white); font-family: 'Source Sans 3', sans-serif; }
         body { display: flex; height: 100vh; overflow: hidden; }
 
