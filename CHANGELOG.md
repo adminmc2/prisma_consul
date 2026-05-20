@@ -2,6 +2,17 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-20] — v3.3.68
+
+### Fix — cache-busting de los iframes del simulador
+
+Los iframes del simulador (`/publicados/armc/simulador-ux/` y las vistas internas `capa-1/2/3`, `mapa`) se servían cacheados por el navegador: los cambios desplegados no se veían aunque se recargara el Hub. Causaba que el diagnóstico de colores `v3.3.66`/`v3.3.67` no apareciera.
+
+- Hub (`switchTab` / `switchUdTab`): el `src` del iframe del simulador se carga con `?cb=<timestamp>`.
+- Shell (`simulador-ux/index.html`): script al cargar que añade `?cb=<timestamp>` a las 4 vistas embebidas.
+
+Los colores de diagnóstico de `v3.3.66`/`v3.3.67` siguen activos; se revierten en el slice de corrección del encuadre. Sin tocar producción.
+
 ## [2026-05-20] — v3.3.67
 
 ### Diagnóstico temporal — colores de depuración también en la vista admin del simulador

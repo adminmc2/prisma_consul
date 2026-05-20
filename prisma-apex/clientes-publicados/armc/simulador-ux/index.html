@@ -65,6 +65,15 @@
   </main>
 
   <script>
+    // Cache-busting: fuerza carga fresca de las vistas embebidas (evita iframes cacheados)
+    (() => {
+      const cb = Date.now();
+      document.querySelectorAll('.view iframe').forEach(ifr => {
+        const base = ifr.getAttribute('src');
+        if (base && !base.includes('?cb=')) ifr.setAttribute('src', base + '?cb=' + cb);
+      });
+    })();
+
     function switchView(id) {
       document.querySelectorAll('.sim-tab').forEach(b => b.classList.toggle('active', b.dataset.view === id));
       document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + id));
