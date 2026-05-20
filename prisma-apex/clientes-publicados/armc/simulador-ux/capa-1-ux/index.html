@@ -102,18 +102,10 @@
         }
         #canvas-wrapper.panning { cursor: grabbing; }
 
-        /* Scrollbar fino y coherente con el tema (sustituye la barra nativa del SO) */
-        #canvas-wrapper::-webkit-scrollbar { width: 10px; height: 10px; }
-        #canvas-wrapper::-webkit-scrollbar-track { background: transparent; }
-        #canvas-wrapper::-webkit-scrollbar-thumb {
-            background: rgba(161, 184, 242, 0.22);
-            border-radius: 999px;
-            border: 2px solid transparent;
-            background-clip: padding-box;
-        }
-        #canvas-wrapper::-webkit-scrollbar-thumb:hover { background: rgba(161, 184, 242, 0.4); background-clip: padding-box; }
-        #canvas-wrapper::-webkit-scrollbar-corner { background: transparent; }
-        #canvas-wrapper { scrollbar-width: thin; scrollbar-color: rgba(161,184,242,0.28) transparent; }
+        /* Lienzo sin barras de scroll: la navegación es por arrastre (pan) + zoom.
+           Se elimina el marco/barra inferior; el desplazamiento es libre por el fondo. */
+        #canvas-wrapper { scrollbar-width: none; -ms-overflow-style: none; }
+        #canvas-wrapper::-webkit-scrollbar { width: 0; height: 0; display: none; }
 
         #canvas {
             position: relative;
@@ -450,9 +442,9 @@
 
     <div class="zoom-toolbar">
         <button type="button" title="Reducir" onclick="zoomBy(-0.1)">−</button>
-        <span class="zoom-level" id="zoomLevel">100%</span>
+        <span class="zoom-level" id="zoomLevel" title="Restablecer zoom" onclick="zoomReset()" style="cursor:pointer">100%</span>
         <button type="button" title="Ampliar" onclick="zoomBy(0.1)">+</button>
-        <button type="button" title="Restablecer" onclick="zoomReset()"><i class="ph ph-arrows-out"></i></button>
+        <button type="button" title="Pantalla completa" onclick="toggleFullscreen()"><i class="ph ph-corners-out"></i></button>
     </div>
 
     <script>
@@ -618,6 +610,16 @@
         function zoomReset() {
             zoomLevel = 1;
             applyZoom();
+        }
+
+        function toggleFullscreen() {
+            const doc = document;
+            const el = doc.documentElement;
+            if (!doc.fullscreenElement) {
+                (el.requestFullscreen || el.webkitRequestFullscreen || (() => {})).call(el);
+            } else {
+                (doc.exitFullscreen || doc.webkitExitFullscreen || (() => {})).call(doc);
+            }
         }
 
         function attachDrag(nodeEl, data) {

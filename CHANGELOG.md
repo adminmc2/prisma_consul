@@ -2,6 +2,27 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-20] — v3.3.65
+
+### Frontend — Simulador UX ARMC: pantalla completa funcional + Capa 1 sin marco de scroll
+
+Continúa el ajuste estético/UX del simulador sobre `v3.3.64`.
+
+#### Pantalla completa funcional
+
+- El botón de la toolbar de Capa 1 ahora ejecuta `toggleFullscreen()` real (Fullscreen API, con fallback `webkit`), no `zoomReset`. Icono `ph-corners-out`.
+- El restablecer zoom pasa al texto `100%` de la toolbar (clic = `zoomReset`).
+- Se añade `allow="fullscreen"` + `allowfullscreen` en la cadena de iframes para que el fullscreen funcione embebido: las 4 vistas del shell (`simulador-ux/index.html`) y los dos iframes del Hub (`simuladorIframe`, `udSimuladorIframe`).
+
+#### Capa 1 sin marco de scroll
+
+- Se ocultan por completo las barras de scroll del lienzo de Capa 1 (`scrollbar-width: none` + `::-webkit-scrollbar { display:none }`). La navegación es por arrastre (pan) + zoom; desaparece el marco/barra inferior que rompía la estética.
+- Capa 2, Capa 3 y Mapa conservan su scrollbar fino (sí necesitan scroll vertical de listas).
+
+#### Bump
+
+- Bump a `v3.3.65` en los 4 puntos canónicos. Sin tocar producción, sin merge a `main`.
+
 ## [2026-05-20] — v3.3.64
 
 ### Frontend — Simulador UX ARMC: pan libre en Capa 1 + scrollbars coherentes en las 4 vistas
