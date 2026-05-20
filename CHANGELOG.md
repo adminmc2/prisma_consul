@@ -2,6 +2,20 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-20] — v3.3.66
+
+### Diagnóstico temporal — colores de depuración en las capas del simulador
+
+Slice **temporal de diagnóstico** para localizar el marco/fondo desencajado al embeber el simulador en el Hub. Se pintan las capas anidadas con colores distintos:
+
+- `#tab-simulador` (contenedor del Hub) → **naranja**
+- `#simuladorIframe` (elemento iframe) → **azul**
+- `body` del shell `simulador-ux/index.html` → **magenta**
+- `main.sim-main` del shell → **verde**
+- `body` de `capa-1-ux/index.html` → **cyan**
+
+Permite identificar visualmente qué capa deja ver el fondo de la página como marco. **Se revierte en el siguiente slice** una vez identificado el desencaje. Sin tocar producción.
+
 ## [2026-05-20] — v3.3.65
 
 ### Frontend — Simulador UX ARMC: pantalla completa funcional + Capa 1 sin marco de scroll
