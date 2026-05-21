@@ -86,6 +86,18 @@ app.use('/apex', express.static(path.join(projectRoot, 'prisma-apex', 'core', 'd
 // tras el subpaso 2.3 (Hub movido a prisma-apex/index.html). Solo queda
 // activo el redirect 301 legacy /portal/analisis/... gestionado más abajo.
 
+// Alias de compatibilidad del simulador UX (Línea B / slice T2).
+// El simulador se reclasifica como módulo interno del Hub y su subtree se
+// moverá a prisma-apex/core/simulador-ux/ (slice T3). Este alias, montado
+// ANTES del estático general de /publicados, mantiene viva la URL antigua
+// /publicados/armc/simulador-ux/... resolviéndola contra la ubicación nueva.
+// Es aditivo: express.static usa fallthrough por defecto, así que mientras
+// el destino no exista (pre-T3) la petición cae al estático general de
+// abajo y se sirve desde la ubicación actual; tras T3 la sirve este alias.
+app.use('/publicados/armc/simulador-ux', express.static(path.join(projectRoot, 'prisma-apex', 'core', 'simulador-ux'), {
+  extensions: ['html']
+}));
+
 // Entregables publicados por cliente — Subpaso 2.2 de Fase 2 (v3.3.31).
 // URL canónica: /publicados/[cliente]/...
 app.use('/publicados', express.static(path.join(projectRoot, 'prisma-apex', 'clientes-publicados'), {
