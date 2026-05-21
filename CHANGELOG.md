@@ -2,6 +2,35 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-21] — v3.3.69
+
+### Simulador UX ARMC — nativización completa en el Hub (Línea B) + transición estructural
+
+Bump de cierre que refleja dos bloques de trabajo encadenados sobre el simulador UX ARMC, ejecutados como slices seriales en `dev` sin versionado intermedio.
+
+#### Línea B — nativización funcional (sin iframes)
+
+El simulador dejó de montarse con iframes anidados y pasó a renderizarse de forma nativa dentro del Hub:
+
+- **B1** — shell nativo del Hub: se elimina el iframe de nivel 1; barra de subpestañas (Capa 1/2/3/Mapa) nativa, reutilizable en vista usuario y admin.
+- **B2** — Capa 1 (UX) nativa: factory por instancia, CSS/JS aislados, markers SVG únicos por instancia.
+- **B3** — Capa 2 (Diccionario) nativa: factory con sidebar+detalle, loader de assets con caché que no envenena ante fallo transitorio.
+- **B4** — Capa 3 (BD/SQL) nativa: parsers de `schema.sql` y `data-dictionary.md` encapsulados por instancia.
+- **B5** — Mapa nativo: matriz de trazabilidad. Cierra la eliminación de todos los iframes de nivel 2.
+
+Resultado: las 4 capas son nativas, con CSS/JS aislados por instancia, montables en `#tab-simulador` (usuario) y `#ud-simulador` (admin), y navegación cross-layer por llamada directa entre instancias.
+
+#### Transición estructural
+
+- **T1** — limpieza del cableado iframe inerte del shell.
+- **T2** — alias Express de compatibilidad para la URL legacy de assets.
+- **T3** — movimiento físico del subtree `prisma-apex/clientes-publicados/armc/simulador-ux/` → `prisma-apex/core/simulador-ux/` (módulo interno del Hub, junto a `core/discovery-engine/`); mount canónico nuevo `/core/simulador-ux` y retarget del Hub (`CAPA2_BASE`/`CAPA3_BASE`).
+- **T4** — retirada de la ruta pública legacy: `/publicados/armc/simulador-ux/...` deja de servir contenido y redirige `301 → /hub`. El simulador queda como módulo interno sin URL pública propia; acceso canónico login-only por el Hub.
+
+#### Bump
+
+- Versión `v3.3.69` en los 4 puntos canónicos (footer `web/index.html`, `.welcome-version` de `prisma-apex/index.html`, "Versión actual" de `CLAUDE.md`, esta entrada).
+
 ## [2026-05-20] — v3.3.68
 
 ### Fix — cache-busting de los iframes del simulador
