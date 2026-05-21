@@ -1,12 +1,12 @@
 # Simulador UX — ARMC
 
-Visualización en cuatro vistas del flujo de captación y persistencia de leads en ARMC.
+Visualización en cuatro capas del flujo de captación y persistencia de leads en ARMC.
 
-> **Estatus: módulo interno del Hub en construcción** — no es un entregable público estable
-> cerrado. Reclasificado en el pase A (carril contenido). Su paso a superficie nativa del Hub
-> (eliminación de iframes) y el movimiento físico a `prisma-apex/core/simulador-ux/` se
-> ejecutan en la línea B del refactor, todavía no abierta. Definición técnica completa en
-> `docs/PROPUESTA-SIMULADOR-NATIVO-HUB.md`.
+> **Estatus: módulo interno nativo del Hub.** El simulador se renderiza directamente dentro
+> del Hub (`prisma-apex/index.html`), sin iframes. La nativización de las 4 capas (Línea B) y
+> el movimiento físico a `prisma-apex/core/simulador-ux/` están **ejecutados**. No es un
+> entregable público: el acceso es solo dentro del Hub autenticado. Definición técnica de
+> partida en `docs/PROPUESTA-SIMULADOR-NATIVO-HUB.md`.
 
 ## Vistas
 
@@ -27,30 +27,56 @@ A fecha actual solo está modelado lo verificado:
 
 Las piezas posteriores del flujo (respuesta automática, escalado humano, intake preclínico, etc.) se añadirán a medida que se verifiquen. No se mantienen piezas especulativas en las capas.
 
-## Estructura
+## Arquitectura
+
+El simulador es **nativo del Hub**: las 4 capas se renderizan en el DOM del Hub mediante
+factories por instancia definidas en `prisma-apex/index.html` (`createCapa1`, `createCapa2`,
+`createCapa3`, `createMapa`), montadas por `mountSimuladorShell`. No hay iframes.
+
+Esta carpeta (`prisma-apex/core/simulador-ux/`) contiene:
+
+- **Datos** que el módulo nativo del Hub consume vía `fetch()` desde la ruta interna
+  `/core/simulador-ux/...`:
+  - `capa-2-diccionario/catalogo-demandas.json`, `forms/*.json`, `events/*.json`, `mappings.json`
+  - `capa-3-sql/schema.sql`, `capa-3-sql/data-dictionary.md`
+- **HTMLs standalone legacy** (`index.html` del shell y de cada capa): son las versiones
+  pre-nativización. El Hub nativo **no las usa**; se conservan de momento como compatibilidad
+  y se sirven vía la ruta antigua. Su retirada definitiva es un paso posterior de la
+  transición.
 
 ```
-simulador-ux/
+prisma-apex/core/simulador-ux/
 ├── README.md
-├── index.html                          ← Shell con 4 tabs (no editar)
+├── index.html                          ← shell standalone legacy (no usado por el Hub)
 ├── capa-1-ux/
-│   └── index.html                      ← Grafo interactivo
+│   └── index.html                      ← capa standalone legacy
 ├── capa-2-diccionario/
-│   ├── index.html                      ← Renderizador con sidebar + detalle
-│   ├── catalogo-demandas.json          ← 25 demandas + 5 líneas de servicio
+│   ├── index.html                      ← capa standalone legacy
+│   ├── catalogo-demandas.json          ← 25 demandas + 5 líneas de servicio (consumido)
 │   ├── forms/
-│   │   ├── web-contact-form.json
-│   │   └── lead-capture.json
+│   │   ├── web-contact-form.json        (consumido)
+│   │   └── lead-capture.json            (consumido)
 │   ├── events/
-│   │   └── lead-captured.json
-│   └── mappings.json                   ← form/evento → tabla
+│   │   └── lead-captured.json           (consumido)
+│   └── mappings.json                   ← form/evento → tabla (consumido)
 ├── capa-3-sql/
-│   ├── index.html                      ← Renderizador con sidebar + detalle
-│   ├── schema.sql                      ← DDL canónico
-│   └── data-dictionary.md              ← Diccionario humano de columnas
+│   ├── index.html                      ← capa standalone legacy
+│   ├── schema.sql                      ← DDL canónico (consumido)
+│   └── data-dictionary.md              ← diccionario humano de columnas (consumido)
 └── mapa/
-    └── index.html                      ← Matriz de trazabilidad
+    └── index.html                      ← capa standalone legacy
 ```
+
+## Rutas
+
+- **`/core/simulador-ux/...`** — ruta interna canónica. El código nativo del Hub fetchea de
+  aquí (`CAPA2_BASE`, `CAPA3_BASE` en `prisma-apex/index.html`).
+- **`/publicados/armc/simulador-ux/...`** — ruta pública legacy. Queda **solo como
+  compatibilidad** durante la transición; no es acceso canónico. Su retirada controlada
+  (redirect a `/hub`) se hará cuando se confirme que ningún consumidor la usa.
+- El simulador **no tiene URL pública propia**: el acceso es la pestaña *Simulador UX ARMC*
+  dentro del Hub (`/hub`, login-only), tanto en vista de usuario como en el detalle de
+  usuario de administración.
 
 ## Convenciones
 
@@ -74,7 +100,7 @@ Capa 2, Capa 3 y Mapa usan **sidebar + detalle + búsqueda** (patrón estándar 
 - Panel central renderiza solo el item seleccionado.
 - Listas largas (25 demandas) como tablas compactas con filtro propio.
 
-**Cross-links entre capas:** cada formulario/evento muestra chips de trazabilidad que saltan a otras capas. Cada tabla muestra "Usado por". Cada nodo de Capa 1 con contrato muestra "Ver contrato en Capa 2". El Mapa permite saltar desde cualquier celda a su capa correspondiente. Mecánica técnica: `postMessage` entre el shell y los iframes.
+**Cross-links entre capas:** cada formulario/evento muestra chips de trazabilidad que saltan a otras capas. Cada tabla muestra "Usado por". Cada nodo de Capa 1 con contrato muestra "Ver contrato en Capa 2". El Mapa permite saltar desde cualquier celda a su capa correspondiente. Mecánica técnica: **llamada directa entre instancias nativas** de capa dentro del Hub (`onNavigate` → `simNavigate` → `focusItem` de la capa destino). No hay `postMessage` ni iframes.
 
 ## Glosario
 
@@ -86,13 +112,12 @@ Capa 2, Capa 3 y Mapa usan **sidebar + detalle + búsqueda** (patrón estándar 
 
 ## Desarrollo local
 
+El simulador es parte del Hub; se prueba levantando el servidor del proyecto:
+
 ```bash
-cd prisma-apex/clientes-publicados/armc/simulador-ux
-python3 -m http.server 8766
+cd server && node server.js
 ```
 
-Acceso: `http://127.0.0.1:8766/index.html`
+Acceso: `http://localhost:3000/hub` → pestaña *Simulador UX ARMC*.
 
-## Carril de trabajo
-
-Edición sobre el worktree `web-de-prisma-simulador-executor3`. La integración a `dev` la decide el revisor.
+Los datos de las capas se sirven en `http://localhost:3000/core/simulador-ux/...`.
