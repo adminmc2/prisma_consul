@@ -2,6 +2,14 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-21] — v3.3.70
+
+### Documentación — README del simulador actualizado al estado nativo
+
+Bump de cierre del slice documental posterior al bloque T1–T6. Actualiza `prisma-apex/core/simulador-ux/README.md` al estado real del repo: módulo interno nativo del Hub (sin iframes), ubicación `prisma-apex/core/simulador-ux/`, ruta canónica interna `/core/simulador-ux/`, y ruta pública legacy documentada como retirada en código (`301 → /hub`) con la compatibilidad estática de `dev` marcada explícitamente como excepción operativa de nginx, no del repo.
+
+Sin cambios de código ni de rutas; solo documentación + bump en los 4 puntos canónicos.
+
 ## [2026-05-21] — v3.3.69
 
 ### Simulador UX ARMC — nativización completa en el Hub (Línea B) + transición estructural
