@@ -2151,15 +2151,25 @@
         document.addEventListener('mouseup', onUp);
       });
 
-      window.addEventListener('resize', () => setTimeout(drawLines, 50));
-
       renderNodes();
       setTimeout(() => { drawLines(); resetSimulation(); }, 40);
 
       // refresh: recalcula líneas al volver a mostrar la subpestaña (el panel
       // oculto tiene rects en cero y las curvas quedarían mal trazadas).
-      return { focusItem, refresh: () => setTimeout(drawLines, 40) };
+      const api = { focusItem, refresh: () => setTimeout(drawLines, 40) };
+      mountEl.__capa1 = api;
+      return api;
     }
+
+    // Un único listener global de resize (registrado una sola vez) redibuja las
+    // instancias de Capa 1 vivas en el DOM. No se registra un listener por
+    // instancia: las fichas admin destruidas salen del DOM con container.innerHTML
+    // y no se recorren — sin acumulación de listeners ni closures muertos.
+    window.addEventListener('resize', () => {
+      document.querySelectorAll('.sim-capa1').forEach(el => {
+        if (el.__capa1 && typeof el.__capa1.refresh === 'function') el.__capa1.refresh();
+      });
+    });
 
     // ── Admin User Detail: Dropzone ──
     function initUdDropzone() {
