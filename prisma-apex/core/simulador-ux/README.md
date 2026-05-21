@@ -40,9 +40,8 @@ Esta carpeta (`prisma-apex/core/simulador-ux/`) contiene:
   - `capa-2-diccionario/catalogo-demandas.json`, `forms/*.json`, `events/*.json`, `mappings.json`
   - `capa-3-sql/schema.sql`, `capa-3-sql/data-dictionary.md`
 - **HTMLs standalone legacy** (`index.html` del shell y de cada capa): son las versiones
-  pre-nativización. El Hub nativo **no las usa**; se conservan de momento como compatibilidad
-  y se sirven vía la ruta antigua. Su retirada definitiva es un paso posterior de la
-  transición.
+  pre-nativización. El Hub nativo **no las usa**; se conservan en el árbol a la espera de su
+  retirada definitiva. En código ya no se exponen públicamente (ver "Rutas").
 
 ```
 prisma-apex/core/simulador-ux/
@@ -71,9 +70,12 @@ prisma-apex/core/simulador-ux/
 
 - **`/core/simulador-ux/...`** — ruta interna canónica. El código nativo del Hub fetchea de
   aquí (`CAPA2_BASE`, `CAPA3_BASE` en `prisma-apex/index.html`).
-- **`/publicados/armc/simulador-ux/...`** — ruta pública legacy. Queda **solo como
-  compatibilidad** durante la transición; no es acceso canónico. Su retirada controlada
-  (redirect a `/hub`) se hará cuando se confirme que ningún consumidor la usa.
+- **`/publicados/armc/simulador-ux/...`** — ruta pública legacy. **En el repo está retirada:**
+  `server/server.js` la redirige con `301 → /hub`. No es acceso canónico.
+  - *Excepción operativa vigente en dev:* el entorno `dev.prismaconsul.com` tiene un override
+    temporal en nginx que la sirve como compatibilidad estática en vez de redirigir, mientras
+    existan páginas cacheadas que aún la consuman. Esa excepción vive en el edge de dev, **no
+    en el repo**; se retira cuando se confirme que ningún consumidor la usa.
 - El simulador **no tiene URL pública propia**: el acceso es la pestaña *Simulador UX ARMC*
   dentro del Hub (`/hub`, login-only), tanto en vista de usuario como en el detalle de
   usuario de administración.
