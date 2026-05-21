@@ -649,7 +649,6 @@
     .sim-panels { flex: 1 1 auto; min-height: 0; position: relative; }
     .sim-panel { display: none; width: 100%; height: 100%; }
     .sim-panel.active { display: block; }
-    .sim-frame { width: 100%; height: 100%; border: none; background: var(--prisma-navy); display: block; }
 
     /* ── Capa 1 nativa (B2) — todo scopeado bajo .sim-capa1 ── */
     .sim-capa1 {
@@ -1889,15 +1888,15 @@
       }
     }
 
-    // ── SIMULADOR UX — shell nativo del Hub (B1) + Capa 1 nativa (B2) ──
-    // B1 eliminó el iframe de nivel 1. B2 nativiza la Capa 1: ya no usa iframe
-    // de nivel 2; se renderiza dentro del Hub con CSS/JS aislados (factory por
-    // instancia). Capa 2, Capa 3 y Mapa siguen vía iframe legacy.
+    // ── SIMULADOR UX — shell nativo del Hub ──
+    // Las 4 capas (Capa 1/2/3 y Mapa) son nativas: se renderizan dentro del Hub
+    // con CSS/JS aislados (factory por instancia). No hay iframes; la navegación
+    // cross-layer es por llamada directa entre instancias.
     const SIM_CAPAS = [
-      { id: 'capa-1-ux',          label: 'Capa 1: UX',          icon: 'ph-tree-structure', native: true },
-      { id: 'capa-2-diccionario', label: 'Capa 2: Diccionario', icon: 'ph-book-bookmark',  native: true },
-      { id: 'capa-3-sql',         label: 'Capa 3: BD (SQL)',    icon: 'ph-database',       native: true },
-      { id: 'mapa',               label: 'Mapa',                icon: 'ph-flow-arrow',     native: true }
+      { id: 'capa-1-ux',          label: 'Capa 1: UX',          icon: 'ph-tree-structure' },
+      { id: 'capa-2-diccionario', label: 'Capa 2: Diccionario', icon: 'ph-book-bookmark' },
+      { id: 'capa-3-sql',         label: 'Capa 3: BD (SQL)',    icon: 'ph-database' },
+      { id: 'mapa',               label: 'Mapa',                icon: 'ph-flow-arrow' }
     ];
     const SIM_CAPA_BY_TAB = { '1': 'capa-1-ux', '2': 'capa-2-diccionario', '3': 'capa-3-sql', '4': 'mapa' };
 
@@ -1909,12 +1908,9 @@
         `<button type="button" class="sim-subtab${i === 0 ? ' active' : ''}" data-capa="${c.id}">` +
         `<i class="ph ${c.icon}"></i> ${c.label}</button>`
       ).join('');
-      const panels = SIM_CAPAS.map((c, i) => {
-        const inner = c.native
-          ? `<div class="sim-native-mount"></div>`
-          : `<iframe class="sim-frame" title="${c.label}" sandbox="allow-scripts allow-same-origin" allow="fullscreen" allowfullscreen></iframe>`;
-        return `<div class="sim-panel${i === 0 ? ' active' : ''}" data-capa="${c.id}">${inner}</div>`;
-      }).join('');
+      const panels = SIM_CAPAS.map((c, i) =>
+        `<div class="sim-panel${i === 0 ? ' active' : ''}" data-capa="${c.id}"><div class="sim-native-mount"></div></div>`
+      ).join('');
       host.innerHTML =
         `<div class="simulador-shell">` +
         `<div class="sim-subtabs" role="tablist">${tabs}</div>` +
@@ -1932,56 +1928,30 @@
         p.classList.toggle('active', on);
         if (!on) return;
         const mount = p.querySelector('.sim-native-mount');
-        if (mount) {
-          // Capa nativa: instancia perezosa (una por superficie)
-          if (!p.__capaInst) {
-            const onNavigate = (tab, itemId) => simNavigate(host, tab, itemId);
-            if (capaId === 'capa-1-ux') p.__capaInst = createCapa1(mount, { onNavigate });
-            else if (capaId === 'capa-2-diccionario') p.__capaInst = createCapa2(mount, { onNavigate });
-            else if (capaId === 'capa-3-sql') p.__capaInst = createCapa3(mount, { onNavigate });
-            else if (capaId === 'mapa') p.__capaInst = createMapa(mount, { onNavigate });
-          } else if (typeof p.__capaInst.refresh === 'function') {
-            p.__capaInst.refresh();
-          }
-          return;
-        }
-        const ifr = p.querySelector('iframe.sim-frame');
-        if (ifr && !ifr.getAttribute('src')) {
-          ifr.setAttribute('src', '/publicados/armc/simulador-ux/' + capaId + '/index.html?cb=' + Date.now());
+        if (!mount) return;
+        // Capa nativa: instancia perezosa (una por superficie)
+        if (!p.__capaInst) {
+          const onNavigate = (tab, itemId) => simNavigate(host, tab, itemId);
+          if (capaId === 'capa-1-ux') p.__capaInst = createCapa1(mount, { onNavigate });
+          else if (capaId === 'capa-2-diccionario') p.__capaInst = createCapa2(mount, { onNavigate });
+          else if (capaId === 'capa-3-sql') p.__capaInst = createCapa3(mount, { onNavigate });
+          else if (capaId === 'mapa') p.__capaInst = createMapa(mount, { onNavigate });
+        } else if (typeof p.__capaInst.refresh === 'function') {
+          p.__capaInst.refresh();
         }
       });
     }
 
     // Navegación cross-layer dentro de una superficie: conmuta la subpestaña y
-    // entrega el 'select' a la capa destino (nativa por llamada directa, iframe
-    // por postMessage).
+    // entrega el 'select' a la capa destino por llamada directa a su instancia.
     function simNavigate(host, tab, itemId) {
       const capaId = SIM_CAPA_BY_TAB[String(tab)] || String(tab);
       simShowCapa(host, capaId);
       setTimeout(() => {
         const panel = host.querySelector('.sim-panel[data-capa="' + capaId + '"]');
-        if (!panel) return;
-        if (panel.__capaInst) {
-          panel.__capaInst.focusItem(itemId);
-        } else {
-          const ifr = panel.querySelector('iframe.sim-frame');
-          if (ifr && ifr.contentWindow) ifr.contentWindow.postMessage({ type: 'select', itemId: itemId }, '*');
-        }
+        if (panel && panel.__capaInst) panel.__capaInst.focusItem(itemId);
       }, 140);
     }
-
-    // Las capas aún iframeadas (2/3/Mapa) emiten 'navigate'; el shell destino se
-    // resuelve por el iframe emisor (e.source), no por orden del DOM.
-    window.addEventListener('message', (e) => {
-      const msg = e.data;
-      if (!msg || msg.type !== 'navigate') return;
-      let host = null;
-      document.querySelectorAll('.simulador-shell .sim-frame').forEach(f => {
-        if (!host && f.contentWindow === e.source) host = f.closest('.simulador-shell');
-      });
-      if (!host) return;
-      simNavigate(host, msg.tab, msg.itemId);
-    });
 
     // ── Capa 1 nativa — datos del flujo (idénticos a la versión legacy) ──
     const CAPA1_NODES = {
