@@ -94,14 +94,14 @@ app.use('/core/simulador-ux', express.static(path.join(projectRoot, 'prisma-apex
   extensions: ['html']
 }));
 
-// Alias de compatibilidad del simulador UX (Línea B / slice T2).
-// Mantiene viva la URL antigua /publicados/armc/simulador-ux/... resolviéndola
-// contra la ubicación nueva, montado ANTES del estático general de /publicados.
-// Es solo compatibilidad legacy; el Hub ya no depende de esta ruta. Su retirada
-// controlada (redirect) es el slice T4.
-app.use('/publicados/armc/simulador-ux', express.static(path.join(projectRoot, 'prisma-apex', 'core', 'simulador-ux'), {
-  extensions: ['html']
-}));
+// Retirada de la ruta pública legacy del simulador (Línea B / slice T4).
+// El simulador es un módulo interno del Hub: no tiene URL pública propia.
+// La URL antigua /publicados/armc/simulador-ux/... deja de servir contenido
+// y se convierte en compensación explícita — redirect 301 a /hub, único
+// acceso canónico (login-only). Sustituye al alias estático de T2.
+app.use('/publicados/armc/simulador-ux', (req, res) => {
+  res.redirect(301, '/hub');
+});
 
 // Entregables publicados por cliente — Subpaso 2.2 de Fase 2 (v3.3.31).
 // URL canónica: /publicados/[cliente]/...
