@@ -2305,7 +2305,7 @@
     // ── Capa 2 nativa (B3) — Diccionario operativo ──
     // Consume los JSON desde la ruta legacy (sin alias todavía, B3). Caché de
     // módulo: las dos superficies (usuario/admin) comparten la descarga.
-    const CAPA2_BASE = '/publicados/armc/simulador-ux/capa-2-diccionario/';
+    const CAPA2_BASE = '/core/simulador-ux/capa-2-diccionario/';
     const CAPA2_FORM_FILES = ['web-contact-form', 'lead-capture'];
     const CAPA2_EVENT_FILES = ['lead-captured'];
     const _capa2Cache = {};
@@ -2570,7 +2570,7 @@
     // Consume schema.sql, data-dictionary.md y mappings.json desde la ruta
     // legacy (sin alias todavía, B4). Caché de módulo con .catch que no
     // envenena ante fallo transitorio (misma lección que B3).
-    const CAPA3_BASE = '/publicados/armc/simulador-ux/';
+    const CAPA3_BASE = '/core/simulador-ux/';
     const _capa3Cache = {};
     function capa3Load(path, asJson) {
       if (!_capa3Cache[path]) {
