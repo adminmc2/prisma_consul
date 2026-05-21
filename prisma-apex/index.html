@@ -651,6 +651,68 @@
     .sim-panel.active { display: block; }
     .sim-frame { width: 100%; height: 100%; border: none; background: var(--prisma-navy); display: block; }
 
+    /* ── Capa 1 nativa (B2) — todo scopeado bajo .sim-capa1 ── */
+    .sim-capa1 {
+      --c1-navy: #101B2C; --c1-bg: #172436; --c1-cyan: #31BEEF; --c1-soft: #A1B8F2;
+      --c1-white: #FAF9F6; --c1-muted: #93A6BF; --c1-border: rgba(161,184,242,0.18);
+      --c1-danger: #e56b6f; --c1-success: #9ad29a; --c1-warning: #f4bf75;
+      position: relative; display: flex; flex-direction: column; height: 100%;
+      overflow: hidden; background: var(--c1-navy); color: var(--c1-white);
+      font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+    }
+    .sim-capa1 .capa1-header { flex: 0 0 auto; background: var(--c1-bg); padding: 14px 22px; border-bottom: 1px solid var(--c1-border); display: flex; justify-content: space-between; align-items: center; gap: 18px; }
+    .sim-capa1 .header-copy h1 { margin: 0; font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; font-family: var(--font-heading); }
+    .sim-capa1 .header-copy h1 i { color: var(--c1-cyan); }
+    .sim-capa1 .header-copy p { margin: 6px 0 0; font-size: 0.86rem; color: var(--c1-muted); }
+    .sim-capa1 .ghost-button { font: inherit; border: 1px solid var(--c1-border); background: transparent; color: var(--c1-white); border-radius: 4px 18px 18px 4px; padding: 9px 16px; font-weight: 600; cursor: pointer; }
+    .sim-capa1 .ghost-button:hover { border-color: var(--c1-cyan); color: var(--c1-cyan); }
+    .sim-capa1 .capa1-main { flex: 1; display: flex; min-height: 0; }
+    .sim-capa1 .capa1-canvas-wrapper { position: relative; flex: 1; overflow: auto; cursor: grab; background: radial-gradient(circle at 1px 1px, rgba(161,184,242,0.12) 1px, transparent 0), linear-gradient(180deg, rgba(16,27,44,0.96), rgba(26,37,53,0.96)); background-size: 26px 26px, auto; scrollbar-width: none; -ms-overflow-style: none; }
+    .sim-capa1 .capa1-canvas-wrapper.panning { cursor: grabbing; }
+    .sim-capa1 .capa1-canvas-wrapper::-webkit-scrollbar { width: 0; height: 0; display: none; }
+    .sim-capa1 .capa1-canvas { position: relative; min-width: 3600px; min-height: 1800px; transform-origin: 0 0; transition: transform 0.1s ease-out; }
+    .sim-capa1 .capa1-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    .sim-capa1 .link { fill: none; stroke: rgba(161,184,242,0.45); stroke-width: 2; transition: stroke 0.3s, stroke-width 0.3s; }
+    .sim-capa1 .link.active { stroke: var(--c1-cyan); stroke-width: 3; filter: drop-shadow(0 0 8px rgba(49,190,239,0.5)); }
+    .sim-capa1 .link.error { stroke: var(--c1-danger); stroke-width: 4; stroke-dasharray: 6 6; }
+    .sim-capa1 .node { position: absolute; width: 360px; background: rgba(15,23,36,0.94); color: var(--c1-white); border: 1px solid var(--c1-border); border-radius: 14px; box-shadow: 0 12px 28px rgba(0,0,0,0.18); z-index: 2; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, opacity 0.2s; overflow: hidden; }
+    .sim-capa1 .node.active { border-color: rgba(49,190,239,0.7); box-shadow: 0 0 0 2px rgba(49,190,239,0.12), 0 18px 34px rgba(0,0,0,0.28); transform: translateY(-2px); }
+    .sim-capa1 .node.disabled { opacity: 0.55; filter: grayscale(0.2); }
+    .sim-capa1 .node-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 13px 16px; background: linear-gradient(135deg, rgba(49,190,239,0.14), rgba(161,184,242,0.08)); border-bottom: 1px solid var(--c1-border); cursor: grab; }
+    .sim-capa1 .node-title { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.95rem; }
+    .sim-capa1 .node-title i { color: var(--c1-cyan); font-size: 1.05rem; }
+    .sim-capa1 .node-id { font-size: 0.69rem; color: var(--c1-soft); background: rgba(16,27,44,0.9); padding: 3px 8px; border-radius: 999px; }
+    .sim-capa1 .node-body { padding: 16px; }
+    .sim-capa1 .node-key-badge { display: inline-block; margin-bottom: 10px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--c1-border); color: var(--c1-soft); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.7rem; }
+    .sim-capa1 .node-description { margin: 0; color: #d6dfeb; font-size: 0.9rem; line-height: 1.45; }
+    .sim-capa1 .node-data { margin-top: 14px; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(161,184,242,0.14); }
+    .sim-capa1 .node-data strong { display: block; margin-bottom: 8px; color: var(--c1-cyan); font-size: 0.8rem; }
+    .sim-capa1 .node-data ul { margin: 0; padding-left: 18px; color: #dce7f7; font-size: 0.84rem; line-height: 1.45; }
+    .sim-capa1 .node-data li + li { margin-top: 4px; }
+    .sim-capa1 .node-note { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: rgba(49,190,239,0.08); border: 1px solid rgba(49,190,239,0.16); color: #dce7f7; font-size: 0.82rem; line-height: 1.4; }
+    .sim-capa1 .options-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+    .sim-capa1 .option-btn { font: inherit; width: 100%; border: 1px solid rgba(161,184,242,0.2); background: rgba(255,255,255,0.04); color: var(--c1-white); border-radius: 10px; padding: 11px 14px; text-align: left; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; transition: border-color 0.18s, background 0.18s, transform 0.18s; }
+    .sim-capa1 .option-btn:hover { border-color: rgba(49,190,239,0.7); background: rgba(49,190,239,0.1); transform: translateX(2px); }
+    .sim-capa1 .option-btn.selected { background: rgba(49,190,239,0.16); border-color: rgba(49,190,239,0.9); }
+    .sim-capa1 .cross-link { background: rgba(49,190,239,0.08); border: 1px solid rgba(49,190,239,0.3); color: var(--c1-cyan); padding: 8px 12px; border-radius: 8px; cursor: pointer; font: inherit; font-size: 0.82rem; text-align: left; display: flex; align-items: center; gap: 8px; }
+    .sim-capa1 .cross-links { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+    .sim-capa1 .terminal-copy { margin-top: 14px; padding-top: 12px; border-top: 1px dashed rgba(161,184,242,0.18); color: var(--c1-muted); font-size: 0.82rem; text-align: center; }
+    .sim-capa1 .capa1-console { width: 360px; background: #111827; border-left: 1px solid rgba(161,184,242,0.15); display: flex; flex-direction: column; }
+    .sim-capa1 .console-header { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(161,184,242,0.12); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.8rem; color: var(--c1-soft); }
+    .sim-capa1 .console-header button { border: none; background: transparent; color: var(--c1-cyan); cursor: pointer; font: inherit; }
+    .sim-capa1 .capa1-logs { flex: 1; overflow: auto; padding: 12px; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.76rem; }
+    .sim-capa1 .log-entry { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed rgba(161,184,242,0.12); line-height: 1.45; }
+    .sim-capa1 .log-time { color: #7b8aa0; margin-right: 6px; }
+    .sim-capa1 .log-info { color: #d7e0ed; }
+    .sim-capa1 .log-success { color: var(--c1-success); }
+    .sim-capa1 .log-warning { color: var(--c1-warning); }
+    .sim-capa1 .log-error { color: var(--c1-danger); }
+    .sim-capa1 .log-db { display: block; margin-top: 6px; padding: 6px 8px; border-radius: 8px; background: rgba(49,190,239,0.08); color: var(--c1-cyan); white-space: pre-wrap; }
+    .sim-capa1 .capa1-zoom { position: absolute; left: 18px; bottom: 18px; display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 12px; background: rgba(15,23,36,0.9); border: 1px solid rgba(161,184,242,0.16); z-index: 20; }
+    .sim-capa1 .capa1-zoom button { width: 34px; height: 34px; border: none; border-radius: 8px; background: rgba(255,255,255,0.04); color: var(--c1-white); cursor: pointer; }
+    .sim-capa1 .capa1-zoom button:hover { background: rgba(49,190,239,0.16); color: var(--c1-cyan); }
+    .sim-capa1 .zoom-level { min-width: 54px; text-align: center; color: var(--c1-soft); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.76rem; }
+
     /* ── Responsive ── */
     @media (max-width: 900px) {
       .panel-body { grid-template-columns: 1fr; }
@@ -1670,16 +1732,17 @@
       }
     }
 
-    // ── SIMULADOR UX — shell nativo del Hub (B1) ──
-    // Sustituye el iframe de nivel 1 (shell simulador-ux/index.html). Las 4 capas
-    // siguen cargándose vía iframe de nivel 2 desde la ruta legacy, sin tocar su
-    // lógica interna (refactor por capa = slices B posteriores).
+    // ── SIMULADOR UX — shell nativo del Hub (B1) + Capa 1 nativa (B2) ──
+    // B1 eliminó el iframe de nivel 1. B2 nativiza la Capa 1: ya no usa iframe
+    // de nivel 2; se renderiza dentro del Hub con CSS/JS aislados (factory por
+    // instancia). Capa 2, Capa 3 y Mapa siguen vía iframe legacy.
     const SIM_CAPAS = [
-      { id: 'capa-1-ux',          label: 'Capa 1: UX',          icon: 'ph-tree-structure' },
+      { id: 'capa-1-ux',          label: 'Capa 1: UX',          icon: 'ph-tree-structure', native: true },
       { id: 'capa-2-diccionario', label: 'Capa 2: Diccionario', icon: 'ph-book-bookmark' },
       { id: 'capa-3-sql',         label: 'Capa 3: BD (SQL)',    icon: 'ph-database' },
       { id: 'mapa',               label: 'Mapa',                icon: 'ph-flow-arrow' }
     ];
+    const SIM_CAPA_BY_TAB = { '1': 'capa-1-ux', '2': 'capa-2-diccionario', '3': 'capa-3-sql', '4': 'mapa' };
 
     function mountSimuladorShell(hostId) {
       const host = document.getElementById(hostId);
@@ -1689,10 +1752,12 @@
         `<button type="button" class="sim-subtab${i === 0 ? ' active' : ''}" data-capa="${c.id}">` +
         `<i class="ph ${c.icon}"></i> ${c.label}</button>`
       ).join('');
-      const panels = SIM_CAPAS.map((c, i) =>
-        `<div class="sim-panel${i === 0 ? ' active' : ''}" data-capa="${c.id}">` +
-        `<iframe class="sim-frame" title="${c.label}" sandbox="allow-scripts allow-same-origin" allow="fullscreen" allowfullscreen></iframe></div>`
-      ).join('');
+      const panels = SIM_CAPAS.map((c, i) => {
+        const inner = c.native
+          ? `<div class="sim-capa1-mount"></div>`
+          : `<iframe class="sim-frame" title="${c.label}" sandbox="allow-scripts allow-same-origin" allow="fullscreen" allowfullscreen></iframe>`;
+        return `<div class="sim-panel${i === 0 ? ' active' : ''}" data-capa="${c.id}">${inner}</div>`;
+      }).join('');
       host.innerHTML =
         `<div class="simulador-shell">` +
         `<div class="sim-subtabs" role="tablist">${tabs}</div>` +
@@ -1708,36 +1773,393 @@
       host.querySelectorAll('.sim-panel').forEach(p => {
         const on = p.dataset.capa === capaId;
         p.classList.toggle('active', on);
-        if (on) {
-          const ifr = p.querySelector('iframe.sim-frame');
-          if (ifr && !ifr.getAttribute('src')) {
-            ifr.setAttribute('src', '/publicados/armc/simulador-ux/' + capaId + '/index.html?cb=' + Date.now());
+        if (!on) return;
+        const mount = p.querySelector('.sim-capa1-mount');
+        if (mount) {
+          // Capa 1 nativa: instancia perezosa (una por superficie)
+          if (!p.__capa1) {
+            p.__capa1 = createCapa1(mount, { onNavigate: (tab, itemId) => simNavigate(host, tab, itemId) });
+          } else {
+            p.__capa1.refresh();
           }
+          return;
+        }
+        const ifr = p.querySelector('iframe.sim-frame');
+        if (ifr && !ifr.getAttribute('src')) {
+          ifr.setAttribute('src', '/publicados/armc/simulador-ux/' + capaId + '/index.html?cb=' + Date.now());
         }
       });
     }
 
-    // Navegación cross-layer: las capas emiten postMessage 'navigate'; el shell
-    // nativo del Hub conmuta la subpestaña y reenvía 'select' a la capa destino.
-    // El shell destino se resuelve por el iframe emisor (e.source), no por orden
-    // del DOM: con usuario y admin montados a la vez, un mensaje debe afectar solo
-    // a su propia superficie.
+    // Navegación cross-layer dentro de una superficie: conmuta la subpestaña y
+    // entrega el 'select' a la capa destino (nativa por llamada directa, iframe
+    // por postMessage).
+    function simNavigate(host, tab, itemId) {
+      const capaId = SIM_CAPA_BY_TAB[String(tab)] || String(tab);
+      simShowCapa(host, capaId);
+      setTimeout(() => {
+        const panel = host.querySelector('.sim-panel[data-capa="' + capaId + '"]');
+        if (!panel) return;
+        if (panel.__capa1) {
+          panel.__capa1.focusItem(itemId);
+        } else {
+          const ifr = panel.querySelector('iframe.sim-frame');
+          if (ifr && ifr.contentWindow) ifr.contentWindow.postMessage({ type: 'select', itemId: itemId }, '*');
+        }
+      }, 140);
+    }
+
+    // Las capas aún iframeadas (2/3/Mapa) emiten 'navigate'; el shell destino se
+    // resuelve por el iframe emisor (e.source), no por orden del DOM.
     window.addEventListener('message', (e) => {
       const msg = e.data;
       if (!msg || msg.type !== 'navigate') return;
-      const capaMap = { '1': 'capa-1-ux', '2': 'capa-2-diccionario', '3': 'capa-3-sql', '4': 'mapa' };
-      const capaId = capaMap[String(msg.tab)] || String(msg.tab);
       let host = null;
       document.querySelectorAll('.simulador-shell .sim-frame').forEach(f => {
         if (!host && f.contentWindow === e.source) host = f.closest('.simulador-shell');
       });
       if (!host) return;
-      simShowCapa(host, capaId);
-      setTimeout(() => {
-        const panel = host.querySelector('.sim-panel[data-capa="' + capaId + '"] iframe.sim-frame');
-        if (panel && panel.contentWindow) panel.contentWindow.postMessage({ type: 'select', itemId: msg.itemId }, '*');
-      }, 120);
+      simNavigate(host, msg.tab, msg.itemId);
     });
+
+    // ── Capa 1 nativa — datos del flujo (idénticos a la versión legacy) ──
+    const CAPA1_NODES = {
+      lead_entry_channel: {
+        title: 'Entrada del lead', key: 'LEAD_ENTRY_CHANNEL', x: 120, y: 420, width: 390,
+        description: 'El flujo comienza cuando se recibe un nuevo lead por uno de los canales habilitados.',
+        dataPoints: ['Canal disponible: Formulario de contacto web', 'Canal disponible: WhatsApp', 'Estado: pendiente de selección de canal', 'Sin persistencia hasta la selección'],
+        actions: [
+          { id: 'route-entry-web', label: 'Formulario de contacto web', targetId: 'web_contact_form_received', dbAction: 'Sin persistencia todavía: se representa la recepción del lead desde el formulario de contacto web.' },
+          { id: 'route-entry-whatsapp', label: 'WhatsApp', targetId: 'lead_capture_whatsapp', dbAction: 'Sin persistencia todavía: se fija solo la bifurcación visual por canal WhatsApp.' }
+        ]
+      },
+      web_contact_form_received: {
+        title: 'Contacto web recibido', key: 'WEB_CONTACT_FORM_RECEIVED', x: 900, y: 110, width: 340,
+        description: 'Se registra un contacto entrante desde la web con los datos básicos del lead.',
+        dataPoints: ['Canal origen: WEB_FORM', 'Origen: formulario de contacto web', 'Datos básicos recibidos', 'Ingreso al flujo inicial'],
+        note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
+        crossLinks: [{ label: 'Ver contrato web_contact_form en Capa 2', tab: 2, itemId: 'form-web_contact_form' }],
+        actions: [{ id: 'register-lead-web', label: 'Registrar lead capturado', targetId: 'lead_captured', dbAction: "INSERT armc_leads(canal_origen='WEB_FORM', ...) RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CAPTURED');" }]
+      },
+      lead_capture_whatsapp: {
+        title: 'Contacto por WhatsApp recibido', key: 'LEAD_CAPTURE_WHATSAPP', x: 900, y: 860, width: 340,
+        description: 'Se registra un contacto entrante por WhatsApp con el contexto inicial disponible.',
+        dataPoints: ['Canal origen: WHATSAPP', 'Origen: conversación de WhatsApp', 'Contexto inicial recibido', 'Ingreso al flujo inicial'],
+        note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
+        crossLinks: [{ label: 'Ver contrato lead_capture en Capa 2', tab: 2, itemId: 'form-lead_capture' }],
+        actions: [{ id: 'register-lead-whatsapp', label: 'Registrar lead capturado', targetId: 'lead_captured', dbAction: "INSERT armc_leads(canal_origen='WHATSAPP', ...) RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CAPTURED');" }]
+      },
+      lead_captured: {
+        title: 'Lead capturado', key: 'LEAD_CAPTURED', x: 1700, y: 480, width: 360,
+        description: 'Convergencia: el lead queda registrado en el sistema con un id único, independientemente del canal de entrada.',
+        dataPoints: ['id único asignado por el sistema', 'estado: LEAD_CAPTURED', 'canal_origen preservado', 'fecha_primer_contacto registrada', 'evento LEAD_CAPTURED emitido'],
+        terminalCopy: 'Lead capturado en el sistema.',
+        crossLinks: [
+          { label: 'Ver evento LEAD_CAPTURED en Capa 2', tab: 2, itemId: 'event-LEAD_CAPTURED' },
+          { label: 'Ver tabla armc_leads en Capa 3', tab: 3, itemId: 'table-armc_leads' }
+        ],
+        actions: []
+      }
+    };
+
+    let capa1Uid = 0;
+    // Factory: monta una instancia aislada de la Capa 1 en mountEl. Reutilizable
+    // en #tab-simulador y #ud-simulador sin colisión de IDs ni de estado.
+    function createCapa1(mountEl, opts) {
+      opts = opts || {};
+      const uid = 'c1u' + (++capa1Uid);
+      mountEl.classList.add('sim-capa1');
+      mountEl.innerHTML =
+        '<div class="capa1-header"><div class="header-copy">' +
+          '<h1><i class="ph ph-tree-structure"></i> Simulador UX ARMC &middot; Capa 1</h1>' +
+          '<p>Mapa de estados y decisiones. La especificaci&oacute;n de formularios y campos vive en el diccionario operativo de la Capa 2.</p>' +
+        '</div><button class="ghost-button capa1-reset" type="button"><i class="ph ph-arrow-counter-clockwise"></i> Reiniciar</button></div>' +
+        '<div class="capa1-main"><div class="capa1-canvas-wrapper"><div class="capa1-canvas">' +
+          '<svg class="capa1-svg"><defs>' +
+            '<marker id="arrow-' + uid + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(161,184,242,0.45)"></path></marker>' +
+            '<marker id="arrowA-' + uid + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#31BEEF"></path></marker>' +
+            '<marker id="arrowE-' + uid + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#e56b6f"></path></marker>' +
+          '</defs></svg><div class="capa1-nodes"></div></div></div>' +
+        '<aside class="capa1-console"><div class="console-header"><span>Terminal del sistema</span>' +
+          '<button type="button" class="capa1-clear">[Limpiar]</button></div><div class="capa1-logs"></div></aside></div>' +
+        '<div class="capa1-zoom"><button type="button" class="capa1-zoom-out" title="Reducir">&minus;</button>' +
+          '<span class="zoom-level capa1-zoom-level" title="Restablecer zoom" style="cursor:pointer">100%</span>' +
+          '<button type="button" class="capa1-zoom-in" title="Ampliar">+</button>' +
+          '<button type="button" class="capa1-fs" title="Pantalla completa"><i class="ph ph-corners-out"></i></button></div>';
+
+      const nodesData = JSON.parse(JSON.stringify(CAPA1_NODES));
+      const container = mountEl.querySelector('.capa1-nodes');
+      const svgPath = mountEl.querySelector('.capa1-svg');
+      const logsBox = mountEl.querySelector('.capa1-logs');
+      const canvasEl = mountEl.querySelector('.capa1-canvas');
+      const wrapper = mountEl.querySelector('.capa1-canvas-wrapper');
+      const zoomLabel = mountEl.querySelector('.capa1-zoom-level');
+      let zoomLevel = 1;
+      let activePathKeys = [];
+      const ZOOM_MIN = 0.3, ZOOM_MAX = 2;
+
+      function escapeHtml(value) {
+        return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+      function log(message, type, dbAction) {
+        const div = document.createElement('div');
+        const tone = type === 'success' ? 'log-success' : type === 'error' ? 'log-error' : type === 'warning' ? 'log-warning' : 'log-info';
+        let html = '<span class="' + tone + '">' + escapeHtml(message) + '</span>';
+        if (dbAction) html += '<span class="log-db">' + escapeHtml(dbAction) + '</span>';
+        div.className = 'log-entry';
+        div.innerHTML = html;
+        logsBox.appendChild(div);
+        logsBox.scrollTop = logsBox.scrollHeight;
+      }
+      function clearLogs() { logsBox.innerHTML = ''; }
+      function getIconForNode(key) {
+        if (key.includes('LEAD')) return 'ph ph-user-plus';
+        if (key.includes('AUTO')) return 'ph ph-robot';
+        if (key.includes('HUMAN')) return 'ph ph-headset';
+        if (key.includes('SUPER')) return 'ph ph-clipboard-text';
+        if (key.includes('USUARIO')) return 'ph ph-check-circle';
+        return 'ph ph-hourglass-medium';
+      }
+      function applyZoom() {
+        canvasEl.style.transform = 'scale(' + zoomLevel + ')';
+        zoomLabel.textContent = Math.round(zoomLevel * 100) + '%';
+      }
+      function zoomBy(delta) { zoomLevel = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoomLevel + delta)); applyZoom(); }
+      function zoomReset() { zoomLevel = 1; applyZoom(); }
+      function toggleFullscreen() {
+        const el = mountEl.closest('.simulador-shell') || mountEl;
+        const doc = document;
+        if (!doc.fullscreenElement) { (el.requestFullscreen || el.webkitRequestFullscreen || (() => {})).call(el); }
+        else { (doc.exitFullscreen || doc.webkitExitFullscreen || (() => {})).call(doc); }
+      }
+      function attachDrag(nodeEl, data) {
+        const header = nodeEl.querySelector('.node-header');
+        header.addEventListener('mousedown', (event) => {
+          event.preventDefault();
+          header.style.cursor = 'grabbing';
+          let startX = event.clientX, startY = event.clientY;
+          const onMove = (mv) => {
+            const scale = zoomLevel > 0 ? zoomLevel : 1;
+            data.x += (mv.clientX - startX) / scale;
+            data.y += (mv.clientY - startY) / scale;
+            nodeEl.style.left = data.x + 'px';
+            nodeEl.style.top = data.y + 'px';
+            startX = mv.clientX; startY = mv.clientY;
+            drawLines();
+          };
+          const onUp = () => {
+            header.style.cursor = 'grab';
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+          };
+          document.addEventListener('mousemove', onMove);
+          document.addEventListener('mouseup', onUp);
+        });
+      }
+      function renderDataBlock(body, data) {
+        if (!data.dataPoints || !data.dataPoints.length) return;
+        const block = document.createElement('div');
+        block.className = 'node-data';
+        const title = document.createElement('strong');
+        title.textContent = 'Campos o contexto visible';
+        block.appendChild(title);
+        const list = document.createElement('ul');
+        data.dataPoints.forEach((item) => {
+          const li = document.createElement('li');
+          li.textContent = item;
+          list.appendChild(li);
+        });
+        block.appendChild(list);
+        body.appendChild(block);
+        if (data.note) {
+          const note = document.createElement('div');
+          note.className = 'node-note';
+          note.textContent = data.note;
+          body.appendChild(note);
+        }
+      }
+      function createActionButton(nodeId, action) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'option-btn';
+        button.dataset.btn = action.id;
+        button.innerHTML = '<span>' + escapeHtml(action.label) + '</span><i class="ph ph-arrow-right"></i>';
+        button.addEventListener('click', () => handleAction(nodeId, action.id, action.targetId, action.dbAction || ''));
+        return button;
+      }
+      function renderCrossLinks(body, data) {
+        if (!data.crossLinks || !data.crossLinks.length) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'cross-links';
+        data.crossLinks.forEach((cl) => {
+          const a = document.createElement('button');
+          a.type = 'button';
+          a.className = 'cross-link';
+          a.innerHTML = '<i class="ph ph-arrow-square-out"></i><span>' + escapeHtml(cl.label) + '</span>';
+          a.addEventListener('click', () => { if (typeof opts.onNavigate === 'function') opts.onNavigate(cl.tab, cl.itemId); });
+          wrap.appendChild(a);
+        });
+        body.appendChild(wrap);
+      }
+      function renderActions(body, nodeId, data) {
+        if (!data.actions.length) {
+          const terminal = document.createElement('div');
+          terminal.className = 'terminal-copy';
+          terminal.textContent = data.terminalCopy || '(Punto final de este flujo)';
+          body.appendChild(terminal);
+          renderCrossLinks(body, data);
+          return;
+        }
+        const list = document.createElement('div');
+        list.className = 'options-list';
+        data.actions.forEach((action) => list.appendChild(createActionButton(nodeId, action)));
+        body.appendChild(list);
+        renderCrossLinks(body, data);
+      }
+      function renderNodes() {
+        container.innerHTML = '';
+        Object.entries(nodesData).forEach(([nodeId, data]) => {
+          const nodeEl = document.createElement('div');
+          nodeEl.className = 'node';
+          nodeEl.dataset.node = nodeId;
+          nodeEl.style.left = data.x + 'px';
+          nodeEl.style.top = data.y + 'px';
+          nodeEl.style.width = (data.width || 360) + 'px';
+          const header = document.createElement('div');
+          header.className = 'node-header';
+          header.innerHTML = '<div class="node-title"><i class="' + getIconForNode(data.key) + '"></i><span>' + escapeHtml(data.title) + '</span></div><span class="node-id">#' + escapeHtml(nodeId) + '</span>';
+          const body = document.createElement('div');
+          body.className = 'node-body';
+          body.innerHTML = '<div class="node-key-badge">key: ' + escapeHtml(data.key) + '</div><p class="node-description">' + escapeHtml(data.description) + '</p>';
+          renderDataBlock(body, data);
+          renderActions(body, nodeId, data);
+          nodeEl.appendChild(header);
+          nodeEl.appendChild(body);
+          attachDrag(nodeEl, data);
+          container.appendChild(nodeEl);
+        });
+      }
+      function applyActivePathState() {
+        activePathKeys.forEach((key) => {
+          const pathEl = svgPath.querySelector('[data-path="' + key + '"]');
+          if (!pathEl) return;
+          pathEl.classList.add('active');
+          pathEl.setAttribute('marker-end', 'url(#arrowA-' + uid + ')');
+        });
+      }
+      function drawLines() {
+        if (mountEl.offsetParent === null) return;
+        const defs = svgPath.querySelector('defs').outerHTML;
+        const lines = [];
+        Object.entries(nodesData).forEach(([, data]) => {
+          data.actions.forEach((action) => {
+            const button = container.querySelector('.option-btn[data-btn="' + action.id + '"]');
+            const targetNode = container.querySelector('.node[data-node="' + action.targetId + '"]');
+            if (!button || !targetNode) return;
+            const buttonRect = button.getBoundingClientRect();
+            const canvasRect = svgPath.getBoundingClientRect();
+            const targetRect = targetNode.getBoundingClientRect();
+            const startX = (buttonRect.right - canvasRect.left) + 2;
+            const startY = (buttonRect.top - canvasRect.top) + (buttonRect.height / 2);
+            const endX = (targetRect.left - canvasRect.left) - 6;
+            const endY = (targetRect.top - canvasRect.top) + 26;
+            const curve = Math.max(100, Math.abs(endX - startX) / 3);
+            const key = 'path-' + action.id + '-to-' + action.targetId;
+            const d = 'M ' + startX + ' ' + startY + ' C ' + (startX + curve) + ' ' + startY + ', ' + (endX - curve) + ' ' + endY + ', ' + endX + ' ' + endY;
+            lines.push('<path data-path="' + key + '" class="link" d="' + d + '" marker-end="url(#arrow-' + uid + ')"></path>');
+          });
+        });
+        svgPath.innerHTML = defs + lines.join('');
+        applyActivePathState();
+      }
+      function focusNode(nodeId) {
+        container.querySelectorAll('.node').forEach((node) => {
+          node.classList.remove('active');
+          node.classList.add('disabled');
+        });
+        const currentNode = container.querySelector('.node[data-node="' + nodeId + '"]');
+        if (currentNode) {
+          currentNode.classList.remove('disabled');
+          currentNode.classList.add('active');
+          const scrollLeft = Math.max(currentNode.offsetLeft - 100, 0);
+          const scrollTop = Math.max(currentNode.offsetTop - Math.round(wrapper.clientHeight * 0.25), 0);
+          wrapper.scrollTo({ left: scrollLeft, top: scrollTop, behavior: 'smooth' });
+        }
+      }
+      function handleAction(sourceNodeId, actionId, targetId, dbAction) {
+        const key = 'path-' + actionId + '-to-' + targetId;
+        const button = container.querySelector('.option-btn[data-btn="' + actionId + '"]');
+        if (button) button.classList.add('selected');
+        if (!container.querySelector('.node[data-node="' + targetId + '"]')) {
+          const pathEl = svgPath.querySelector('[data-path="' + key + '"]');
+          log('Ruta invalida: el nodo destino no existe en el mapa.', 'error');
+          if (pathEl) {
+            pathEl.classList.add('error');
+            pathEl.setAttribute('marker-end', 'url(#arrowE-' + uid + ')');
+          }
+          return;
+        }
+        if (!activePathKeys.includes(key)) activePathKeys.push(key);
+        applyActivePathState();
+        log('Decision ejecutada desde ' + nodesData[sourceNodeId].key + ' hacia ' + nodesData[targetId].key + '.', 'info', dbAction);
+        focusNode(targetId);
+        log('Nodo activo: ' + nodesData[targetId].title, 'success');
+      }
+      function resetSimulation() {
+        activePathKeys = [];
+        clearLogs();
+        renderNodes();
+        drawLines();
+        focusNode('lead_entry_channel');
+        log('Sistema reiniciado. Capa 1 vuelve al modo simulador con arranque por canal web y WhatsApp.', 'warning');
+      }
+      function focusItem(itemId) {
+        const m = String(itemId || '').match(/^node-(.+)$/);
+        if (m && nodesData[m[1]]) focusNode(m[1]);
+      }
+
+      mountEl.querySelector('.capa1-reset').addEventListener('click', resetSimulation);
+      mountEl.querySelector('.capa1-clear').addEventListener('click', clearLogs);
+      mountEl.querySelector('.capa1-zoom-out').addEventListener('click', () => zoomBy(-0.1));
+      mountEl.querySelector('.capa1-zoom-in').addEventListener('click', () => zoomBy(0.1));
+      zoomLabel.addEventListener('click', zoomReset);
+      mountEl.querySelector('.capa1-fs').addEventListener('click', toggleFullscreen);
+
+      wrapper.addEventListener('wheel', (event) => {
+        if (!(event.ctrlKey || event.metaKey)) return;
+        event.preventDefault();
+        zoomBy(event.deltaY < 0 ? 0.1 : -0.1);
+      }, { passive: false });
+
+      // Pan libre por arrastre del fondo (el arrastre de nodos lo captura .node-header)
+      wrapper.addEventListener('mousedown', (event) => {
+        if (event.button !== 0 || event.target.closest('.node')) return;
+        event.preventDefault();
+        wrapper.classList.add('panning');
+        const startX = event.clientX, startY = event.clientY;
+        const startLeft = wrapper.scrollLeft, startTop = wrapper.scrollTop;
+        const onMove = (mv) => {
+          wrapper.scrollLeft = startLeft - (mv.clientX - startX);
+          wrapper.scrollTop = startTop - (mv.clientY - startY);
+        };
+        const onUp = () => {
+          wrapper.classList.remove('panning');
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+
+      window.addEventListener('resize', () => setTimeout(drawLines, 50));
+
+      renderNodes();
+      setTimeout(() => { drawLines(); resetSimulation(); }, 40);
+
+      // refresh: recalcula líneas al volver a mostrar la subpestaña (el panel
+      // oculto tiene rects en cero y las curvas quedarían mal trazadas).
+      return { focusItem, refresh: () => setTimeout(drawLines, 40) };
+    }
 
     // ── Admin User Detail: Dropzone ──
     function initUdDropzone() {
