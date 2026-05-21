@@ -2248,6 +2248,11 @@
         _capa2Cache[path] = fetch(CAPA2_BASE + path).then(r => {
           if (!r.ok) throw new Error(path);
           return r.json();
+        }).catch(err => {
+          // No envenenar la caché: ante fallo transitorio se borra la entrada
+          // para que un reintento dentro de la sesión vuelva a descargar.
+          delete _capa2Cache[path];
+          throw err;
         });
       }
       return _capa2Cache[path];
