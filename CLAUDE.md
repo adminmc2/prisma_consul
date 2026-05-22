@@ -37,7 +37,15 @@ Mapa completo, flujos cruzados, convenciones y relaciones entre repos: ver [`ECO
 
 **Ámbito temporal:** vigente durante todo Sprint A (incluye Fase 1, Fase 2, Fase 3 y Fase 4). Tras el cierre del Sprint A + Sprint B (`v4.0.0`), se evalúa si esta práctica se mantiene como base permanente del proyecto o si se relaja.
 
+## Modo operativo vigente
+
+**El modo de trabajo del proyecto (roles, chats, capas, escalado, handoff, validación) vive en [`docs/OPERATIVA.md`](./docs/OPERATIVA.md) — esa es la fuente vigente.** Cualquier chat de Claude Code debe trabajar según `docs/OPERATIVA.md`; si hay conflicto entre este `CLAUDE.md` y `OPERATIVA.md` sobre *cómo se trabaja*, prevalece `OPERATIVA.md` y se escala al revisor.
+
+Resumen: cuatro roles en cuatro chats — **ejecutor 1** (repo/integración/ops), **contenido blueprint**, **contenido simulador**, **revisor** (independiente). Solo ejecutor 1 toca git de integración, deploy y operaciones. Estructura congelada; cada tarea declara su capa; validación en la superficie real; handoff por rama + diff.
+
 ## Modo de trabajo en dos carriles
+
+> **Sección histórica — superada por [`docs/OPERATIVA.md`](./docs/OPERATIVA.md).** Se conserva como contexto del periodo Sprint A / Fase 2; el modo de trabajo vigente es el de `OPERATIVA.md`.
 
 **Vigente desde el cierre baseline pre-Fase 2 (`v3.3.22`).**
 
