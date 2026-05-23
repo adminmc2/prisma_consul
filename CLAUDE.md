@@ -33,7 +33,7 @@ Monorepo con 3 frontends servidos por un único Express: `/` (landing) · `/apex
 
 ## Directory Structure
 
-Estructura vigente (`v3.3.72`). URLs canónicas de entregables: `/publicados/[cliente]/...` (legacy `/portal/analisis/...` resuelve por 301). El simulador no tiene URL pública: se sirve bajo `/core/simulador-ux/...`.
+Estructura vigente (`v3.3.73`). URLs canónicas de entregables: `/publicados/[cliente]/...` (legacy `/portal/analisis/...` resuelve por 301). El simulador no tiene URL pública: se sirve bajo `/core/simulador-ux/...`.
 
 ```
 web/                          # Web pública (landing + legales + css/js/images)
@@ -130,7 +130,7 @@ DNS y proxy gestionados desde Cloudflare (nameservers `bruce.ns.cloudflare.com`,
 
 ## Versionado
 
-Versionado Semántico (`MAJOR.MINOR.PATCH`). **Versión actual:** `v3.3.72`.
+Versionado Semántico (`MAJOR.MINOR.PATCH`). **Versión actual:** `v3.3.73`.
 
 En cada cambio publicable actualizar la versión en los **4 puntos canónicos**: (1) footer de `web/index.html` (`footer__bottom`, en `data-es`, `data-en` y texto visible); (2) login de `prisma-apex/index.html` (`.welcome-version`); (3) cabecera de [`CHANGELOG.md`](./CHANGELOG.md) (entrada nueva); (4) este campo "Versión actual".
 

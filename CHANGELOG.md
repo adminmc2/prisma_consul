@@ -2,6 +2,64 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-23] — v3.3.73
+
+### Saneamiento del contexto Claude Code — cierre del Bloque 2 del F1-PLAN
+
+`CLAUDE.md` raíz se cargaba automáticamente en todas las conversaciones del repo y
+mezclaba instrucciones vigentes, histórico cerrado y operativa ajena (IONOS, nginx,
+PM2, postmortems). Mantenerlo así penalizaba el trabajo activo de F1 y aumentaba
+deriva. El Bloque 2 deja **contexto base corto en raíz** y **contexto fino por
+superficie** en subdirectorios. Cero cambios de código de producto.
+
+- **Slice 2.1 — Poda del root.** `CLAUDE.md` raíz pasa de **431 a 145 líneas**
+  (−66%). Salen del root: histórico cerrado (Modo de trabajo en dos carriles,
+  Coordinación pre-Fase 2), operativa del VPS (Securización, Stack del servidor,
+  Pendiente, detalle largo de IONOS/DNS/Incidencia), detalle por superficie (Key
+  Patterns, Database Tables, Google Drive Integration, Portal Users), y detalle
+  fino de Development. Se conservan con sustancia las secciones sostenidas por
+  referencias canónicas cruzadas vivas: Directory Structure (`CONTRATOS.md:677`),
+  Git Workflow (`README.md:95`), Versionado (`GLOSARIO.md:376-377`), Modo revisor
+  permanente (`MODELO-DOMINIO.md:715`, `GLOSARIO.md:347`). IONOS VPS y DNS y
+  Cloudflare quedan como stubs mínimos de compatibilidad. La incidencia
+  Movistar/Cloudflare se mantiene como resumen autosuficiente (síntoma +
+  diagnóstico verificado + regla práctica), exigido por `README.md:113`. Commit
+  `3d39483`.
+- **Slice 2.2 — CLAUDE.md por superficie.** Tres archivos nuevos, capa doc,
+  aditivos: `server/CLAUDE.md` (50 líneas: auth compartida APEX/Hub, tablas
+  Neon, Google Drive per-user, estado real de `domain-sync.js`, gotchas
+  backend), `prisma-apex/CLAUDE.md` (32 líneas: las cuatro superficies internas
+  Hub/discovery/simulador/entregables, `SITUACIONES_*` en
+  `prisma-apex/core/discovery-engine/form.js:67` y `:199`, nota del monolito
+  pendiente de Bloque 3, gotchas Hub), `docs/CLAUDE.md` (25 líneas:
+  estrictamente cómo tratar la carpeta docs — cabecera obligatoria, criterio
+  de archivado, límite frente a OPERATIVA). Sin usuarios operativos, sin
+  runbook, sin secrets, sin lógica server-side en `prisma-apex`, sin rehacer
+  la taxonomía de ciclo de vida en `docs`. Commit `a950a0f`.
+- **Slice 2.3 — Verificación documental y alineación.** Verificadas 8
+  referencias canónicas cruzadas tras la poda (7 correctas + 1 corrección):
+  `README.md:113` afirmaba que las mitigaciones operativas de la incidencia
+  vivían en `CLAUDE.md`; tras la poda viven en `prisma-server-ops`. Una línea
+  ajustada. 4 puntos canónicos de versión coherentes verificados.
+  `docs/historico/sprint-a/PLAN-COORDINACION-PRE-FASE2.md` confirmado.
+  Hallazgos documentados fuera del alcance del slice y sin nota en F1-PLAN
+  (deuda previa entre `MODELO-DOMINIO.md:281` y backend; referencia obsoleta
+  por número de línea en `docs/AUDITORIA-ARQUITECTONICA.md`, que es snapshot a
+  archivar al cierre de F1). Commit `0b69256`.
+
+**F1-PLAN.md actualizado.** Slice 2.1 amplió prohibiciones específicas y
+criterio PASS para incluir las referencias canónicas cruzadas vivas y la
+excepción de compatibilidad explícita para la incidencia Movistar/Cloudflare.
+§6 ("Fuera de F1") añadió dos notas de deuda verificada como apuntes para
+trabajo futuro: auditoría de scope explícito en el hook documental y los
+subagentes de Bloque 1 (extracción del principio del Protocolo 8); y
+endurecimiento de los prompts del discovery contra prompt injection desde
+contenido scrapeado por Tavily (verificado en `server/routes/apex.js:175-190`
+y `:503`), con verificación adversarial al cerrar el slice post-F1.
+
+**Bump.** PATCH único al cierre del bloque (F1-PLAN §9). 4 puntos canónicos
+sincronizados.
+
 ## [2026-05-23] — v3.3.72
 
 ### Tooling Claude Code — cierre del Bloque 1 del F1-PLAN
