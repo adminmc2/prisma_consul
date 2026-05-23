@@ -22,6 +22,11 @@ cd "${CLAUDE_PROJECT_DIR:-.}" 2>/dev/null || exit 0
 md_files=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null | grep '\.md$')
 [ -z "$md_files" ] && exit 0
 
+# Docs por naturaleza históricos: referencian rutas legacy a propósito.
+# No se barren para no convertir el hook en sirena constante.
+md_files=$(printf '%s\n' "$md_files" | grep -v -x -E 'CHANGELOG\.md|REVIEW-PRISMA-APEX\.md')
+[ -z "$md_files" ] && exit 0
+
 # Allowlist: carpetas top-level válidas y archivos raíz canónicos.
 top_dirs=" web prisma-apex server shared docs .claude .github images "
 root_files=" CLAUDE.md CHANGELOG.md CONTRATOS.md ECOSISTEMA.md GLOSARIO.md MODELO-DOMINIO.md README.md REGISTRO-RUTAS.md REVIEW-PRISMA-APEX.md "
@@ -41,7 +46,7 @@ for md in $md_files; do
       # Path-shaped tokens: al menos un "/". Excluye delimitadores típicos de
       # prosa/markdown (espacio, <>, paréntesis, comillas, corchetes, backtick,
       # pipe, llaves). Acepta bytes no-ASCII (UTF-8) dentro de los segmentos.
-      while (match(s, /(\.\.\/|\.\/)?[^][[:space:]<>()"`|{}]+(\/[^][[:space:]<>()"`|{}]+)+\/?/)) {
+      while (match(s, /(\.\.\/|\.\/)?[^][[:space:]<>()"`|{}:]+(\/[^][[:space:]<>()"`|{}:]+)+\/?/)) {
         cand = substr(s, RSTART, RLENGTH)
         pre = (RSTART > 1) ? substr(s, RSTART-1, 1) : ""
         if (pre != ":" && pre != "/") print md "\t" NR "\t" cand
@@ -88,6 +93,11 @@ while IFS="$TAB" read -r md lineno cand; do
     esac
   done
   [ -n "$skip" ] && continue
+
+  # URL pública (empieza por "/"): fuera de alcance del hook de filesystem.
+  case "$cand" in
+    /*) continue ;;
+  esac
 
   # Normalización.
   norm="$cand"
