@@ -10,7 +10,8 @@
 node_modules/
 
 # Editor / IDE local config (no se commitean)
-.claude/
+.claude/settings.local.json
+.claude/claude-code-chat-images/
 .vscode/
 
 # Design artifacts & temp files

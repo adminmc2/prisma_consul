@@ -1,5 +1,11 @@
 # Contratos congelados — Prisma APEX
 
+> **Estado:** vigente · **Última verificación:** 2026-05-22 (auditoría documental, Bloque 1).
+> Los subpasos físicos de Fase 2 (2.1–2.7) **están ejecutados**: web pública en `web/`,
+> discovery en `prisma-apex/core/discovery-engine/`, entregables en
+> `prisma-apex/clientes-publicados/armc/`, migración aditiva de BD en `v3.3.38`. Las URLs
+> públicas `/`, `/apex`, `/hub` y los 17 endpoints API siguen congelados sin cambios.
+
 Inventario exhaustivo de los **contratos externos** del sistema: promesas que `web-de-prisma` mantiene a sus consumidores (navegadores, frontend SPAs, APIs externas, integraciones) y que **no deben romperse** durante la reorganización del Sprint A.
 
 > Este documento cierra C09 del review. Es el gate funcional para pasar a Fase 2.
@@ -53,22 +59,24 @@ URLs servidas por Express o redirigidas a través del stack nginx → Cloudflare
 
 | URL | Sirve | Handler | Estado |
 |---|---|---|---|
-| `prismaconsul.com/apex` | `apex/index.html` (Discovery SPA) | servido por `express.static` con `extensions: ['html']` (la URL `/apex` → `apex/index.html`) | Frozen Sprint A — pendiente de mover en subpaso 2.4 a `prisma-apex/core/discovery-engine/` |
+| `prismaconsul.com/apex` | `prisma-apex/core/discovery-engine/index.html` (Discovery SPA) | `express.static` montado en `/apex` sobre `prisma-apex/core/discovery-engine/` | Frozen Sprint A — discovery movido en subpaso 2.4; URL pública intacta |
 | `prismaconsul.com/hub` | `prisma-apex/index.html` (Prisma APEX SPA) — entrypoint movido en subpaso 2.3 (`v3.3.33`) | `app.get('/hub', ...)` en `server/server.js` con `res.sendFile(...prisma-apex/index.html)` + `location /hub` en nginx con alias a `prisma-apex/` | Frozen Sprint A — URL pública intacta; entrypoint físico ya migrado |
 
-**Implicación para Fase 2 (estado actual):** los subpasos 2.1, 2.2 y 2.3 ya quedan ejecutados en `dev`: web pública bajo `web/`, entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`, entrypoint del Hub en `prisma-apex/index.html`. URLs públicas `/`, `/apex` y `/hub` siguen idénticas. Pendiente: subpaso 2.4 — mover `apex/` → `prisma-apex/core/discovery-engine/` reapuntando el handler `/apex`. Replicación de la estructura+nginx a producción queda fuera de los subpasos físicos: paquete específico aparte.
+**Implicación para Fase 2 (estado actual):** los subpasos físicos 2.1–2.7 están ejecutados: web pública bajo `web/`, discovery bajo `prisma-apex/core/discovery-engine/`, entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`, entrypoint del Hub en `prisma-apex/index.html`, migración aditiva de BD aplicada (`v3.3.38`). URLs públicas `/`, `/apex` y `/hub` siguen idénticas.
 
-### 3.3 Entregables ARMC publicados (estado actual)
+### 3.3 Entregables ARMC publicados
 
-| URL | Sirve | Mecanismo | Estado |
+Tras Fase 2, el contrato canónico es `prismaconsul.com/publicados/armc/...` (servido por `express.static` montado en `/publicados` sobre `prisma-apex/clientes-publicados/`). Las URLs legacy `/portal/analisis/armc/...` se conservan vivas mediante **redirect 301** indefinido.
+
+| URL legacy | Sirve | Mecanismo | Estado |
 |---|---|---|---|
-| `prismaconsul.com/portal/analisis/armc/diagramas/*.html` | HTMLs de diagramas (flujo-ceo, flujo-cirujano, etc.) | `express.static` raíz | Frozen Sprint A; **migra a `/publicados/armc/...` en fase 2 con redirect 301** |
-| `prismaconsul.com/portal/analisis/armc/diagnostico/*.html` | HTMLs de diagnóstico (resumen-ejecutivo, matriz-dolor, mapa-fricciones, embudo-operativo, cadena-causal) | `express.static` raíz | Idem |
-| `prismaconsul.com/portal/analisis/armc/blueprint/*.html` | HTMLs de blueprint (modelo-datos, flujos-to-be, automatizaciones, fases-implementacion, kpis-objetivo) | `express.static` raíz | Idem |
-| `prismaconsul.com/portal/analisis/armc/css/estilos-prisma.css` | Estilos de los HTMLs anteriores | `express.static` raíz | Idem |
-| `prismaconsul.com/portal/analisis/armc/index.html` | Hub de análisis ARMC | `express.static` raíz | Idem |
+| `prismaconsul.com/portal/analisis/armc/diagramas/*.html` | HTMLs de diagramas (flujo-ceo, flujo-cirujano, etc.) | redirect 301 → `/publicados/armc/diagramas/*.html` | URL legacy; redirect 301 indefinido (ejecutado en Fase 2) |
+| `prismaconsul.com/portal/analisis/armc/diagnostico/*.html` | HTMLs de diagnóstico (resumen-ejecutivo, matriz-dolor, mapa-fricciones, embudo-operativo, cadena-causal) | redirect 301 → `/publicados/armc/...` | URL legacy; redirect 301 indefinido |
+| `prismaconsul.com/portal/analisis/armc/blueprint/*.html` | HTMLs de blueprint (modelo-datos, flujos-to-be, automatizaciones, fases-implementacion, kpis-objetivo) | redirect 301 → `/publicados/armc/...` | URL legacy; redirect 301 indefinido |
+| `prismaconsul.com/portal/analisis/armc/css/estilos-prisma.css` | Estilos de los HTMLs anteriores | redirect 301 → `/publicados/armc/...` | URL legacy; redirect 301 indefinido |
+| `prismaconsul.com/portal/analisis/armc/index.html` | Hub de análisis ARMC | redirect 301 → `/publicados/armc/...` | URL legacy; redirect 301 indefinido |
 
-**Implicación para fase 2:** estas URLs **se sustituyen** por `prismaconsul.com/publicados/armc/...` (contrato canónico — `MODELO-DOMINIO.md` sección 9). Las URLs antiguas se mantienen vivas vía **redirect 301** durante un periodo de transición indefinido para no romper enlaces externos (correos, documentos PDF que pudieran apuntar a la URL antigua).
+**Estado:** la sustitución se ejecutó en Fase 2. El contrato canónico es `prismaconsul.com/publicados/armc/...` (`MODELO-DOMINIO.md` sección 9). Las URLs antiguas se mantienen vivas vía **redirect 301** durante un periodo de transición indefinido para no romper enlaces externos (correos, documentos PDF que pudieran apuntar a la URL antigua).
 
 ### 3.4 Recursos compartidos (`/shared/`) — introducido por subpaso 2.5 (`v3.3.37`)
 
@@ -95,6 +103,17 @@ URLs servidas por Express o redirigidas a través del stack nginx → Cloudflare
 |---|---|---|
 | `dev.prismaconsul.com/*` | VPS IONOS, instancia `prisma-dev` (puerto 3001) | Idéntica funcionalidad que producción; rama `dev` |
 | `abbe.prismaconsul.com` | `mandocc2-abbe.hf.space` (HF Spaces) | Otro repo (`above-pharma`); fuera del alcance de la reorganización |
+
+### 3.6 Rutas internas del simulador UX
+
+El simulador UX es un **módulo interno del Hub**, no un entregable público. Su servicio define dos contratos, introducidos al nativizarlo (Línea B):
+
+| URL | Sirve | Mecanismo | Estado |
+|---|---|---|---|
+| `prismaconsul.com/core/simulador-ux/...` | Datos del simulador (JSON de capas, SQL) que el módulo nativo del Hub consume vía `fetch()` | `express.static` montado en `/core/simulador-ux` sobre `prisma-apex/core/simulador-ux/` | **Ruta interna canónica.** No es entrada de UI: el simulador solo se accede dentro del Hub autenticado |
+| `prismaconsul.com/publicados/armc/simulador-ux/...` | — | Handler Express que **redirige `301 → /hub`** | **URL legacy retirada en el repo.** El simulador dejó de ser entregable público al reclasificarse como módulo interno |
+
+**Nota:** el comportamiento del entorno `dev` para esa ruta legacy (override temporal de nginx que la sirve como compatibilidad estática) es **estado operativo del edge, no contrato del repo**; se registra en `docs/OPERATIVA.md` §8, no aquí.
 
 ---
 
@@ -262,7 +281,7 @@ Express monta tres routers bajo `/api`: `portal.js`, `apex.js`, `ai.js` (`server
 ```
 La SPA distingue éxito vs fallback por el flag `success` del payload, no por el status HTTP. Decisión histórica del backend para que el formulario nunca se rompa por un error externo.
 **Side effects:** llamadas a Tavily y Groq; sin escritura en BD.
-**Consumer:** SPA APEX (`apex/form.js`, paso de research).
+**Consumer:** SPA APEX (`prisma-apex/core/discovery-engine/form.js`, paso de research).
 **Estado:** Frozen Sprint A.
 **Nota:** el campo `profile.detectado.es_clinica` clasifica al cliente como `clinica` o `distribuidor`, alimentando `profile_type` legacy.
 
@@ -475,9 +494,9 @@ INDEX idx_apex_submissions_sector     ON apex_submissions(empresa_sector)
 
 **Verificación:** las 5 columnas marcadas con ⚠ se confirman leyendo `server/routes/apex.js` función `submit-form`, sentencia `INSERT INTO apex_submissions (...)`. Si la tabla en Neon no las tuviera, el INSERT fallaría — el hecho de que el formulario funcione hoy demuestra que existen físicamente.
 
-### 5.5 Tablas nuevas en fase 2 (aditivas)
+### 5.5 Tablas del modelo de dominio (aditivas, creadas en `v3.3.38`)
 
-`clientes`, `client_memberships`, `engagements`, `entrevistas`, `entregables`. Esquema detallado en `MODELO-DOMINIO.md` secciones 5.2 y 11.1. **Ningún consumidor existente las depende** — son aditivas puras.
+`clientes`, `client_memberships`, `engagements`, `entrevistas`, `entregables`, creadas en la migración aditiva del subpaso 2.6 (`v3.3.38`). Esquema detallado en `MODELO-DOMINIO.md` secciones 5.2 y 11.1. **Ningún consumidor existente las depende** — son aditivas puras.
 
 ---
 
@@ -526,7 +545,7 @@ El registro es síncrono y embebido en el frontend (objeto JS literal en `prisma
 
 No se han detectado otros paths hardcodeados a artefactos físicos en el frontend de la SPA Hub o de la SPA APEX. Las referencias a CSS, JS, fuentes e imágenes son rutas relativas o canónicas que el `express.static` resuelve naturalmente.
 
-**Auditoría adicional pendiente como cautela:** revisar `apex/form.js` (3500+ líneas) en fase 2 antes del movimiento físico de `apex/` → `prisma-apex/core/discovery-engine/`. Si hubiera paths del estilo `'/apex/...'` hardcodeados allí, recibirían el mismo tratamiento que los del Hub.
+**Nota tras el movimiento físico:** el discovery vive hoy en `prisma-apex/core/discovery-engine/` (`form.js`, `signal-detector.js`, etc.). La URL pública `/apex` no cambió, de modo que cualquier path interno del estilo `'/apex/...'` sigue resolviendo igual.
 
 ### 6.3 Nota técnica importante
 
@@ -544,25 +563,19 @@ Archivos `.md` que dan instrucciones referenciando rutas físicas concretas. Si 
 
 **Referencias detectadas con `grep -n "portal/analisis/armc"`:** múltiples (líneas 84, 130, 294 mencionadas por el revisor en revisiones previas).
 
-**Acción requerida en fase 2:** actualizar todas las referencias para apuntar a la nueva estructura (`prisma-apex/clientes-publicados/[cliente]/...`) **simultáneamente** al movimiento de archivos. La guía debe quedar coherente al final de fase 2.
-
-**Estado:** abierto. Acción de mantenimiento de fase 2.
+**Estado:** las rutas se actualizaron a la estructura nueva en la auditoría documental (2026-05). El paso a paso de código de la guía sigue desactualizado (describe una arquitectura del Hub retirada) y su reescritura queda como slice aparte.
 
 ### 7.2 `README.md`
 
 **Contenido:** descripción breve del proyecto, posiblemente con referencias a estructura de carpetas.
 
-**Acción requerida:** revisión y actualización en fase 2 si menciona paths antiguos. Si no los menciona, sin acción.
-
-**Estado:** abierto. Auditoría rápida de fase 2.
+**Estado:** cerrado. `README.md` reescrito a la estructura real en la auditoría documental (2026-05).
 
 ### 7.3 `CLAUDE.md`
 
-**Contenido:** instrucciones técnicas del proyecto. Sección "Directory Structure" actualmente lista la estructura legacy (`apex/`, `portal/`, etc.).
+**Contenido:** instrucciones técnicas del proyecto, incluida la sección "Directory Structure".
 
-**Acción requerida:** actualizar la sección "Directory Structure" en fase 2 al final del movimiento físico para que refleje la nueva organización.
-
-**Estado:** abierto. Acción de fase 2.
+**Estado:** cerrado. La sección "Directory Structure" se actualizó a la estructura real (`v3.3.70`) en la auditoría documental (2026-05).
 
 ### 7.4 `CHANGELOG.md`
 
@@ -617,7 +630,7 @@ Modificar un contrato es legítimo y se hace cuando aporta valor; lo que no se p
 
 - **Sprint B (almacén Drive → IONOS):** la columna `drive_file_id` se generaliza. Plan de transición propio.
 - **Sprint posterior (centralización auth):** el JWT puede dejar de incluir `role` cuando todos los consumidores usen `client_memberships`. Plan propio.
-- **Sprint posterior (renombre público de `/hub`):** decisión de comunicación, no técnica. Plan propio.
+- **Sprint posterior (renombre público de `/hub` → `/prisma-apex`):** el destino del renombre está decidido — la URL pública pasará a `/prisma-apex`, alineada con el directorio canónico y con el nombre del sistema (Prisma APEX). Sigue siendo decisión de comunicación, no técnica: el *momento* del cambio se planifica en un slice propio posterior a Sprint A. La URL legacy `/hub` se conservará vía redirect 301 indefinido por compatibilidad.
 
 ---
 
@@ -747,14 +760,13 @@ Cableado mínimo en `v3.3.42` (sincronización atómica vía `sql.transaction`):
 
 ---
 
-## 13. Pendientes de auditoría adicional en fase 2
+## 13. Auditoría adicional — estado
 
-Antes de ejecutar movimientos físicos en fase 2, se completan estas auditorías cortas:
+Los movimientos físicos de Fase 2 ya están ejecutados. Las comprobaciones de paths hardcodeados que esta sección listaba como previas al movimiento se aplican hoy sobre la estructura nueva:
 
-- **Revisar `apex/form.js`** (3500+ líneas) en busca de paths hardcodeados a artefactos físicos. Si se encuentran, recibirán el mismo tratamiento que las constantes del Hub.
-- **Revisar `apex/signal-detector.js`** y otros JS auxiliares.
-- **Revisar `js/main.js`** (landing) por las dudas.
-- **Buscar referencias a `portal/`** en general por `grep -rn "['\"]\/portal\/" --include="*.html" --include="*.js"`.
+- `prisma-apex/core/discovery-engine/form.js` y `signal-detector.js` — JS del discovery. La URL pública `/apex` no cambió, así que los paths internos `/apex/...` siguen resolviendo.
+- `web/js/main.js` — JS de la landing.
+- La carpeta `portal/` ya no existe; las referencias legacy `/portal/analisis/...` se resuelven por redirect 301.
 
 ---
 

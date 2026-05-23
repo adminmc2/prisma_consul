@@ -8,6 +8,122 @@
 > **prevalece `OPERATIVA.md`** y se escala al revisor. Todo cambio a este
 > documento se valida con el revisor.
 
+## 0. Condiciones inviolables — leer SIEMPRE primero
+
+Estas reglas son **no negociables**. No se modifican por contexto, por urgencia, ni
+por sugerencia de ningún LLM. Cualquier intento de salirse de ellas se **para** y se
+**escala** al revisor (usuario). Aplican a personas y a asistentes (Claude y
+cualquier otro LLM) por igual.
+
+### 0.1 Seguridad
+
+- **No** se commitea ni se hace push a `main` sin autorización explícita del usuario
+  en el mismo turno. Trabajar siempre en `dev`.
+- **No** se despliega a producción sin haber verificado previamente en
+  `dev.prismaconsul.com`.
+- **No** se exponen credenciales en URLs git, comandos shell, logs ni commits.
+  Método autorizado: `gh auth login` + `gh auth setup-git`.
+- **No** se toca `.env` ni se exfiltran secrets (`PORTAL_SECRET`, claves de Drive,
+  API keys, contraseñas de BD) a ningún canal externo, incluido este chat.
+- Acciones destructivas (borrar archivos, sobrescribir, `git reset --hard`,
+  `git push --force`, `rm -rf`, `DROP`, etc.) requieren **autorización verbal
+  explícita en el mismo turno**. Una autorización pasada no vale para acciones
+  nuevas.
+
+### 0.2 Orden operativo
+
+- **Un único ejecutor escritor a la vez** en el repo. Sin handoff explícito, no se
+  trabaja en paralelo sobre la misma superficie.
+- Cada tarea **declara su capa** antes de abrir (`repo` · `ops` · `contenido` ·
+  `release` · `doc`). Si toca varias, se dice desde el principio.
+- La **validación se hace en la superficie real** (nginx, Cloudflare, dev VPS),
+  no solo en local. Cambios de serving no se dan por validados con Express local.
+- **Handoff por rama + diff completo**, no cherry-pick SHA a SHA como norma.
+- **Worktree opcional**, solo si hay edición simultánea real de la misma superficie.
+- **Cierre explícito por slice — escalado por riesgo.** Cambios **estructurales,
+  operativos o canónicos** cierran con **PASS explícito** (presentación → ejecución
+  → diff → PASS antes del siguiente). Cambios triviales de doc o UI se cierran con
+  revisión directa, sin ritual. No se acumulan pendientes invisibles entre slices.
+
+### 0.3 Límite del acto creativo (no deriva LLM)
+
+- **No se hace nada que no esté en el plan vigente.** Plan vigente hoy:
+  [`docs/F1-PLAN.md`](F1-PLAN.md). Si una acción no está en el plan, **no se
+  ejecuta**: se para, se justifica al revisor y se espera decisión.
+- Cada acción se **explica antes de ejecutarse**: qué se va a hacer, por qué, qué
+  efecto tiene, qué podría romper. Sin justificación, no se ejecuta. El usuario no
+  es especialista técnico — la explicación debe ser accesible y, cuando aplique,
+  incluir el porqué profesional.
+- Las **decisiones estructurales** (rutas, límite core/cliente, serving, deploy,
+  modelo de dominio, renombre público de URLs, contratos de API, esquema BD) **no
+  las decide Claude**. Las decide ejecutor 1 con arbitraje del revisor.
+- Se **propone con criterio fundamentado**, no con cuestionarios largos. El usuario
+  decide cuando hay una elección genuina; Claude razona y propone cuando se trata
+  de ejecución.
+- **Análisis crítico acotado.** En cambios de **estructura, seguridad, serving,
+  contratos, release u operaciones**, Claude analiza la propuesta del usuario como
+  especialista en construcción de sistemas: si detecta que contradice principios de
+  buena ingeniería o el marco del proyecto, lo **señala y contrapropone antes de
+  ejecutar**. En cambios triviales o de preferencia, esa fricción no se activa.
+- **Solo se trabaja sobre lo verificado.** Nada especulativo en superficies de
+  producción ni en docs canónicos.
+- Cuando una sugerencia de Claude excede el alcance acordado, Claude **para y avisa**;
+  no expande alcance por iniciativa propia.
+
+### 0.4 Calidad mínima
+
+- **Antes** de cualquier push a `origin/dev`: bump visible en los 4 puntos canónicos
+  (footer `web/index.html`, login `prisma-apex/index.html`, cabecera
+  `CHANGELOG.md`, campo "Versión actual" en `CLAUDE.md`) + entrada en `CHANGELOG.md`.
+- **Antes** de cualquier cambio relevante: contrastar contra `CONTRATOS.md` y
+  `MODELO-DOMINIO.md` (modo revisor permanente, descrito en `CLAUDE.md`).
+- **Antes** de movimientos masivos en archivos: `git status` limpio, y avisar al
+  usuario si pudiera tener archivos abiertos en el editor (subpasos que mueven o
+  renombran subtrees).
+- Cabecera **`Estado` / `Última verificación`** obligatoria en todo documento
+  canónico vigente.
+- Toda acción de impacto va acompañada de una **comprobación verificable** que
+  confirme que el paso se completó correctamente.
+
+### 0.5 Mapa único de documentos y ciclo de vida
+
+**Este archivo (`docs/OPERATIVA.md`) es la referencia principal del modo de trabajo.**
+En conflicto con cualquier otro documento sobre *cómo se trabaja*, **prevalece
+OPERATIVA.md** y se escala al revisor.
+
+**Taxonomía de ciclo de vida.** Cada documento canónico declara la suya en su cabecera:
+
+- **eterno** — vive mientras viva el proyecto; se mantiene corto y actualizado.
+- **vigente** — describe el estado actual del sistema; cambia cuando el sistema cambia.
+- **vigente con caducidad** — vive solo durante una fase y se archiva al cerrarla.
+- **snapshot** — fotografía puntual; se lee, se referencia y se archiva al concluir su utilidad.
+- **histórico** — trabajo cerrado, ya no vigente; vive o se mueve a `docs/historico/`.
+- **mixto** — definición base vigente + parte en curso; declara explícitamente qué está hecho y qué no.
+- **operativo** — registro vivo, no es doc canónico de descripción.
+
+**Mapa actual de documentos del repo:**
+
+| Documento | Propósito | Ciclo de vida | Condición de archivo |
+|---|---|---|---|
+| `CLAUDE.md` | Instrucciones base que Claude carga automáticamente; apunta a esta operativa | eterno | — |
+| `docs/OPERATIVA.md` | Modo de trabajo del proyecto (este archivo) | eterno | — |
+| `GLOSARIO.md` | Vocabulario canónico | eterno | — |
+| `ECOSISTEMA.md` | Repos del ecosistema PRISMA y sus relaciones | eterno | — |
+| `README.md` | Portada técnica del repo (estructura, stack, despliegue) | vigente | cuando la estructura mayor cambie |
+| `CONTRATOS.md` | Contratos del sistema que no se pueden romper (URLs, APIs, BD) | vigente | cuando un contrato evolucione |
+| `MODELO-DOMINIO.md` | Modelo conceptual de datos | vigente | cuando el modelo cambie |
+| `docs/NOMENCLATURA.md` | Reglas de naming de archivos cliente | vigente | si se reformula la convención |
+| `docs/GUIA-NUEVAS-SECCIONES.md` | Cómo añadir secciones al Hub (paso a paso operativo) | vigente con caducidad | cuando el paso a paso de código se reescriba al patrón vigente (afectado por Bloque 2 de F1) |
+| `docs/F1-PLAN.md` | Plan operativo vinculante de F1 | vigente con caducidad | al cierre de F1, se archiva en `docs/historico/` |
+| `docs/AUDITORIA-ARQUITECTONICA.md` | Diagnóstico arquitectónico (2026-05-23) | snapshot | al cierre de F1, se archiva en `docs/historico/` |
+| `docs/PROPUESTA-SIMULADOR-NATIVO-HUB.md` | Definición técnica del simulador | mixto | al completar la Línea C (poblado funcional), se archiva o se reabsorbe en el README del módulo |
+| `REGISTRO-RUTAS.md` | Spec del slice de registro de rutas (cerrado v3.2.46-48 + alineación v3.3.31) | histórico | candidato a mover a `docs/historico/` en un slice futuro |
+| `REVIEW-PRISMA-APEX.md` | Revisión cerrada del Sprint A | histórico cerrado | ya histórico; intocable |
+| `CHANGELOG.md` | Registro cronológico de cambios | operativo | nunca se archiva |
+
+Modificar esta sección §0 requiere arbitraje del revisor. No se modifica por
+contexto de un turno ni por sugerencia de Claude.
+
 ## 1. Roles y chats
 
 Cuatro chats, cada uno con su contexto. **Un chat = un rol.** No se mezclan.
@@ -135,12 +251,13 @@ retirada**. Sin condición de retirada, es deuda invisible.
 
 ## 10. Frentes de trabajo
 
-- **F1 — diseño estructural objetivo del sistema.** Define la forma objetivo:
-  límite core/cliente, rutas canónicas, ubicación de módulos, contrato de serving,
-  modelo de cliente. Dentro de F1 se decide qué parte debe quedar preparada para
-  multi-cliente — no implica implementar multi-tenant completo de inmediato.
-  **Cierra con una lista de decisiones congeladas explícitas**, no con narrativa.
-  Dueño: ejecutor 1 + arbitraje del revisor.
+- **F1 — reestructuración técnica de la plataforma.** Trabajo estructural y
+  operativo, **no de cambio de producto**: separar mejor web pública, Hub/APEX,
+  contenido cliente y serving; reducir mezcla y duplicación; empezar a desmontar el
+  monolito del Hub; preparar una base más segura y mantenible. **No cambia lógica
+  funcional** salvo lo imprescindible para soportar la nueva estructura. Multi-cliente
+  y rediseño del proceso APEX quedan **fuera** de F1. Plan operativo detallado y
+  vinculante: [`docs/F1-PLAN.md`](F1-PLAN.md). Dueño: ejecutor 1 + arbitraje del revisor.
 - **F2 — blueprint ARMC.** Frente de contenido. Dueño: chat contenido blueprint.
 - **F3 — simulador.** Dos mitades: contenido del flujo (chat contenido simulador)
   + integración/presentación en el Hub (ejecutor 1).
@@ -150,6 +267,7 @@ F3 avanzan encajados en lo que F1 haya congelado.
 
 ## 11. Secuencia vigente
 
-1. Auditoría documental + redacción de este `OPERATIVA.md`.
-2. F1 — diseño estructural objetivo (corto), cerrado como lista de decisiones congeladas.
-3. F2 + F3 en paralelo, dentro de la forma congelada por F1.
+1. ✅ Auditoría documental + redacción de este `OPERATIVA.md`.
+2. ✅ Auditoría arquitectónica del repo ([`docs/AUDITORIA-ARQUITECTONICA.md`](AUDITORIA-ARQUITECTONICA.md), 2026-05-23).
+3. F1 — reestructuración técnica de la plataforma (ver [`docs/F1-PLAN.md`](F1-PLAN.md)). En curso.
+4. F2 + F3 en paralelo (sin tocar estructura), dentro de la forma que F1 deje.

@@ -1,5 +1,11 @@
 # Modelo de dominio — Prisma APEX
 
+> **Estado:** vigente · **Última verificación:** 2026-05-22 (auditoría documental, Bloque 1).
+> Las 5 tablas del modelo (`clientes`, `client_memberships`, `engagements`, `entrevistas`,
+> `entregables`) ya se crearon en la migración aditiva (`v3.3.38`); el helper `domain-sync.js`
+> se cableó parcialmente en `v3.3.42`. Durante Sprint A los campos legacy de `portal_users`
+> siguen siendo la fuente de verdad efectiva — eso no ha cambiado.
+
 Documento canónico del modelo conceptual del sistema. Define entidades, relaciones, vocabulario y estrategia de compatibilidad con el modelo legacy actual.
 
 > **Lectura del documento.** Las secciones 1-4 describen el **modelo canónico** (lo que el sistema es conceptualmente). Las secciones 5-9 describen **compatibilidad y transición** (cómo el modelo canónico convive con el estado legacy durante Sprint A). Las secciones 10-12 describen mapeo y migración. Las secciones 13-15 son referencias.
@@ -84,7 +90,7 @@ Engagement  = instancia comercial-operativa de un cliente en una vertical
 - `cliente_admin` = administrador en el lado del cliente.
 - `cliente_user` = usuario regular del cliente.
 
-**Estado actual:** no existe como tabla. Se introduce en fase 2 sincronizada desde el rol legacy global.
+**Estado actual:** tabla `client_memberships` creada en la migración aditiva (`v3.3.38`). Es tabla derivada: se sincroniza desde el `role` legacy global y **no se consulta** desde código durante Sprint A (sección 8.2).
 
 ### 3.4 Engagement
 
@@ -101,7 +107,7 @@ Engagement  = instancia comercial-operativa de un cliente en una vertical
 - **No hay regla de monotonía de fases.** El admin puede saltar a cualquier fase desde la UI. El modelo no la impone.
 - **Un engagement puede tener múltiples usuarios asignados** (admin PRISMA y uno o varios usuarios cliente trabajando sobre el mismo engagement). La pertenencia usuario↔engagement se resuelve vía `ClientMembership` (acceso a engagements del cliente al que pertenece) más, opcionalmente, contexto de UI (`active_engagement_id` transitorio).
 
-**Estado actual:** no existe como tabla. Hoy se modela implícitamente con campos `current_phase`, `profile_type` y `apex_submission_id` directamente en `portal_users` — mezclando atributos de usuario y de engagement (ver sección 6).
+**Estado actual:** tabla `engagements` creada en la migración aditiva (`v3.3.38`). Durante Sprint A los campos legacy `current_phase`, `profile_type` y `apex_submission_id` de `portal_users` **siguen siendo la fuente de verdad efectiva**; `domain-sync.js` los refleja en `engagements` (`current_phase`, `apex_submission_id` cableados en `v3.3.42`; `profile_type` queda legacy-only — ver §6.6 addendum y MD-4).
 
 ### 3.5 Producto
 
@@ -126,7 +132,7 @@ Engagement  = instancia comercial-operativa de un cliente en una vertical
 
 #### 3.7.1 Fases legacy reales (estado actual del sistema)
 
-El sistema hoy expone **cuatro fases** en el panel admin (visibles en `portal/index.html`, sección "Fase del Proceso"):
+El sistema hoy expone **cuatro fases** en el panel admin (visibles en `prisma-apex/index.html`, sección "Fase del Proceso"):
 
 | `current_phase` | Nombre legacy verbatim |
 |---|---|
@@ -161,7 +167,7 @@ Estas son las **únicas fases reales** del sistema actualmente. Cualquier mappin
 
 **Definición.** Sesión grabada con personal del cliente. Audio en Drive (Workspace nativo desde Meet); transcripción en `prisma-trabajo-clientes` como markdown.
 
-**Estado actual.** No modelada en BD. Se introduce en fase 2 con metadatos: id, engagement_id, fecha, participantes, link_drive_audio, path_transcripcion_repo.
+**Estado actual.** Tabla `entrevistas` creada en la migración aditiva (`v3.3.38`) con metadatos: id, engagement_id, fecha, participantes, link_drive_audio, path_transcripcion_repo.
 
 ### 3.10 Archivo
 
@@ -172,7 +178,7 @@ Estas son las **únicas fases reales** del sistema actualmente. Cualquier mappin
 - `referencia_externa` (drive_file_id hoy; path filesystem post-Sprint B)
 - `nombre_visible`, `tipo_documento`, `mime_type`, `tamano`, `created_at`
 
-**Estado actual.** Existe como `portal_files` con `drive_file_id` y `user_id`. Se evoluciona en fase 2 añadiendo `engagement_id`.
+**Estado actual.** Existe como `portal_files` con `drive_file_id` y `user_id`. La columna canónica `engagement_id` se añadió en la migración aditiva (`v3.3.38`).
 
 ### 3.11 Entregable
 
@@ -183,7 +189,7 @@ Estas son las **únicas fases reales** del sistema actualmente. Cualquier mappin
 - `path_servido` — ruta canónica (sección 9)
 - `version`, `publicado_en`
 
-**Estado actual.** No modelado en BD. Hoy son archivos HTML estáticos en `portal/analisis/armc/` referenciados por constantes en `portal/index.html`.
+**Estado actual.** Tabla `entregables` creada en la migración aditiva (`v3.3.38`); aún no poblada como modelo operativo. Los entregables son archivos HTML estáticos en `prisma-apex/clientes-publicados/armc/`, referenciados por la capa de registro de rutas en `prisma-apex/index.html`.
 
 ### 3.12 Plantilla
 
@@ -439,7 +445,7 @@ La autorización está dispersa:
 - **JWT** lleva `{id, email, nombre, role}` (`server/middleware/auth.js`, función `auth`).
 - **Middleware `requireAdmin`** consulta `req.user.role !== 'admin'` (`server/middleware/auth.js`, función `requireAdmin`).
 - **Endpoints** consultan `req.user.role === 'admin'` para decidir cross-user access (handlers de `portal-apex-results`, `portal-profile`, `portal-upload`, `portal-files` GET/DELETE/PATCH en `server/routes/portal.js`).
-- **Frontend** muestra/oculta secciones admin con condiciones JS (`portal/index.html`, código de inicialización tras login).
+- **Frontend** muestra/oculta secciones admin con condiciones JS (`prisma-apex/index.html`, código de inicialización tras login).
 
 ### 8.2 Estrategia durante Sprint A
 
@@ -465,7 +471,7 @@ Migración futura se beneficia de la capa centralizada. Sin ella sería compleja
 
 ### 9.1 Problema
 
-Hoy los entregables ARMC son HTMLs estáticos en `portal/analisis/armc/` servidos por `express.static(projectRoot, ...)` en `server/server.js`.
+Los entregables ARMC son HTMLs estáticos en `prisma-apex/clientes-publicados/armc/`, servidos por Express bajo `/publicados/` (`server/server.js`).
 
 El frontend los cargaba originalmente vía 3 constantes hardcodeadas en `portal/index.html` (`ANALISIS_BASE_PATH`, `ANALISIS_DIAGNOSTICO_PATH`, `ANALISIS_BLUEPRINT_PATH`). En v3.2.46-47 esas constantes fueron **reemplazadas por la capa de registro de rutas** (`ANALISIS_REGISTRY` + función `getAnalysisPaths`); ver `REGISTRO-RUTAS.md`.
 
@@ -483,7 +489,7 @@ Los entregables:
 ### 9.3 Configuración del servidor en fase 2
 
 ```javascript
-// server.js (estado deseado tras fase 2)
+// server.js (configuración vigente, esquemática)
 
 // Web pública servida desde /web/
 app.use(express.static(path.join(projectRoot, 'web'), {
@@ -527,7 +533,7 @@ app.get('/portal/analisis/:cliente/*', (req, res) => {
 
 ### 9.5 Capa de registro de rutas en frontend
 
-Las 3 constantes hardcodeadas en `portal/index.html` se reemplazan por consultas al registro central. Especificación detallada en el documento de diseño de la capa (entregable propio de fase 1, próximo).
+Las 3 constantes hardcodeadas que vivían en el frontend del Hub se reemplazaron por consultas a un registro central (`ANALISIS_REGISTRY` + `getAnalysisPaths`), hoy en `prisma-apex/index.html`. Especificación detallada en `REGISTRO-RUTAS.md`.
 
 **Forma esperada:**
 
@@ -552,17 +558,17 @@ const blueprintBase   = paths.blueprint;
 
 | Entidad del modelo | Hoy se llama | Dónde vive | Estado |
 |---|---|---|---|
-| Cliente | implícito en `portal_users.empresa` | columna BD | **Tabla `clientes`** introducida en fase 2; datos empresariales canónicos viven aquí |
+| Cliente | implícito en `portal_users.empresa` | columna BD | **Tabla `clientes`** creada en `v3.3.38`; datos empresariales canónicos viven aquí |
 | Usuario | `portal_users` | tabla BD | Existe; mantiene campos legacy durante Sprint A; pertenencia a clientes pasa a `ClientMembership` |
-| ClientMembership | implícito en `portal_users.role` | columna BD | **Tabla `client_memberships`** en fase 2 |
-| Engagement | implícito en `portal_users.{current_phase, profile_type, apex_submission_id}` | columnas BD | **Tabla `engagements`** en fase 2; sincronizada |
+| ClientMembership | implícito en `portal_users.role` | columna BD | **Tabla `client_memberships`** creada en `v3.3.38` |
+| Engagement | implícito en `portal_users.{current_phase, profile_type, apex_submission_id}` | columnas BD | **Tabla `engagements`** creada en `v3.3.38`; sincronizada |
 | Producto | implícito (todo es APEX) | n/a | enum |
 | Vertical | implícito en `profile_type` | columna BD | enum dentro de Engagement |
 | Fase | `current_phase` (INT) | columna BD | enum legacy mantenido verbatim |
 | Submission | `apex_submissions` | tabla BD | Existe; FK desde Engagement |
 | Entrevista | no modelada | dispersa | **Tabla `entrevistas`** en fase 2 |
 | Archivo | `portal_files` | tabla BD | Existe; columna `engagement_id` añadida en fase 2 |
-| Entregable | HTMLs estáticos en `portal/analisis/armc/` | filesystem | **Tabla `entregables`** en fase 2; archivos en `prisma-apex/clientes-publicados/[cliente]/` |
+| Entregable | HTMLs estáticos en `prisma-apex/clientes-publicados/armc/` | filesystem | **Tabla `entregables`** creada en `v3.3.38`; archivos en `prisma-apex/clientes-publicados/[cliente]/` |
 | Plantilla | no existe | n/a | **Introducida en fase 3** |
 
 ---
@@ -573,7 +579,7 @@ const blueprintBase   = paths.blueprint;
 
 ### 11.1 Tablas y columnas nuevas
 
-**Tablas nuevas en fase 2:**
+**Tablas creadas en la migración aditiva (`v3.3.38`):**
 - `clientes`
 - `client_memberships`
 - `engagements`

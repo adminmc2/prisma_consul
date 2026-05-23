@@ -1,5 +1,7 @@
 # Ecosistema de repositorios de PRISMA
 
+> **Estado:** vigente · **Última verificación:** 2026-05-22 (auditoría documental, Bloque 1).
+
 Documento canónico que describe los repositorios que conforman el sistema PRISMA, qué hace cada uno, cuándo abrirlos y cómo se relacionan entre sí.
 
 > Este documento se mantiene en `web-de-prisma/ECOSISTEMA.md` como fuente única. Cada repo del ecosistema referencia este archivo desde su `CLAUDE.md` mediante una sección breve "Ecosistema de repositorios".
@@ -37,7 +39,7 @@ Documento canónico que describe los repositorios que conforman el sistema PRISM
 
 
   ┌──────────────────────────────────────────────────────────────┐
-  │  prisma-trabajo-clientes  (privado, NUEVO en fase 1)         │
+  │  prisma-trabajo-clientes  (privado)                          │
   │  Trabajo interno PRISMA por cliente: contratos, notas,       │
   │  transcripciones, drafts de entregables                      │
   └──────────────────────────────────────────────────────────────┘
@@ -87,8 +89,8 @@ Documento canónico que describe los repositorios que conforman el sistema PRISM
 - Desplegar cambios al VPS (rama `main` para producción, rama `dev` para `dev.prismaconsul.com`).
 
 **Qué contiene.**
-- Web pública (`/web/` tras reorganización).
-- Prisma APEX (`/prisma-apex/` tras reorganización): núcleo común + verticales.
+- Web pública (`web/`).
+- Prisma APEX (`prisma-apex/`): núcleo común + verticales.
 - Backend Express (`/server/`).
 - Configuración Claude Code (`.claude/`).
 - Documentación operativa: `CLAUDE.md`, `CHANGELOG.md`, `MODELO-DOMINIO.md`, `CONTRATOS.md`, `GLOSARIO.md`, `ECOSISTEMA.md` (este archivo).
@@ -101,7 +103,7 @@ Documento canónico que describe los repositorios que conforman el sistema PRISM
 
 ---
 
-### 2. `prisma-trabajo-clientes` (privado, NUEVO — se crea en fase 1)
+### 2. `prisma-trabajo-clientes` (privado)
 
 **Propósito.** Material de trabajo PRISMA por cliente (texto colaborativo). No es producto entregado, es **trabajo en construcción**.
 

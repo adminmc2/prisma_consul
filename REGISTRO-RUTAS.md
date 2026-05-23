@@ -1,5 +1,13 @@
 # Capa de registro de rutas — especificación
 
+> **Estado:** histórico · **Última verificación:** 2026-05-23.
+> **Slice ejecutado:** las 3 constantes hardcodeadas fueron reemplazadas por
+> `ANALISIS_REGISTRY` + `getAnalysisPaths` en `v3.2.46-48`; alineación a los valores
+> canónicos `/publicados/armc/...` en `v3.3.31`. Verificado contra
+> `prisma-apex/index.html:3640-3701`.
+> Esta spec se conserva como referencia documental del slice. Candidata a mover a
+> `docs/historico/` en un slice futuro.
+
 Spec breve, pegada a la implementación. Reemplaza las 3 constantes hardcodeadas en `portal/index.html` por un registro consultable que las hace dejar de ser fuente de verdad.
 
 > **Alcance estricto.** Esta spec describe **únicamente el slice del Hub que sirve los entregables ARMC**. No define una arquitectura futura. No abstrae para casos que aún no existen. Si en el futuro hace falta más (multi-cliente real, registro en BD, multi-vertical), se evalúa entonces.

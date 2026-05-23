@@ -2,6 +2,49 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-23] — v3.3.71
+
+### Documentación — cierre del bloque documental + gobierno operativo + diagnóstico arquitectónico
+
+Cierra el bloque documental abierto el 22-may tras detectar deriva crónica.
+Refresco de canónicos al estado real del repo, mecanismo anti-deriva,
+diagnóstico arquitectónico, plan F1 redefinido como reestructuración técnica
+y mapa único de documentos en OPERATIVA.md.
+
+**Hito A — correcciones de ruta y estructura**
+- `README.md`: reescritura a la estructura real (`web/`, `prisma-apex/`, `shared/`, `server/`, `docs/`); tabla de apps con `/hub` y `/publicados/` reales; eliminada ruta inexistente `/documentacion`.
+- `docs/GUIA-NUEVAS-SECCIONES.md`: rutas `portal/` → estructura real. Aviso explícito de que el paso a paso de código (§2-§6) describe arquitectura del Hub retirada, pendiente de reescritura en Bloque 2 de F1.
+- `CLAUDE.md` "Directory Structure": actualizada al estado vigente (simulador-ux en `core/`, bloque `portal/` eliminado, `server/scripts/` añadido).
+
+**Hito B+D — refresco de canónicos + contratos del simulador**
+- `ECOSISTEMA.md`: cabecera de vigencia; "(NUEVO en fase 1)" → "(privado)"; "(/web/ tras reorganización)" → "(`web/`)".
+- `GLOSARIO.md`: cabecera de vigencia + nota sobre anclajes a `REVIEW-PRISMA-APEX.md`; `portal/index.html` → `prisma-apex/index.html`; "tablas nuevas en fase 2" → "creadas en la migración aditiva (`v3.3.38`)". Nuevas entradas: **Simulador UX**, **Nativización**, **Líneas A/B/C**. Decisión registrada: el nombre canónico del sistema es Prisma APEX (`prisma-apex` en código y URLs); renombre `/hub` → `/prisma-apex` planificado posterior a Sprint A con 301 indefinido en la URL legacy.
+- `MODELO-DOMINIO.md`: cabecera de vigencia; entidades pasadas a presente (tablas creadas en `v3.3.38`); paths `portal/` → `prisma-apex/`; mapeo §10 y §11.1 actualizados.
+- `CONTRATOS.md`: cabecera de vigencia; §3.2 SPA discovery con path real; §3.3 reframe a redirect 301 ejecutado; §6.2 y §13 actualizados; §7.1–§7.3 cerrados. Nueva **§3.6 — Rutas internas del simulador UX** registrando la ruta canónica `/core/simulador-ux/...` y la retirada de la legacy `/publicados/armc/simulador-ux/` (301 → /hub). La compatibilidad temporal de nginx dev queda fuera de CONTRATOS, en `OPERATIVA.md` §8. Decisión registrada en §9.3: destino del renombre público es `/prisma-apex`.
+
+**Hito C — cabeceras de ciclo de vida**
+- `REGISTRO-RUTAS.md`: cabecera `histórico` (slice ejecutado v3.2.46-48 + alineación v3.3.31), verificado contra `prisma-apex/index.html:3640-3701`.
+- `docs/PROPUESTA-SIMULADOR-NATIVO-HUB.md`: cabecera `mixto` (Líneas A y B ejecutadas; Línea C en curso), reemplazando la cabecera anterior que era falsa. Verificado contra código y árbol del repo.
+- `README.md` y `docs/GUIA-NUEVAS-SECCIONES.md`: cabeceras `vigente` y `vigente con caducidad` respectivamente.
+
+**Mecanismo anti-deriva**
+- `.claude/skills/revisar-docs/SKILL.md`: nuevo skill que codifica el método de auditoría documental — cualquier sesión escribe `/revisar-docs` y obtiene la auditoría completa.
+- `.claude/hooks/recordar-revisar-docs.sh` + entrada en `.claude/settings.json`: hook PreToolUse en `Bash(git commit*)` que detecta cambios estructurales y recuerda correr `/revisar-docs` antes de cerrar.
+
+**Diagnóstico arquitectónico (snapshot)**
+- `docs/AUDITORIA-ARQUITECTONICA.md` (nuevo): diagnóstico profundo del repo con inventario, anti-patrones de código y documentación, estado del setup Claude Code, raíz estructural de la deriva y propuesta de remediación priorizada por niveles.
+
+**Gobierno operativo — Plan F1 redefinido**
+- `docs/F1-PLAN.md` (nuevo, vigente con caducidad): plan operativo vinculante de F1 — **reestructuración técnica de la plataforma** (no multi-cliente, no rediseño funcional). Define principios fijos, prohibiciones absolutas, secuencia por bloques (0 cierre documental · 1 tooling Claude Code · 2 saneamiento monolito Hub), criterios PASS por slice y lo que queda fuera.
+- `docs/OPERATIVA.md`:
+  - §10 reescrita: F1 = reestructuración técnica de la plataforma.
+  - §11 actualizada con secuencia vigente.
+  - Nueva **§0 — Condiciones inviolables**: seguridad, orden operativo, límite del acto creativo (no deriva LLM), calidad mínima, jerarquía de documentos.
+  - §0.2 reforzada con regla de cierre por slice escalado por riesgo.
+  - §0.3 reforzada con cláusula de análisis crítico acotado a cambios estructurales/operativos/canónicos.
+  - §0.5 convertida en **mapa único de documentos** con taxonomía de ciclo de vida (eterno · vigente · vigente con caducidad · snapshot · histórico · mixto · operativo).
+- `CLAUDE.md`: aviso obligatorio al inicio que apunta a `docs/OPERATIVA.md` §0 antes de cualquier acción.
+
 ## [2026-05-21] — v3.3.70
 
 ### Documentación — README del simulador actualizado al estado nativo

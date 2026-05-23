@@ -1,8 +1,17 @@
 # Propuesta — Simulador UX a superficie nativa del Hub (sin iframes)
 
-> **Tipo:** slice de definición técnica. No es implementación.
-> **Estado:** propuesta para revisión. Si se aprueba, la implementación es un pase posterior.
-> **Base:** `v3.3.63` (`8858729`).
+> **Estado:** mixto · **Última verificación:** 2026-05-23.
+> **Líneas A y B ejecutadas** (slices T1-T4): reclasificación documental + refactor de
+> arquitectura (eliminación de iframes, nativización de las 4 capas, movimiento del
+> subtree a `prisma-apex/core/simulador-ux/`, retirada de la ruta pública legacy
+> `/publicados/armc/simulador-ux/` con `301 → /hub`). Verificado contra
+> `prisma-apex/index.html`, `server/server.js` y árbol del repo.
+> **Línea C (poblado funcional) en curso** conforme se verifica el flujo (hoy: 4 nodos,
+> 2 forms, 1 evento, 2 tablas).
+> **Referencia operativa actual:** [`prisma-apex/core/simulador-ux/README.md`](../prisma-apex/core/simulador-ux/README.md).
+> Este documento se conserva como **definición técnica de partida** mientras Línea C
+> siga viva; al cerrarse se archiva o se reabsorbe en el README del módulo.
+> **Base original:** `v3.3.63` (`8858729`).
 
 ## 1. Contexto y motivación
 

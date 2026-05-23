@@ -1,5 +1,12 @@
 # Cómo entregar material de análisis a PRISMA Hub
 
+> **Estado:** vigente con caducidad · **Última verificación:** 2026-05-23.
+> Las **rutas** de esta guía están alineadas al estado real del repo. El **paso a paso
+> de código (§2-§6)** describe una arquitectura del Hub ya retirada; caduca y se
+> reescribe al patrón actual cuando se ejecute Bloque 2 de F1 (saneamiento del
+> monolito). Hasta entonces, antes de tocar código consulta el estado real en
+> `prisma-apex/index.html`.
+
 ## Qué es esto
 
 Eres un Claude que trabaja en un proyecto de consultoría. Cuando generas material de análisis (diagramas de flujo, mapas de procesos, etc.), ese material se publica en **PRISMA Hub** — el portal web de clientes de PRISMA Consul.
@@ -16,11 +23,10 @@ El repositorio es `web-de-prisma`. La ruta relevante para ti es:
 
 ```
 web-de-prisma/
-├── portal/
-│   ├── index.html              ← SPA del Hub (~2500 líneas, HTML/CSS/JS vanilla)
-│   └── analisis/               ← AQUÍ VA TODO TU MATERIAL
-│       ├── GUIA-NUEVAS-SECCIONES.md   ← Este archivo
-│       └── armc/               ← Ejemplo: proyecto ARMC (ya completado)
+├── prisma-apex/
+│   ├── index.html                  ← SPA del Hub (HTML/CSS/JS vanilla)
+│   └── clientes-publicados/        ← AQUÍ VA TODO TU MATERIAL
+│       └── armc/                   ← Ejemplo: proyecto ARMC (ya completado)
 │           ├── css/estilos-prisma.css
 │           └── diagramas/
 │               ├── flujo-atención-paciente.html
@@ -30,7 +36,11 @@ web-de-prisma/
 │               ├── flujo-primer-ayudante.html
 │               ├── flujo-tricologia.html
 │               └── flujo-ceo.html
+└── docs/
+    └── GUIA-NUEVAS-SECCIONES.md     ← Este archivo
 ```
+
+Los entregables se sirven bajo la URL canónica `/publicados/[cliente]/...`.
 
 **Rama de trabajo**: `dev` (nunca `main`)
 
@@ -76,12 +86,22 @@ Cada archivo HTML tuyo se carga en un **iframe con sandbox** (`allow-scripts all
 
 ## Paso a paso: entregar una nueva sección
 
-### 1. Crea tus archivos HTML en `portal/analisis/`
+> **⚠ Aviso de vigencia (auditoría documental, 2026-05).** Las rutas de este
+> documento ya están actualizadas a la estructura real del repo. Sin embargo,
+> los **pasos de código §2 a §6** (registrar la sección, `analisisOpenSection`,
+> `analisisOpenRole`, constante `ANALISIS_BASE_PATH`) describen una arquitectura
+> del Hub **ya retirada**. El Hub actual usa una tabla única `ANALISIS_SECTION_MAP`
+> con `ANALISIS_REGISTRY` + `getAnalysisPaths()`; ya no hay un `if` por sección ni
+> la constante `ANALISIS_BASE_PATH`. La reescritura de estos pasos al patrón
+> vigente está pendiente como slice propio. Hasta entonces, **antes de tocar
+> código consulta el estado real en `prisma-apex/index.html`**.
+
+### 1. Crea tus archivos HTML en `prisma-apex/clientes-publicados/[cliente]/`
 
 Crea una subcarpeta con tus archivos. La estructura es libre, pero mantén coherencia:
 
 ```
-portal/analisis/armc/procesos/          ← Ejemplo
+prisma-apex/clientes-publicados/armc/procesos/     ← Ejemplo
 ├── proceso-recepcion.html
 ├── proceso-facturacion.html
 └── proceso-inventario.html
@@ -291,7 +311,7 @@ Regla del border-radius: **el borde recto mira hacia dentro** (hacia el centro).
 
 ## Lo que NO debes tocar
 
-1. **Archivos existentes** en `portal/analisis/armc/diagramas/` — son inmutables
+1. **Archivos existentes** en `prisma-apex/clientes-publicados/armc/diagramas/` — son inmutables
 2. **HTML estructural** del Hub — las `<div>` con IDs `tab-analisis`, `analisis-sections`, `analisis-roles`, `analisis-viewer` y sus equivalentes `ud-`
 3. **CSS del Hub** — las clases `.analisis-layer`, `.analisis-layer-flex`, `.analisis-container`, `.analisis-sections-grid`, `.analisis-role-card`, etc.
 4. **Funciones de navegación base** — `analisisShowSections()`, `analisisShowRoles()`, `loadAnalisis()`, `loadUdAnalisis()` y equivalentes `ud`
@@ -310,7 +330,7 @@ git pull origin dev
 # ...
 
 # Commit
-git add portal/analisis/tu-carpeta/
+git add prisma-apex/clientes-publicados/[cliente]/tu-carpeta/
 git add prisma-apex/index.html
 git commit -m "Add [nombre de tu sección] analysis to Hub Análisis tab"
 
@@ -326,7 +346,7 @@ git push origin dev
 
 Para que veas el patrón completo que ya está funcionando:
 
-**Archivos**: 7 HTML en `portal/analisis/armc/diagramas/`
+**Archivos**: 7 HTML en `prisma-apex/clientes-publicados/armc/diagramas/`
 
 **En `prisma-apex/index.html`:**
 ```js

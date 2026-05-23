@@ -1,5 +1,16 @@
 # PRISMA Consul - Web Platform
 
+> **⚠ LEER ANTES DE CUALQUIER ACCIÓN — Condiciones inviolables.**
+> Antes de tocar nada en este repo, leer **[`docs/OPERATIVA.md` §0 — Condiciones
+> inviolables](docs/OPERATIVA.md#0-condiciones-inviolables--leer-siempre-primero)**.
+> Esas reglas son no negociables: seguridad, orden operativo, límite del acto
+> creativo (no deriva LLM), calidad mínima y jerarquía de documentos de referencia.
+> En conflicto con cualquier sección de este `CLAUDE.md`, **prevalecen las
+> inviolables** y se escala al revisor.
+>
+> **Qué se está trabajando ahora mismo:** [`docs/F1-PLAN.md`](docs/F1-PLAN.md) —
+> plan operativo vinculante de F1 (reestructuración técnica de la plataforma).
+
 ## Project Overview
 
 Marketing website + B2B discovery tool + document portal for PRISMA Consul, a pharma/healthcare consulting company. Self-hosted on IONOS VPS.
@@ -80,7 +91,7 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 
 ## Directory Structure
 
-> **Estructura vigente tras los subpasos 2.1 a 2.7 de Fase 2 (`v3.3.40`).** La web pública vive bajo `web/`, los entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`, el entrypoint del Hub en `prisma-apex/index.html`, el discovery engine en `prisma-apex/core/discovery-engine/` y los recursos compartidos (fuentes Phosphor del discovery) bajo `shared/fonts/phosphor/`. El subpaso **2.6** (`v3.3.38`) ejecutó la **migración aditiva de BD** sobre Neon (5 tablas nuevas + columnas transitorias en `portal_users` y canónica en `portal_files`); el árbol de archivos no cambió. El subpaso **2.7** (`v3.3.39`) añadió el helper de dominio `server/lib/domain-sync.js` (skeleton, no invocado todavía). URL canónica de entregables: `/publicados/[cliente]/...` (legacy `/portal/analisis/[cliente]/...` resuelve vía redirect 301). URL pública del discovery `/apex` se mantiene idéntica. URL pública de recursos compartidos: `/shared/...`. `portal/` queda vestigial; `apex/` queda eliminado del árbol efectivo tras 2.5 (vacío, sin tracking git).
+> **Estructura vigente (`v3.3.71`).** La web pública vive bajo `web/`, los entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`, el entrypoint del Hub en `prisma-apex/index.html`, el discovery engine en `prisma-apex/core/discovery-engine/`, el simulador UX (módulo interno del Hub, nativizado en la Línea B) en `prisma-apex/core/simulador-ux/`, y los recursos compartidos (fuentes Phosphor del discovery) bajo `shared/fonts/phosphor/`. La **migración aditiva de BD** sobre Neon (5 tablas nuevas + columnas transitorias en `portal_users` y canónica en `portal_files`) quedó ejecutada en el subpaso 2.6 (`v3.3.38`); el helper de dominio `server/lib/domain-sync.js` se cableó en `v3.3.42`. URL canónica de entregables: `/publicados/[cliente]/...` (legacy `/portal/analisis/[cliente]/...` resuelve vía redirect 301). URLs públicas del discovery `/apex` y del Hub `/hub` sin cambios. URL pública de recursos compartidos: `/shared/...`. El simulador **no tiene URL pública**: sus datos se sirven internamente bajo `/core/simulador-ux/...`. Las carpetas legacy `portal/` y `apex/` quedaron eliminadas del árbol.
 
 ```
 ├── web/                        # Web pública (Subpaso 2.1, v3.3.25+)
@@ -95,30 +106,34 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 │       ├── team/               # Team member photos
 │       └── videos/             # Marketing videos
 ├── prisma-apex/                # Sistema interno PRISMA APEX (en construcción)
-│   ├── index.html              # PRISMA Hub — entrypoint (Subpaso 2.3, v3.3.33)
-│   ├── core/
-│   │   └── discovery-engine/   # APEX Discovery — movido en Subpaso 2.4 (v3.3.36)
-│   │       ├── index.html
-│   │       ├── form.js         # Main form logic (~3500 lines)
-│   │       ├── form.css
-│   │       └── signal-detector.js
-│   └── clientes-publicados/    # Entregables publicados por cliente (Subpaso 2.2, v3.3.31)
+│   ├── index.html              # PRISMA Hub — entrypoint (SPA)
+│   ├── core/                   # Núcleo común a todos los clientes
+│   │   ├── discovery-engine/   # APEX Discovery — servido en /apex
+│   │   │   ├── index.html
+│   │   │   ├── form.js         # Main form logic (~3500 lines)
+│   │   │   ├── form.css
+│   │   │   └── signal-detector.js
+│   │   └── simulador-ux/       # Simulador UX — módulo interno del Hub (Línea B, nativizado)
+│   │       ├── README.md
+│   │       ├── index.html      # Shell standalone legacy (no usado por el Hub nativo)
+│   │       ├── capa-1-ux/      # Grafo de estados
+│   │       ├── capa-2-diccionario/  # Catálogos, formularios, eventos, mapeos (forms/, events/)
+│   │       ├── capa-3-sql/     # Esquema SQL + diccionario de datos
+│   │       └── mapa/           # Matriz de trazabilidad
+│   └── clientes-publicados/    # Entregables publicados por cliente
 │       └── armc/               # ARMC — primer cliente
 │           ├── index.html
 │           ├── diagramas/      # 7 flujos por rol + template
 │           ├── diagnostico/    # Resumen, fricciones, matriz, embudo, cadena causal
 │           ├── blueprint/      # Modelo datos, flujos to-be, automatizaciones, fases, KPIs
-│           ├── simulador-ux/   # Módulo INTERNO del Hub en construcción (no entregable público). Reclasificado en pase A; destino futuro prisma-apex/core/simulador-ux/, movimiento físico en línea B — ver docs/PROPUESTA-SIMULADOR-NATIVO-HUB.md
 │           └── css/
-├── shared/                     # Recursos compartidos entre apps (Subpaso 2.5, v3.3.37)
+├── shared/                     # Recursos compartidos entre apps
 │   └── fonts/
 │       └── phosphor/           # Phosphor Icons del discovery — servido bajo /shared/fonts/phosphor/
 │           ├── phosphor.css
 │           ├── Phosphor.woff2
 │           ├── Phosphor.woff
 │           └── Phosphor.ttf
-├── portal/                     # Vestigio post-2.3 (sin contenido propio; soporte vestigial para routing legacy)
-│   └── analisis/               # Vacío — residual del subpaso 2.2
 ├── server/                     # Express.js backend
 │   ├── server.js               # App setup, middleware, route mounting
 │   ├── package.json            # All backend dependencies
@@ -130,6 +145,7 @@ This is a monorepo with 3 frontend apps sharing one Express.js backend:
 │   │   ├── portal.js           # Auth, upload, file management, user management, activity log
 │   │   ├── apex.js             # Research, questions, form submission
 │   │   └── ai.js               # Groq LLM chat + Whisper transcription
+│   ├── scripts/                # Scripts de mantenimiento puntual
 │   └── lib/
 │       ├── pain-knowledge-base.js  # Pain/situation database (469 pains)
 │       ├── google-drive.js     # Google Drive client + per-user folder helpers
@@ -387,7 +403,7 @@ La versión actual se muestra en el footer de `web/index.html`. Se usa **Version
 - **MINOR** — Funcionalidad nueva (v3.0 → v3.1)
 - **PATCH** — Correcciones, bugs, parches de seguridad (v3.0.0 → v3.0.1)
 
-**Versión actual:** `v3.3.70`
+**Versión actual:** `v3.3.71`
 
 Al hacer cualquier cambio, actualizar la versión en:
 1. El footer de `web/index.html` (línea del `footer__bottom`, en `data-es`, `data-en` y el texto visible)

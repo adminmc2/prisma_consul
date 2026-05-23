@@ -1,5 +1,11 @@
 # Glosario — Prisma APEX
 
+> **Estado:** vigente · **Última verificación:** 2026-05-22 (auditoría documental, Bloque 1).
+> Varios términos anclan su definición canónica a `REVIEW-PRISMA-APEX.md` (histórico
+> cerrado). Esos anclajes se conservan a falta de un documento vigente que los sustituya;
+> reasignarlos es una decisión de gobernanza documental pendiente, fuera del alcance de
+> esta auditoría.
+
 Vocabulario canónico del proyecto. Fuente única para evitar deriva terminológica entre documentos, código y conversación.
 
 > **Cómo se usa.** Cada término tiene definición concisa + referencia al documento canónico donde se desarrolla en detalle. El glosario **no inventa términos**: absorbe los ya aprobados en `MODELO-DOMINIO.md`, `CONTRATOS.md`, `ECOSISTEMA.md` y `REVIEW-PRISMA-APEX.md`.
@@ -19,8 +25,8 @@ Producto que PRISMA vende a clientes. Acrónimo de **Automatización de Procesos
 *Canónico:* `MODELO-DOMINIO.md` §1.1.
 
 ### Prisma APEX
-Sistema interno de PRISMA donde PRISMA opera con sus clientes. Es la instancia que PRISMA usa para sí misma. Análogo a Salesforce-empresa usando Salesforce-producto. Reemplaza el nombre legacy "Hub".
-*Canónico:* `MODELO-DOMINIO.md` §1.1. *Estado:* `Hub` se mantiene como URL pública (`/hub`) durante Sprint A.
+Sistema interno de PRISMA donde PRISMA opera con sus clientes. Es la instancia que PRISMA usa para sí misma. Análogo a Salesforce-empresa usando Salesforce-producto. Reemplaza el nombre legacy "Hub" — **el nombre canónico del sistema es Prisma APEX (`prisma-apex` en código, directorios y URLs)**.
+*Canónico:* `MODELO-DOMINIO.md` §1.1. *Estado:* la URL pública `/hub` se mantiene durante Sprint A por contrato congelado. El renombre planificado es a `/prisma-apex` (destino decidido); el *momento* del cambio queda como decisión de comunicación posterior a Sprint A (ver `CONTRATOS.md` §9.3).
 
 ### Producto
 Categoría de oferta de PRISMA. Hoy en `web-de-prisma` solo se modela **APEX**. Otros productos PRISMA (NOVIA, ABBE, Omia) viven en sus propios repos.
@@ -115,11 +121,11 @@ Capa única de aplicación que mantiene la sincronización entre estado legacy (
 *Canónico:* `MODELO-DOMINIO.md` §6.6 y MD-6.
 
 ### Capa de registro de rutas (route registry)
-Capa del frontend que centraliza el mapeo `cliente → paths` en un registro consultable, en lugar de constantes hardcodeadas en el JS. Reemplaza las 3 constantes `ANALISIS_BASE_PATH`, `ANALISIS_DIAGNOSTICO_PATH`, `ANALISIS_BLUEPRINT_PATH` en `portal/index.html`. Pre-requisito técnico de mover físicamente `portal/analisis/armc/` en Fase 2.
+Capa del frontend que centraliza el mapeo `cliente → paths` en un registro consultable, en lugar de constantes hardcodeadas en el JS. Reemplazó las 3 constantes `ANALISIS_BASE_PATH`, `ANALISIS_DIAGNOSTICO_PATH`, `ANALISIS_BLUEPRINT_PATH` del frontend del Hub; fue pre-requisito técnico del movimiento físico de los entregables ARMC en Fase 2 (ya ejecutado). El registro vive hoy en `prisma-apex/index.html`.
 *Canónico:* `MODELO-DOMINIO.md` §9.5, `CONTRATOS.md` §6.1.
 
 ### Núcleo común APEX (core)
-Parte del sistema Prisma APEX que se comparte entre verticales: motor de discovery, modelo de fases, motor de entregables, gestión de archivos, gestión de clientes, capa de registro de rutas. Vive en `prisma-apex/core/`.
+Parte del sistema Prisma APEX que se comparte entre verticales: motor de discovery, modelo de fases, motor de entregables, gestión de archivos, gestión de clientes, capa de registro de rutas, simulador UX. Vive en `prisma-apex/core/` (hoy: `discovery-engine/` y `simulador-ux/`).
 *Canónico:* `MODELO-DOMINIO.md` §5.
 
 ### discovery-engine
@@ -133,6 +139,18 @@ Configuración específica de discovery para una vertical concreta (preguntas, s
 ### Modelo objetivo de fases — pendiente
 Decisión abierta: las fases definitivas que tendrá el sistema cuando los procesos completos estén desarrollados. Algunas fases legacy se conservarán; otras se renombrarán; algunas (captación, operación) son procesos no implementados todavía. Durante Sprint A se mantienen las **4 fases legacy verbatim**.
 *Canónico:* `MODELO-DOMINIO.md` §3.7.2 y §6.3.
+
+### Simulador UX
+Módulo interno del Hub que visualiza en cuatro capas el flujo de captación de leads de un cliente (hoy ARMC). **No es entregable público**: se accede solo dentro del Hub autenticado. Vive en `prisma-apex/core/simulador-ux/`; sus datos se sirven bajo la ruta interna `/core/simulador-ux/...`.
+*Canónico:* `prisma-apex/core/simulador-ux/README.md`.
+
+### Nativización (del simulador)
+Refactor que eliminó la arquitectura de iframes del simulador y lo convirtió en una superficie nativa renderizada directamente en el DOM del Hub. Ejecutada en la Línea B.
+*Canónico:* `docs/PROPUESTA-SIMULADOR-NATIVO-HUB.md`.
+
+### Líneas A / B / C (del simulador)
+Las tres líneas de trabajo del simulador: **A** — reclasificación de entregable público a módulo interno (documental); **B** — refactor de arquitectura (eliminar iframes, nativizar, mover el subtree a `core/`); **C** — poblado funcional del flujo. A y B están ejecutadas; C se reanuda tras B.
+*Canónico:* `docs/PROPUESTA-SIMULADOR-NATIVO-HUB.md` §8.
 
 ---
 
@@ -220,7 +238,7 @@ DNS y proxy del dominio `prismaconsul.com`. Subdominios `dev.prismaconsul.com` y
 *Canónico:* `CLAUDE.md` §"DNS y Cloudflare".
 
 ### Neon PostgreSQL
-Base de datos serverless usada por `web-de-prisma`. Tablas legacy: `apex_submissions`, `portal_users`, `portal_files`, `portal_activity_log`. Tablas nuevas en fase 2: `clientes`, `client_memberships`, `engagements`, `entrevistas`, `entregables`.
+Base de datos serverless usada por `web-de-prisma`. Tablas legacy: `apex_submissions`, `portal_users`, `portal_files`, `portal_activity_log`. Tablas del modelo de dominio creadas en la migración aditiva (`v3.3.38`): `clientes`, `client_memberships`, `engagements`, `entrevistas`, `entregables`.
 *Canónico:* `CONTRATOS.md` §5.
 
 ### IONOS VPS
@@ -281,7 +299,7 @@ Dirección interna que las SPAs usan para hablar con el servidor. **17 endpoints
 *Canónico:* `CONTRATOS.md` §4.
 
 ### Path hardcodeado
-Ruta a un archivo físico que el JavaScript del frontend construye literalmente en su código. Detectados: 3 constantes en `portal/index.html` (líneas 2423, 2432, 2441). **Pre-requisito técnico:** abstraer vía capa de registro de rutas antes de mover físicamente los archivos.
+Ruta a un archivo físico que el JavaScript del frontend construye literalmente en su código. Hasta `v3.2.45` había 3 constantes de este tipo en el frontend del Hub; fueron reemplazadas por la capa de registro de rutas antes del movimiento físico de Fase 2. Hoy no quedan paths hardcodeados a entregables en el frontend.
 *Canónico:* `CONTRATOS.md` §6.
 
 ### CONTRATO CRÍTICO
@@ -311,11 +329,11 @@ URL pública del formulario de discovery (frozen Sprint A).
 *Canónico:* `MODELO-DOMINIO.md` §9.2, `CONTRATOS.md` §3.3 y CT-2.
 
 ### `/portal/analisis/[cliente]/...` (URL legacy)
-URL antigua de los entregables publicados. Tras Fase 2 redirige 301 a `/publicados/[cliente]/...`. Periodo de transición indefinido.
+URL antigua de los entregables publicados. Redirige 301 a `/publicados/[cliente]/...`. Periodo de transición indefinido.
 *Canónico:* `CONTRATOS.md` §8.1.
 
-### `/web/`
-**Carpeta interna nueva** (NO URL pública) introducida en Fase 2 para alojar la web pública. El servidor reapunta `express.static` a esta carpeta. Las URLs públicas (`/`, `/aviso-legal`, etc.) **no cambian**.
+### `web/`
+**Carpeta interna** (NO URL pública) que aloja la web pública. `express.static` la sirve como raíz. Las URLs públicas (`/`, `/aviso-legal`, etc.) no cambian respecto al estado pre-reorganización.
 *Canónico:* `MODELO-DOMINIO.md` §9.3, `CONTRATOS.md` §11 (CT-1).
 
 ---
