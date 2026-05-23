@@ -80,18 +80,27 @@ Saneamiento de cómo Claude opera sobre el repo. **Riesgo de regresión: cero** 
 
 | Slice | Acción | Capa | Prohibición específica | PASS |
 |---|---|---|---|---|
-| 1.1 | Crear subagentes `revisor` y `auditor-rutas` en `.claude/agents/` | repo (Claude Code) | No tocar código de producto | Invocación produce salida coherente con prompt |
-| 1.2 | Crear skills de flujo `/nuevo-cliente`, `/procesar-entrevista`, `/generar-entregable` | repo (Claude Code) | No comprometer contrato existente de `/revisar-docs` | Cada skill ejecuta su flujo sin error |
+| 1.1 | Crear subagentes `auditor-slice` y `auditor-rutas` en `.claude/agents/`. El nombre `revisor` queda reservado al rol humano definido en `docs/OPERATIVA.md §1`; los subagentes se nombran por función, no por autoridad. | repo (Claude Code) | No tocar código de producto | Invocación produce salida coherente con prompt |
+| 1.2 | Skills de flujo `/nuevo-cliente`, `/procesar-entrevista`, `/generar-entregable` — **APLAZADO con trigger**. Hoy el trabajo activo es F2 (blueprint) y F3 (simulador), no operación repetitiva multi-cliente; codificar estos flujos ahora sería documentar hipótesis (OPERATIVA §0.3). Trigger de reactivación: la primera entrevista procesada con pipeline automatizado Drive → Whisper → `prisma-trabajo-clientes`, una vez que `prisma-trabajo-clientes` exista y esté operativo; **o** al alta del segundo cliente posterior a ARMC. Mientras tanto, no se crean estos skills. | repo (Claude Code) | No crear los skills hasta cumplirse el trigger | (no aplica hasta reactivación) |
 | 1.3 | Limpieza de `permissions.allow` (literales sed-versión → patrón general o script `scripts/bump-version.sh`) | repo (Claude Code) | No ampliar permisos a comandos no autorizados antes | `settings.json` válido (jq), hook PreToolUse sigue activo, ≤30 entradas en allow del proyecto |
 | 1.4 | Hook validador de rutas en docs (PreToolUse en `git commit` sobre `*.md` que verifica rutas mencionadas contra el árbol) | repo (Claude Code) | No bloquear commits, solo avisar | Smoke: `.md` con ruta inexistente → avisa; sin ruta inexistente → no avisa |
 | 1.5 | Statusline mínima (versión + rama) — opcional | repo (Claude Code) | No depender de comandos externos lentos | Statusline muestra `v3.3.7x` + `dev` |
 
 **Criterio PASS del Bloque 1:**
 
-- Subagentes y skills operativos, invocables, documentados.
+- Subagentes y skills del método Claude operativos e invocables para el trabajo activo del bloque.
+- Slice 1.2 registrado como **aplazado con trigger explícito y verificable**; no se afirma completitud sobre los skills operativos A/B/C mientras 1.2 permanezca aplazado.
 - `permissions.allow` limpio y revisado.
 - Hook validador funcionando en vivo.
 - Bump menor PATCH al cierre.
+
+**Skills pendientes con condición de creación (registrados aquí para no perder la necesidad, sin diseñar hoy):**
+
+- `/trazar-blueprint-simulador` — mapearía proceso del blueprint a estados/capas del simulador. **Condición de creación:** blueprint ARMC o simulador con línea base cerrada y verificable (al menos uno de los dos).
+- `/validar-coherencia-blueprint` — verificaría consistencia entre procesos objetivo, eventos e implementación. **Condición de creación:** misma condición anterior, además de que exista implementación contra la que validar.
+- `/controlar-contratos-internos` — revisaría impactos sobre contratos internos de proceso/datos. **Condición de creación:** lista de contratos internos definida (hoy `CONTRATOS.md` cubre solo los externos).
+
+Cada uno, cuando se cumpla su condición, se diseña como **slice propio** con su scoping (igual que se hizo con 1.1), no en bloque. No se añaden al Bloque 1 en curso.
 
 ### Bloque 2 — Saneamiento del monolito del Hub (sin cambio funcional)
 
@@ -147,7 +156,7 @@ F1 se considera cerrado cuando:
 
 - Bloques 0, 1 y 2 cumplen su criterio PASS.
 - `prisma-apex/index.html` deja de ser monolito (CSS y JS extraídos, duplicación `analisis`/`udAnalisis` eliminada).
-- Subagentes y skills operativos.
+- Subagentes y skills del método Claude operativos para el trabajo activo (slice 1.2 puede permanecer aplazado con trigger registrado; no bloquea el cierre de F1).
 - Hook validador activo y probado en vivo.
 - `v3.4.0` publicada en `dev` y verificada en `dev.prismaconsul.com`.
 

@@ -29,6 +29,13 @@
             "if": "Bash(git commit*)",
             "timeout": 10,
             "statusMessage": "Comprobando deriva documental..."
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/validar-rutas-md.sh\"",
+            "if": "Bash(git commit*)",
+            "timeout": 15,
+            "statusMessage": "Validando rutas en .md staged..."
           }
         ]
       }

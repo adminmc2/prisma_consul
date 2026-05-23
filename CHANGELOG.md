@@ -2,6 +2,46 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-23] — v3.3.72
+
+### Tooling Claude Code — cierre del Bloque 1 del F1-PLAN
+
+Saneamiento del método con el que Claude Code opera sobre el repo. Riesgo de
+regresión cero: cambios aditivos en `.claude/`, no toca código de producto.
+
+- **Slice 1.1 — Subagentes.** Creados `auditor-slice` (lectura previa de un
+  slice antes del PASS humano, contraste contra OPERATIVA §0 / CONTRATOS /
+  MODELO-DOMINIO / F1-PLAN) y `auditor-rutas` (verificador mecánico de rutas y
+  URLs, valida capa lógica del repo; nginx/Cloudflare siguen siendo
+  validación humana por OPERATIVA §5). El nombre `revisor` queda reservado al
+  rol humano definido en OPERATIVA §1; los subagentes se nombran por función.
+- **Slice 1.2 — APLAZADO con trigger.** Skills `/nuevo-cliente`,
+  `/procesar-entrevista`, `/generar-entregable` no se crean hoy: codificarlas
+  ahora sería documentar hipótesis. Reactivación al primer procesamiento real
+  de entrevista por pipeline Drive → Whisper → `prisma-trabajo-clientes`, o al
+  alta del segundo cliente posterior a ARMC. Registrado en F1-PLAN.
+- **Slice 1.3 — Limpieza de `permissions.allow`.** Cerrado sin escritura: el
+  archivo ya estaba sano (15 entradas, ningún literal `sed`, JSON válido,
+  hook PreToolUse activo, `settings.local.json` ignorado).
+- **Slice 1.4 — Hook validador de rutas en docs.** Creado
+  `.claude/hooks/validar-rutas-md.sh` (POSIX sh, consistente con el hook
+  existente). Al hacer `git commit`, revisa los `.md` staged y avisa si
+  mencionan rutas resolubles a este repo que no existen en el árbol. Modo
+  aviso: nunca bloquea. Acepta UTF-8 en nombres de archivo
+  (`flujo-atención-paciente.html`), normaliza `./`, `../` y `web-de-prisma/`,
+  filtra placeholders (`[cliente]`), URLs y rutas absolutas, y trata prefijos
+  de otros repos del ecosistema como fuera de alcance. Validado con 7 smoke
+  tests del revisor. Registrado en `settings.json` junto al hook previo.
+- **Slice 1.5 — Statusline.** Omitido por decisión expresa: opcional en el
+  plan y sin valor proporcional frente al ruido de añadir tooling.
+- **F1-PLAN.md actualizado.** Slice 1.1 alineado al nombre real
+  (`auditor-slice`). Slice 1.2 reescrito como aplazado con trigger
+  verificable. PASS de Bloque 1 reformulado para no afirmar completitud
+  sobre lo aplazado. Cierre de F1 (§10) aclara que 1.2 aplazado no bloquea.
+  Añadida sección "Skills pendientes con condición de creación" para no
+  perder la necesidad de skills blueprint/simulador, que se diseñarán como
+  slices propios cuando esos frentes alcancen línea base verificable.
+
 ## [2026-05-23] — v3.3.71
 
 ### Documentación — cierre del bloque documental + gobierno operativo + diagnóstico arquitectónico
