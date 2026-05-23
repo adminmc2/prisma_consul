@@ -102,15 +102,32 @@ Saneamiento de cómo Claude opera sobre el repo. **Riesgo de regresión: cero** 
 
 Cada uno, cuando se cumpla su condición, se diseña como **slice propio** con su scoping (igual que se hizo con 1.1), no en bloque. No se añaden al Bloque 1 en curso.
 
-### Bloque 2 — Saneamiento del monolito del Hub (sin cambio funcional)
+### Bloque 2 — Saneamiento del contexto Claude Code
+
+Esto **sí entra en F1**: `CLAUDE.md` raíz se carga automáticamente en todas las conversaciones del repo y hoy mezcla instrucciones vigentes, histórico y operaciones ajenas. Mantenerlo así penaliza el trabajo activo de F1 y aumenta deriva. El objetivo del bloque es dejar **contexto base corto en raíz** y **contexto fino por superficie**.
 
 | Slice | Acción | Superficie | Prohibición específica | PASS |
 |---|---|---|---|---|
-| 2.1 | Extraer `<style>` del Hub a `prisma-apex/hub.css`, enlazar con `<link>` | `prisma-apex/index.html` (líneas 30-1.298) | No tocar JS · no renombrar clases · no modificar HTML estructural | `/hub` abre idéntico visualmente (comparar con captura previa). Smoke en `dev.prismaconsul.com` |
-| 2.2 | Extraer `<script>` por dominio a `hub-login.js`, `hub-tabs.js`, `hub-analisis.js`, `hub-admin.js`, `hub-helpers.js`. Commit por módulo. | `prisma-apex/index.html` (líneas 1.299-3.830) | No cambiar comportamiento · no refactorizar funciones · no renombrar identificadores | Login + 3 pestañas + abrir un análisis + admin "view as user" funcionan en `dev.prismaconsul.com` **tras cada commit** |
-| 2.3 | Deduplicar `analisis*` vs `udAnalisis*` con factoría `crearControladorAnalisis(prefix)` | `hub-analisis.js` (post-2.2) | No cambiar comportamiento de ninguna de las dos vistas | Ambas vistas (usuario y admin-detail) funcionan idéntico tras el cambio; smoke completo |
+| 2.1 | Podar `CLAUDE.md` raíz a contexto repo-wide vigente: identidad del proyecto, comandos esenciales, convenciones críticas y punteros a docs canónicos. | `CLAUDE.md` | No duplicar `docs/OPERATIVA.md` · no dejar histórico cerrado ni postmortems de incidentes (excepción: stubs mínimos exigidos por referencias canónicas cruzadas vivas — caso de la incidencia Movistar/Cloudflare, sostenida por `README.md:113`, que se conserva como resumen compacto autosuficiente y no como puntero externo) · no perder las condiciones inviolables ni los punteros críticos del repo · no romper referencias canónicas cruzadas vivas (`README.md`, `GLOSARIO.md`, `CONTRATOS.md`, `MODELO-DOMINIO.md`) · no nombrar archivos aún inexistentes (los `CLAUDE.md` por subdirectorio se crean en 2.2; 2.1 no los forward-referencia) | `CLAUDE.md` raíz queda ≤ 150 líneas y sin secciones históricas/ops ajenas al repo, el diff no rompe las referencias canónicas cruzadas ya identificadas, y no introduce punteros a archivos pendientes de 2.2 |
+| 2.2 | Crear `server/CLAUDE.md`, `prisma-apex/CLAUDE.md` y `docs/CLAUDE.md` con instrucciones mínimas por superficie. `web/CLAUDE.md` solo si durante el slice se demuestra necesidad real. | `server/CLAUDE.md`, `prisma-apex/CLAUDE.md`, `docs/CLAUDE.md` | No duplicar el root entero · no meter historia · no meter secretos, rutas personales ni operativa de otros repos | Existen los `CLAUDE.md` por superficie necesarios y cada uno cubre solo su ámbito local |
+| 2.3 | Reubicar el contenido retirado del root a su destino correcto (puntero, archivo histórico o nada), y revalidar que no se rompa el mapa documental. | `CLAUDE.md`, `docs/historico/` si aplica | No tocar `REVIEW-PRISMA-APEX.md` · no reescribir historia cerrada · no mover documentos sin dictamen claro de destino | `/revisar-docs` estructural pasa limpio y el root deja de cargar contenido histórico/operativo sobrante |
 
 **Criterio PASS del Bloque 2:**
+
+- `CLAUDE.md` raíz deja de funcionar como mega-doc y vuelve a ser instrucción base corta del repo.
+- Las instrucciones por superficie viven en subdirectorios, no mezcladas en la raíz.
+- Cero rutas rotas o punteros muertos introducidos por la reorganización.
+- Bump PATCH al cierre.
+
+### Bloque 3 — Saneamiento del monolito del Hub (sin cambio funcional)
+
+| Slice | Acción | Superficie | Prohibición específica | PASS |
+|---|---|---|---|---|
+| 3.1 | Extraer `<style>` del Hub a `prisma-apex/hub.css`, enlazar con `<link>` | `prisma-apex/index.html` (líneas 30-1.298) | No tocar JS · no renombrar clases · no modificar HTML estructural | `/hub` abre idéntico visualmente (comparar con captura previa). Smoke en `dev.prismaconsul.com` |
+| 3.2 | Extraer `<script>` por dominio a `hub-login.js`, `hub-tabs.js`, `hub-analisis.js`, `hub-admin.js`, `hub-helpers.js`. Commit por módulo. | `prisma-apex/index.html` (líneas 1.299-3.830) | No cambiar comportamiento · no refactorizar funciones · no renombrar identificadores | Login + 3 pestañas + abrir un análisis + admin "view as user" funcionan en `dev.prismaconsul.com` **tras cada commit** |
+| 3.3 | Deduplicar `analisis*` vs `udAnalisis*` con factoría `crearControladorAnalisis(prefix)` | `hub-analisis.js` (post-3.2) | No cambiar comportamiento de ninguna de las dos vistas | Ambas vistas (usuario y admin-detail) funcionan idéntico tras el cambio; smoke completo |
+
+**Criterio PASS del Bloque 3:**
 
 - `prisma-apex/index.html` reduce ≥ 70% su tamaño actual.
 - Comportamiento visible de `/hub` idéntico antes y después en `dev.prismaconsul.com`.
@@ -120,14 +137,16 @@ Cada uno, cuando se cumpla su condición, se diseña como **slice propio** con s
 ## 6. Lo que queda **fuera** de F1
 
 - Generar §Rutas y §BD desde el código (Nivel 2 auditoría arquitectónica).
-- Separar `CLAUDE.md` vigente vs histórico (Nivel 2).
-- Fragmentar `CHANGELOG.md` por sprint (Nivel 2).
+- Saneamiento de `CHANGELOG.md` (Nivel 2). Estado a 2026-05-23: 2.841 líneas, 137 entradas, verbosidad creciente por entrada (las últimas ~40 líneas cada una). Trabajo a abrir como slice propio cuando se cumpla **cualquiera** de: (a) cierre del Bloque 3 de F1; (b) `CHANGELOG.md` supere las 3.500 líneas; (c) empiece a obstaculizar lectura o mantenimiento real. Alcance previsto: (i) redefinir convención a entradas cortas (3-5 líneas, formato fijo `Cambio` + `Impacto`); (ii) recalibrar en `CLAUDE.md` la regla *"actualizar en cada cambio"* a *"actualizar en cada release o cambio de impacto"*; (iii) si tras (i) sigue creciendo, archivar entradas previas a una fecha de corte en `docs/historico/CHANGELOG-pre-vX.Y.md`. **No** se reescriben entradas pasadas: sería destruir historia.
+- Inventario y poda documental del repo (Nivel 2). Hay sospecha de docs huérfanos, drafts olvidados y archivos sueltos sin propósito claro fuera del mapa canónico declarado en `OPERATIVA.md §0.5`. Trabajo a abrir como slice propio tras el cierre del Bloque 3 de F1 (conviene agruparlo con el saneamiento de `CHANGELOG.md`). Método previsto en dos pasos: (1) **auditoría de inventario** — listar todo `.md` del repo, contrastar contra el mapa de `OPERATIVA.md §0.5`, identificar docs no listados, docs `histórico` que aún viven en raíz, docs `vigente con caducidad` cuya condición ya se cumplió, y archivos sueltos sin propósito. Solo lectura, devuelve dictamen. (2) **Poda con dictamen** — para cada candidato: archivar a `docs/historico/` con `git mv`, borrar con commit explícito, o justificar permanencia. **Nada se borra sin pasar por el revisor.**
 - Tests Playwright + `node:test` (Nivel 3).
 - CI mínimo en GitHub Actions (Nivel 3).
 - Migración a componentes ESM con `<template>` (Nivel 3).
 - Mover catálogos `PAIN_KNOWLEDGE_BASE` y `SITUACIONES` a JSON (Nivel 3).
 - Refactor de `form.js` del discovery.
 - Cualquier cambio funcional en el Hub, en APEX o en el simulador.
+- Auditar el hook `validar-rutas-md.sh` y los prompts de los subagentes `auditor-slice` y `auditor-rutas` (creados en Bloque 1, `v3.3.72`) contra el principio de **scope explícito**: cada uno declara en su system prompt o cabecera qué archivos toca, qué excluye (`.git/`, `docs/historico/`, `node_modules/`, etc.) y, si aplica, su cota. Mantenimiento de Bloque 1; **no abre slice nuevo en F1**. Se ejecuta cuando aparezca caso real (hallazgo espurio, ejecución lenta, ruido en salida) o, en su defecto, tras el cierre de F1 como parte de la revisión de tooling Claude Code.
+- Endurecer los prompts del discovery (`server/routes/apex.js`) contra **prompt injection desde contenido scrapeado por Tavily**. Verificado en 2026-05-23: el contenido devuelto por Tavily se interpola directamente en (a) el `systemPrompt` de Groq en `apex.js:175-190` (research de empresa) y (b) por propagación en el `userPrompt` de Claude en `apex.js:503` (generación de preguntas), sin delimitador tipo `<documento>` ni marco defensivo. Vector real: un actor que controle una página indexada por Tavily puede manipular las detecciones booleanas del JSON de research o inyectar texto en campos free-text (`dolores_probables.razon`). Severidad moderada en este repo: no hay tools ejecutables por el LLM, el output es JSON estructurado consumido por el frontend, no hay emails generados por LLM a cliente, y las API keys no viven en el contexto del modelo. Mitigación mínima cuando se aborde: delimitar el contenido de Tavily en bloques explícitos + system prompt defensivo + validar shape JSON antes de consumir. La mitigación deberá **verificarse con pruebas adversariales repetidas** antes de cerrar el slice; el detalle del testing se define cuando exista el slice, no ahora. **Fuera de F1** porque F1-PLAN §3 protege la lógica funcional del discovery flow; se abre como slice propio post-F1 o antes si aparece evidencia de explotación.
 
 ## 7. Coordinación
 
@@ -142,19 +161,22 @@ Cada uno, cuando se cumpla su condición, se diseña como **slice propio** con s
 
 - **Bloque 0**: las cinco del §5 Bloque 0.
 - **Bloque 1**: además — invocación real de cada subagente y skill nuevos con caso concreto. `permissions.allow` revisado entrada a entrada.
-- **Bloque 2**: además — navegación visual exhaustiva en `dev.prismaconsul.com`. Comparar Hub usuario y admin contra captura previa al refactor. Verificar que ningún ID DOM quedó huérfano. Diff por slice ≤ 300 líneas netas (separación + reescritura mínima); si excede, fragmentar el slice.
+- **Bloque 2**: además — verificar que `CLAUDE.md` raíz queda corto, sin histórico cerrado ni operativa de otros repos, y que los `CLAUDE.md` de subdirectorio no duplican el root ni `OPERATIVA.md`. `/revisar-docs` estructural debe seguir pasando limpio.
+- **Bloque 3**: además — navegación visual exhaustiva en `dev.prismaconsul.com`. Comparar Hub usuario y admin contra captura previa al refactor. Verificar que ningún ID DOM quedó huérfano. Diff por slice ≤ 300 líneas netas (separación + reescritura mínima); si excede, fragmentar el slice.
 
 ## 9. Versionado
 
 - **Bloque 0**: PATCH (`v3.3.71`).
 - **Bloque 1**: PATCH(s) por slice o uno único al cierre, según ritmo de revisión.
-- **Bloque 2**: MINOR al cierre (`v3.4.0`) por reestructuración estructural visible en el árbol.
+- **Bloque 2**: PATCH(s) por slice o uno único al cierre.
+- **Bloque 3**: MINOR al cierre (`v3.4.0`) por reestructuración estructural visible en el árbol.
 
 ## 10. Cierre de F1
 
 F1 se considera cerrado cuando:
 
-- Bloques 0, 1 y 2 cumplen su criterio PASS.
+- Bloques 0, 1, 2 y 3 cumplen su criterio PASS.
+- `CLAUDE.md` raíz deja de cargar histórico/operativa sobrante y las instrucciones por superficie viven en subdirectorios cuando aplica.
 - `prisma-apex/index.html` deja de ser monolito (CSS y JS extraídos, duplicación `analisis`/`udAnalisis` eliminada).
 - Subagentes y skills del método Claude operativos para el trabajo activo (slice 1.2 puede permanecer aplazado con trigger registrado; no bloquea el cierre de F1).
 - Hook validador activo y probado en vivo.
