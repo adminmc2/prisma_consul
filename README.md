@@ -110,7 +110,7 @@ Se registró un incidente regional entre **Movistar/Telefónica (AS3352)** y el 
 - El patrón correcto es: **DNS resuelve bien, Cloudflare edge hace timeout, origen IONOS responde 200 directo**.
 - Eso significa que el problema puede ser de **ruta ISP ↔ Cloudflare**, no del repo, del VPS o del certificado.
 - Si el sitio abre desde otros países/redes pero falla desde una ruta concreta en España, revisar primero conectividad a Cloudflare antes de tocar la aplicación.
-- El detalle completo del diagnóstico, evidencias y mitigaciones operativas vive en `CLAUDE.md`.
+- El detalle del diagnóstico, las evidencias y la regla práctica vive en `CLAUDE.md`; las mitigaciones operativas detalladas viven en `prisma-server-ops`.
 
 ## Licencia
 
