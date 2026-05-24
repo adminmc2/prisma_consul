@@ -659,3 +659,304 @@ async function saveUserDetail(userId) {
     }
   } catch {}
 }
+
+// ── Document type config ──
+const DOC_TYPE_COLORS = {
+  historia: '#3b82f6', consentimiento: '#8b5cf6', informe: '#f59e0b',
+  analitica: '#06b6d4', catalogo: '#10b981', pno: '#f97316',
+  organizacional: '#ec4899', factura: '#22c55e', contrato: '#6366f1',
+  legal: '#ef4444', entrevista: '#e879f9',
+  expediente: '#14b8a6', receta: '#d97706', nota_vuelo: '#0ea5e9', aviso_privacidad: '#be185d',
+  general: '#64748b', otro: '#94a3b8'
+};
+const DOC_TYPE_LABELS = {
+  historia: 'Historias clínicas', consentimiento: 'Consentimientos',
+  informe: 'Informes médicos', analitica: 'Analíticas',
+  catalogo: 'Catálogo de servicios', pno: 'PNO',
+  organizacional: 'Doc. organizacional', factura: 'Facturas',
+  contrato: 'Contratos', legal: 'Legal', entrevista: 'Entrevista',
+  expediente: 'Expediente clínico', receta: 'Receta médica',
+  nota_vuelo: 'Nota médica para vuelo', aviso_privacidad: 'Aviso de privacidad',
+  general: 'General', otro: 'Otros'
+};
+const DOC_TYPE_OPTIONS = [
+  { value: 'general', label: 'General' },
+  { value: 'historia', label: 'Historia clínica' },
+  { value: 'expediente', label: 'Expediente clínico' },
+  { value: 'consentimiento', label: 'Consentimiento informado' },
+  { value: 'informe', label: 'Informe médico' },
+  { value: 'analitica', label: 'Analítica / Resultados' },
+  { value: 'receta', label: 'Receta médica' },
+  { value: 'nota_vuelo', label: 'Nota médica para vuelo' },
+  { value: 'catalogo', label: 'Catálogo de servicios' },
+  { value: 'pno', label: 'PNO (Proc. Normalizado de Operación)' },
+  { value: 'organizacional', label: 'Doc. organizacional (organigrama, puestos)' },
+  { value: 'factura', label: 'Factura' },
+  { value: 'contrato', label: 'Contrato' },
+  { value: 'legal', label: 'Legal / Compliance' },
+  { value: 'aviso_privacidad', label: 'Aviso de privacidad' },
+  { value: 'entrevista', label: 'Entrevista' },
+  { value: 'otro', label: 'Otro' }
+];
+
+// ── State ──
+let currentFiles = [];
+
+// ════════════════════════════════════════
+// DOCUMENTOS — File Management
+// ════════════════════════════════════════
+
+let stagedFiles = [];
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const uploadStatus = document.getElementById('uploadStatus');
+const stagingArea = document.getElementById('stagingArea');
+const stagingList = document.getElementById('stagingList');
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault(); dropzone.classList.remove('dragover');
+  if (e.dataTransfer.files.length) stageFiles(e.dataTransfer.files);
+});
+fileInput.addEventListener('change', () => { if (fileInput.files.length) stageFiles(fileInput.files); fileInput.value = ''; });
+
+function stageFiles(files) {
+  for (const file of files) {
+    if (file.size > 25 * 1024 * 1024) {
+      uploadStatus.className = 'upload-status error';
+      uploadStatus.textContent = `"${file.name}" supera los 25 MB`;
+      continue;
+    }
+    const nameWithoutExt = file.name.replace(/\.[^.]+$/, '');
+    stagedFiles.push({ file, docType: 'general', displayName: nameWithoutExt });
+  }
+  renderStaging();
+}
+
+function renderStaging() {
+  if (!stagedFiles.length) { stagingArea.style.display = 'none'; return; }
+  stagingArea.style.display = 'block';
+  stagingList.innerHTML = stagedFiles.map((item, idx) => {
+    const ext = getFileExt(item.file.name);
+    const iconClass = getIconClass(ext);
+    const optionsHtml = DOC_TYPE_OPTIONS.map(o =>
+      `<div class="custom-dropdown-option${o.value === item.docType ? ' selected' : ''}" data-value="${o.value}">${o.label}</div>`
+    ).join('');
+    const currentLabel = DOC_TYPE_OPTIONS.find(o => o.value === item.docType)?.label || 'General';
+    return `
+      <div class="staging-item">
+        <div class="file-icon ${iconClass}">${ext || '?'}</div>
+        <div class="staging-item-info">
+          <div class="staging-item-name">${escapeHtml(item.file.name)}</div>
+          <div class="staging-item-size">${formatSize(item.file.size)}</div>
+          <input type="text" class="staging-item-title" placeholder="Título descriptivo" value="${escapeHtml(item.displayName || '')}" onchange="updateStagingTitle(${idx}, this.value)" required>
+        </div>
+        <div class="staging-item-type">
+          <div class="custom-dropdown" data-staging-idx="${idx}">
+            <button type="button" class="custom-dropdown-toggle" onclick="toggleStagingDropdown(this)">
+              <span>${currentLabel}</span>
+              <svg class="custom-dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="custom-dropdown-menu">${optionsHtml}</div>
+          </div>
+        </div>
+        <button class="staging-item-remove" onclick="removeStagedFile(${idx})" title="Quitar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>`;
+  }).join('');
+}
+
+function toggleStagingDropdown(btn) {
+  document.querySelectorAll('.staging-item-type .custom-dropdown-menu.open').forEach(m => {
+    if (m !== btn.nextElementSibling) { m.classList.remove('open'); m.previousElementSibling.classList.remove('open'); }
+  });
+  const menu = btn.nextElementSibling;
+  const isOpen = menu.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.custom-dropdown')) {
+    document.querySelectorAll('.custom-dropdown-menu.open').forEach(m => { m.classList.remove('open'); m.previousElementSibling?.classList.remove('open'); });
+  }
+  const opt = e.target.closest('.staging-item-type .custom-dropdown-option');
+  if (opt) {
+    const dropdown = opt.closest('.custom-dropdown');
+    const idx = parseInt(dropdown.dataset.stagingIdx);
+    stagedFiles[idx].docType = opt.dataset.value;
+    dropdown.querySelector('.custom-dropdown-toggle span').textContent = opt.textContent;
+    dropdown.querySelectorAll('.custom-dropdown-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    dropdown.querySelector('.custom-dropdown-menu').classList.remove('open');
+    dropdown.querySelector('.custom-dropdown-toggle').classList.remove('open');
+  }
+});
+
+function updateStagingTitle(idx, value) { stagedFiles[idx].displayName = value; }
+function removeStagedFile(idx) { stagedFiles.splice(idx, 1); renderStaging(); }
+
+document.getElementById('btnClearStaging').addEventListener('click', () => {
+  stagedFiles = []; renderStaging(); uploadStatus.textContent = '';
+});
+
+document.getElementById('btnUpload').addEventListener('click', async () => {
+  if (!stagedFiles.length) return;
+  const missing = stagedFiles.some(item => !item.displayName?.trim());
+  if (missing) { uploadStatus.className = 'upload-status error'; uploadStatus.textContent = 'Todos los archivos necesitan un título descriptivo'; return; }
+  const token = getToken();
+  if (!token) { showScreen('screen-login'); return; }
+  const btnUpload = document.getElementById('btnUpload');
+  btnUpload.disabled = true;
+  const total = stagedFiles.length;
+  let uploaded = 0;
+  for (let i = stagedFiles.length - 1; i >= 0; i--) {
+    const item = stagedFiles[i];
+    uploadStatus.className = 'upload-status uploading';
+    uploadStatus.textContent = `Subiendo ${total - i} de ${total}: "${item.file.name}"...`;
+    try {
+      const formData = new FormData();
+      formData.append('file', item.file);
+      formData.append('docType', item.docType);
+      if (item.displayName) formData.append('displayName', item.displayName);
+      if (viewingUserId) formData.append('userId', viewingUserId);
+      const res = await fetch(`${API_BASE}/portal-upload`, {
+        method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData
+      });
+      if (res.status === 401) { clearSession(); showScreen('screen-login'); return; }
+      if (res.ok) { uploaded++; stagedFiles.splice(i, 1); }
+      else { const data = await res.json(); uploadStatus.className = 'upload-status error'; uploadStatus.textContent = `Error: "${item.file.name}" - ${data.error || 'Error'}`; }
+    } catch { uploadStatus.className = 'upload-status error'; uploadStatus.textContent = `Error de conexión al subir "${item.file.name}"`; }
+  }
+  btnUpload.disabled = false;
+  renderStaging();
+  if (uploaded > 0) {
+    uploadStatus.className = 'upload-status success';
+    uploadStatus.textContent = `${uploaded} archivo${uploaded > 1 ? 's' : ''} subido${uploaded > 1 ? 's' : ''} correctamente`;
+    loadFiles();
+  }
+});
+
+// ── FILES LIST ──
+async function loadFiles() {
+  const token = getToken();
+  if (!token) return;
+  const filesList = document.getElementById('filesList');
+  filesList.innerHTML = '<div class="files-loading"><span class="spinner light"></span></div>';
+  let url = `${API_BASE}/portal-files`;
+  if (viewingUserId) url += `?userId=${viewingUserId}`;
+  try {
+    const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (res.status === 401) { clearSession(); showScreen('screen-login'); return; }
+    const data = await res.json();
+    currentFiles = data.files || [];
+    updateStats(currentFiles);
+    updateDocTypes(currentFiles);
+    renderFiles(currentFiles);
+  } catch { filesList.innerHTML = '<div class="files-empty"><div>Error al cargar archivos</div></div>'; }
+}
+
+function renderFiles(files) {
+  const filesList = document.getElementById('filesList');
+  if (!files.length) {
+    filesList.innerHTML = `<div class="files-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+      </svg><div>No hay archivos todavía</div></div>`;
+    return;
+  }
+  filesList.innerHTML = files.map(f => {
+    const displayName = f.name || '';
+    const code = f.driveName || '';
+    const ext = getFileExt(code || displayName) || getMimeLabel(f.mimeType);
+    const iconClass = getIconClass(ext);
+    const docType = f.docType || guessDocType(f.mimeType, ext);
+    return `
+      <div class="file-card" data-file-id="${f.id}">
+        <div class="file-icon ${iconClass}">${ext || '?'}</div>
+        <div class="file-info">
+          ${code ? `<div class="file-code">${escapeHtml(code)}</div>` : ''}
+          <div class="file-name file-name-editable" title="Clic para renombrar" onclick="startRename('${f.id}', this)">${escapeHtml(displayName)}</div>
+          <div class="file-meta">
+            <span>${formatDate(f.createdTime)}</span><span class="file-meta-sep"></span><span>${formatSize(f.size)}</span>
+            ${docType ? `<span class="file-meta-sep"></span><span class="file-type-badge">${DOC_TYPE_LABELS[docType] || docType}</span>` : ''}
+          </div>
+        </div>
+        <div class="file-actions">
+          ${f.link ? `<a href="${f.link}" target="_blank" rel="noopener" class="file-link" title="Abrir">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg></a>` : ''}
+          <button class="file-btn-delete" title="Eliminar" onclick="deleteFile('${f.id}', '${escapeHtml(displayName || code)}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function updateStats(files) {
+  const totalSize = files.reduce((sum, f) => sum + (parseInt(f.size) || 0), 0);
+  const mimeTypes = new Set(files.map(f => getIconClass(getFileExt(f.driveName || f.name))));
+  const oneWeekAgo = new Date(); oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  const recent = files.filter(f => f.createdTime && new Date(f.createdTime) > oneWeekAgo).length;
+  document.getElementById('statTotal').textContent = files.length;
+  document.getElementById('statSize').textContent = (totalSize / (1024 * 1024)).toFixed(1);
+  document.getElementById('statTypes').textContent = mimeTypes.size;
+  document.getElementById('statRecent').textContent = recent;
+}
+
+function updateDocTypes(files) {
+  const counts = {};
+  files.forEach(f => { const ext = getFileExt(f.driveName || f.name); const docType = f.docType || guessDocType(f.mimeType, ext); counts[docType] = (counts[docType] || 0) + 1; });
+  const list = document.getElementById('docTypeList');
+  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  if (!entries.length) { list.innerHTML = '<div style="color: var(--text-muted); font-size: 0.8rem; padding: 0.5rem 0;">Sin archivos</div>'; return; }
+  list.innerHTML = entries.map(([type, count]) => `
+    <div class="doc-type-row">
+      <span class="doc-type-name"><span class="doc-type-dot" style="background: ${DOC_TYPE_COLORS[type] || '#64748b'}"></span>${DOC_TYPE_LABELS[type] || type}</span>
+      <span class="doc-type-count">${count}</span>
+    </div>`).join('');
+}
+
+async function deleteFile(fileId, fileName) {
+  if (!confirm(`¿Eliminar "${fileName}"?`)) return;
+  const token = getToken();
+  if (!token) { showScreen('screen-login'); return; }
+  try {
+    const res = await fetch(`${API_BASE}/portal-files?action=delete&fileId=${fileId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+    if (res.status === 401) { clearSession(); showScreen('screen-login'); return; }
+    if (res.ok) { uploadStatus.className = 'upload-status success'; uploadStatus.textContent = `"${fileName}" eliminado`; loadFiles(); }
+    else { const data = await res.json(); uploadStatus.className = 'upload-status error'; uploadStatus.textContent = data.error || 'Error al eliminar'; }
+  } catch { uploadStatus.className = 'upload-status error'; uploadStatus.textContent = 'Error de conexión'; }
+}
+
+function startRename(fileId, el) {
+  const currentName = el.textContent;
+  const input = document.createElement('input');
+  input.type = 'text'; input.className = 'file-name-input'; input.value = currentName;
+  el.replaceWith(input); input.focus(); input.select();
+  async function finishRename() {
+    const newName = input.value.trim();
+    if (!newName || newName === currentName) { input.replaceWith(el); return; }
+    const token = getToken();
+    if (!token) { showScreen('screen-login'); return; }
+    try {
+      const res = await fetch(`${API_BASE}/portal-files?action=rename&fileId=${fileId}`, {
+        method: 'PATCH', headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newName })
+      });
+      if (res.ok) { el.textContent = newName; input.replaceWith(el); loadFiles(); if (udCurrentUserId) loadUdFiles(udCurrentUserId); }
+      else { input.replaceWith(el); uploadStatus.className = 'upload-status error'; uploadStatus.textContent = 'Error al renombrar'; }
+    } catch { input.replaceWith(el); }
+  }
+  input.addEventListener('blur', finishRename);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+    if (e.key === 'Escape') { input.value = currentName; input.blur(); }
+  });
+}

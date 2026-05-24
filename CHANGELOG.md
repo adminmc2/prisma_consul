@@ -2,6 +2,58 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-24] — v3.3.83
+
+### Sub-slice 3.2.4.d Bloque 3 F1-PLAN — `hub-admin.js` DOC_TYPE_* + documentos compartidos
+
+Quinto sub-sub-slice del bloque 3.2.4. Mueve los catálogos de tipos de
+documento y la vista "Documentos" completa del panel (la que ve el user
+normal y el admin via `viewAsClient`/detalle).
+
+Append a `prisma-apex/hub-admin.js`.
+
+- **`prisma-apex/hub-admin.js`** — append (~300 líneas):
+  - Comentario `// ── Document type config ──` + `DOC_TYPE_COLORS`,
+    `DOC_TYPE_LABELS`, `DOC_TYPE_OPTIONS`.
+  - Comentario `// ── State ──` + `let currentFiles = []`.
+  - Comentario `═══ DOCUMENTOS ═══` + `let stagedFiles` + 5 `const` DOM
+    (`dropzone`, `fileInput`, `uploadStatus`, `stagingArea`, `stagingList`)
+    + 8 `addEventListener` top-level (dropzone×4, fileInput×1,
+    btnClearStaging×1, btnUpload×1, **document global×1** para cerrar
+    dropdowns y procesar selección de tipo en staging).
+  - Funciones: `stageFiles`, `renderStaging`, `toggleStagingDropdown`,
+    `updateStagingTitle`, `removeStagedFile`, `loadFiles`, `renderFiles`,
+    `updateStats`, `updateDocTypes`, `deleteFile`, `startRename`.
+- **`prisma-apex/index.html`** — bloques 337-377 y 1383-1640 originales
+  eliminados del `<script>` inline.
+
+**Acoplamientos cerrados por este sub-slice (lista completa):**
+- **c1 → d:** `showUserDetail` → `DOC_TYPE_OPTIONS`.
+- **c2 → d:** funciones del detalle admin (`udRenderStaging`, render de
+  archivos en detalle) → `DOC_TYPE_OPTIONS`, `DOC_TYPE_LABELS`,
+  `toggleStagingDropdown` (via `onclick`), `startRename` (via `onclick`).
+- **Internos d:** `renderStaging` → `DOC_TYPE_OPTIONS`; `renderFiles`,
+  `updateDocTypes` → `DOC_TYPE_*`.
+
+Tras d, `hub-admin.js` queda autoconsistente para la vista Documentos
+en ambos modos (user normal y admin "view as / ud-detail").
+
+**Acoplamientos abiertos restantes hacia 3.2.4.e:** ninguno nuevo
+introducido por d. Sigue abierto desde c2: `loadUdApex` →
+`renderApexResults` (aún inline, irá en e).
+
+Top-level executable: 5 `getElementById` + 8 `addEventListener` se
+ejecutan al cargar el script. Funciona porque `hub-admin.js` se carga
+al final del body. Mismo patrón que `loginForm` en `hub-login.js`.
+
+Movimiento mecánico puro. Cuerpos byte a byte idénticos. Re-indentación
+top-level 4→0.
+
+Smoke local: `node --check hub-admin.js` OK (962 líneas); inline OK;
+`/hub/hub-admin.js` 200 application/javascript 47.9 KB.
+
+Bump PATCH `v3.3.83` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-24] — v3.3.82
 
 ### Sub-slice 3.2.4.c2 Bloque 3 F1-PLAN — `hub-admin.js` gestión archivos detalle + update/save
