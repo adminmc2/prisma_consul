@@ -2,6 +2,45 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-24] — v3.3.82
+
+### Sub-slice 3.2.4.c2 Bloque 3 F1-PLAN — `hub-admin.js` gestión archivos detalle + update/save
+
+Cuarto sub-sub-slice del bloque 3.2.4 (segundo fragmento de la
+bifurcación c → c1 + c2). Cierra los acoplamientos abiertos por c1
+sobre `initUdDropzone / loadUdFiles / loadUdApex`.
+
+Append a `prisma-apex/hub-admin.js` (sin tocar `<script src>`).
+
+- **`prisma-apex/hub-admin.js`** — append (~231 líneas):
+  - Comentario `// ── Admin User Detail: Dropzone ──`.
+  - `initUdDropzone`, `udAddFiles`, `udRenderStaging`, `udClearStaging`,
+    `udUploadFiles`, `loadUdFiles`, `udDeleteFile`, `loadUdApex`.
+  - `updateUserPhase`, `saveUserDetail`.
+- **`prisma-apex/index.html`** — bloque 1381-1611 original eliminado
+  del `<script>` inline.
+
+**Acoplamientos cerrados por este sub-slice:**
+- `showUserDetail` (en hub-admin.js desde c1) → `initUdDropzone`,
+  `loadUdFiles`, `loadUdApex` (ahora en hub-admin.js). Cerrado.
+- `updateUserPhase` y `saveUserDetail` → `showUserDetail` (ya en
+  hub-admin.js). Cerrado.
+
+**Acoplamientos que siguen abiertos (declarados):**
+- `loadUdApex` invoca `renderApexResults` (aún inline, irá en e).
+  Funciona por global scope.
+- `udDeleteFile` invoca `loadUdFiles` (incluida en este sub-slice).
+- `udUploadFiles` invoca `loadUdFiles` (incluida).
+
+Movimiento mecánico puro. Cuerpos byte a byte idénticos. Re-indentación
+top-level 4→0.
+
+Smoke local: `node --check hub-admin.js` OK (661 líneas); inline OK;
+`/hub/hub-admin.js` 200 application/javascript 31.8 KB (crecimiento
+esperado tras append).
+
+Bump PATCH `v3.3.82` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-24] — v3.3.81
 
 ### Sub-slice 3.2.4.c1 Bloque 3 F1-PLAN — `hub-admin.js` detalle admin shell

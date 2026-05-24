@@ -427,3 +427,235 @@ async function showUserDetail(userId) {
   loadUdFiles(userId);
   loadUdApex(userId);
 }
+
+// ── Admin User Detail: Dropzone ──
+function initUdDropzone() {
+  const dropzone = document.getElementById('udDropzone');
+  const fileInput = document.getElementById('udFileInput');
+  if (!dropzone || !fileInput) return;
+
+  dropzone.addEventListener('click', () => fileInput.click());
+  dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('drag-over'); udAddFiles(e.dataTransfer.files); });
+  fileInput.addEventListener('change', (e) => { udAddFiles(e.target.files); e.target.value = ''; });
+
+  document.getElementById('udBtnUpload').addEventListener('click', udUploadFiles);
+}
+
+function udAddFiles(fileList) {
+  const status = document.getElementById('udUploadStatus');
+  for (const file of fileList) {
+    if (file.size > 25 * 1024 * 1024) { status.className = 'upload-status error'; status.textContent = `"${file.name}" supera los 25 MB`; continue; }
+    const nameWithoutExt = file.name.replace(/\.[^.]+$/, '');
+    udStagedFiles.push({ file, docType: 'general', displayName: nameWithoutExt });
+  }
+  udRenderStaging();
+}
+
+function udRenderStaging() {
+  const area = document.getElementById('udStagingArea');
+  const list = document.getElementById('udStagingList');
+  if (!udStagedFiles.length) { area.style.display = 'none'; return; }
+  area.style.display = 'block';
+  list.innerHTML = udStagedFiles.map((item, idx) => {
+    const ext = getFileExt(item.file.name);
+    const iconClass = getIconClass(ext);
+    const optionsHtml = DOC_TYPE_OPTIONS.map(o =>
+      `<div class="custom-dropdown-option${o.value === item.docType ? ' selected' : ''}" data-value="${o.value}">${o.label}</div>`
+    ).join('');
+    const currentLabel = DOC_TYPE_OPTIONS.find(o => o.value === item.docType)?.label || 'General';
+    return `
+      <div class="staging-item">
+        <div class="file-icon ${iconClass}">${ext || '?'}</div>
+        <div class="staging-item-info">
+          <div class="staging-item-name">${escapeHtml(item.file.name)}</div>
+          <div class="staging-item-size">${formatSize(item.file.size)}</div>
+          <input type="text" class="staging-item-title" placeholder="Título descriptivo" value="${escapeHtml(item.displayName || '')}" onchange="udStagedFiles[${idx}].displayName=this.value" required>
+        </div>
+        <div class="staging-item-type">
+          <div class="custom-dropdown" data-ud-staging-idx="${idx}">
+            <button type="button" class="custom-dropdown-toggle" onclick="toggleStagingDropdown(this)">
+              <span>${currentLabel}</span>
+              <svg class="custom-dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="custom-dropdown-menu">${optionsHtml}</div>
+          </div>
+        </div>
+        <button class="staging-item-remove" onclick="udStagedFiles.splice(${idx},1);udRenderStaging();" title="Quitar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>`;
+  }).join('');
+
+  // Wire dropdown clicks for ud staging
+  list.querySelectorAll('.custom-dropdown-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const dropdown = opt.closest('.custom-dropdown');
+      const idx = parseInt(dropdown.dataset.udStagingIdx);
+      udStagedFiles[idx].docType = opt.dataset.value;
+      dropdown.querySelector('.custom-dropdown-toggle span').textContent = opt.textContent;
+      dropdown.querySelectorAll('.custom-dropdown-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      dropdown.querySelector('.custom-dropdown-menu').classList.remove('open');
+      dropdown.querySelector('.custom-dropdown-toggle').classList.remove('open');
+    });
+  });
+}
+
+function udClearStaging() { udStagedFiles = []; udRenderStaging(); document.getElementById('udUploadStatus').textContent = ''; }
+
+async function udUploadFiles() {
+  if (!udStagedFiles.length) return;
+  const missing = udStagedFiles.some(item => !item.displayName?.trim());
+  if (missing) { document.getElementById('udUploadStatus').className = 'upload-status error'; document.getElementById('udUploadStatus').textContent = 'Todos los archivos necesitan un título descriptivo'; return; }
+  const token = getToken();
+  if (!token) return;
+  const btn = document.getElementById('udBtnUpload');
+  btn.disabled = true;
+  const status = document.getElementById('udUploadStatus');
+  const total = udStagedFiles.length;
+  let uploaded = 0;
+  for (let i = udStagedFiles.length - 1; i >= 0; i--) {
+    const item = udStagedFiles[i];
+    status.className = 'upload-status uploading';
+    status.textContent = `Subiendo ${total - i} de ${total}: "${item.file.name}"...`;
+    try {
+      const formData = new FormData();
+      formData.append('file', item.file);
+      formData.append('docType', item.docType);
+      if (item.displayName) formData.append('displayName', item.displayName);
+      formData.append('userId', udCurrentUserId);
+      const res = await fetch(`${API_BASE}/portal-upload`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData });
+      if (res.ok) { uploaded++; udStagedFiles.splice(i, 1); }
+      else { const data = await res.json(); status.className = 'upload-status error'; status.textContent = `Error: "${item.file.name}" - ${data.error || 'Error'}`; }
+    } catch { status.className = 'upload-status error'; status.textContent = `Error de conexión al subir "${item.file.name}"`; }
+  }
+  btn.disabled = false;
+  udRenderStaging();
+  if (uploaded > 0) {
+    status.className = 'upload-status success';
+    status.textContent = `${uploaded} archivo${uploaded > 1 ? 's' : ''} subido${uploaded > 1 ? 's' : ''} correctamente`;
+    loadUdFiles(udCurrentUserId);
+  }
+}
+
+// ── Admin User Detail: Files List ──
+async function loadUdFiles(userId) {
+  const filesList = document.getElementById('udFilesList');
+  if (!filesList) return;
+  filesList.innerHTML = '<div class="files-loading"><span class="spinner light"></span></div>';
+  const token = getToken();
+  try {
+    const res = await fetch(`${API_BASE}/portal-files?userId=${userId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (!res.ok) return;
+    const data = await res.json();
+    const files = data.files || [];
+    if (!files.length) {
+      filesList.innerHTML = '<div class="files-empty" style="padding:1.5rem;"><div>Sin archivos</div></div>';
+      return;
+    }
+    filesList.innerHTML = files.map(f => {
+      const displayName = f.name || '';
+      const code = f.driveName || '';
+      const ext = getFileExt(code || displayName) || getMimeLabel(f.mimeType);
+      const iconClass = getIconClass(ext);
+      const docType = f.docType || 'general';
+      return `<div class="file-card" data-file-id="${f.id}">
+        <div class="file-icon ${iconClass}">${ext || '?'}</div>
+        <div class="file-info">
+          ${code ? `<div class="file-code">${escapeHtml(code)}</div>` : ''}
+          <div class="file-name file-name-editable" title="Clic para renombrar" onclick="startRename('${f.id}', this)">${escapeHtml(displayName)}</div>
+          <div class="file-meta">
+            <span>${formatDate(f.createdTime)}</span><span class="file-meta-sep"></span><span>${formatSize(f.size)}</span>
+            ${docType ? `<span class="file-meta-sep"></span><span class="file-type-badge">${DOC_TYPE_LABELS[docType] || docType}</span>` : ''}
+          </div>
+        </div>
+        <div class="file-actions">
+          ${f.link ? `<a href="${f.link}" target="_blank" rel="noopener" class="file-link" title="Abrir">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg></a>` : ''}
+          <button class="file-btn-delete" title="Eliminar" onclick="udDeleteFile('${f.id}', '${escapeHtml(displayName || code)}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch { filesList.innerHTML = '<div class="files-empty" style="padding:1.5rem;"><div>Error al cargar archivos</div></div>'; }
+}
+
+async function udDeleteFile(fileId, fileName) {
+  if (!confirm(`¿Eliminar "${fileName}"?`)) return;
+  const token = getToken();
+  if (!token) return;
+  const status = document.getElementById('udUploadStatus');
+  try {
+    const res = await fetch(`${API_BASE}/portal-files?action=delete&fileId=${fileId}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+    if (res.ok) { status.className = 'upload-status success'; status.textContent = `"${fileName}" eliminado`; loadUdFiles(udCurrentUserId); }
+    else { status.className = 'upload-status error'; status.textContent = 'Error al eliminar'; }
+  } catch { status.className = 'upload-status error'; status.textContent = 'Error de conexión'; }
+}
+
+// ── Admin User Detail: APEX ──
+async function loadUdApex(userId) {
+  const container = document.getElementById('udApexContainer');
+  if (!container) return;
+  container.innerHTML = '<div class="files-loading"><span class="spinner light"></span></div>';
+  const token = getToken();
+  try {
+    const res = await fetch(`${API_BASE}/portal-apex-results?userId=${userId}`, { headers: { 'Authorization': `Bearer ${token}` } });
+    const data = await res.json();
+    if (!data.submission) {
+      container.innerHTML = `<div class="apex-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+        </svg>
+        <div>No hay resultados APEX vinculados a este usuario.</div>
+      </div>`;
+      return;
+    }
+    renderApexResults(data.submission, container);
+  } catch { container.innerHTML = '<div class="apex-empty"><div>Error al cargar resultados APEX</div></div>'; }
+}
+
+async function updateUserPhase(userId, newPhase) {
+  const token = getToken();
+  if (!token) return;
+  try {
+    const res = await fetch(`${API_BASE}/portal-users/${userId}`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ current_phase: newPhase })
+    });
+    if (res.ok) {
+      const user = allUsers.find(u => u.id === userId);
+      if (user) user.current_phase = newPhase;
+      showUserDetail(userId);
+    }
+  } catch {}
+}
+
+async function saveUserDetail(userId) {
+  const token = getToken();
+  if (!token) return;
+  const inputs = document.querySelectorAll('#userDetailContainer .user-detail-field-input');
+  const body = {};
+  inputs.forEach(inp => { body[inp.dataset.field] = inp.value; });
+
+  try {
+    const res = await fetch(`${API_BASE}/portal-users/${userId}`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const idx = allUsers.findIndex(u => u.id === userId);
+      if (idx >= 0) Object.assign(allUsers[idx], data.user);
+      showUserDetail(userId);
+    }
+  } catch {}
+}
