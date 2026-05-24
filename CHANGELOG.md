@@ -2,6 +2,43 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-24] — v3.3.79
+
+### Sub-slice 3.2.4.a Bloque 3 F1-PLAN — `hub-admin.js` inicial (state + view-as)
+
+Primer sub-sub-slice del bloque 3.2.4. Crea `prisma-apex/hub-admin.js`
+con cabecera honesta y el primer corte: estado admin compartido + lógica
+de "ver como cliente". El archivo se irá alimentando en 3.2.4.b/c/d/e
+sin tocar más el HTML salvo borrar bloques movidos.
+
+- **`prisma-apex/hub-admin.js`** — nuevo, 54 líneas. Cabecera explícita:
+  *"PRISMA Hub — dominio admin + vistas del panel reutilizadas por el
+  modo view-as. Acoplamiento real, no decisión estética."*
+  Contenido:
+  - `PHASE_DEFINITIONS` + `getPhasesForProfile` (catálogo de 4 fases
+    legacy verbatim, `MODELO-DOMINIO.md` MD-5).
+  - 3 lets globales admin: `viewingUserId`, `allUsers`, `selectedUserId`.
+    (`currentFiles` se queda en inline hasta 3.2.4.d — es vista user.)
+  - `viewAsUser`, `viewAsClient`, `stopViewingAs`.
+- **`prisma-apex/index.html`** — bloques movidos eliminados. Añadido
+  `<script src="/hub/hub-admin.js"></script>` después del de hub-tabs.js,
+  preservando orden helpers → login → tabs → admin → script principal.
+
+**Hallazgo de transparencia:** `viewAsUser` está declarada pero sin
+call-site en el repo. Se mueve igual por pertenecer al mismo dominio.
+Eventual limpieza requiere slice propio con autorización.
+
+**Acoplamiento aceptado:** `stopViewingAs` llama a `loadFiles` aún en
+inline; se cerrará en 3.2.4.d. Funciona por global scope.
+
+Movimiento mecánico puro. Cuerpos byte a byte idénticos. Re-indentación
+top-level 4→0. Sin `}` huérfanas (rangos eran bloques completos).
+
+Smoke local: `node --check hub-admin.js` OK; inline OK; `/hub/hub-admin.js`
+200 application/javascript 1.9 KB; los 4 tags presentes en el HTML.
+
+Bump PATCH `v3.3.79` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-24] — v3.3.78
 
 ### Sub-slice 3.2.3 Bloque 3 F1-PLAN — extracción de navegación entre pestañas a `hub-tabs.js`
