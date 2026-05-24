@@ -258,3 +258,172 @@ async function createUser(e) {
     loadUsers();
   } catch { errorEl.textContent = 'Error de conexión'; }
 }
+
+// ── User Detail (Tabbed) ──
+let udStagedFiles = [];
+let udCurrentUserId = null;
+
+async function showUserDetail(userId) {
+  selectedUserId = userId;
+  udCurrentUserId = userId;
+  document.getElementById('usuarios-list-view').style.display = 'none';
+  document.getElementById('usuarios-detail-view').style.display = '';
+
+  const user = allUsers.find(u => u.id === userId);
+  if (!user) return;
+
+  const container = document.getElementById('userDetailContainer');
+  const initials = (user.nombre || user.email.split('@')[0]).split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 4);
+  const phases = getPhasesForProfile(user.profile_type || 'clinica');
+  const cp = user.current_phase || 1;
+
+  const phaseSteps = user.role !== 'admin' ? phases.map(p => {
+    const completed = p.id < cp;
+    const current = p.id === cp;
+    const cls = completed ? 'completed' : (current ? 'current' : '');
+    return `<div class="phase-step ${cls}" onclick="updateUserPhase(${userId}, ${p.id})">
+      <div class="phase-step-number">${completed ? '✓' : p.id}</div>
+      <div class="phase-step-name">${escapeHtml(p.name)}</div>
+    </div>`;
+  }).join('') : '<div style="color:var(--text-muted);font-size:0.85rem;">El admin no tiene pipeline de fases</div>';
+
+  const fields = [
+    { label: 'Nombre', key: 'nombre' }, { label: 'Empresa', key: 'empresa' },
+    { label: 'Sector', key: 'sector' }, { label: 'RFC / CIF / Tax ID', key: 'rfc' },
+    { label: 'Dirección', key: 'direccion' }, { label: 'Ciudad', key: 'ciudad' },
+    { label: 'C.P.', key: 'cp' }, { label: 'Teléfono', key: 'telefono' },
+    { label: 'Contacto', key: 'contacto_principal' }, { label: 'Cargo', key: 'cargo' }
+  ];
+
+  const fieldsHtml = fields.map(f =>
+    `<div class="user-detail-field">
+      <div class="user-detail-field-label">${f.label}</div>
+      <input class="user-detail-field-input" data-field="${f.key}" value="${escapeHtml(user[f.key] || '')}" placeholder="—">
+    </div>`
+  ).join('');
+
+  const docTypeOptionsHtml = DOC_TYPE_OPTIONS.map(o =>
+    `<option value="${o.value}">${o.label}</option>`
+  ).join('');
+
+  container.innerHTML = `
+    <div class="user-detail-header">
+      <div class="user-detail-avatar">${initials}</div>
+      <div style="flex:1;">
+        <div class="user-detail-name">${escapeHtml(user.nombre || user.email.split('@')[0])}</div>
+        <div class="user-detail-email">${escapeHtml(user.email)} · <span class="role-badge ${user.role}">${user.role}</span></div>
+      </div>
+      ${user.role !== 'admin' ? `<button class="btn-upload" onclick="viewAsClient(${user.id}, '${escapeHtml(user.nombre || user.empresa || user.email)}')" style="font-size:0.75rem;padding:8px 18px;white-space:nowrap;">Ver como cliente</button>` : ''}
+    </div>
+
+    <div class="ud-tabs">
+      <button class="ud-tab active" onclick="switchUdTab('ud-perfil')">Perfil y proceso</button>
+      <button class="ud-tab" onclick="switchUdTab('ud-docs')">Documentos</button>
+      <button class="ud-tab" onclick="switchUdTab('ud-apex')">Formulario APEX</button>
+      <button class="ud-tab" onclick="switchUdTab('ud-analisis')">Análisis de flujos y procesos</button>
+      <button class="ud-tab" onclick="switchUdTab('ud-simulador')">Simulador UX ARMC</button>
+    </div>
+
+    <!-- Perfil y proceso -->
+    <div id="ud-perfil" class="ud-content active">
+      <div class="user-detail-grid">
+        <div>
+          <div class="user-detail-section">
+            <div class="user-detail-section-title">Información</div>
+            ${fieldsHtml}
+            <div style="margin-top:1rem;">
+              <button class="btn-upload" onclick="saveUserDetail(${userId})" style="font-size:0.75rem;padding:8px 18px;">Guardar cambios</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="user-detail-section">
+            <div class="user-detail-section-title">Fase del proceso</div>
+            <div class="phase-selector">${phaseSteps}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.75rem;">Haz clic en una fase para establecer el estado actual</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documentos -->
+    <div id="ud-docs" class="ud-content">
+      <div class="ud-dropzone" id="udDropzone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p class="ud-dropzone-text">Arrastra archivos aquí o haz clic para seleccionar</p>
+        <p class="ud-dropzone-hint">Máximo 25 MB por archivo</p>
+        <input type="file" id="udFileInput" multiple style="display:none;">
+      </div>
+      <div id="udStagingArea" style="display:none;">
+        <div class="section-divider" style="margin-bottom:0.75rem;">
+          <span class="section-divider-title">Archivos pendientes</span>
+          <div class="section-divider-line"></div>
+        </div>
+        <div class="staging-list" id="udStagingList"></div>
+        <div class="staging-actions">
+          <button type="button" class="btn-upload" id="udBtnUpload">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <span>Subir archivos</span>
+          </button>
+          <button type="button" class="btn-clear-staging" onclick="udClearStaging()">Cancelar</button>
+        </div>
+      </div>
+      <div class="upload-status" id="udUploadStatus"></div>
+      <div class="section-divider">
+        <span class="section-divider-title">Archivos subidos</span>
+        <div class="section-divider-line"></div>
+      </div>
+      <div class="files-list" id="udFilesList">
+        <div class="files-loading"><span class="spinner light"></span></div>
+      </div>
+    </div>
+
+    <!-- Formulario APEX -->
+    <div id="ud-apex" class="ud-content">
+      <div id="udApexContainer">
+        <div class="files-loading"><span class="spinner light"></span></div>
+      </div>
+    </div>
+
+    <!-- Análisis -->
+    <div id="ud-analisis" class="ud-content analisis-layer-flex" style="display:none;min-height:400px;">
+      <div id="ud-analisis-sections" class="analisis-container analisis-layer">
+        <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">Selecciona una sección para explorar</p>
+        <div class="analisis-sections-grid" id="udAnalisisSectionsGrid"></div>
+      </div>
+      <div id="ud-analisis-roles" class="analisis-container analisis-layer" style="display:none;">
+        <div class="analisis-viewer-topbar" style="padding:0;border:none;margin-bottom:1rem;">
+          <button class="analisis-back-btn" onclick="udAnalisisShowSections()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Volver
+          </button>
+          <span class="analisis-viewer-title" id="udAnalisisSectionTitle"></span>
+        </div>
+        <div class="analisis-roles-grid" id="udAnalisisRolesGrid"></div>
+      </div>
+      <div id="ud-analisis-viewer" class="analisis-layer-flex" style="display:none;">
+        <div class="analisis-viewer-topbar">
+          <button class="analisis-back-btn" onclick="udAnalisisShowRoles()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Volver a roles
+          </button>
+          <span class="analisis-viewer-title" id="udAnalisisViewerTitle"></span>
+        </div>
+        <iframe id="udAnalisisIframe" class="analisis-iframe" style="min-height:600px;" sandbox="allow-scripts allow-same-origin"></iframe>
+      </div>
+    </div>
+
+    <!-- Simulador UX ARMC — shell nativo (B1, sin iframe de nivel 1) -->
+    <div id="ud-simulador" class="ud-content analisis-layer-flex" style="display:none;min-height:600px;background:var(--prisma-navy);"></div>
+  `;
+
+  // Wire up dropzone
+  initUdDropzone();
+  // Load files and APEX
+  loadUdFiles(userId);
+  loadUdApex(userId);
+}

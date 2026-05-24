@@ -2,6 +2,46 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-24] — v3.3.81
+
+### Sub-slice 3.2.4.c1 Bloque 3 F1-PLAN — `hub-admin.js` detalle admin shell
+
+Tercer sub-sub-slice del bloque 3.2.4 (primer fragmento de la
+bifurcación c → c1 + c2). Aplica la regla F1-PLAN.md:165: el corte
+único de 3.2.4.c excedía 300 líneas netas (~400 líneas mapeadas), por
+lo que se fragmenta automáticamente. Bifurcación aprobada por revisor
+como regla, activada por mapeo real.
+
+Append a `prisma-apex/hub-admin.js` (sin tocar `<script src>`, ya
+añadido en 3.2.4.a).
+
+- **`prisma-apex/hub-admin.js`** — append (~168 líneas):
+  - Comentario `// ── User Detail (Tabbed) ──`.
+  - `udStagedFiles`, `udCurrentUserId` (lets de estado del detalle).
+  - `showUserDetail(userId)` — render completo del detalle de usuario
+    admin con sus 5 sub-pestañas.
+- **`prisma-apex/index.html`** — bloque 401-568 original eliminado del
+  `<script>` inline. Sin cambios en script tags.
+
+**Acoplamientos abiertos (declarados):**
+- `showUserDetail` invoca `initUdDropzone`, `loadUdFiles`, `loadUdApex`
+  al final (líneas 564-567 originales). Esas 3 siguen en inline hasta
+  3.2.4.c2. Funciona por global scope compartido; callbacks tras click.
+- `showUserDetail` evalúa `DOC_TYPE_OPTIONS` en el HTML que inyecta
+  (`index.html:657` original). `DOC_TYPE_OPTIONS` sigue en inline hasta
+  3.2.4.d. Funciona por global scope.
+- `renderUsers` (en hub-admin.js desde 3.2.4.b) llama a `showUserDetail`
+  (ahora en hub-admin.js tras este sub-slice) — acoplamiento cerrado.
+
+Movimiento mecánico puro. Cuerpos byte a byte idénticos. Re-indentación
+top-level 4→0. Sin `}` huérfanas.
+
+Smoke local: `node --check hub-admin.js` OK; inline OK;
+`/hub/hub-admin.js` 200 application/javascript 19.8 KB (crecimiento
+esperado tras append).
+
+Bump PATCH `v3.3.81` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-24] — v3.3.80
 
 ### Sub-slice 3.2.4.b Bloque 3 F1-PLAN — `hub-admin.js` dashboard + usuarios + creación
