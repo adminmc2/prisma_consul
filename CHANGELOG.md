@@ -2,6 +2,39 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-24] — v3.3.76
+
+### Sub-slice 3.2.1 Bloque 3 F1-PLAN — extracción de helpers transversales a `hub-helpers.js`
+
+Primer sub-slice del Slice 3.2 (saneamiento del JS del Hub en 5 archivos por
+dominio). Mueve solo el bloque de **utilidades puras sin dependencia de
+dominio**: formato de fechas, tamaños, iconos y escape HTML.
+
+- **`prisma-apex/hub-helpers.js`** — nuevo, 30 líneas. 8 funciones
+  transversales: `escapeHtml`, `formatDate`, `formatDateShort`, `formatSize`,
+  `getFileExt`, `getMimeLabel`, `getIconClass`, `guessDocType`. Cero
+  dependencias (no usan `API_BASE`, sesión, ni catálogos de dominio).
+- **`prisma-apex/index.html`** — bloque `// ── Helpers ──` (líneas 2824–2852
+  originales) eliminado del `<script>` inline. Añadido
+  `<script src="/hub/hub-helpers.js"></script>` antes del `<script>` principal
+  para preservar orden de carga.
+
+**Quedan explícitamente fuera de este corte** (los llevará su dueño natural
+en sub-slices posteriores): `API_BASE`, `PHASE_DEFINITIONS`/
+`getPhasesForProfile`, `DOC_TYPE_*`, helpers de sesión (`getToken`,
+`setSession`, etc.), `showScreen`.
+
+Movimiento mecánico puro: sin renombrar, sin reformatear cuerpos, sin tocar
+`init()`. Única adaptación: re-indentación de top-level (4 → 0 espacios)
+al pasar las funciones de dentro del `<script>` a archivo propio. Cuerpos
+idénticos byte a byte.
+
+Smoke local: `node -c hub-helpers.js` OK, `/hub/hub-helpers.js` 200
+application/javascript 2.1 KB, `/hub` 200, tag `hub-helpers.js` presente
+en el HTML servido.
+
+Bump PATCH `v3.3.76` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-24] — v3.3.75
 
 ### Matización honesta de v3.3.74 y registro de deuda ops sobre `/hub/*`
