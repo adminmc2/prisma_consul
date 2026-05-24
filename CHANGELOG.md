@@ -2,6 +2,48 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-24] — v3.3.78
+
+### Sub-slice 3.2.3 Bloque 3 F1-PLAN — extracción de navegación entre pestañas a `hub-tabs.js`
+
+Tercer sub-slice del Slice 3.2. Mueve a archivo propio las dos funciones
+de **navegación entre pestañas**.
+
+- **`prisma-apex/hub-tabs.js`** — nuevo, 52 líneas. Contiene:
+  - `switchTab(tabName)` — barra principal del panel (Dashboard, Usuarios,
+    Documentos, APEX, Perfil, Entrevistas, Análisis, Simulador).
+  - `switchUdTab(tabId)` — sub-pestañas del detalle de usuario en vista
+    admin (`ud-perfil`, `ud-docs`, `ud-apex`, `ud-analisis`, `ud-simulador`).
+- **`prisma-apex/index.html`** — bloques movidos eliminados del `<script>`
+  inline. Añadido `<script src="/hub/hub-tabs.js"></script>` después del
+  de `hub-login.js`, preservando orden helpers → login → tabs → script
+  principal.
+
+**Acoplamiento aceptado** (mismo patrón que 3.2.2): `switchTab` y
+`switchUdTab` invocan `loadDashboard`, `loadFiles`, `showUsersList`,
+`loadUsers`, `loadApexResults`, `loadProfile`, `loadEntrevistas`,
+`analisisShowSections`, `loadAnalisis`, `udAnalisisShowSections`,
+`loadUdAnalisis`, `mountSimuladorShell` — todas siguen en el `<script>`
+inline (dominios admin/profile/analisis/simulador, irán en 3.2.4 y 3.2.5).
+Funciona porque las dos funciones se invocan siempre como callbacks tras
+interacción del usuario, momento en que el script principal ya corrió y
+las dependencias existen en el global scope compartido.
+
+Movimiento mecánico puro. Cuerpos byte a byte idénticos. Única adaptación:
+re-indentación top-level (4 → 0 espacios). Esta vez ningún `}` huérfano:
+los rangos `switchTab` (líneas 409–429) y `switchUdTab` (líneas 803–828)
+eran bloques completos que cerraban dentro del rango cortado.
+
+Separación Hub ↔ web pública: respetada. `hub-tabs.js` vive en
+`prisma-apex/`, se sirve bajo `/hub/hub-tabs.js`, solo se enlaza desde
+`prisma-apex/index.html`. Cero impacto en `web/`.
+
+Smoke local: `node --check hub-tabs.js` OK; `node --check` del `<script>`
+inline restante OK; `/hub/hub-tabs.js` 200 application/javascript 2.4 KB;
+los tres tags presentes en el HTML servido.
+
+Bump PATCH `v3.3.78` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-24] — v3.3.77
 
 ### Sub-slice 3.2.2 Bloque 3 F1-PLAN — extracción del dominio auth/sesión a `hub-login.js`
