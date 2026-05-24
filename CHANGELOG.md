@@ -2,6 +2,61 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-24] — v3.3.77
+
+### Sub-slice 3.2.2 Bloque 3 F1-PLAN — extracción del dominio auth/sesión a `hub-login.js`
+
+Segundo sub-slice del Slice 3.2. Mueve a archivo propio todo el código del
+dominio **login / sesión / arranque del panel**.
+
+- **`prisma-apex/hub-login.js`** — nuevo. Contiene, en este orden:
+  - `const API_BASE = '/api'`
+  - 8 helpers de `sessionStorage`: `getToken`, `getEmail`, `getNombre`,
+    `getRole`, `isAdmin`, `getEmpresa`, `setSession`, `clearSession`.
+  - `showScreen(id)` — transición login ↔ panel.
+  - Listener `submit` del `#loginForm` con `fetch('/api/portal-auth')` +
+    `setSession` + `showPanel`.
+  - `resetLoginButton()`.
+  - `showPanel()` — primera vista post-login (empresa, admin vs user,
+    `switchTab`).
+  - Listener `click` del `#btnLogout`.
+- **`prisma-apex/index.html`** — bloques movidos eliminados del `<script>`
+  inline. Añadido `<script src="/hub/hub-login.js"></script>` después del
+  de `hub-helpers.js`, preservando orden helpers → login → script principal.
+
+**Acoplamiento aceptado y documentado:**
+- El listener del `btnLogout` toca `viewingUserId` y elementos
+  `panel-tab.admin-only/user-only` que pertenecen a dominios aún no
+  extraídos. Los callbacks se ejecutan tras el clic, cuando el script
+  principal ya corrió y las declaraciones globales existen en el global
+  scope compartido entre `<script>` clásicos.
+- `showPanel()` llama a `switchTab()` (aún en el inline, irá a `hub-tabs.js`
+  en 3.2.3). Mismo razonamiento.
+
+**`init()` se queda en `index.html` hasta 3.2.5:** es el último statement
+del orden de carga y necesita todas las funciones presentes antes de
+ejecutarse. Moverlo ahora rompería la inicialización.
+
+Movimiento mecánico puro: sin renombrar, sin reformatear cuerpos, sin tocar
+`init()`. Única adaptación: re-indentación top-level (4 → 0 espacios).
+Cuerpos byte a byte idénticos.
+
+Smoke local: `node --check hub-login.js` OK; `node --check` del `<script>`
+inline restante OK; `/hub/hub-login.js` 200 application/javascript 4.4 KB;
+`/hub/hub-helpers.js` y `/hub` siguen 200; ambos tags presentes en el HTML
+servido.
+
+**Pruebas de seguridad obligatorias para cerrar el sub-slice** (gate
+explícito):
+- Navegador (validación humana): login admin (`info@`) carga Dashboard;
+  login user (`armc@`) carga panel user; logout limpia `sessionStorage`
+  y vuelve a login; reload con sesión activa entra al panel sin error;
+  `/hub?login=1` fuerza limpieza de sesión.
+- Backend (smoke automatizado con `curl`): llamada sin token a ruta
+  protegida → 401; llamada con token de user normal a ruta admin → 403.
+
+Bump PATCH `v3.3.77` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-24] — v3.3.76
 
 ### Sub-slice 3.2.1 Bloque 3 F1-PLAN — extracción de helpers transversales a `hub-helpers.js`
