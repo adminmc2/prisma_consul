@@ -2,6 +2,37 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-24] — v3.3.75
+
+### Matización honesta de v3.3.74 y registro de deuda ops sobre `/hub/*`
+
+La entrada `v3.3.74` afirmaba que el handler estricto del slice 3.1 "no expone
+`index.html`, `CLAUDE.md`, `core/`, ni `clientes-publicados/`" bajo `/hub/*`.
+Esa afirmación es **cierta a nivel Express/local**, pero **no cierta a nivel
+edge en `dev.prismaconsul.com`**, donde el smoke remoto post-deploy reveló
+estado ops preexistente: `nginx` (`/etc/nginx/sites-available/prisma-dev`)
+tiene `location /hub { alias /home/prisma/web-de-prisma-dev/prisma-apex;
+try_files $uri $uri/ @plain404; }`, que sirve estáticos del subtree de
+`prisma-apex/` antes de proxyar a Express. Por tanto `/hub/CLAUDE.md`,
+`/hub/index.html`, `/hub/core/discovery-engine/index.html` responden 200 en
+dev por configuración de nginx, no por el handler nuevo de Express.
+
+Esta deuda **es preexistente** a la `v3.3.74`; este slice no la introduce ni
+la empeora. El handler estricto de Express conserva su valor como contrato
+único declarado por la app (local, escenarios sin nginx, red de seguridad).
+
+**Acción tomada en este repo:** ninguna sobre código. Solo este registro
+honesto del alcance real de v3.3.74.
+
+**Deuda ops registrada para `prisma-server-ops`:** retirar el `alias` amplio
+sobre `prisma-apex/` bajo `/hub` en nginx (dev y prod) y reemplazarlo por
+`proxy_pass` a Express, dejando a Express como única capa dueña del contrato
+público `/hub/*`. Spec del slice ops en el chat de coordinación; queda fuera
+del alcance del Bloque 3 de F1 (capa `repo`, no `ops`).
+
+Sin cambios de código de producto. Sin cambios de comportamiento visible.
+Bump PATCH `v3.3.75` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-24] — v3.3.74
 
 ### Slice 3.1 Bloque 3 F1-PLAN — extracción del `<style>` del Hub a `hub.css`
