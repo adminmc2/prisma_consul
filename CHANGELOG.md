@@ -2,6 +2,50 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-24] — v3.3.74
+
+### Slice 3.1 Bloque 3 F1-PLAN — extracción del `<style>` del Hub a `hub.css`
+
+Primer slice del Bloque 3 (saneamiento del monolito `prisma-apex/index.html`).
+Movimiento mecánico puro: el bloque `<style>` embebido (líneas 30–1003, ~972
+líneas de CSS) se traslada literalmente a `prisma-apex/hub.css` y se enlaza
+desde el HTML con `<link rel="stylesheet" href="/hub/hub.css">`. Sin reordenar
+reglas, sin renombrar selectores, sin tocar Phosphor, sin "limpiar".
+
+- **`server/server.js`** — handler estricto añadido antes del `app.get('/hub', ...)`:
+  `GET /hub/hub*.{css,js}` resuelve a `prisma-apex/<archivo>`. Regex
+  `^/hub/(hub[\w-]*\.(?:css|js))$` no admite `/` ni `..`. Nombre permitido pero
+  archivo inexistente → `404 text/plain "Not Found"` (coherente con el fallback
+  de `v3.3.38`, no filtra ruta absoluta del FS). Errores distintos de ENOENT →
+  500 text/plain sin detalle interno. El patrón no expone `index.html`,
+  `CLAUDE.md`, `core/`, ni `clientes-publicados/`.
+- **`prisma-apex/hub.css`** — nuevo, 972 líneas, contenido literal del antiguo
+  `<style>`. Verificado: sin `url(...)` relativos, la extracción no introduce
+  problemas de paths.
+- **`prisma-apex/index.html`** — bloque `<style>...</style>` sustituido por
+  `<link rel="stylesheet" href="/hub/hub.css">`. Archivo baja de 3.830 a 2.857
+  líneas (Δ −973).
+
+**Desviación reconocida frente a `docs/F1-PLAN.md` §5 Bloque 3.** El plan
+declaraba superficie únicamente en `prisma-apex/index.html`. La realidad del
+repo obligó a ampliar a `server/server.js` porque Express no podía servir
+`hub.css` con la configuración previa (estáticos solo desde `web/`, `/hub`
+era un handler `sendFile` puntual). La ampliación es la mínima posible,
+discutida y aprobada por el revisor antes de ejecutar.
+
+**Smoke local validado:** `/hub/hub.css` → 200; `/hub` → 200 (SPA intacta);
+`/hub/CLAUDE.md` → 404; `/hub/index.html` → 404; `/hub/hub-missing.css` → 404
+text/plain sin filtración de ruta.
+
+Baseline visual del Hub capturado en `dev.prismaconsul.com` antes del cambio
+(login, admin Dashboard + Usuarios, detalle usuario con 5 sub-pestañas, "ver
+como cliente" en sus 6 sub-pestañas incluido Simulador UX ARMC). Comparación
+visual post-deploy pendiente para PASS final del slice.
+
+Bump PATCH `v3.3.74` por `docs/OPERATIVA.md §0.4` (bump visible en cada push a
+`origin/dev`). El bump MINOR `v3.4.0` reservado para el cierre del Bloque 3
+(`docs/F1-PLAN.md §9`) sigue vigente.
+
 ## [2026-05-23] — v3.3.73
 
 ### Saneamiento del contexto Claude Code — cierre del Bloque 2 del F1-PLAN

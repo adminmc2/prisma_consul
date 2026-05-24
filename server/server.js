@@ -115,6 +115,21 @@ app.get(/^\/portal\/analisis\/(.+)$/, (req, res) => {
   res.redirect(301, '/publicados/' + req.params[0]);
 });
 
+// Assets del Hub — Slice 3.1 F1. Sirve solo /hub/hub*.{css,js} desde
+// prisma-apex/. Patrón intencionalmente acotado: no expone el resto del
+// subtree (index.html, CLAUDE.md, core/, clientes-publicados/).
+// Coherente con el fallback de v3.3.38: nombre permitido pero archivo
+// inexistente → 404 text/plain (no filtramos la ruta absoluta del FS).
+app.get(/^\/hub\/(hub[\w-]*\.(?:css|js))$/, (req, res) => {
+  res.sendFile(path.join(projectRoot, 'prisma-apex', req.params[0]), (err) => {
+    if (!err) return;
+    if (err.code === 'ENOENT') {
+      return res.status(404).type('text/plain').send('Not Found');
+    }
+    res.status(500).type('text/plain').send('Internal Server Error');
+  });
+});
+
 // SPA routes
 // Subpaso 2.3 (v3.3.33): el Hub se sirve desde prisma-apex/index.html.
 app.get('/hub', (req, res) => {
