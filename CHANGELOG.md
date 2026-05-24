@@ -2,6 +2,42 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-24] — v3.3.80
+
+### Sub-slice 3.2.4.b Bloque 3 F1-PLAN — `hub-admin.js` dashboard + usuarios + creación
+
+Segundo sub-sub-slice del bloque 3.2.4. Append a `prisma-apex/hub-admin.js`
+con los bloques visibles de admin (dashboard + listado usuarios + modal
+de creación). Sin tocar `<script src>` (ya añadido en 3.2.4.a).
+
+- **`prisma-apex/hub-admin.js`** — append (~204 líneas). Añade:
+  - DASHBOARD: `loadDashboard`, `renderPipeline`, `renderRecentActivity`.
+  - USUARIOS: `showUserDetailFromDashboard`, `showUsersList`, `loadUsers`,
+    `renderUsers`.
+  - CREATE USER: `showCreateUserModal`, `hideCreateUserModal`, `createUser`.
+- **`prisma-apex/index.html`** — bloques originales eliminados del
+  `<script>` inline (líneas 398-496, 498-501, 503-567, 1949-1984
+  originales). Sin cambios en script tags.
+
+**Acoplamientos aceptados:**
+- `showUserDetailFromDashboard` y `renderUsers` invocan `showUserDetail`
+  (aún en inline, irá en 3.2.4.c). Funciona por global scope;
+  callbacks se ejecutan tras click.
+- `createUser` invoca `loadUsers` (incluida en este sub-slice).
+- Resto de dependencias (`escapeHtml`, `formatDate`, `formatSize`,
+  `formatDateShort`, `getToken`, `API_BASE`, `switchTab`, `viewAsClient`,
+  `getPhasesForProfile`, `allUsers`, `selectedUserId`) ya disponibles
+  desde sub-slices previos.
+
+Movimiento mecánico puro. Cuerpos byte a byte idénticos. Re-indentación
+top-level 4→0. Sin `}` huérfanas (rangos eran bloques completos).
+
+Smoke local: `node --check hub-admin.js` OK; `node --check` del inline
+restante OK; `/hub/hub-admin.js` 200 application/javascript 11.4 KB
+(crecimiento esperado tras append); resto de tags 200.
+
+Bump PATCH `v3.3.80` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-24] — v3.3.79
 
 ### Sub-slice 3.2.4.a Bloque 3 F1-PLAN — `hub-admin.js` inicial (state + view-as)
