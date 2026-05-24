@@ -960,3 +960,238 @@ function startRename(fileId, el) {
     if (e.key === 'Escape') { input.value = currentName; input.blur(); }
   });
 }
+
+// ── APEX RESULTS TAB ──
+async function loadApexResults() {
+  const container = document.getElementById('apexContainer');
+  container.innerHTML = '<div class="files-loading"><span class="spinner light"></span></div>';
+  const token = getToken();
+  if (!token) return;
+  try {
+    let apexUrl = `${API_BASE}/portal-apex-results`;
+    if (viewingUserId) apexUrl += `?userId=${viewingUserId}`;
+    const res = await fetch(apexUrl, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (res.status === 401) { clearSession(); showScreen('screen-login'); return; }
+    const data = await res.json();
+    if (!data.submission) {
+      container.innerHTML = `<div class="apex-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+        </svg>
+        <div>No hay resultados de formulario APEX vinculados a tu cuenta.</div>
+      </div>`;
+      return;
+    }
+    renderApexResults(data.submission);
+  } catch { container.innerHTML = '<div class="apex-empty"><div>Error al cargar resultados</div></div>'; }
+}
+
+function renderApexResults(sub, targetContainer) {
+  const container = targetContainer || document.getElementById('apexContainer');
+  const research = sub.investigacion_empresa || {};
+  const empresa = research.empresa || {};
+  const pains = sub.pains_finales || sub.pains_detectados_inicial || [];
+  const accepted = pains.filter(p => p.action !== 'reject');
+  const rejected = pains.filter(p => p.action === 'reject');
+
+  let html = `<h2 class="panel-title" style="margin-bottom:1.5rem;">Resultados del Formulario APEX</h2>`;
+
+  // Company info
+  html += `<div class="apex-section">
+    <div class="apex-section-title">Datos de empresa</div>
+    <div class="apex-company-card">
+      <div class="apex-company-field"><div class="apex-company-label">Empresa</div><div class="apex-company-value">${escapeHtml(sub.empresa_nombre || '')}</div></div>
+      <div class="apex-company-field"><div class="apex-company-label">Sector</div><div class="apex-company-value">${escapeHtml(sub.empresa_sector || '')}</div></div>
+      <div class="apex-company-field"><div class="apex-company-label">Contacto</div><div class="apex-company-value">${escapeHtml(sub.empresa_contacto || '')}</div></div>
+      <div class="apex-company-field"><div class="apex-company-label">Tamaño equipo</div><div class="apex-company-value">${escapeHtml(sub.empresa_tamano || '')} personas</div></div>
+      <div class="apex-company-field"><div class="apex-company-label">Email</div><div class="apex-company-value">${escapeHtml(sub.empresa_email || '')}</div></div>
+      <div class="apex-company-field"><div class="apex-company-label">WhatsApp</div><div class="apex-company-value">${escapeHtml(sub.empresa_whatsapp || '')}</div></div>
+    </div>
+  </div>`;
+
+  // Research summary
+  if (empresa.descripcion_procesos) {
+    html += `<div class="apex-section">
+      <div class="apex-section-title">Investigación</div>
+      <div class="apex-research-summary">${escapeHtml(empresa.descripcion_procesos)}</div>
+    </div>`;
+  }
+
+  // Pains
+  if (pains.length) {
+    html += `<div class="apex-section"><div class="apex-section-title">Necesidades detectadas</div>`;
+    for (const p of accepted) {
+      html += `<div class="apex-pain-card">
+        <div class="apex-pain-header">
+          <div class="apex-pain-status accepted"></div>
+          <div class="apex-pain-title">${escapeHtml(p.title || '')}</div>
+        </div>
+        <div class="apex-pain-desc">${escapeHtml(p.description || '')}</div>
+        ${p.impacto ? `<div class="apex-pain-impact">${escapeHtml(p.impacto)}</div>` : ''}
+      </div>`;
+    }
+    for (const p of rejected) {
+      html += `<div class="apex-pain-card" style="opacity:0.5;">
+        <div class="apex-pain-header">
+          <div class="apex-pain-status rejected"></div>
+          <div class="apex-pain-title" style="text-decoration:line-through;">${escapeHtml(p.title || '')}</div>
+        </div>
+        <div class="apex-pain-desc">${escapeHtml(p.description || '')}</div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+
+  // Plan
+  if (sub.plan_recomendado) {
+    html += `<div class="apex-section">
+      <div class="apex-section-title">Plan recomendado</div>
+      <div class="apex-plan-badge">${escapeHtml(sub.plan_recomendado)}</div>
+    </div>`;
+  }
+
+  // Audio transcription
+  if (sub.audio_transcripcion) {
+    html += `<div class="apex-section">
+      <div class="apex-section-title">Transcripción de audio</div>
+      <div class="apex-research-summary">${escapeHtml(sub.audio_transcripcion)}</div>
+    </div>`;
+  }
+
+  // Date
+  html += `<div style="text-align:right; font-size:0.75rem; color:var(--text-muted); margin-top:1rem;">Completado: ${formatDate(sub.created_at)}</div>`;
+
+  container.innerHTML = html;
+}
+
+// ── PROFILE TAB ──
+const PROFILE_FIELDS = [
+  { key: 'nombre', label: 'Nombre completo', full: true },
+  { key: 'empresa', label: 'Empresa', full: true },
+  { key: 'email', label: 'Email', readonly: true },
+  { key: 'rfc', label: 'RFC / CIF / Tax ID' },
+  { key: 'sector', label: 'Sector' },
+  { key: 'telefono', label: 'Teléfono' },
+  { key: 'direccion', label: 'Dirección', full: true },
+  { key: 'ciudad', label: 'Ciudad' },
+  { key: 'cp', label: 'C.P.' },
+  { key: 'contacto_principal', label: 'Contacto principal' },
+  { key: 'cargo', label: 'Cargo' }
+];
+
+async function loadProfile() {
+  const grid = document.getElementById('profileGrid');
+  const token = getToken();
+  if (!token) return;
+  // Get current user data from session + fresh fetch
+  try {
+    let profileUrl = `${API_BASE}/portal-profile`;
+    if (viewingUserId) profileUrl += `?userId=${viewingUserId}`;
+    const res = await fetch(profileUrl, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (res.status === 401) { clearSession(); showScreen('screen-login'); return; }
+    // If endpoint doesn't exist yet, use session data
+    let userData = {};
+    if (res.ok) {
+      const data = await res.json();
+      userData = data.user || {};
+    } else {
+      // Fallback to session
+      const empresa = getEmpresa() || {};
+      userData = { email: getEmail(), nombre: getNombre(), ...empresa };
+    }
+    renderProfile(userData);
+  } catch {
+    const empresa = getEmpresa() || {};
+    renderProfile({ email: getEmail(), nombre: getNombre(), ...empresa });
+  }
+}
+
+function renderProfile(user) {
+  const grid = document.getElementById('profileGrid');
+  const readOnly = viewingUserId && isAdmin();
+  grid.innerHTML = PROFILE_FIELDS.map(f => `
+    <div class="profile-field${f.full ? ' full-width' : ''}">
+      <label class="profile-label">${f.label}</label>
+      <input class="profile-input" data-field="${f.key}" value="${escapeHtml(user[f.key] || '')}" ${(f.readonly || readOnly) ? 'readonly' : ''}>
+    </div>
+  `).join('');
+  document.getElementById('profileStatus').textContent = '';
+  document.getElementById('profileActions').style.display = readOnly ? 'none' : '';
+}
+
+async function saveProfile() {
+  const token = getToken();
+  if (!token) { showScreen('screen-login'); return; }
+  const inputs = document.querySelectorAll('#profileGrid .profile-input:not([readonly])');
+  const body = {};
+  inputs.forEach(inp => { body[inp.dataset.field] = inp.value; });
+  const status = document.getElementById('profileStatus');
+  status.className = 'profile-status'; status.textContent = 'Guardando...';
+  try {
+    const res = await fetch(`${API_BASE}/portal-profile`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (res.ok) {
+      status.className = 'profile-status success';
+      status.textContent = 'Datos guardados correctamente';
+      // Update session data
+      const data = await res.json();
+      if (data.user) {
+        sessionStorage.setItem('portal_nombre', data.user.nombre || '');
+        const empresa = { nombre: data.user.empresa, rfc: data.user.rfc, direccion: data.user.direccion, ciudad: data.user.ciudad, cp: data.user.cp, telefono: data.user.telefono, contacto_principal: data.user.contacto_principal, cargo: data.user.cargo, sector: data.user.sector };
+        sessionStorage.setItem('portal_empresa', JSON.stringify(empresa));
+      }
+    } else {
+      const data = await res.json();
+      status.className = 'profile-status error';
+      status.textContent = data.error || 'Error al guardar';
+    }
+  } catch { status.className = 'profile-status error'; status.textContent = 'Error de conexión'; }
+}
+
+// ── ENTREVISTAS TAB ──
+async function loadEntrevistas() {
+  const list = document.getElementById('entrevistasFilesList');
+  list.innerHTML = '<div class="files-loading"><span class="spinner light"></span></div>';
+  const token = getToken();
+  if (!token) return;
+  try {
+    let entUrl = `${API_BASE}/portal-files`;
+    if (viewingUserId) entUrl += `?userId=${viewingUserId}`;
+    const res = await fetch(entUrl, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (res.status === 401) { clearSession(); showScreen('screen-login'); return; }
+    const data = await res.json();
+    const entrevistas = (data.files || []).filter(f => f.docType === 'entrevista');
+    if (!entrevistas.length) {
+      list.innerHTML = `<div class="entrevistas-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+        <div>No hay entrevistas disponibles todavía.</div>
+      </div>`;
+      return;
+    }
+    list.innerHTML = entrevistas.map(f => {
+      const code = f.driveName || '';
+      const displayName = f.name || '';
+      const ext = getFileExt(code || displayName) || getMimeLabel(f.mimeType);
+      const iconClass = getIconClass(ext);
+      return `<div class="file-card">
+        <div class="file-icon ${iconClass}">${ext || '?'}</div>
+        <div class="file-info">
+          ${code ? `<div class="file-code">${escapeHtml(code)}</div>` : ''}
+          <div class="file-name">${escapeHtml(displayName)}</div>
+          <div class="file-meta">
+            <span>${formatDate(f.createdTime)}</span><span class="file-meta-sep"></span><span>${formatSize(f.size)}</span>
+          </div>
+        </div>
+        ${f.link ? `<a href="${f.link}" target="_blank" rel="noopener" class="file-link" title="Abrir">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+          </svg></a>` : ''}
+      </div>`;
+    }).join('');
+  } catch { list.innerHTML = '<div class="entrevistas-empty"><div>Error al cargar entrevistas</div></div>'; }
+}

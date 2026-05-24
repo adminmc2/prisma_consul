@@ -2,6 +2,46 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-24] — v3.3.84
+
+### Sub-slice 3.2.4.e Bloque 3 F1-PLAN — `hub-admin.js` APEX results + perfil + entrevistas
+
+Último sub-sub-slice del bloque 3.2.4. Cierra el último acoplamiento
+abierto (`loadUdApex` → `renderApexResults`, pendiente desde c2).
+
+Append a `prisma-apex/hub-admin.js`.
+
+- **`prisma-apex/hub-admin.js`** — append (~234 líneas):
+  - APEX RESULTS: `loadApexResults`, `renderApexResults`.
+  - PROFILE: `PROFILE_FIELDS` (12 campos), `loadProfile`, `renderProfile`,
+    `saveProfile`.
+  - ENTREVISTAS: `loadEntrevistas`.
+- **`prisma-apex/index.html`** — bloque 1343-1576 original eliminado
+  del `<script>` inline.
+
+**Acoplamiento cerrado:** `loadUdApex` (en hub-admin desde c2) →
+`renderApexResults` (ahora en hub-admin). Único acoplamiento abierto
+restante del bloque 3.2.4, ahora cerrado.
+
+**Estado de hub-admin.js tras este sub-slice:** 1197 líneas,
+autoconsistente para todos los dominios admin + vistas del panel
+reutilizadas por viewAsClient. Sin acoplamientos abiertos hacia el
+`<script>` inline.
+
+**Estado del bloque 3.2.4 completo:** 5 sub-sub-slices (.a/.b/.c1/.c2/.d/.e),
+bumps `v3.3.79` → `v3.3.84`. Pendiente solo el gate de seguridad final
+(8 checks: 4 rutas admin × 2 estados).
+
+**Próximo:** Sub-slice 3.2.5 (`hub-analisis.js`), último del Slice 3.2.
+
+Movimiento mecánico puro. Cuerpos byte a byte idénticos. Re-indentación
+top-level 4→0.
+
+Smoke local: `node --check hub-admin.js` OK (1197 líneas); inline OK;
+`/hub/hub-admin.js` 200 application/javascript 59.1 KB.
+
+Bump PATCH `v3.3.84` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-24] — v3.3.83
 
 ### Sub-slice 3.2.4.d Bloque 3 F1-PLAN — `hub-admin.js` DOC_TYPE_* + documentos compartidos
