@@ -2,6 +2,65 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-25] — v3.3.91
+
+### Slice 3.3 Bloque 3 F1-PLAN — deduplicación `analisis*` / `udAnalisis*` con factoría
+
+Cierra el Slice 3.3 del Bloque 3 F1-PLAN. **Único refactor permitido en
+F1** (F1-PLAN §5). Reemplaza 10 funciones duplicadas por una sola
+factoría parametrizada + 2 instancias + 10 wrappers `function` globales.
+
+- **`prisma-apex/hub-analisis.js`** — refactor in-place:
+  - **Eliminadas:** `loadAnalisis`, `analisisOpenSection`,
+    `analisisShowSections`, `analisisShowRoles`, `analisisOpenItem`,
+    `loadUdAnalisis`, `udAnalisisOpenSection`, `udAnalisisShowSections`,
+    `udAnalisisShowRoles`, `udAnalisisOpenItem` (10 funciones, ~110
+    líneas duplicadas).
+  - **Añadida:** `crearControladorAnalisis({ camel, kebab })` — factoría
+    con 5 funciones internas (`load`, `openSection`, `showSections`,
+    `showRoles`, `openItem`). Una sola implementación.
+  - **Añadidas:** 2 instancias (`_ctrlAnalisisUser`, `_ctrlAnalisisUd`)
+    + 10 wrappers `function` que delegan a las instancias.
+
+**Diferencia entre las dos vistas reducida a 2 prefijos:**
+- `camel`: `'analisis'` vs `'udAnalisis'` — para IDs camelCase
+  (`SectionsGrid`, `RolesGrid`, `Iframe`, `ViewerTitle`, `SectionTitle`)
+  y nombres de handlers en `onclick` inyectado (`OpenSection`, `OpenItem`).
+- `kebab`: `'analisis'` vs `'ud-analisis'` — para IDs kebab-case de
+  contenedores (`-sections`, `-roles`, `-viewer`).
+
+**Decisión técnica crítica (corrección del revisor):** los 10 wrappers
+se exponen como **`function` declarations**, no `const`. En scripts
+clásicos solo las `function` declarations se asignan automáticamente a
+`window`, garantizando que los `onclick=""` estáticos del HTML
+(`index.html:77-84,90,151,274,285,320` + markup inyectado por
+`showUserDetail` en `hub-admin.js:400+`) siguen resolviendo contra los
+mismos nombres globales que antes. Una versión con `const` habría roto
+el contrato de markup sin tocar HTML.
+
+**Sin cambios visibles:** URLs, contratos, `ANALISIS_REGISTRY`,
+`ANALISIS_SECTIONS`, `getAnalysisPaths`, todo intacto.
+
+**Reducción neta:** ~26 líneas en `hub-analisis.js` (1179 → 1153
+líneas). Más importante que la reducción de líneas: deduplicación
+lógica. Cualquier cambio futuro en el flujo análisis se hace una sola
+vez.
+
+Smoke local: `node --check hub-analisis.js` OK; `/hub/hub-analisis.js`
+200 application/javascript 63.2 KB.
+
+Bump PATCH `v3.3.91` por `docs/OPERATIVA.md §0.4`. **MINOR `v3.4.0`
+reservado al cierre formal del Bloque 3** (tras smoke usuario OK de
+este slice).
+
+### Estado del Bloque 3 tras este slice
+
+- Slice 3.1 ✓ (CSS → `hub.css`).
+- Slice 3.2 ✓ (JS → 5 archivos modulares `hub-*.js`).
+- Corrección documental README ✓ (v3.3.90).
+- Slice 3.3 ✓ (este sub-slice — deduplicación analisis con factoría).
+- **Pendiente:** smoke usuario + bump MINOR `v3.4.0` cierre Bloque 3.
+
 ## [2026-05-25] — v3.3.90
 
 ### Corrección documental README post-Slice 3.2

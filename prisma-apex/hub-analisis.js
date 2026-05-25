@@ -1063,18 +1063,6 @@ const ANALISIS_BLUEPRINT = [
 ];
 
 // ── Client: Análisis Tab (3 capas) ──
-function loadAnalisis() {
-  const grid = document.getElementById('analisisSectionsGrid');
-  if (!grid) return;
-  grid.innerHTML = ANALISIS_SECTIONS.map(s => `
-    <div class="analisis-section-card" onclick="analisisOpenSection('${s.id}')">
-      <div class="section-icon"><i class="${s.icon}"></i></div>
-      <h3>${s.title}</h3>
-      <p>${s.desc}</p>
-    </div>
-  `).join('');
-}
-
 const _armcPaths = getAnalysisPaths('armc');
 const ANALISIS_SECTION_MAP = {
   roles: { items: () => ANALISIS_ROLES, path: _armcPaths?.diagramas, title: 'Análisis por roles' },
@@ -1082,98 +1070,84 @@ const ANALISIS_SECTION_MAP = {
   blueprint: { items: () => ANALISIS_BLUEPRINT, path: _armcPaths?.blueprint, title: 'Blueprint de Sistema' }
 };
 
-function analisisOpenSection(sectionId) {
-  const section = ANALISIS_SECTION_MAP[sectionId];
-  if (!section) return;
-  const grid = document.getElementById('analisisRolesGrid');
-  grid.innerHTML = section.items().map(r => `
-    <div class="analisis-role-card" onclick="analisisOpenItem('${r.id}', '${sectionId}')">
-      <div class="role-icon"><i class="${r.icon}"></i></div>
-      <h3>${r.title}</h3>
-      <p>${r.desc}</p>
-    </div>
-  `).join('');
-  document.getElementById('analisisSectionTitle').textContent = section.title;
-  document.getElementById('analisis-sections').style.display = 'none';
-  document.getElementById('analisis-roles').style.cssText = '';
+// Factoría de controlador de análisis. Una sola implementación, dos instancias
+// (usuario y admin-detail). Diferencia entre vistas reducida a 2 prefijos:
+// camel  → IDs camelCase + nombres de handlers en onclick (SectionsGrid,
+//          RolesGrid, Iframe, ViewerTitle, SectionTitle, OpenSection, OpenItem).
+// kebab  → IDs kebab-case de contenedores (-sections, -roles, -viewer).
+function crearControladorAnalisis({ camel, kebab }) {
+  function load() {
+    const grid = document.getElementById(`${camel}SectionsGrid`);
+    if (!grid) return;
+    grid.innerHTML = ANALISIS_SECTIONS.map(s => `
+      <div class="analisis-section-card" onclick="${camel}OpenSection('${s.id}')">
+        <div class="section-icon"><i class="${s.icon}"></i></div>
+        <h3>${s.title}</h3>
+        <p>${s.desc}</p>
+      </div>
+    `).join('');
+  }
+
+  function openSection(sectionId) {
+    const section = ANALISIS_SECTION_MAP[sectionId];
+    if (!section) return;
+    const grid = document.getElementById(`${camel}RolesGrid`);
+    grid.innerHTML = section.items().map(r => `
+      <div class="analisis-role-card" onclick="${camel}OpenItem('${r.id}', '${sectionId}')">
+        <div class="role-icon"><i class="${r.icon}"></i></div>
+        <h3>${r.title}</h3>
+        <p>${r.desc}</p>
+      </div>
+    `).join('');
+    document.getElementById(`${camel}SectionTitle`).textContent = section.title;
+    document.getElementById(`${kebab}-sections`).style.display = 'none';
+    document.getElementById(`${kebab}-roles`).style.cssText = '';
+  }
+
+  function showSections() {
+    document.getElementById(`${kebab}-viewer`).style.display = 'none';
+    document.getElementById(`${kebab}-roles`).style.display = 'none';
+    document.getElementById(`${kebab}-sections`).style.cssText = '';
+    document.getElementById(`${camel}Iframe`).src = 'about:blank';
+  }
+
+  function showRoles() {
+    document.getElementById(`${kebab}-viewer`).style.display = 'none';
+    document.getElementById(`${kebab}-roles`).style.cssText = '';
+    document.getElementById(`${camel}Iframe`).src = 'about:blank';
+  }
+
+  function openItem(itemId, sectionId) {
+    const section = ANALISIS_SECTION_MAP[sectionId];
+    if (!section || !section.path) return;
+    const item = section.items().find(r => r.id === itemId);
+    if (!item) return;
+    document.getElementById(`${camel}Iframe`).src = section.path + item.file + '?v=' + Date.now();
+    document.getElementById(`${camel}ViewerTitle`).textContent = item.title;
+    document.getElementById(`${kebab}-roles`).style.display = 'none';
+    document.getElementById(`${kebab}-viewer`).style.cssText = '';
+  }
+
+  return { load, openSection, showSections, showRoles, openItem };
 }
 
-function analisisShowSections() {
-  document.getElementById('analisis-viewer').style.display = 'none';
-  document.getElementById('analisis-roles').style.display = 'none';
-  document.getElementById('analisis-sections').style.cssText = '';
-  document.getElementById('analisisIframe').src = 'about:blank';
-}
+const _ctrlAnalisisUser = crearControladorAnalisis({ camel: 'analisis',   kebab: 'analisis' });
+const _ctrlAnalisisUd   = crearControladorAnalisis({ camel: 'udAnalisis', kebab: 'ud-analisis' });
 
-function analisisShowRoles() {
-  document.getElementById('analisis-viewer').style.display = 'none';
-  document.getElementById('analisis-roles').style.cssText = '';
-  document.getElementById('analisisIframe').src = 'about:blank';
-}
+// Wrappers globales explícitos (function declarations → window.X automático).
+// Preservan el contrato onclick estático del HTML (index.html y markup
+// inyectado por hub-admin.js): los nombres deben seguir resolviendo en window.
+function loadAnalisis()                             { return _ctrlAnalisisUser.load(); }
+function analisisOpenSection(sectionId)             { return _ctrlAnalisisUser.openSection(sectionId); }
+function analisisShowSections()                     { return _ctrlAnalisisUser.showSections(); }
+function analisisShowRoles()                        { return _ctrlAnalisisUser.showRoles(); }
+function analisisOpenItem(itemId, sectionId)        { return _ctrlAnalisisUser.openItem(itemId, sectionId); }
 
-function analisisOpenItem(itemId, sectionId) {
-  const section = ANALISIS_SECTION_MAP[sectionId];
-  if (!section || !section.path) return;
-  const item = section.items().find(r => r.id === itemId);
-  if (!item) return;
-  document.getElementById('analisisIframe').src = section.path + item.file + '?v=' + Date.now();
-  document.getElementById('analisisViewerTitle').textContent = item.title;
-  document.getElementById('analisis-roles').style.display = 'none';
-  document.getElementById('analisis-viewer').style.cssText = '';
-}
-
-// ── Admin: User Detail Análisis (3 capas) ──
-function loadUdAnalisis() {
-  const grid = document.getElementById('udAnalisisSectionsGrid');
-  if (!grid) return;
-  grid.innerHTML = ANALISIS_SECTIONS.map(s => `
-    <div class="analisis-section-card" onclick="udAnalisisOpenSection('${s.id}')">
-      <div class="section-icon"><i class="${s.icon}"></i></div>
-      <h3>${s.title}</h3>
-      <p>${s.desc}</p>
-    </div>
-  `).join('');
-}
-
-function udAnalisisOpenSection(sectionId) {
-  const section = ANALISIS_SECTION_MAP[sectionId];
-  if (!section) return;
-  const grid = document.getElementById('udAnalisisRolesGrid');
-  grid.innerHTML = section.items().map(r => `
-    <div class="analisis-role-card" onclick="udAnalisisOpenItem('${r.id}', '${sectionId}')">
-      <div class="role-icon"><i class="${r.icon}"></i></div>
-      <h3>${r.title}</h3>
-      <p>${r.desc}</p>
-    </div>
-  `).join('');
-  document.getElementById('udAnalisisSectionTitle').textContent = section.title;
-  document.getElementById('ud-analisis-sections').style.display = 'none';
-  document.getElementById('ud-analisis-roles').style.cssText = '';
-}
-
-function udAnalisisShowSections() {
-  document.getElementById('ud-analisis-viewer').style.display = 'none';
-  document.getElementById('ud-analisis-roles').style.display = 'none';
-  document.getElementById('ud-analisis-sections').style.cssText = '';
-  document.getElementById('udAnalisisIframe').src = 'about:blank';
-}
-
-function udAnalisisShowRoles() {
-  document.getElementById('ud-analisis-viewer').style.display = 'none';
-  document.getElementById('ud-analisis-roles').style.cssText = '';
-  document.getElementById('udAnalisisIframe').src = 'about:blank';
-}
-
-function udAnalisisOpenItem(itemId, sectionId) {
-  const section = ANALISIS_SECTION_MAP[sectionId];
-  if (!section || !section.path) return;
-  const item = section.items().find(r => r.id === itemId);
-  if (!item) return;
-  document.getElementById('udAnalisisIframe').src = section.path + item.file + '?v=' + Date.now();
-  document.getElementById('udAnalisisViewerTitle').textContent = item.title;
-  document.getElementById('ud-analisis-roles').style.display = 'none';
-  document.getElementById('ud-analisis-viewer').style.cssText = '';
-}
+function loadUdAnalisis()                           { return _ctrlAnalisisUd.load(); }
+function udAnalisisOpenSection(sectionId)           { return _ctrlAnalisisUd.openSection(sectionId); }
+function udAnalisisShowSections()                   { return _ctrlAnalisisUd.showSections(); }
+function udAnalisisShowRoles()                      { return _ctrlAnalisisUd.showRoles(); }
+function udAnalisisOpenItem(itemId, sectionId)      { return _ctrlAnalisisUd.openItem(itemId, sectionId); }
 
 // ── Init ──
 init();
