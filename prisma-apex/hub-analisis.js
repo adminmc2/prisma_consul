@@ -917,3 +917,263 @@ function createCapa3(mountEl, opts) {
 
   return { focusItem: focusItem, refresh: function () {} };
 }
+
+// ── Init ──
+function init() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('login')) {
+    clearSession();
+    history.replaceState(null, '', window.location.pathname);
+    return;
+  }
+  if (getToken()) showPanel();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// ── Mapa nativo (B5) — matriz de trazabilidad ──
+// Datos inline (sin assets externos). Cierra la eliminación de iframes
+// de nivel 2 del simulador.
+const MAPA_ROWS = [
+  { c1: 'lead_entry_channel', c1_label: 'Entrada del lead', c2_form: null, c2_event: null, c3: [], note: 'Dispatcher visual. Sin datos ni evento.' },
+  { c1: 'web_contact_form_received', c1_label: 'Contacto web recibido', c2_form: 'web_contact_form', c2_event: null, c3: [], note: 'Input por canal web. La persistencia ocurre al converger en lead_captured.' },
+  { c1: 'lead_capture_whatsapp', c1_label: 'Contacto por WhatsApp recibido', c2_form: 'lead_capture', c2_event: null, c3: [], note: 'Input por canal WhatsApp. La persistencia ocurre al converger en lead_captured.' },
+  { c1: 'lead_captured', c1_label: 'Lead capturado (convergencia)', c2_form: null, c2_event: 'LEAD_CAPTURED', c3: ['armc_leads', 'armc_events'], note: 'Punto único de persistencia. Emite el evento y escribe en BD.' }
+];
+
+function createMapa(mountEl, opts) {
+  opts = opts || {};
+  mountEl.classList.add('sim-mapa');
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function btn(label, tab, itemId, soft) {
+    return `<button type="button" class="nav-btn ${soft ? 'soft' : ''}" data-nav-tab="${tab}" data-nav-item="${escapeHtml(itemId)}">` +
+      `<i class="ph ph-arrow-square-out"></i>${escapeHtml(label)}</button>`;
+  }
+  const rowsHtml = MAPA_ROWS.map(r => {
+    const c1 = btn(r.c1, 1, 'node-' + r.c1, false);
+    const c2parts = [];
+    if (r.c2_form) c2parts.push(btn(r.c2_form, 2, 'form-' + r.c2_form, false));
+    if (r.c2_event) c2parts.push(btn(r.c2_event, 2, 'event-' + r.c2_event, true));
+    const c2 = c2parts.length ? c2parts.join('') : '<span class="none">— sin contrato —</span>';
+    const c3 = r.c3.length ? r.c3.map(t => btn(t, 3, 'table-' + t, true)).join('') : '<span class="none">— sin persistencia —</span>';
+    return `<tr data-c1="${escapeHtml(r.c1)}"><td>${c1}<div style="color:var(--m-muted);font-size:0.78rem;margin-top:4px">${escapeHtml(r.c1_label)}</div></td>` +
+      `<td>${c2}</td><td>${c3}</td><td>${escapeHtml(r.note)}</td></tr>`;
+  }).join('');
+  mountEl.innerHTML =
+    '<div class="mapa-page">' +
+    '<h1><i class="ph ph-flow-arrow"></i> Mapa de trazabilidad</h1>' +
+    '<p class="lede">Una fila por estado verificado del flujo. Los formularios web y WhatsApp son input: recogen los datos del lead. La persistencia (evento + escritura en BD) ocurre una sola vez, en el nodo de convergencia <code>lead_captured</code>. Click en cualquier botón para saltar al item en su capa.</p>' +
+    '<div class="legend">' +
+      '<span class="item"><span class="dot c1"></span> Capa 1 — Estados de UX</span>' +
+      '<span class="item"><span class="dot c2"></span> Capa 2 — Formularios y eventos</span>' +
+      '<span class="item"><span class="dot c3"></span> Capa 3 — Tablas SQL</span>' +
+    '</div>' +
+    '<h2 class="section">Flujo verificado</h2>' +
+    '<table class="matrix"><thead><tr>' +
+      '<th class="col-c1">Capa 1 (estado)</th><th class="col-c2">Capa 2 (formulario &middot; evento)</th>' +
+      '<th class="col-c3">Capa 3 (persistencia)</th><th class="col-note">Nota</th>' +
+    '</tr></thead><tbody class="mapa-rows">' + rowsHtml + '</tbody></table>' +
+    '<h2 class="section">Cómo leer este mapa</h2>' +
+    '<div class="note">Esta matriz muestra los cuatro estados verificados de Capa 1. Los dos formularios (<code>web_contact_form</code> y <code>lead_capture</code>) son input por canal: recogen datos del lead pero no persisten todavía. La emisión del evento <code>LEAD_CAPTURED</code> y la escritura en <code>armc_leads</code> + <code>armc_events</code> ocurren una sola vez por lead, en el nodo de convergencia <code>lead_captured</code>. Los estados visualizados sin contrato (como <code>lead_entry_channel</code>) son construcciones puramente visuales. A medida que se verifiquen nuevas piezas del flujo, se añadirán filas a esta matriz.</div>' +
+    '</div>';
+
+  mountEl.querySelectorAll('[data-nav-tab]').forEach(b => {
+    b.addEventListener('click', () => {
+      if (typeof opts.onNavigate === 'function') opts.onNavigate(Number(b.dataset.navTab), b.dataset.navItem);
+    });
+  });
+
+  // El Mapa es una matriz completa, no tiene selección de item; si otra capa
+  // navega hacia él con un itemId de estado, se desplaza a esa fila.
+  function focusItem(itemId) {
+    const m = String(itemId || '').match(/^node-(.+)$/);
+    if (!m) return;
+    const row = mountEl.querySelector('tr[data-c1="' + m[1] + '"]');
+    if (row && row.scrollIntoView) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  return { focusItem: focusItem, refresh: function () {} };
+}
+
+
+
+
+
+// ── ANÁLISIS TAB ──
+const ANALISIS_SECTIONS = [
+  { id: 'roles', title: 'Análisis por roles', icon: 'ph ph-users-three', desc: '7 flujos operativos analizados por rol' },
+  { id: 'diagnostico', title: 'Diagnóstico integrado', icon: 'ph ph-heartbeat', desc: 'Hallazgos, matriz D1-D4, fricciones, embudo y cadena causal' },
+  { id: 'blueprint', title: 'Blueprint de Sistema', icon: 'ph ph-blueprint', desc: 'Modelo de datos, flujos to-be, automatizaciones, fases y KPIs' }
+];
+
+// ── Capa de registro de rutas (REGISTRO-RUTAS.md) ──
+// Reemplaza las antiguas constantes ANALISIS_BASE_PATH / DIAGNOSTICO_PATH / BLUEPRINT_PATH.
+// Fuente de verdad para los paths físicos de los entregables por cliente.
+const ANALISIS_REGISTRY = {
+  armc: {
+    diagramas:   '/publicados/armc/diagramas/',
+    diagnostico: '/publicados/armc/diagnostico/',
+    blueprint:   '/publicados/armc/blueprint/'
+  }
+};
+function getAnalysisPaths(cliente) {
+  const entry = ANALISIS_REGISTRY[cliente];
+  if (!entry) {
+    console.warn(`getAnalysisPaths: cliente "${cliente}" no registrado`);
+    return null;
+  }
+  return entry;
+}
+
+const ANALISIS_ROLES = [
+  { id: 'atencion-paciente', file: 'flujo-atención-paciente.html', title: 'Atención al Paciente', icon: 'ph ph-user', desc: 'Captación, conversión, seguimiento y reportes' },
+  { id: 'cirujano', file: 'flujo-cirujano.html', title: 'Cirujano', icon: 'ph ph-stethoscope', desc: 'Evaluación, procedimiento y seguimiento post' },
+  { id: 'enfermero', file: 'flujo-enfermero.html', title: 'Enfermero', icon: 'ph ph-heartbeat', desc: 'Preparación, asistencia quirúrgica y cuidados' },
+  { id: 'cosmiatra', file: 'flujo-cosmiatra.html', title: 'Cosmiatra', icon: 'ph ph-sparkle', desc: 'Consulta, tratamientos y seguimiento dermatológico' },
+  { id: 'primer-ayudante', file: 'flujo-primer-ayudante.html', title: 'Primer Ayudante', icon: 'ph ph-hand', desc: 'Asistencia quirúrgica y preparación de materiales' },
+  { id: 'tricologia', file: 'flujo-tricologia.html', title: 'Tricología y Microinjerto', icon: 'ph ph-eyedropper', desc: 'Diagnóstico capilar, microinjerto y comunicación' },
+  { id: 'ceo', file: 'flujo-ceo.html', title: 'CEO/Dirección', icon: 'ph ph-chart-line-up', desc: 'Estrategia, visibilidad, KPIs y decisiones' }
+];
+
+const ANALISIS_DIAGNOSTICO = [
+  { id: 'resumen-ejecutivo', file: 'resumen-ejecutivo.html', title: 'Resumen Ejecutivo', icon: 'ph ph-target', desc: 'Hallazgos principales, métricas clave y voces del equipo' },
+  { id: 'matriz-dolor-proceso', file: 'matriz-dolor-proceso.html', title: 'Matriz Dolor × Proceso', icon: 'ph ph-grid-four', desc: 'D1-D4 cruzado con los 7 roles — severidad y evidencia' },
+  { id: 'mapa-fricciones', file: 'mapa-fricciones.html', title: 'Mapa de Fricciones', icon: 'ph ph-fire', desc: 'Fricciones transversales y específicas por rol' },
+  { id: 'embudo-operativo', file: 'embudo-operativo.html', title: 'Embudo Operativo', icon: 'ph ph-funnel', desc: 'De la captación a la retención con métricas reales' },
+  { id: 'cadena-causal', file: 'cadena-causal.html', title: 'Cadena Causal', icon: 'ph ph-tree-structure', desc: 'Diagrama D1→D2→D3→D4→Retención con evidencia' }
+];
+
+const ANALISIS_BLUEPRINT = [
+  { id: 'modelo-datos', file: 'modelo-datos.html', title: 'Modelo de Datos', icon: 'ph ph-database', desc: '7 entidades con campos, relaciones y mapeo D1-D4' },
+  { id: 'flujos-to-be', file: 'flujos-to-be.html', title: 'Flujos To-Be', icon: 'ph ph-flow-arrow', desc: 'Cómo trabaja cada rol con APEX — antes vs después' },
+  { id: 'automatizaciones', file: 'automatizaciones.html', title: 'Automatizaciones', icon: 'ph ph-lightning', desc: '12 automatizaciones que eliminan fricciones documentadas' },
+  { id: 'fases-implementacion', file: 'fases-implementacion.html', title: 'Fases de Implementación', icon: 'ph ph-steps', desc: '4 fases D1→D2→D3→D4 con resultados medibles' },
+  { id: 'kpis-objetivo', file: 'kpis-objetivo.html', title: 'KPIs y Objetivos', icon: 'ph ph-chart-line-up', desc: '13 métricas actuales vs objetivos a 6 y 12 meses' }
+];
+
+// ── Client: Análisis Tab (3 capas) ──
+function loadAnalisis() {
+  const grid = document.getElementById('analisisSectionsGrid');
+  if (!grid) return;
+  grid.innerHTML = ANALISIS_SECTIONS.map(s => `
+    <div class="analisis-section-card" onclick="analisisOpenSection('${s.id}')">
+      <div class="section-icon"><i class="${s.icon}"></i></div>
+      <h3>${s.title}</h3>
+      <p>${s.desc}</p>
+    </div>
+  `).join('');
+}
+
+const _armcPaths = getAnalysisPaths('armc');
+const ANALISIS_SECTION_MAP = {
+  roles: { items: () => ANALISIS_ROLES, path: _armcPaths?.diagramas, title: 'Análisis por roles' },
+  diagnostico: { items: () => ANALISIS_DIAGNOSTICO, path: _armcPaths?.diagnostico, title: 'Diagnóstico integrado' },
+  blueprint: { items: () => ANALISIS_BLUEPRINT, path: _armcPaths?.blueprint, title: 'Blueprint de Sistema' }
+};
+
+function analisisOpenSection(sectionId) {
+  const section = ANALISIS_SECTION_MAP[sectionId];
+  if (!section) return;
+  const grid = document.getElementById('analisisRolesGrid');
+  grid.innerHTML = section.items().map(r => `
+    <div class="analisis-role-card" onclick="analisisOpenItem('${r.id}', '${sectionId}')">
+      <div class="role-icon"><i class="${r.icon}"></i></div>
+      <h3>${r.title}</h3>
+      <p>${r.desc}</p>
+    </div>
+  `).join('');
+  document.getElementById('analisisSectionTitle').textContent = section.title;
+  document.getElementById('analisis-sections').style.display = 'none';
+  document.getElementById('analisis-roles').style.cssText = '';
+}
+
+function analisisShowSections() {
+  document.getElementById('analisis-viewer').style.display = 'none';
+  document.getElementById('analisis-roles').style.display = 'none';
+  document.getElementById('analisis-sections').style.cssText = '';
+  document.getElementById('analisisIframe').src = 'about:blank';
+}
+
+function analisisShowRoles() {
+  document.getElementById('analisis-viewer').style.display = 'none';
+  document.getElementById('analisis-roles').style.cssText = '';
+  document.getElementById('analisisIframe').src = 'about:blank';
+}
+
+function analisisOpenItem(itemId, sectionId) {
+  const section = ANALISIS_SECTION_MAP[sectionId];
+  if (!section || !section.path) return;
+  const item = section.items().find(r => r.id === itemId);
+  if (!item) return;
+  document.getElementById('analisisIframe').src = section.path + item.file + '?v=' + Date.now();
+  document.getElementById('analisisViewerTitle').textContent = item.title;
+  document.getElementById('analisis-roles').style.display = 'none';
+  document.getElementById('analisis-viewer').style.cssText = '';
+}
+
+// ── Admin: User Detail Análisis (3 capas) ──
+function loadUdAnalisis() {
+  const grid = document.getElementById('udAnalisisSectionsGrid');
+  if (!grid) return;
+  grid.innerHTML = ANALISIS_SECTIONS.map(s => `
+    <div class="analisis-section-card" onclick="udAnalisisOpenSection('${s.id}')">
+      <div class="section-icon"><i class="${s.icon}"></i></div>
+      <h3>${s.title}</h3>
+      <p>${s.desc}</p>
+    </div>
+  `).join('');
+}
+
+function udAnalisisOpenSection(sectionId) {
+  const section = ANALISIS_SECTION_MAP[sectionId];
+  if (!section) return;
+  const grid = document.getElementById('udAnalisisRolesGrid');
+  grid.innerHTML = section.items().map(r => `
+    <div class="analisis-role-card" onclick="udAnalisisOpenItem('${r.id}', '${sectionId}')">
+      <div class="role-icon"><i class="${r.icon}"></i></div>
+      <h3>${r.title}</h3>
+      <p>${r.desc}</p>
+    </div>
+  `).join('');
+  document.getElementById('udAnalisisSectionTitle').textContent = section.title;
+  document.getElementById('ud-analisis-sections').style.display = 'none';
+  document.getElementById('ud-analisis-roles').style.cssText = '';
+}
+
+function udAnalisisShowSections() {
+  document.getElementById('ud-analisis-viewer').style.display = 'none';
+  document.getElementById('ud-analisis-roles').style.display = 'none';
+  document.getElementById('ud-analisis-sections').style.cssText = '';
+  document.getElementById('udAnalisisIframe').src = 'about:blank';
+}
+
+function udAnalisisShowRoles() {
+  document.getElementById('ud-analisis-viewer').style.display = 'none';
+  document.getElementById('ud-analisis-roles').style.cssText = '';
+  document.getElementById('udAnalisisIframe').src = 'about:blank';
+}
+
+function udAnalisisOpenItem(itemId, sectionId) {
+  const section = ANALISIS_SECTION_MAP[sectionId];
+  if (!section || !section.path) return;
+  const item = section.items().find(r => r.id === itemId);
+  if (!item) return;
+  document.getElementById('udAnalisisIframe').src = section.path + item.file + '?v=' + Date.now();
+  document.getElementById('udAnalisisViewerTitle').textContent = item.title;
+  document.getElementById('ud-analisis-roles').style.display = 'none';
+  document.getElementById('ud-analisis-viewer').style.cssText = '';
+}
+
+// ── Init ──
+init();

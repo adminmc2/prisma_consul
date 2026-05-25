@@ -2,6 +2,79 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-25] — v3.3.89
+
+### Sub-slice 3.2.5.e Bloque 3 F1-PLAN — `hub-analisis.js` MAPA + ANÁLISIS + init (CIERRE SLICE 3.2)
+
+**Último sub-sub-slice del bloque 3.2.5 y cierre del Slice 3.2 completo.**
+Cierra todos los acoplamientos pendientes y elimina el `<script>` inline
+del HTML por completo. **El Hub queda completamente modular.**
+
+- **`prisma-apex/hub-analisis.js`** — append (~250 líneas):
+  - `function init()` definición.
+  - MAPA: `MAPA_ROWS` (4 entradas inline) + `createMapa` con helpers
+    internas.
+  - ANÁLISIS: 3 catálogos (`ANALISIS_ROLES`, `ANALISIS_DIAGNOSTICO`,
+    `ANALISIS_BLUEPRINT`) + `ANALISIS_REGISTRY` + `getAnalysisPaths` +
+    `ANALISIS_SECTION_MAP` + `loadAnalisis` + `analisisShowSections` +
+    `analisisShowRoles` + `analisisOpenSection` + `analisisOpenItem` +
+    `loadUdAnalisis` + `udAnalisisShowSections` + `udAnalisisShowRoles` +
+    `udAnalisisOpenSection` + `udAnalisisOpenItem`.
+  - `init();` como **última línea ejecutable** del archivo.
+- **`prisma-apex/index.html`** — bloque 341-599 original eliminado.
+  **Etiquetas `<script>...</script>` eliminadas por completo** (líneas
+  331-600 originales). El HTML termina ahora con los 5 `<script src>` +
+  `</body></html>`.
+
+**Acoplamientos cerrados (todos los pendientes del Slice 3.2):**
+- `simShowCapa` → `createMapa` (último del simulador).
+- `switchTab` (en hub-tabs.js) → `loadAnalisis`, `analisisShowSections`,
+  `mountSimuladorShell`.
+- `switchUdTab` (en hub-tabs.js) → `udAnalisisShowSections`,
+  `loadUdAnalisis`, `mountSimuladorShell`.
+- `init()` → `clearSession`, `getToken`, `showPanel` (en hub-login.js).
+
+**Sin acoplamientos abiertos restantes. Hub completamente modular.**
+
+`init();` como última línea ejecutable garantiza que TODO está cargado
+antes de su ejecución (5 archivos `hub-*.js` en orden helpers → login →
+tabs → admin → analisis).
+
+### Estado tras el cierre del Slice 3.2 entero
+
+`prisma-apex/index.html`: **330 líneas** (era 3.830 al inicio del Bloque
+3). Reducción del **91.4%**. Cumple ampliamente el criterio PASS de
+F1-PLAN: ≥ 70% de reducción.
+
+`prisma-apex/hub-*.js`: 5 archivos modulares (helpers · login · tabs ·
+admin · analisis), ~1.179 líneas en el más grande (hub-analisis.js).
+
+Estructura final del Hub:
+- `prisma-apex/index.html` (330 líneas) — solo HTML + 5 `<script src>`.
+- `prisma-apex/hub.css` (972 líneas) — estilos.
+- `prisma-apex/hub-helpers.js` (30 líneas) — utilidades.
+- `prisma-apex/hub-login.js` (99 líneas) — auth/sesión.
+- `prisma-apex/hub-tabs.js` (52 líneas) — navegación.
+- `prisma-apex/hub-admin.js` (1.197 líneas) — admin + vistas panel.
+- `prisma-apex/hub-analisis.js` (1.179 líneas) — simulador + análisis + init.
+
+### Pendiente al cierre del Bloque 3
+
+- **Slice 3.3:** deduplicación `analisis*` / `udAnalisis*` con factoría
+  `crearControladorAnalisis(prefix)` (F1-PLAN §5).
+- **Bump MINOR `v3.4.0`** al cierre del Bloque 3.
+- **Corrección documental:** README.md:33 y :72 (deriva detectada por
+  revisor durante 3.2.5.d), sub-slice doc inmediato.
+
+Movimiento mecánico puro. Cuerpos byte a byte idénticos. Re-indentación
+top-level 4→0.
+
+Smoke local: `node --check hub-analisis.js` OK (1179 líneas);
+`/hub/hub-analisis.js` 200 application/javascript 63.5 KB; los 5 tags
+presentes en HTML; `<script>` inline ya no existe.
+
+Bump PATCH `v3.3.89` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-25] — v3.3.88
 
 ### Sub-slice 3.2.5.d Bloque 3 F1-PLAN — `hub-analisis.js` CAPA3
