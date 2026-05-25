@@ -1,6 +1,6 @@
 ---
 name: auditor-slice
-description: Lectura previa automatizada de un slice ya ejecutado, antes del PASS del revisor humano. Contrasta el diff contra las condiciones inviolables de OPERATIVA §0, CONTRATOS.md, MODELO-DOMINIO.md, el plan vigente (F1-PLAN) y el alcance declarado del slice. Devuelve un dictamen estructurado. NO sustituye al revisor humano definido en OPERATIVA §1 — solo prepara la lectura.
+description: Lectura previa automatizada de un slice ya ejecutado, antes del PASS del revisor humano. Contrasta el diff contra las condiciones inviolables de OPERATIVA §0, CONTRATOS.md, MODELO-DOMINIO.md, el plan vigente (si lo hay) y el alcance declarado del slice. Devuelve un dictamen estructurado. NO sustituye al revisor humano definido en OPERATIVA §1 — solo prepara la lectura.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
@@ -30,7 +30,7 @@ Si falta el alcance declarado, pídelo antes de auditar. Auditar sin alcance es 
 2. **Alcance declarado** — ¿el diff toca SOLO lo declarado? Toda expansión silenciosa de alcance es hallazgo.
 3. **Contratos** — `CONTRATOS.md`. ¿Rompe URLs públicas, endpoints API, esquema BD, paths hardcodeados? Si toca un contrato, ¿hay compensación (redirect, alias) o aprobación explícita?
 4. **Modelo de dominio** — `MODELO-DOMINIO.md`. ¿Coherente con entidades, relaciones, jerarquía Producto/Vertical/Engagement y separación canónico vs transitorio?
-5. **Plan vigente** — `docs/F1-PLAN.md`. ¿La acción está en el plan? Si no, es deriva LLM y se marca.
+5. **Plan vigente** — el plan abierto en cada momento (declarado por el chat invocante). Si no hay plan vigente, contrastas solo contra OPERATIVA §0 + CONTRATOS + MODELO-DOMINIO + alcance declarado del slice. F1 cerró en `v3.4.0`; su plan vive archivado en `docs/historico/F1-PLAN.md` (consulta solo lectura para contexto histórico, no como plan vigente).
 6. **Calidad mínima** — bump visible en los 4 puntos canónicos (footer `web/index.html`, login `prisma-apex/index.html`, cabecera `CHANGELOG.md`, "Versión actual" en `CLAUDE.md`) + entrada `CHANGELOG.md`, si el slice es publicable. Cabecera `Estado` / `Última verificación` en docs canónicos vigentes.
 
 ## Formato de salida obligatorio

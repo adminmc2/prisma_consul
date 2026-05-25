@@ -47,9 +47,14 @@ cualquier otro LLM) por igual.
 
 ### 0.3 Límite del acto creativo (no deriva LLM)
 
-- **No se hace nada que no esté en el plan vigente.** Plan vigente hoy:
-  [`docs/F1-PLAN.md`](F1-PLAN.md). Si una acción no está en el plan, **no se
-  ejecuta**: se para, se justifica al revisor y se espera decisión.
+- **No se hace nada que no esté en el plan vigente.** Plan vigente: el que
+  esté abierto en cada momento, declarado expresamente por el chat invocante.
+  F1 cerró en `v3.4.0` (2026-05-25); su plan vive archivado en
+  [`docs/historico/F1-PLAN.md`](historico/F1-PLAN.md). Si no hay plan abierto,
+  ninguna acción estructural, operativa o canónica se ejecuta sin abrir su
+  propio plan o slice acordado con el revisor. Si una acción no está en el
+  plan vigente, **no se ejecuta**: se para, se justifica al revisor y se
+  espera decisión.
 - Cada acción se **explica antes de ejecutarse**: qué se va a hacer, por qué, qué
   efecto tiene, qué podría romper. Sin justificación, no se ejecuta. El usuario no
   es especialista técnico — la explicación debe ser accesible y, cuando aplique,
@@ -114,8 +119,8 @@ OPERATIVA.md** y se escala al revisor.
 | `MODELO-DOMINIO.md` | Modelo conceptual de datos | vigente | cuando el modelo cambie |
 | `docs/NOMENCLATURA.md` | Reglas de naming de archivos cliente | vigente | si se reformula la convención |
 | `docs/GUIA-NUEVAS-SECCIONES.md` | Cómo añadir secciones al Hub (paso a paso operativo) | vigente con caducidad | cuando el paso a paso de código se reescriba al patrón vigente (afectado por Bloque 2 de F1) |
-| `docs/F1-PLAN.md` | Plan operativo vinculante de F1 | vigente con caducidad | al cierre de F1, se archiva en `docs/historico/` |
-| `docs/AUDITORIA-ARQUITECTONICA.md` | Diagnóstico arquitectónico (2026-05-23) | snapshot | al cierre de F1, se archiva en `docs/historico/` |
+| `docs/historico/F1-PLAN.md` | Plan operativo vinculante de F1 (archivado al cierre en `v3.4.0`, 2026-05-25) | histórico | — |
+| `docs/AUDITORIA-ARQUITECTONICA.md` | Diagnóstico arquitectónico (2026-05-23) | snapshot | condición de archivo cumplida (cierre de F1 en `v3.4.0`); movimiento físico pendiente de decisión del revisor |
 | `docs/PROPUESTA-SIMULADOR-NATIVO-HUB.md` | Definición técnica del simulador | mixto | al completar la Línea C (poblado funcional), se archiva o se reabsorbe en el README del módulo |
 | `REGISTRO-RUTAS.md` | Spec del slice de registro de rutas (cerrado v3.2.46-48 + alineación v3.3.31) | histórico | candidato a mover a `docs/historico/` en un slice futuro |
 | `REVIEW-PRISMA-APEX.md` | Revisión cerrada del Sprint A | histórico cerrado | ya histórico; intocable |
@@ -251,13 +256,15 @@ retirada**. Sin condición de retirada, es deuda invisible.
 
 ## 10. Frentes de trabajo
 
-- **F1 — reestructuración técnica de la plataforma.** Trabajo estructural y
-  operativo, **no de cambio de producto**: separar mejor web pública, Hub/APEX,
-  contenido cliente y serving; reducir mezcla y duplicación; empezar a desmontar el
-  monolito del Hub; preparar una base más segura y mantenible. **No cambia lógica
-  funcional** salvo lo imprescindible para soportar la nueva estructura. Multi-cliente
-  y rediseño del proceso APEX quedan **fuera** de F1. Plan operativo detallado y
-  vinculante: [`docs/F1-PLAN.md`](F1-PLAN.md). Dueño: ejecutor 1 + arbitraje del revisor.
+- **F1 — reestructuración técnica de la plataforma.** ✅ **Cerrado en `v3.4.0`
+  (2026-05-25).** Trabajo estructural y operativo, **no de cambio de producto**:
+  separó mejor web pública, Hub/APEX, contenido cliente y serving; redujo mezcla
+  y duplicación; desmontó el monolito del Hub (reducción del 91.4%); preparó
+  base más segura y mantenible. No cambió lógica funcional salvo lo imprescindible
+  para soportar la nueva estructura. Multi-cliente y rediseño del proceso APEX
+  quedaron **fuera** de F1. Plan operativo archivado en
+  [`docs/historico/F1-PLAN.md`](historico/F1-PLAN.md). Dueño durante F1: ejecutor 1
+  + arbitraje del revisor.
 - **F2 — blueprint ARMC.** Frente de contenido. Dueño: chat contenido blueprint.
 - **F3 — simulador.** Dos mitades: contenido del flujo (chat contenido simulador)
   + integración/presentación en el Hub (ejecutor 1).
@@ -269,5 +276,5 @@ F3 avanzan encajados en lo que F1 haya congelado.
 
 1. ✅ Auditoría documental + redacción de este `OPERATIVA.md`.
 2. ✅ Auditoría arquitectónica del repo ([`docs/AUDITORIA-ARQUITECTONICA.md`](AUDITORIA-ARQUITECTONICA.md), 2026-05-23).
-3. F1 — reestructuración técnica de la plataforma (ver [`docs/F1-PLAN.md`](F1-PLAN.md)). En curso.
-4. F2 + F3 en paralelo (sin tocar estructura), dentro de la forma que F1 deje.
+3. ✅ F1 — reestructuración técnica de la plataforma. Cerrado en `v3.4.0` (2026-05-25). Plan archivado: [`docs/historico/F1-PLAN.md`](historico/F1-PLAN.md).
+4. **Pendiente decisión del revisor:** evaluar apertura de Nivel 2 (auditoría arquitectónica) **o** avance paralelo de F2 (blueprint ARMC) + F3 (simulador). Ninguno está abierto hoy.

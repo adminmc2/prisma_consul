@@ -2,6 +2,75 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-25] — v3.4.1
+
+### Cierre formal del F1 — `docs/F1-PLAN.md` archivado, referencias actualizadas
+
+Acto documental que cierra formalmente el frente **F1 — reestructuración
+técnica de la plataforma**, cuyo trabajo funcional concluyó con `v3.4.0`
+(cierre del Bloque 3) hace minutos.
+
+**Acciones del commit:**
+
+- **`git mv docs/F1-PLAN.md docs/historico/F1-PLAN.md`** — el plan operativo
+  (declarado en `OPERATIVA.md §0.5` como "vigente con caducidad") cumple su
+  condición de archivo al cerrarse F1. Movimiento conserva historia.
+- **`CLAUDE.md` raíz:** sustituido el bloque "Qué se está trabajando ahora
+  mismo" por una nota explícita de cierre F1 con puntero al histórico y la
+  regla de que cualquier acción estructural nueva requiere abrir su propio
+  plan o slice acordado con el revisor.
+- **`prisma-apex/CLAUDE.md`:** sección "Hub — monolito pendiente"
+  reescrita a "Hub — modular desde `v3.4.0`" listando los 5 archivos
+  `hub-*.js` + `hub.css`, orden de carga obligatorio y puntero al
+  histórico. La nota sobre el simulador queda reformulada sin referencia
+  al plan archivado.
+- **`.claude/agents/auditor-slice.md`:** descripción y paso 5 del orden
+  de auditoría actualizados — el subagente ya no asume F1-PLAN como
+  "plan vigente"; lo recibe del chat invocante. Sin plan vigente
+  contrasta solo contra OPERATIVA §0 + CONTRATOS + MODELO-DOMINIO + el
+  alcance declarado del slice.
+- **`docs/OPERATIVA.md`** — 4 ajustes:
+  - **§0.3:** "Plan vigente" deja de ser F1-PLAN; pasa a "el que esté
+    abierto en cada momento". Sin plan abierto, ninguna acción
+    estructural se ejecuta sin nuevo acuerdo con el revisor.
+  - **§0.5 (mapa de documentos):** fila `docs/F1-PLAN.md` actualizada a
+    `docs/historico/F1-PLAN.md` con ciclo de vida "histórico". Fila
+    `docs/AUDITORIA-ARQUITECTONICA.md` actualizada para reflejar que su
+    condición de archivo (cierre de F1) ya está cumplida, pero el
+    movimiento físico queda pendiente de decisión del revisor (no se
+    incluye en este commit por no estar en el plan aprobado).
+  - **§10 (frente F1):** marcado como cerrado en `v3.4.0` (2026-05-25)
+    con resumen retrospectivo y puntero al plan archivado.
+  - **§11 (secuencia vigente):** entrada 3 pasa a "✅ F1 cerrado"; entrada
+    4 reescrita como "Pendiente decisión del revisor: Nivel 2 o F2+F3".
+
+**Estado del repo tras este commit:**
+
+- F1 cerrado formalmente, sin plan vigente abierto.
+- Sin referencias rotas a `docs/F1-PLAN.md` desde archivos vivos
+  (verificado con `grep -rn`).
+- Producción (`main`) intacta en `v3.4.0`; este cierre formal vive
+  solo en `dev` por decisión explícita del revisor (Opción A).
+
+**Decisión pendiente del revisor** (registrada en `OPERATIVA.md §11`):
+- Nivel 2 (auditoría arquitectónica), o
+- Avance paralelo F2 (blueprint ARMC) + F3 (simulador).
+
+### Resumen retrospectivo de F1 entero
+
+| Bloque | Cierre | Resultado clave |
+|---|---|---|
+| Bloque 0 — Cierre del bloque documental | `v3.3.71` | Cabeceras de estado, anti-drift hook + skill |
+| Bloque 1 — Tooling y método Claude Code | (varios) | Subagentes `auditor-slice` + `auditor-rutas`, hook validador-rutas-md activo. Slice 1.2 aplazado con trigger. |
+| Bloque 2 — Saneamiento del contexto Claude Code | `v3.3.73` | `CLAUDE.md` raíz de 431 → 145 líneas; instrucciones por superficie en `prisma-apex/`, `server/`, `docs/` |
+| Bloque 3 — Saneamiento del monolito del Hub | `v3.4.0` | `prisma-apex/index.html` 3.830 → 330 líneas (−91.4%). 5 archivos modulares `hub-*.js` + `hub.css`. Deduplicación `analisis*`/`udAnalisis*` con factoría. |
+
+Bumps consumidos durante F1: aprox. `v3.3.71` → `v3.4.1` (este commit).
+
+Sin cambios de código. Sin cambios en producción. Bump PATCH `v3.4.1`
+por `docs/OPERATIVA.md §0.4` (push a `origin/dev` requiere bump visible
+en los 4 puntos canónicos).
+
 ## [2026-05-25] — v3.4.0
 
 ### Cierre formal del Bloque 3 del F1-PLAN — saneamiento del monolito del Hub

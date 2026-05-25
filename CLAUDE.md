@@ -12,8 +12,11 @@
 > capas, escalado, handoff, validación). En conflicto sobre *cómo se trabaja*,
 > prevalece `OPERATIVA.md`.
 >
-> **Qué se está trabajando ahora mismo:** [`docs/F1-PLAN.md`](docs/F1-PLAN.md) —
-> plan operativo vinculante de F1 (reestructuración técnica de la plataforma).
+> **Plan vigente:** ninguno abierto. F1 (reestructuración técnica) cerrado en
+> `v3.4.0` (2026-05-25); plan archivado en
+> [`docs/historico/F1-PLAN.md`](docs/historico/F1-PLAN.md). Cualquier acción
+> estructural nueva requiere abrir su propio plan o slice acordado con el
+> revisor antes de ejecutar.
 
 ## Project Overview
 
@@ -130,7 +133,7 @@ DNS y proxy gestionados desde Cloudflare (nameservers `bruce.ns.cloudflare.com`,
 
 ## Versionado
 
-Versionado Semántico (`MAJOR.MINOR.PATCH`). **Versión actual:** `v3.4.0`.
+Versionado Semántico (`MAJOR.MINOR.PATCH`). **Versión actual:** `v3.4.1`.
 
 En cada cambio publicable actualizar la versión en los **4 puntos canónicos**: (1) footer de `web/index.html` (`footer__bottom`, en `data-es`, `data-en` y texto visible); (2) login de `prisma-apex/index.html` (`.welcome-version`); (3) cabecera de [`CHANGELOG.md`](./CHANGELOG.md) (entrada nueva); (4) este campo "Versión actual".
 
