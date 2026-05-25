@@ -1,11 +1,16 @@
 # F1 — Reestructuración técnica de la plataforma
 
-> **Estado:** plan operativo activo · **Apertura:** 2026-05-23 · **Vigencia:** hasta el cierre de F1.
-> Este documento es **vinculante** durante F1. Toda decisión estructural se contrasta contra
-> él. Las modificaciones del plan requieren arbitraje del revisor.
+> **⚠ DOCUMENTO ARCHIVADO.** F1 cerró el 2026-05-25 en `v3.4.0`. Este archivo se
+> conserva como histórico operativo del plan. Para el estado actual del proyecto,
+> ver `docs/OPERATIVA.md §11`. NO es plan vigente.
 >
-> Fuentes: propuesta del revisor (2026-05-23) + `docs/AUDITORIA-ARQUITECTONICA.md` +
-> `docs/OPERATIVA.md`.
+> **Estado original al cierre:** plan operativo activo (durante F1, del 2026-05-23
+> al 2026-05-25). Vigencia con caducidad cumplida íntegramente. Este documento fue
+> vinculante durante F1: toda decisión estructural se contrastaba contra él, y las
+> modificaciones del plan requerían arbitraje del revisor.
+>
+> Fuentes originales: propuesta del revisor (2026-05-23) +
+> `docs/AUDITORIA-ARQUITECTONICA.md` + `docs/OPERATIVA.md`.
 
 ## 1. Definición y alcance
 

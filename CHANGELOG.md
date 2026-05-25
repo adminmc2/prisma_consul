@@ -2,6 +2,27 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-25] — v3.4.2
+
+### Higiene documental — banner de cierre en `docs/historico/F1-PLAN.md`
+
+Hallazgo no-bloqueante del revisor tras el cierre formal de F1 en `v3.4.1`:
+la cabecera del archivo `docs/historico/F1-PLAN.md` conservaba textualmente
+`**Estado:** plan operativo activo`. Aunque la ubicación física
+(`docs/historico/`) y la declaración explícita en `OPERATIVA §0.5` ya marcan
+su estado real, leído aislado el archivo podía confundir.
+
+- **`docs/historico/F1-PLAN.md`** — cabecera: añadido banner `⚠ DOCUMENTO
+  ARCHIVADO` con fecha de cierre (`2026-05-25`, `v3.4.0`) + puntero a
+  `docs/OPERATIVA.md §11`. El estado original ("plan operativo activo
+  durante F1") y las fuentes originales se conservan **literalmente** como
+  contexto histórico, reformulados solo en tiempo verbal (presente → pasado).
+  No se reescribe el cuerpo del documento. No se borra historia.
+
+Sin cambios de código. Sin cambios en producción.
+
+Bump PATCH `v3.4.2` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-25] — v3.4.1
 
 ### Cierre formal del F1 — `docs/F1-PLAN.md` archivado, referencias actualizadas
