@@ -2,6 +2,32 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-25] — v3.3.90
+
+### Corrección documental README post-Slice 3.2
+
+Tras cierre del Slice 3.2 del Bloque 3 F1, el Hub vive distribuido en
+7 archivos (`index.html` + `hub.css` + 5 `hub-*.js`). El árbol del
+`README.md` solo listaba `index.html`, lo cual inducía a error en
+cualquier lectura post-3.2.
+
+- **`README.md`** — sección `prisma-apex/` en el árbol de estructura:
+  - `index.html`: nota refinada `# Hub — entrypoint SPA (carga los 5
+    hub-*.js + hub.css, servida en /hub)`.
+  - **Añadidas 6 entradas nuevas:** `hub.css`, `hub-helpers.js`,
+    `hub-login.js`, `hub-tabs.js`, `hub-admin.js`, `hub-analisis.js`,
+    cada una con una nota breve de su dominio.
+  - `simulador-ux/` comentario refinado: aclara que son **assets**
+    JSON/SQL/MD del módulo nativo, no las factories (que viven ahora
+    en `hub-analisis.js`).
+  - Cabecera "Última verificación": `2026-05-23` → `2026-05-25`.
+
+Sin cambios de código. Hallazgo detectado por revisor durante el cierre
+del Slice 3.2 y registrado para corrección inmediata antes de abrir el
+Slice 3.3.
+
+Bump PATCH `v3.3.90` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-25] — v3.3.89
 
 ### Sub-slice 3.2.5.e Bloque 3 F1-PLAN — `hub-analisis.js` MAPA + ANÁLISIS + init (CIERRE SLICE 3.2)

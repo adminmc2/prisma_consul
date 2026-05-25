@@ -1,6 +1,6 @@
 # PRISMA Consul — Web Platform
 
-> **Estado:** vigente · **Última verificación:** 2026-05-23.
+> **Estado:** vigente · **Última verificación:** 2026-05-25.
 > Portada técnica del repo. Se actualiza cuando la estructura mayor cambia.
 > Ciclo de vida y mapa de todos los documentos: [`docs/OPERATIVA.md` §0.5](docs/OPERATIVA.md#05-mapa-único-de-documentos-y-ciclo-de-vida).
 
@@ -41,10 +41,16 @@ Web de marketing + formulario de descubrimiento APEX + sistema interno Prisma AP
 │       ├── team/                 # Fotos del equipo
 │       └── videos/               # Videos de marketing
 ├── prisma-apex/                  # Sistema interno Prisma APEX
-│   ├── index.html                # Hub — entrypoint (SPA, ~servida en /hub)
+│   ├── index.html                # Hub — entrypoint SPA (carga los 5 hub-*.js + hub.css, servida en /hub)
+│   ├── hub.css                   # Estilos del Hub
+│   ├── hub-helpers.js            # Utilidades transversales (formato, escape, iconos)
+│   ├── hub-login.js              # Auth, sesión y arranque del panel
+│   ├── hub-tabs.js               # Navegación entre pestañas
+│   ├── hub-admin.js              # Dominio admin + vistas del panel (compartidas por viewAsClient)
+│   ├── hub-analisis.js           # Simulador (módulo nativo) + análisis (iframes ARMC) + init
 │   ├── core/                     # Núcleo común a todos los clientes
 │   │   ├── discovery-engine/     # Formulario APEX Discovery (servido en /apex)
-│   │   └── simulador-ux/         # Simulador UX — módulo interno del Hub
+│   │   └── simulador-ux/         # Simulador UX — assets (JSON/SQL/MD del módulo nativo)
 │   └── clientes-publicados/      # Entregables publicados por cliente
 │       └── armc/                 # ARMC — primer cliente real
 ├── shared/                       # Recursos compartidos entre apps
