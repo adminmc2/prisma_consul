@@ -2,6 +2,61 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-25] — v3.3.86
+
+### Sub-slice 3.2.5.b Bloque 3 F1-PLAN — `hub-analisis.js` CAPA1 (dominio completo)
+
+Segundo sub-sub-slice del bloque 3.2.5. Mueve el dominio CAPA1 completo:
+catálogo + state + factory + listener global de resize.
+
+**EXCEPCIÓN DE TAMAÑO EXPLÍCITA**, aprobada por revisor por indivisibilidad
+del dominio:
+- ~349 líneas totales, excede límite F1-PLAN.md:165 (300 netas).
+- `createCapa1` es factory con closure de 229 líneas que envuelve ~22
+  funciones internas compartiendo 12+ variables del closure.
+- `window.addEventListener('resize', ...)` (10 líneas) consume el contrato
+  `.sim-capa1` + `__capa1.refresh()` expuesto por la factory; separarlo
+  sería acoplamiento cross-file no declarado.
+- Indivisible sin refactor (prohibido por F1-PLAN.md:127).
+- Fragmentación cosmética rechazada en presentación previa por no resolver
+  el problema raíz.
+
+- **`prisma-apex/hub-analisis.js`** — append (~349 líneas):
+  - `CAPA1_NODES` (catálogo de **4 nodos** del flujo: `lead_entry_channel`,
+    `web_contact_form_received`, `lead_capture_whatsapp`, `lead_captured`).
+  - `capa1Uid` let.
+  - `createCapa1(mountEl, opts)` — factory completa con ~22 helpers
+    internos (`escapeHtml`, `log`, `clearLogs`, `getIconForNode`,
+    `applyZoom`, `zoomBy`, `zoomReset`, `toggleFullscreen`, `attachDrag`,
+    `renderDataBlock`, `createActionButton`, `renderCrossLinks`,
+    `renderActions`, `renderNodes`, `applyActivePathState`, `drawLines`,
+    `focusNode`, `handleAction`, `resetSimulation`, `focusItem`).
+  - `window.addEventListener('resize')` — listener global único que
+    redibuja todas las instancias `.sim-capa1` vivas vía
+    `__capa1.refresh()`.
+- **`prisma-apex/index.html`** — bloque 361-709 original eliminado del
+  `<script>` inline.
+
+**Acoplamientos cerrados por este sub-slice:**
+- `simShowCapa` (en hub-analisis.js desde .a) → `createCapa1` (ahora aquí).
+- Listener `resize` ↔ `.sim-capa1` + `__capa1.refresh()`: ambos extremos
+  ahora en el mismo archivo.
+
+**Acoplamientos abiertos restantes:** `simShowCapa` → `createCapa2`,
+`createCapa3`, `createMapa` (aún inline hasta .c/.d/.e).
+
+**Top-level executable:** el listener `resize` se registra **una sola vez**
+al cargar `hub-analisis.js` (no por instancia). Funciona porque el archivo
+se carga al final del body.
+
+Movimiento mecánico puro. Cuerpos byte a byte idénticos. Re-indentación
+top-level 4→0 (internas del closure conservan indent relativo).
+
+Smoke local: `node --check hub-analisis.js` OK (421 líneas); inline OK;
+`/hub/hub-analisis.js` 200 application/javascript 21.7 KB.
+
+Bump PATCH `v3.3.86` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-24] — v3.3.85
 
 ### Sub-slice 3.2.5.a Bloque 3 F1-PLAN — `hub-analisis.js` inicial (SIM shell)
