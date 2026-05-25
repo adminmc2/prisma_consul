@@ -419,3 +419,267 @@ window.addEventListener('resize', () => {
   });
 });
 
+
+// ── Capa 2 nativa (B3) — Diccionario operativo ──
+// Consume los JSON desde la ruta legacy (sin alias todavía, B3). Caché de
+// módulo: las dos superficies (usuario/admin) comparten la descarga.
+const CAPA2_BASE = '/core/simulador-ux/capa-2-diccionario/';
+const CAPA2_FORM_FILES = ['web-contact-form', 'lead-capture'];
+const CAPA2_EVENT_FILES = ['lead-captured'];
+const _capa2Cache = {};
+function capa2LoadJSON(path) {
+  if (!_capa2Cache[path]) {
+    _capa2Cache[path] = fetch(CAPA2_BASE + path).then(r => {
+      if (!r.ok) throw new Error(path);
+      return r.json();
+    }).catch(err => {
+      // No envenenar la caché: ante fallo transitorio se borra la entrada
+      // para que un reintento dentro de la sesión vuelva a descargar.
+      delete _capa2Cache[path];
+      throw err;
+    });
+  }
+  return _capa2Cache[path];
+}
+
+// Factory: instancia aislada de la Capa 2 en mountEl. CSS/JS scopeados;
+// reutilizable en #tab-simulador y #ud-simulador sin colisión de estado.
+function createCapa2(mountEl, opts) {
+  opts = opts || {};
+  mountEl.classList.add('sim-capa2');
+  mountEl.innerHTML =
+    '<aside class="capa2-sidebar"><div class="side-head">' +
+      '<h2><i class="ph ph-book-bookmark"></i> Diccionario ARMC</h2>' +
+      '<div class="search-box"><i class="ph ph-magnifying-glass"></i>' +
+      '<input class="capa2-search" type="text" placeholder="Buscar&hellip;" autocomplete="off"></div>' +
+    '</div><nav class="capa2-tree"></nav></aside>' +
+    '<main class="capa2-detail"><div class="empty">Cargando&hellip;</div></main>';
+
+  const state = { catalogo: null, forms: [], events: [], mappings: null, tree: [], activeId: null, collapsed: new Set(), search: '' };
+  const treeEl = mountEl.querySelector('.capa2-tree');
+  const detailEl = mountEl.querySelector('.capa2-detail');
+  const searchEl = mountEl.querySelector('.capa2-search');
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function buildTree() {
+    state.tree = [
+      { id: 'cat-catalogo', label: 'Catálogo', icon: 'ph-list-bullets', items: [
+        { id: 'catalogo-demandas', label: 'Demandas (25)', icon: 'ph-target', kind: 'demandas' },
+        { id: 'catalogo-lineas', label: 'Líneas de servicio (5)', icon: 'ph-stack', kind: 'lineas' }
+      ] },
+      { id: 'cat-forms', label: 'Formularios', icon: 'ph-clipboard-text',
+        items: state.forms.map(f => ({ id: 'form-' + f.id, label: f.id, icon: 'ph-clipboard-text', kind: 'form', payload: f })) },
+      { id: 'cat-events', label: 'Eventos', icon: 'ph-lightning',
+        items: state.events.map(e => ({ id: 'event-' + e.id, label: e.id, icon: 'ph-lightning', kind: 'event', payload: e })) },
+      { id: 'cat-mappings', label: 'Mapeos', icon: 'ph-database', items: [
+        { id: 'mappings-forms', label: 'Formularios → BD', icon: 'ph-arrow-right', kind: 'mappings-forms' },
+        { id: 'mappings-events', label: 'Eventos → BD', icon: 'ph-arrow-right', kind: 'mappings-events' }
+      ] }
+    ];
+  }
+  function matchesSearch(label) {
+    if (!state.search) return true;
+    return label.toLowerCase().includes(state.search.toLowerCase());
+  }
+  function renderTree() {
+    treeEl.innerHTML = state.tree.map(cat => {
+      const items = cat.items.filter(it => matchesSearch(it.label));
+      if (state.search && items.length === 0) return '';
+      const collapsed = state.collapsed.has(cat.id) ? 'collapsed' : '';
+      const itemsHtml = items.map(it => {
+        const active = state.activeId === it.id ? 'active' : '';
+        return `<div class="item ${active}" data-id="${it.id}"><i class="ph ${it.icon}"></i><span>${escapeHtml(it.label)}</span></div>`;
+      }).join('');
+      return `<div class="cat ${collapsed}" data-cat="${cat.id}">` +
+        `<div class="cat-head"><i class="ph ph-caret-down chev"></i><i class="ph ${cat.icon}"></i><span>${cat.label}</span><span class="cat-count">${cat.items.length}</span></div>` +
+        `<div class="cat-items">${itemsHtml}</div></div>`;
+    }).join('');
+    treeEl.querySelectorAll('.cat-head').forEach(el => {
+      el.addEventListener('click', () => {
+        const id = el.parentElement.dataset.cat;
+        if (state.collapsed.has(id)) state.collapsed.delete(id); else state.collapsed.add(id);
+        renderTree();
+      });
+    });
+    treeEl.querySelectorAll('.item').forEach(el => {
+      el.addEventListener('click', () => {
+        state.activeId = el.dataset.id;
+        renderTree();
+        renderDetail();
+      });
+    });
+  }
+  function findItem(id) {
+    for (const c of state.tree) {
+      for (const it of c.items) { if (it.id === id) return it; }
+    }
+    return null;
+  }
+  function header(kicker, title, chips) {
+    chips = chips || [];
+    return '<div class="detail-head"><div class="detail-kicker">' + escapeHtml(kicker) + '</div>' +
+      '<h1 class="detail-title">' + escapeHtml(title) + '</h1>' +
+      '<div class="chips">' + chips.map(c => `<span class="chip ${c.soft ? 'soft' : ''}">${escapeHtml(c.label)}</span>`).join('') + '</div></div>';
+  }
+  function navChip(label, tab, itemId, soft) {
+    return `<button type="button" class="chip ${soft ? 'soft' : ''}" data-nav-tab="${tab}" data-nav-item="${escapeHtml(itemId)}">` +
+      `<i class="ph ph-arrow-square-out" style="margin-right:4px;font-size:0.78rem"></i>${escapeHtml(label)}</button>`;
+  }
+  function renderDemandas(host) {
+    const rows = state.catalogo.opciones;
+    host.innerHTML = header('Catálogo', 'Demandas (25)', [{ label: 'fuente: catalogo-demandas.json', soft: true }]) +
+      '<div class="panel-filter"><input class="capa2-demandas-filter" placeholder="Filtrar por frase o línea de servicio…" autocomplete="off">' +
+      '<span class="count capa2-demandas-count">' + rows.length + ' / ' + rows.length + '</span></div>' +
+      '<table class="data"><thead><tr><th>#</th><th>Frase</th><th>Líneas</th><th>Tratamientos</th></tr></thead><tbody class="capa2-demandas-body"></tbody></table>';
+    const body = host.querySelector('.capa2-demandas-body');
+    const count = host.querySelector('.capa2-demandas-count');
+    const draw = (q) => {
+      const filtered = rows.filter(r => {
+        if (!q) return true;
+        const t = q.toLowerCase();
+        return r.frase.toLowerCase().includes(t) || r.lineas_servicio.some(l => l.toLowerCase().includes(t));
+      });
+      body.innerHTML = filtered.map(r =>
+        '<tr><td><code>' + r.id + '</code></td><td>' + escapeHtml(r.frase) + '</td>' +
+        '<td>' + r.lineas_servicio.map(l => `<span class="tag">${escapeHtml(l)}</span>`).join('') + '</td>' +
+        '<td style="color:#b7c7dd;font-size:0.84rem">' + escapeHtml(r.tratamientos) + '</td></tr>'
+      ).join('') || '<tr><td colspan="4" class="empty">Sin resultados</td></tr>';
+      count.textContent = filtered.length + ' / ' + rows.length;
+    };
+    draw('');
+    host.querySelector('.capa2-demandas-filter').addEventListener('input', e => draw(e.target.value));
+  }
+  function renderLineas(host) {
+    const lineas = state.catalogo.lineas_servicio;
+    host.innerHTML = header('Catálogo', 'Líneas de servicio (5)', [{ label: 'fuente: catalogo-demandas.json', soft: true }]) +
+      '<table class="data"><thead><tr><th>Línea</th><th>Descripción</th></tr></thead><tbody>' +
+      lineas.map(l => `<tr><td><code>${escapeHtml(l.nombre)}</code></td><td>${escapeHtml(l.descripcion)}</td></tr>`).join('') +
+      '</tbody></table>';
+  }
+  function renderForm(host, f) {
+    const chips = [{ label: 'canal: ' + f.canal }, { label: 'paso: ' + f.paso, soft: true }];
+    if (f.dispara_evento) chips.push({ label: 'evento: ' + f.dispara_evento });
+    if (f.salida) chips.push({ label: 'salida: ' + f.salida, soft: true });
+    if (f.version) chips.push({ label: 'v' + f.version, soft: true });
+    const persist = state.mappings.forms[f.id];
+    const traceLinks = [navChip('← Capa 1: ' + f.paso, 1, 'node-' + f.paso, false)];
+    if (persist) traceLinks.push(navChip('→ Capa 3: ' + persist.tabla_principal, 3, 'table-' + persist.tabla_principal, true));
+    host.innerHTML = header('Formulario', f.nombre, chips) +
+      '<section class="block"><h3>Trazabilidad</h3><div class="chips">' + traceLinks.join('') + '</div></section>';
+    host.innerHTML += '<section class="block"><h3>Campos (input de captura)</h3>' +
+      '<table class="data"><thead><tr><th>Nombre</th><th>Tipo</th><th>Obligatorio</th><th>Restricciones</th><th>Ejemplo</th></tr></thead><tbody>' +
+      f.campos.map(c => {
+        const restr = [];
+        if (c.min !== undefined) restr.push('min: ' + c.min);
+        if (c.max !== undefined) restr.push('max: ' + c.max);
+        if (c.min_items !== undefined) restr.push('min items: ' + c.min_items);
+        if (c.max_items !== undefined) restr.push('max items: ' + c.max_items);
+        if (c.pattern) restr.push('pattern: <code>' + escapeHtml(c.pattern) + '</code>');
+        if (c.nullable) restr.push('nullable');
+        if (c.fuente) restr.push('fuente: <code>' + escapeHtml(c.fuente) + '</code>');
+        return '<tr><td><code>' + escapeHtml(c.nombre) + '</code></td><td>' + escapeHtml(c.tipo) + '</td>' +
+          '<td>' + (c.obligatorio ? '<span class="yes">sí</span>' : '<span class="no">no</span>') + '</td>' +
+          '<td style="font-size:0.82rem;color:#b7c7dd">' + (restr.join(' · ') || '—') + '</td>' +
+          '<td style="font-size:0.82rem;color:#b7c7dd">' + (c.ejemplo !== undefined ? '<code>' + escapeHtml(JSON.stringify(c.ejemplo)) + '</code>' : '—') + '</td></tr>';
+      }).join('') + '</tbody></table></section>' +
+      (f.genera && f.genera.length ? '<section class="block"><h3>Genera (atributos asignados por el sistema)</h3>' +
+        '<table class="data"><thead><tr><th>Nombre</th><th>Tipo</th><th>Descripción</th></tr></thead><tbody>' +
+        f.genera.map(g => `<tr><td><code>${escapeHtml(g.nombre)}</code></td><td>${escapeHtml(g.tipo)}</td><td style="color:#b7c7dd;font-size:0.86rem">${escapeHtml(g.descripcion || '')}</td></tr>`).join('') +
+        '</tbody></table></section>' : '') +
+      (f.derivados && f.derivados.length ? '<section class="block"><h3>Derivados</h3>' +
+        '<table class="data"><thead><tr><th>Nombre</th><th>Origen</th></tr></thead><tbody>' +
+        f.derivados.map(d => `<tr><td><code>${escapeHtml(d.nombre)}</code></td><td>${escapeHtml(d.origen)}</td></tr>`).join('') +
+        '</tbody></table></section>' : '') +
+      (f.reglas && f.reglas.length ? '<section class="block"><h3>Reglas</h3><ul class="simple">' +
+        f.reglas.map(r => `<li>${escapeHtml(r)}</li>`).join('') + '</ul></section>' : '') +
+      (persist ? '<section class="block"><h3>Persistencia</h3><table class="data"><tbody>' +
+        '<tr><th style="width:200px">Tabla principal</th><td><code>' + escapeHtml(persist.tabla_principal) + '</code></td></tr>' +
+        (persist.tabla_secundaria ? '<tr><th>Tabla secundaria</th><td><code>' + escapeHtml(persist.tabla_secundaria) + '</code></td></tr>' : '') +
+        '<tr><th>Columnas</th><td>' + persist.columnas.map(c => `<code>${escapeHtml(c)}</code>`).join(' ') + '</td></tr>' +
+        '<tr><th>Eventos asociados</th><td>' + persist.eventos.map(e => `<span class="tag">${escapeHtml(e)}</span>`).join('') + '</td></tr>' +
+        '</tbody></table></section>' : '');
+  }
+  function renderEvent(host, e) {
+    const origenStr = Array.isArray(e.origen) ? e.origen.join(', ') : e.origen;
+    const chips = [{ label: 'paso: ' + e.paso, soft: true }, { label: 'origen: ' + origenStr }];
+    const eventMap = state.mappings.events[e.id];
+    const traceLinks = [navChip('← Capa 1: ' + e.paso, 1, 'node-' + e.paso, false)];
+    const origenArr = Array.isArray(e.origen) ? e.origen : (e.origen ? [e.origen] : []);
+    origenArr.forEach(o => traceLinks.push(navChip('↑ Form: ' + o, 2, 'form-' + o, false)));
+    if (eventMap && eventMap.tablas) eventMap.tablas.forEach(t => traceLinks.push(navChip('→ Capa 3: ' + t, 3, 'table-' + t, true)));
+    host.innerHTML = header('Evento', e.id, chips) +
+      '<section class="block"><h3>Trazabilidad</h3><div class="chips">' + traceLinks.join('') + '</div></section>';
+    host.innerHTML += '<section class="block"><h3>Destino</h3><div>' +
+      e.destino.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('') + '</div></section>' +
+      '<section class="block"><h3>Payload mínimo</h3><ul class="simple">' +
+      e.payload_minimo.map(p => `<li><code>${escapeHtml(p)}</code></li>`).join('') + '</ul></section>' +
+      (e.payload_opcional && e.payload_opcional.length ? '<section class="block"><h3>Payload opcional</h3><ul class="simple">' +
+        e.payload_opcional.map(p => `<li><code>${escapeHtml(p)}</code></li>`).join('') + '</ul></section>' : '');
+  }
+  function renderMappingsForms(host) {
+    const entries = Object.entries(state.mappings.forms);
+    host.innerHTML = header('Mapeos', 'Formularios → Base de datos', [{ label: 'fuente: mappings.json', soft: true }]) +
+      '<table class="data"><thead><tr><th>Formulario</th><th>Tabla principal</th><th>Tabla secundaria</th><th>Eventos</th></tr></thead><tbody>' +
+      entries.map(([id, def]) =>
+        '<tr><td><code>' + escapeHtml(id) + '</code></td><td><code>' + escapeHtml(def.tabla_principal) + '</code></td>' +
+        '<td>' + (def.tabla_secundaria ? '<code>' + escapeHtml(def.tabla_secundaria) + '</code>' : '<span class="no">—</span>') + '</td>' +
+        '<td>' + def.eventos.map(e => `<span class="tag">${escapeHtml(e)}</span>`).join('') + '</td></tr>'
+      ).join('') + '</tbody></table>';
+  }
+  function renderMappingsEvents(host) {
+    const entries = Object.entries(state.mappings.events);
+    host.innerHTML = header('Mapeos', 'Eventos → Base de datos', [{ label: 'fuente: mappings.json', soft: true }]) +
+      '<table class="data"><thead><tr><th>Evento</th><th>Tablas</th></tr></thead><tbody>' +
+      entries.map(([id, def]) =>
+        '<tr><td><code>' + escapeHtml(id) + '</code></td><td>' +
+        def.tablas.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('') + '</td></tr>'
+      ).join('') + '</tbody></table>';
+  }
+  function renderDetail() {
+    const it = findItem(state.activeId);
+    if (!it) { detailEl.innerHTML = '<div class="empty">Selecciona un item del menú lateral.</div>'; return; }
+    if (it.kind === 'demandas') renderDemandas(detailEl);
+    else if (it.kind === 'lineas') renderLineas(detailEl);
+    else if (it.kind === 'form') renderForm(detailEl, it.payload);
+    else if (it.kind === 'event') renderEvent(detailEl, it.payload);
+    else if (it.kind === 'mappings-forms') renderMappingsForms(detailEl);
+    else if (it.kind === 'mappings-events') renderMappingsEvents(detailEl);
+    // Cablear los chips de navegación cross-layer (sin onclick inline)
+    detailEl.querySelectorAll('[data-nav-tab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (typeof opts.onNavigate === 'function') opts.onNavigate(Number(btn.dataset.navTab), btn.dataset.navItem);
+      });
+    });
+  }
+  function focusItem(itemId) {
+    if (findItem(itemId)) {
+      state.activeId = itemId;
+      renderTree();
+      renderDetail();
+    }
+  }
+
+  searchEl.addEventListener('input', (e) => { state.search = e.target.value; renderTree(); });
+
+  (async () => {
+    try {
+      const [catalogo, mappings] = await Promise.all([
+        capa2LoadJSON('catalogo-demandas.json'),
+        capa2LoadJSON('mappings.json')
+      ]);
+      const forms = await Promise.all(CAPA2_FORM_FILES.map(n => capa2LoadJSON('forms/' + n + '.json')));
+      const events = await Promise.all(CAPA2_EVENT_FILES.map(n => capa2LoadJSON('events/' + n + '.json')));
+      state.catalogo = catalogo; state.mappings = mappings; state.forms = forms; state.events = events;
+      buildTree();
+      state.activeId = 'catalogo-demandas';
+      renderTree();
+      renderDetail();
+    } catch (err) {
+      detailEl.innerHTML = '<div class="empty" style="color:#e56b6f">Error cargando datos: ' + escapeHtml(err.message) + '</div>';
+    }
+  })();
+
+  return { focusItem: focusItem, refresh: function () {} };
+}

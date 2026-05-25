@@ -2,6 +2,40 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-25] — v3.3.87
+
+### Sub-slice 3.2.5.c Bloque 3 F1-PLAN — `hub-analisis.js` CAPA2
+
+Tercer sub-sub-slice del bloque 3.2.5. Mueve el dominio CAPA2
+(Diccionario operativo) completo.
+
+Mapeo del dominio completo verificado (lección aplicada de .b): CAPA2
+**NO** tiene piezas globales acopladas fuera del closure (a diferencia
+de CAPA1, sin listener global de resize). Es autocontenida.
+
+- **`prisma-apex/hub-analisis.js`** — append (~263 líneas):
+  - `CAPA2_BASE`, `CAPA2_FORM_FILES`, `CAPA2_EVENT_FILES` (catálogos).
+  - `_capa2Cache` (caché de módulo compartida user/admin).
+  - `capa2LoadJSON` (loader con caché + invalidación ante fallo).
+  - `createCapa2(mountEl, opts)` — factory completa con sidebar + tree
+    + search + panel detalle + render demandas/líneas/forms/events/
+    mappings.
+- **`prisma-apex/index.html`** — bloque 361-623 original eliminado.
+
+**Acoplamiento cerrado:** `simShowCapa` (en hub-analisis.js desde .a) →
+`createCapa2` (ahora aquí).
+
+**Acoplamientos abiertos restantes:** `simShowCapa` → `createCapa3`,
+`createMapa` (aún inline hasta .d/.e).
+
+Movimiento mecánico puro. Cuerpos byte a byte idénticos. Re-indentación
+top-level 4→0.
+
+Smoke local: `node --check hub-analisis.js` OK (685 líneas); inline OK;
+`/hub/hub-analisis.js` 200 application/javascript 37.8 KB.
+
+Bump PATCH `v3.3.87` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-25] — v3.3.86
 
 ### Sub-slice 3.2.5.b Bloque 3 F1-PLAN — `hub-analisis.js` CAPA1 (dominio completo)
