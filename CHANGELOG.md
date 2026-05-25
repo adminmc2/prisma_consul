@@ -2,6 +2,44 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-24] — v3.3.85
+
+### Sub-slice 3.2.5.a Bloque 3 F1-PLAN — `hub-analisis.js` inicial (SIM shell)
+
+Primer sub-sub-slice del bloque 3.2.5 (último Slice 3.2). Crea
+`prisma-apex/hub-analisis.js` con cabecera honesta y el shell del
+simulador. Las 4 factories de capa siguen en el `<script>` inline hasta
+sus sub-sub-slices respectivos (b/c/d/e).
+
+- **`prisma-apex/hub-analisis.js`** — nuevo, 71 líneas. Cabecera:
+  *"PRISMA Hub — análisis (entregables ARMC en iframe) + simulador
+  (módulo nativo)."* Contenido:
+  - `SIM_CAPAS` (catálogo de las 4 capas con icono).
+  - `SIM_CAPA_BY_TAB` (mapping tab→capa).
+  - `mountSimuladorShell(hostId)` — monta cabecera + 4 botones, llama
+    a `simShowCapa('capa-1-ux')` por defecto.
+  - `simShowCapa(host, capaId)` — invoca `createCapa1/2/3/Mapa` según
+    capaId (factories aún inline).
+  - `simNavigate(host, tab, itemId)` — navegación cross-layer.
+- **`prisma-apex/index.html`** — bloque 360-426 original eliminado.
+  Añadido `<script src="/hub/hub-analisis.js">` después de
+  `hub-admin.js` y antes del `<script>` inline. Orden final:
+  helpers → login → tabs → admin → analisis → inline.
+
+**Acoplamiento abierto declarado:** `mountSimuladorShell` →
+`simShowCapa` → `createCapa1/2/3/Mapa` (las 4 factories aún en inline).
+Funciona por global scope. El smoke obligatorio prueba el cruce
+hub-analisis.js (shell) ↔ inline (factories), no solo el shell aislado.
+
+Movimiento mecánico puro. Cuerpos byte a byte idénticos. Re-indentación
+top-level 4→0.
+
+Smoke local: `node --check hub-analisis.js` OK; inline OK;
+`/hub/hub-analisis.js` 200 application/javascript 3.3 KB; los 5 tags
+presentes en HTML.
+
+Bump PATCH `v3.3.85` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-24] — v3.3.84
 
 ### Sub-slice 3.2.4.e Bloque 3 F1-PLAN — `hub-admin.js` APEX results + perfil + entrevistas
