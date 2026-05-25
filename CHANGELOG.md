@@ -2,6 +2,83 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-25] — v3.4.0
+
+### Cierre formal del Bloque 3 del F1-PLAN — saneamiento del monolito del Hub
+
+Bump **MINOR** que conmemora el cierre del Bloque 3 del plan vigente
+F1-PLAN. El Hub queda **completamente modular**: el monolito de
+`prisma-apex/index.html` (3.830 líneas de HTML+CSS+JS embebidos) pasa a
+ser **330 líneas de solo HTML estructural + 5 `<script src>`**.
+Reducción del **91.4%**, ampliamente por encima del criterio PASS
+mínimo (≥70%) del plan.
+
+### Cambio operado en este commit (chore release)
+
+- **Bumps a `v3.4.0`** en los 4 puntos canónicos (`web/index.html`
+  footer, `prisma-apex/index.html` login, `CLAUDE.md` "Versión actual",
+  cabecera de este `CHANGELOG.md`).
+- **Corrección documental absorbida:** `prisma-apex/core/simulador-ux/
+  README.md` líneas 33-34 y 72: las factories del simulador
+  (`createCapa1`, `createCapa2`, `createCapa3`, `createMapa`) y las
+  constantes `CAPA2_BASE`, `CAPA3_BASE` ya no viven en
+  `prisma-apex/index.html` sino en `prisma-apex/hub-analisis.js` desde
+  el cierre del Slice 3.2. Deriva detectada por el revisor durante el
+  cierre del Bloque 3; absorbida aquí por petición explícita.
+
+### Resumen del Bloque 3 entero
+
+| Slice | Commits | Bumps | Resultado |
+|---|---|---|---|
+| **3.1** | 1 commit + 1 matización post-deploy nginx | `v3.3.74` + `v3.3.75` | CSS extraído a `prisma-apex/hub.css` (972 líneas). Handler estricto `/hub/hub*.{css,js}` añadido en `server/server.js`. nginx migrado de `alias` amplio a `proxy_pass` (slice ops en `prisma-server-ops`). |
+| **3.2** | 14 commits (1+1+1+6+5 sub-sub-slices) | `v3.3.76` → `v3.3.89` | JS extraído a **5 archivos modulares** `prisma-apex/hub-*.js` (helpers · login · tabs · admin · analisis). Orden de carga: helpers → login → tabs → admin → analisis. Cada sub-slice con smoke obligatorio en `dev.prismaconsul.com`. |
+| **Doc post-3.2** | 1 commit | `v3.3.90` | `README.md` raíz: árbol de `prisma-apex/` actualizado para listar los 6 archivos modulares. |
+| **3.3** | 1 commit | `v3.3.91` | Único refactor permitido en F1: deduplicación `analisis*`/`udAnalisis*` en factoría `crearControladorAnalisis({ camel, kebab })` + 2 instancias + 10 wrappers `function` (no `const`, para preservar contrato `onclick` estático del HTML). |
+| **Cierre Bloque 3** | este commit | **`v3.4.0`** | Bump MINOR + corrección doc absorbida en `prisma-apex/core/simulador-ux/README.md`. |
+| **TOTAL** | **18 commits** | 17 PATCH + 1 MINOR | — |
+
+### Verificación contra criterio PASS del Bloque 3 (`F1-PLAN.md §5`)
+
+| Criterio | Requerido | Resultado |
+|---|---|---|
+| `prisma-apex/index.html` reduce ≥ 70% | sí | **−91.4%** (3.830 → 330 líneas) |
+| Comportamiento visible idéntico | sí | Validado por smoke usuario en cada sub-slice |
+| Ningún ID DOM huérfano | ninguno | Validado en cierre 3.2 (onclick estáticos) y 3.3 (factoría) |
+| Diff por slice ≤ 300 netas | sí | Cumplido salvo excepciones documentadas (3.2.4.c1+c2 partido por aplicación de la regla; 3.2.5.b CAPA1 con excepción aprobada por indivisibilidad de closure + listener global resize) |
+| Slice 3.3 ejecutado | sí | Factoría implementada con corrección crítica del revisor (`function` declarations, no `const`) |
+| Bump MINOR `v3.4.0` | sí | Este commit |
+
+### Estructura final del Hub
+
+`prisma-apex/index.html` (330 líneas) — solo HTML estructural + 5 `<script src>`:
+```
+prisma-apex/
+├── index.html                    330 líneas (era 3.830)
+├── hub.css                       972 líneas (era inline)
+├── hub-helpers.js                 30 líneas
+├── hub-login.js                   99 líneas
+├── hub-tabs.js                    52 líneas
+├── hub-admin.js                1.197 líneas
+└── hub-analisis.js             1.153 líneas (tras deduplicación 3.3)
+```
+
+### Lo que no incluye este cierre
+
+- **Merge a `main` / deploy a producción:** intencionalmente fuera del
+  commit. Requiere autorización verbal explícita del usuario en su
+  propio turno (`docs/OPERATIVA.md §0.1`). Producción permanece en la
+  versión anterior hasta esa autorización.
+- **Archivo de `docs/F1-PLAN.md`:** F1 puede tener más bloques
+  pendientes del plan vigente. El archivo se mueve a `docs/historico/`
+  cuando se cierre F1 entero, no este bloque.
+
+### Próximo paso (cuando el usuario lo decida)
+
+1. Validación final en `dev.prismaconsul.com` con `v3.4.0`.
+2. Promoción a `main` con autorización verbal explícita.
+3. Apertura del siguiente bloque del F1 (si lo hay) o cierre del F1
+   entero.
+
 ## [2026-05-25] — v3.3.91
 
 ### Slice 3.3 Bloque 3 F1-PLAN — deduplicación `analisis*` / `udAnalisis*` con factoría

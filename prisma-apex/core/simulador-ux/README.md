@@ -30,7 +30,7 @@ Las piezas posteriores del flujo (respuesta automática, escalado humano, intake
 ## Arquitectura
 
 El simulador es **nativo del Hub**: las 4 capas se renderizan en el DOM del Hub mediante
-factories por instancia definidas en `prisma-apex/index.html` (`createCapa1`, `createCapa2`,
+factories por instancia definidas en `prisma-apex/hub-analisis.js` (`createCapa1`, `createCapa2`,
 `createCapa3`, `createMapa`), montadas por `mountSimuladorShell`. No hay iframes.
 
 Esta carpeta (`prisma-apex/core/simulador-ux/`) contiene:
@@ -69,7 +69,7 @@ prisma-apex/core/simulador-ux/
 ## Rutas
 
 - **`/core/simulador-ux/...`** — ruta interna canónica. El código nativo del Hub fetchea de
-  aquí (`CAPA2_BASE`, `CAPA3_BASE` en `prisma-apex/index.html`).
+  aquí (`CAPA2_BASE`, `CAPA3_BASE` en `prisma-apex/hub-analisis.js`).
 - **`/publicados/armc/simulador-ux/...`** — ruta pública legacy. **En el repo está retirada:**
   `server/server.js` la redirige con `301 → /hub`. No es acceso canónico.
   - *Excepción operativa vigente en dev:* el entorno `dev.prismaconsul.com` tiene un override
