@@ -25,3 +25,6 @@ logo-intro-prisma-*/
 # Consulting repo (separate repository)
 oferta prisma/
 servicios-costes.csv
+
+# Bitácora viva de coordinación (local, no canónica, no trackeada)
+bitacora/

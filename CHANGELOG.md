@@ -2,6 +2,48 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-31] — v3.4.8
+
+### Repo — bitácora viva de coordinación añadida a `.gitignore`
+
+Slice de gobernanza del repositorio (no de runtime). Se añade la
+carpeta `bitacora/` a `.gitignore` para que el archivo local de
+coordinación entre revisor y ejecutores quede explícitamente
+**no trackeado** por Git y no entre por accidente en ningún commit
+funcional.
+
+**Decisión del revisor (2026-05-31):**
+
+- La bitácora viva es **infraestructura ligera de coordinación**, no
+  pieza canónica del repo.
+- Vive como archivo local en `bitacora/BITACORA-VIVA.md` (archivo
+  único, continuidad multi-chat, multi-días).
+- **No canónica · no normativa · no requiere bump ni CHANGELOG al
+  actualizarse · no sustituye a `docs/OPERATIVA.md`,
+  `docs/ARQUITECTURA.md`, `CONTRATOS.md` ni `MODELO-DOMINIO.md`**.
+- Si una decisión madura y debe oficializarse, se promueve por su slice
+  propio al documento canónico correspondiente.
+- La regla de "no trackear" sí se canoniza en `.gitignore` para que
+  cualquier ejecutor en cualquier chat la respete sin enterarse —
+  evita errores tontos entre chats.
+
+**Cambios:**
+
+- `.gitignore` — añadida entrada `bitacora/` con comentario explicando
+  el propósito.
+
+**Bumps en los 4 puntos canónicos `v3.4.7 → v3.4.8`** conforme a
+`OPERATIVA.md` §0.4. La regla de bump no distingue tamaño del cambio.
+
+**Naturaleza del slice:** cambio de gobernanza/repositorio, no de
+runtime. No hay nada que validar en UI o backend. Se mantiene el
+ritual de push + deploy + smoke de versión por disciplina y para que
+`dev.prismaconsul.com` quede coherente con la rama `dev`, pero sin
+abrir UI ni backend.
+
+**Producción intocada:** `prismaconsul.com` permanece en `v3.4.0`.
+Acumulado en `dev`: `v3.4.1..v3.4.8`. Opción B sigue vigente.
+
 ## [2026-05-30] — v3.4.7
 
 ### Arquitectura — apertura de la vista canónica `docs/ARQUITECTURA.md`
