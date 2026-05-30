@@ -2,6 +2,74 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-30] — v3.4.7
+
+### Arquitectura — apertura de la vista canónica `docs/ARQUITECTURA.md`
+
+Slice de pieza (no de norma). Se abre el archivo reservado en `v3.4.6`
+por la canonización del rol ampliado del Ejecutor 1. La vista cubre el
+sistema **en construcción**, con estados explícitos por pieza —
+**operativo**, **integrado en dev** y **definido y pendiente de
+integración**. No es foto del runtime ni proyección aspiracional.
+
+**Contenido del archivo (8 secciones):**
+
+1. Propósito y límites — con definición operativa de los tres estados.
+2. Vista de contenedores — diagrama Mermaid con `classDef` propios
+   (op / dev / pending), leyenda embebida, `themeVariables` heredados
+   de `prisma-apex/hub.css` (paleta `#101B2C` / `#1a2535` / `#31BEEF` /
+   `#A1B8F2` / `#FAF9F6`; rojo `#e56b6f` reservado solo a riesgo, no
+   usado como estado). Flechas punteadas para dependencias entre
+   piezas definidas pero todavía no integradas.
+3. Módulos internos — tabla con columna **Estado**. El simulador queda
+   como `integrado en dev`; el resto, `operativo`. Incluye las dos
+   compatibilidades de URL ya configuradas en `server/server.js`.
+4. Persistencia y datos — separada en tres bloques:
+   - 4.1 Persistencia operativa actual: `portal_users`, `portal_files`,
+     `portal_activity_log`, `apex_submissions` (declaradas en
+     `server/schema.sql`).
+   - 4.2 Persistencia definida y pendiente: `armc_leads`, `armc_events`
+     (definidas en
+     `prisma-apex/core/simulador-ux/capa-3-sql/schema.sql`; el backend
+     operativo no escribe en ellas todavía).
+   - 4.3 Contratos y eventos del simulador definidos y pendientes:
+     `web_contact_form`, `lead_capture`, `LEAD_CAPTURED`.
+5. Dependencias externas — tabla con columna **Estado** (Neon, Drive,
+   Gmail SMTP, Groq, Claude, Tavily; todas `operativo`).
+6. Runtime e infraestructura — nginx + Express + PM2 (`prisma-consul`,
+   `prisma-dev`) + Cloudflare. Menciona la compatibilidad temporal
+   vigente de nginx producción para `/core/simulador-ux/` (registrada
+   en `docs/OPERATIVA.md` §8).
+7. Autenticación y secretos nombrados — JWT + `bcryptjs` para usuarios;
+   Service Account + DWD para Drive; convención de `.env` por entorno.
+   Solo se nombran variables esperadas, no valores.
+8. Referencias — apunta a `CLAUDE.md`, `CONTRATOS.md`,
+   `MODELO-DOMINIO.md`, `OPERATIVA.md`, `REGISTRO-RUTAS.md` (raíz,
+   `../REGISTRO-RUTAS.md` desde `docs/`), `ECOSISTEMA.md`, y a las
+   fuentes canónicas en `server/` y `prisma-apex/`.
+
+**Cabecera del archivo:** `Estado: vigente` + `Última verificación:
+2026-05-30` desde el nacimiento del archivo, cumpliendo `OPERATIVA.md`
+§0.4. La deuda preexistente del propio `OPERATIVA.md` (no lleva esa
+cabecera) sigue apuntada para slice posterior de higiene documental.
+
+**Higiene de referencias en el propio documento:** ninguna cita derivada
+del tipo `archivo:línea` dentro del documento — las referencias a
+`prisma-apex/hub.css` y `prisma-apex/hub-analisis.js` van sin número de
+línea, conforme a la lección aplicada en `v3.4.4`.
+
+**Compatibilidad transitoria del hook resuelta:** el aviso del hook
+`validar-rutas-md` sobre `docs/OPERATIVA.md:273` (ruta `docs/ARQUITECTURA.md`
+no existía) se autorresuelve con este slice. Persiste el falso positivo
+conocido en `CLAUDE.md:5` (anchor con caracteres especiales), deuda del
+normalizador de anchors del hook.
+
+**Bumps en los 4 puntos canónicos `v3.4.6 → v3.4.7`** conforme a
+`OPERATIVA.md` §0.4.
+
+**Producción intocada:** `prismaconsul.com` permanece en `v3.4.0`.
+Acumulado en `dev`: `v3.4.1..v3.4.7`. Opción B sigue vigente.
+
 ## [2026-05-30] — v3.4.6
 
 ### OPERATIVA — canonización del rol ampliado de Ejecutor 1 y cierre arquitectónico
