@@ -2,6 +2,71 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-30] — v3.4.6
+
+### OPERATIVA — canonización del rol ampliado de Ejecutor 1 y cierre arquitectónico
+
+Slice de norma (no de pieza). Se formaliza en `docs/OPERATIVA.md` que el
+rol del **Ejecutor 1** se amplía con el mantenimiento de una vista
+canónica de arquitectura técnica del repo, y que los slices con
+**impacto arquitectónico** no se dan por cerrados hasta actualizar esa
+vista. Esta entrada documenta la norma; el archivo
+`docs/ARQUITECTURA.md` se abre en un slice posterior, como decisión
+explícita del revisor ("norma primero, pieza después").
+
+**Inserciones aplicadas en `docs/OPERATIVA.md`:**
+
+- **§1 — Ejecutor 1.** Bloque del rol reescrito: título pasa a
+  *"repo / integración / ops / arquitectura"*; el bullet **Hace** suma
+  el mantenimiento de la vista canónica (con referencia interna a §9);
+  el bullet **No hace** explicita que el Ejecutor 1 no redacta contenido
+  de F2 (blueprint) ni de F3 (simulador) — *su adaptación es técnica,
+  no semántica*; el cierre del rol nombra al Ejecutor 1 como
+  **responsable de mantener** la vista canónica (no como "único dueño",
+  para no excluir aportes de hechos arquitectónicos por parte de
+  F2/F3/revisor).
+- **§5 — Pre-check, validación y revisión.** Bullet nuevo añadido en la
+  escalada de riesgo, justo antes de "Regla dura": *slice con impacto
+  arquitectónico — además de lo anterior, el cierre exige actualizar la
+  vista canónica de arquitectura técnica (§9) en el mismo paquete; sin
+  esa actualización el slice no se considera cerrado, aunque el smoke
+  en superficie real pase*.
+- **§9 — Definiciones.** Dos definiciones nuevas al final del bloque:
+  - *impacto arquitectónico* — lista cerrada de zonas (rutas/mounts,
+    serving, endpoints Express, persistencia realmente usada,
+    integraciones externas — Neon/Drive/Groq/Claude/Tavily/Gmail/Meta —,
+    auth, runtime, nginx, PM2, Cloudflare, límites entre módulos).
+    Aclaración expresa: tocar nombres, comentarios o contenido dentro
+    de una superficie ya congelada **no** constituye impacto
+    arquitectónico.
+  - *vista canónica de arquitectura técnica* — documento canónico de
+    arquitectura técnica del repo. Su archivo reservado es
+    `docs/ARQUITECTURA.md` y se abre en slice posterior. Markdown +
+    Mermaid, nivel contenedor. Complementa, no sustituye, a
+    `CLAUDE.md`, `CONTRATOS.md` y `MODELO-DOMINIO.md`. Mantenida por el
+    Ejecutor 1 (§1).
+
+**No tocado** en este slice (decisión explícita del revisor):
+
+- §10 *Frentes de trabajo* — F1 cerrado, F2 blueprint y F3 simulador
+  siguen como están. Esto no es F4 ni cambio de modelo.
+- §11 *Secuencia vigente* — no se altera la secuencia.
+- No se abre `docs/ARQUITECTURA.md`. Queda reservado como archivo
+  canónico, sin crear, hasta el siguiente slice.
+
+**Bumps en los 4 puntos canónicos `v3.4.5 → v3.4.6`** conforme a
+`OPERATIVA.md` §0.4.
+
+**Deuda apuntada** (no urgente, fuera de scope de este slice): el propio
+`docs/OPERATIVA.md` no lleva cabecera `Estado` / `Última verificación`,
+aunque enuncia esa regla en §0.4 para todo documento canónico vigente.
+Es deuda preexistente; se aborda en un slice de higiene documental
+aparte.
+
+**Producción intocada:** `prismaconsul.com` permanece en `v3.4.0`.
+Acumulado en `dev`: `v3.4.1..v3.4.6`. Opción B sigue vigente; el
+acumulado espera ventana funcional para arrastre conjunto.
+
 ## [2026-05-30] — v3.4.5
 
 ### Simulador UX ARMC — aviso de privacidad previo en captación inicial (web + WhatsApp)

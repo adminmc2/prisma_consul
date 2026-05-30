@@ -133,13 +133,17 @@ contexto de un turno ni por sugerencia de Claude.
 
 Cuatro chats, cada uno con su contexto. **Un chat = un rol.** No se mezclan.
 
-### Ejecutor 1 — repo / integración / ops
+### Ejecutor 1 — repo / integración / ops / arquitectura
 - **Hace:** código de sistema, estructura, rutas, mounts, serving, integración a
-  `dev`, git de integración, releases, deploy, nginx/PM2, y la presentación y
-  cableado técnico de los módulos.
+  `dev`, git de integración, releases, deploy, nginx/PM2, presentación y
+  cableado técnico de los módulos, y **mantenimiento de la vista canónica de
+  arquitectura técnica del repo** (ver definición en §9).
 - **No hace:** modelado profundo del corpus documental como actividad principal;
-  no convierte decisiones de contenido en decisiones estructurales sin arbitraje.
-- Es el **único** rol que toca git de integración, deploy y operaciones.
+  no convierte decisiones de contenido en decisiones estructurales sin arbitraje;
+  no redacta contenido de F2 (blueprint) ni de F3 (simulador) — su adaptación es
+  técnica, no semántica.
+- Es el **único** rol que toca git de integración, deploy y operaciones, y el
+  **responsable de mantener la vista canónica de arquitectura técnica**.
 
 ### Contenido blueprint
 - **Hace:** leer el corpus, modelar dominio, redactar el blueprint de ARMC,
@@ -199,6 +203,11 @@ escala** al revisor / ejecutor 1. No toma la decisión.
 - **ops / release / estructura / contratos:** capa declarada + superficie real
   declarada + pre-check completo + rollback explícito + **validación en la
   superficie real** (nginx / Cloudflare / producción según aplique).
+- **slice con impacto arquitectónico** (cualquier capa que toque las zonas
+  listadas en §9 bajo *impacto arquitectónico*): además de lo anterior, el
+  cierre exige actualizar la vista canónica de arquitectura técnica (§9) en el
+  mismo paquete de integración. Sin esa actualización el slice no se considera
+  cerrado, aunque el smoke en superficie real pase.
 
 Regla dura: un cambio de serving **no** se da por validado solo porque funcione
 en Express local. Si la ruta pasa por nginx o Cloudflare, se valida ahí.
@@ -253,6 +262,20 @@ retirada**. Sin condición de retirada, es deuda invisible.
 - **listo para promover a main** — integrado y validado en `dev` (validación en
   superficie real cuando aplique), revisado en hito (+ `/ultrareview` si es de
   riesgo), versionado y CHANGELOG al día.
+- **impacto arquitectónico** — cualquier cambio efectivo en alguna de estas
+  zonas: rutas o mounts, serving, endpoints Express, persistencia realmente
+  usada (esquema, tablas, columnas, índices), integraciones con servicios
+  externos (Neon, Drive, Groq, Claude, Tavily, Gmail, Meta), autenticación,
+  runtime, nginx, PM2, Cloudflare, o límites entre módulos del sistema. Tocar
+  nombres, comentarios o contenido dentro de una superficie ya congelada **no**
+  constituye impacto arquitectónico.
+- **vista canónica de arquitectura técnica** — documento canónico de
+  arquitectura técnica del repo. Su archivo reservado es `docs/ARQUITECTURA.md`
+  y se abre en slice posterior. Vista única, en Markdown + Mermaid, nivel
+  contenedor: qué piezas internas existen, cómo se conectan, qué persistencia
+  usan, qué dependencias externas tienen y qué runtime/infra las sirve.
+  Complementa, no sustituye, a `CLAUDE.md`, `CONTRATOS.md` y `MODELO-DOMINIO.md`.
+  Mantenida por el Ejecutor 1 (§1).
 
 ## 10. Frentes de trabajo
 
