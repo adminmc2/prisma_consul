@@ -25,6 +25,7 @@
     "Mismos campos que web_contact_form; cambia la forma de capturar (conversación vs. formulario).",
     "email es opcional en este canal; puede completarse en seguimiento posterior.",
     "telefono lo aporta el propio canal (metadata_canal), no requiere tecleo del usuario.",
-    "Al menos una opción seleccionada del catálogo (mínimo 1, máximo 25)."
+    "Al menos una opción seleccionada del catálogo (mínimo 1, máximo 25).",
+    "Antes de iniciar la captura conversacional, el bot envía al usuario el Aviso de Privacidad conforme a la LFPDPPP. Esta superficie modela el envío previo del aviso en el canal WhatsApp para la captación inicial y la orientación comercial sobre servicios de la clínica. No se modela aquí evidencia específica de aceptación ni los consentimientos explícitos obligatorios de creación de cuenta."
   ]
 }

@@ -25,6 +25,8 @@ A fecha actual solo está modelado lo verificado:
 - **Capa 2:** dos formularios (`web_contact_form`, `lead_capture`) que actúan como input, y un evento (`LEAD_CAPTURED`) emitido al converger.
 - **Capa 3:** dos tablas (`armc_leads`, `armc_events`) con enums limitados al estado `LEAD_CAPTURED`. La escritura ocurre una sola vez por lead, en el momento de convergencia.
 
+En la captura inicial actualmente modelada (web y WhatsApp), el contrato refleja la presentación previa del Aviso de Privacidad para orientar comercialmente al contacto sobre servicios de ARMC. Los consentimientos explícitos obligatorios se desplazan a la fase posterior de creación de cuenta, fuera del alcance actual.
+
 Las piezas posteriores del flujo (respuesta automática, escalado humano, intake preclínico, etc.) se añadirán a medida que se verifiquen. No se mantienen piezas especulativas en las capas.
 
 ## Arquitectura

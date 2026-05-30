@@ -24,6 +24,7 @@
   "reglas": [
     "Todos los campos son obligatorios excepto nota.",
     "Al menos una opción seleccionada del catálogo (mínimo 1, máximo 25).",
-    "email y telefono validados contra patrón."
+    "email y telefono validados contra patrón.",
+    "Antes de enviar, se muestra al usuario el Aviso de Privacidad conforme a la LFPDPPP. Esta superficie modela la presentación previa del aviso en el canal web para la captación inicial y la orientación comercial sobre servicios de la clínica. No se modela aquí evidencia específica de aceptación ni los consentimientos explícitos obligatorios de creación de cuenta."
   ]
 }

@@ -2,6 +2,54 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-30] — v3.4.5
+
+### Simulador UX ARMC — aviso de privacidad previo en captación inicial (web + WhatsApp)
+
+Mini-slice F3 de contenido/integración ligera: se documenta en el simulador
+que la captación inicial muestra/envía el Aviso de Privacidad (LFPDPPP)
+**antes** de capturar datos para orientación comercial sobre servicios de la
+clínica. No se añaden consentimientos explícitos, ni auditoría, ni cambios
+de contrato externo, ni cambios de BD. Los consentimientos explícitos
+obligatorios siguen perteneciendo a la fase posterior de creación de
+cuenta, fuera del alcance actual del simulador.
+
+**Acciones (superficie F3 aislada, sin tocar F2):**
+
+- `prisma-apex/core/simulador-ux/README.md` — párrafo nuevo entre el bloque
+  de capas modeladas y el de piezas posteriores, explicitando que el
+  contrato refleja la presentación previa del Aviso y que los
+  consentimientos explícitos quedan en la fase de creación de cuenta.
+- `prisma-apex/core/simulador-ux/capa-2-diccionario/forms/web-contact-form.json` —
+  regla nueva al final de `reglas[]` para el canal web (presentación
+  previa del Aviso antes de enviar; no se modela evidencia de aceptación).
+- `prisma-apex/core/simulador-ux/capa-2-diccionario/forms/lead-capture.json` —
+  regla nueva al final de `reglas[]` para el canal WhatsApp (el bot envía
+  el Aviso antes de capturar datos; no se modela evidencia de aceptación).
+- `prisma-apex/hub-analisis.js` — `dataPoint` añadido al final de
+  `CAPA1_NODES.web_contact_form_received` (clave `WEB_CONTACT_FORM_RECEIVED`)
+  y al final de `CAPA1_NODES.lead_capture_whatsapp` (clave
+  `LEAD_CAPTURE_WHATSAPP`), reflejando el Aviso visible/enviado antes de
+  capturar datos para captación inicial y orientación comercial.
+
+**Por qué este slice y no más:** la presentación previa del Aviso es lo
+único que el simulador puede modelar hoy sin abrir scope de
+consentimientos, registros de aceptación o auditoría. Esos elementos
+viven en la fase de cuenta y entran cuando se modelen como capa propia.
+
+**Validación local:** JSON correcto en los 2 forms; `node --check
+prisma-apex/hub-analisis.js` OK. Smoke visual en `dev.prismaconsul.com/hub
+→ admin → ARMC → Simulador` se ejecuta tras push + deploy, comprobando
+los 2 dataPoints en Capa 1 y las 2 reglas nuevas en Capa 2. Si el smoke
+falla, rollback con `git revert` del commit F3 (sin tocar F2).
+
+**Bumps en los 4 puntos canónicos `v3.4.4 → v3.4.5`** conforme a
+`OPERATIVA.md` §0.4.
+
+**Producción intocada:** `prismaconsul.com` permanece en `v3.4.0`. Opción
+B sigue vigente: el acumulado documental + F3 en `dev` espera a la
+próxima ventana funcional para arrastre conjunto.
+
 ## [2026-05-30] — v3.4.4
 
 ### Higiene documental — corrección de cita derivada en entrada `v3.4.3`

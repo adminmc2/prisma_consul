@@ -84,7 +84,7 @@ const CAPA1_NODES = {
   web_contact_form_received: {
     title: 'Contacto web recibido', key: 'WEB_CONTACT_FORM_RECEIVED', x: 900, y: 110, width: 340,
     description: 'Se registra un contacto entrante desde la web con los datos básicos del lead.',
-    dataPoints: ['Canal origen: WEB_FORM', 'Origen: formulario de contacto web', 'Datos básicos recibidos', 'Ingreso al flujo inicial'],
+    dataPoints: ['Canal origen: WEB_FORM', 'Origen: formulario de contacto web', 'Datos básicos recibidos', 'Ingreso al flujo inicial', 'Aviso de Privacidad LFPDPPP visible antes de enviar para captación inicial y orientación comercial'],
     note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
     crossLinks: [{ label: 'Ver contrato web_contact_form en Capa 2', tab: 2, itemId: 'form-web_contact_form' }],
     actions: [{ id: 'register-lead-web', label: 'Registrar lead capturado', targetId: 'lead_captured', dbAction: "INSERT armc_leads(canal_origen='WEB_FORM', ...) RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CAPTURED');" }]
@@ -92,7 +92,7 @@ const CAPA1_NODES = {
   lead_capture_whatsapp: {
     title: 'Contacto por WhatsApp recibido', key: 'LEAD_CAPTURE_WHATSAPP', x: 900, y: 860, width: 340,
     description: 'Se registra un contacto entrante por WhatsApp con el contexto inicial disponible.',
-    dataPoints: ['Canal origen: WHATSAPP', 'Origen: conversación de WhatsApp', 'Contexto inicial recibido', 'Ingreso al flujo inicial'],
+    dataPoints: ['Canal origen: WHATSAPP', 'Origen: conversación de WhatsApp', 'Contexto inicial recibido', 'Ingreso al flujo inicial', 'Aviso de Privacidad LFPDPPP enviado por el bot antes de capturar datos para captación inicial y orientación comercial'],
     note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
     crossLinks: [{ label: 'Ver contrato lead_capture en Capa 2', tab: 2, itemId: 'form-lead_capture' }],
     actions: [{ id: 'register-lead-whatsapp', label: 'Registrar lead capturado', targetId: 'lead_captured', dbAction: "INSERT armc_leads(canal_origen='WHATSAPP', ...) RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CAPTURED');" }]
