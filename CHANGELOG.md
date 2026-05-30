@@ -2,6 +2,87 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-30] — v3.4.3
+
+### Integración documental — 9ª entrevista ARMC (Marisela, 2ª sesión, 15-abr-2026)
+
+Mini-slice técnico ejecutado por ejecutor-1 a petición del revisor para
+añadir al sistema la 2ª entrevista CEO de ARMC del 2026-04-15. Por
+convención (`OPERATIVA §0.4`), todo push a `origin/dev` requiere bump
+visible; este commit registra el cambio aunque la mutación principal
+fuera operativa (Drive + BD), no de repo.
+
+**Acciones operativas (fuera del repo):**
+
+- **Drive — doc nuevo en carpeta portal ARMC:**
+  - `drive_file_id`: `1D5z_FQfNOKWwwpX6vgT68MLScPdKqlWtlbEQCEGUXHg`.
+  - `name`: `34_01_ENTREVISTA_V1_MARISELA_PARTE2_20260415`
+    (nomenclatura canónica `NOMENCLATURA.md:111-120` — `PARTE2` =
+    segunda sesión del mismo entrevistado dentro del discovery, no
+    revisión de archivo; coherente con el precedente
+    `V1_CARLOS_PARTE1`/`V1_CARLOS_PARTE2`).
+  - Origen: copia (`drive.files.copy`) del doc crudo
+    `1is3YdZ9d-q3VTP5mPufgVUoiInVWK2FyuqUg2ceToCg` propiedad de
+    `info@prismaconsul.com`. La copia preserva al 100% el formato
+    Google Doc nativo (headers reales, hipervínculos, sin texto plano
+    de markdown literal) y mantiene la coherencia visual con las 8
+    entrevistas V1 existentes.
+  - Los 2 H2 internos del doc copia se conservan **verbatim del crudo**
+    por decisión explícita del revisor (preferencia "tal como está"
+    para evitar tocar el contenido más allá de lo mínimo). La
+    normalización a "ARMC x PRISMA - Fase 1 - Entrevista Marisela
+    (2ª - análisis documentos y servicios clínica)" queda registrada
+    solo en el `display_name` de BD, no dentro del doc.
+  - Doc crudo origen: **intacto, sin tocar**.
+
+- **BD `portal_files` — fila id=82 (`INSERT` + `UPDATE` posterior):**
+  - `drive_file_id`: `1D5z_FQfNOKWwwpX6vgT68MLScPdKqlWtlbEQCEGUXHg`
+    (apunta al doc final con formato preservado, no al crudo).
+  - `user_id`: `3` (ARMC).
+  - `file_name`: `34_01_ENTREVISTA_V1_MARISELA_PARTE2_20260415`.
+  - `display_name`: `ARMC x PRISMA - Fase 1 - Entrevista Marisela
+    (2ª - análisis documentos y servicios clínica) - 2026/04/15 20:59
+    CEST - Notas de Gemini`.
+  - `file_size`: `0` (Google Docs nativos no reportan tamaño útil; ver
+    `schema.sql:31`).
+  - `mime_type`: `application/vnd.google-apps.document`.
+  - `doc_type`: `'entrevista'` (el tab del Hub filtra por este campo en
+    `hub-admin.js:1166`, sin esto no aparecería).
+  - Las 8 filas de entrevistas ARMC existentes: **intactas, sin tocar**.
+  - Conteo verificado: 8 → **9** entrevistas para `user_id=3`.
+
+**Iteración intermedia descartada (registrada por trazabilidad):**
+
+El primer intento creó el doc con `drive.files.create` + `textContent`
+markdown, que produjo un Google Doc con texto plano (sin formato rico).
+Esa versión (`drive_file_id` `1mUQpxJwBl4rda1q2ydcktqGjQly3Edbvx3zh7xGttMs`)
+fue **eliminada** y reemplazada por la copia mediante `drive.files.copy`,
+que preserva formato. La fila id=82 fue UPDATE-ada al nuevo
+`drive_file_id`. No hay docs huérfanos ni filas obsoletas.
+
+**Lo que NO se hizo (restricciones del mini-slice respetadas):**
+
+- No se tocó código del repo (esta entrada CHANGELOG + bump en 4 puntos
+  canónicos son la única superficie editada, y solo por la regla de
+  versionado, no por la lógica del slice).
+- No se tocó el blueprint, ni el simulador, ni los `hub-*.js`, ni
+  `server/`.
+- No se modificaron las 8 entrevistas existentes ni el doc crudo.
+- No se usó el script legacy `armc_ent_NNN`.
+- No se renombró nada del histórico.
+
+**Fecha visible en la tarjeta del Hub:** `createdTime` del Google Doc
+final en Drive (`2026-05-30`), no la fecha real de la entrevista
+(`2026-04-15`). Aceptado por el revisor como decisión cerrada sin abrir
+slice de código para reescribir esa lógica.
+
+**Rollback** (si fuese necesario):
+- `DELETE FROM portal_files WHERE id = 82;`
+- Drive: borrar el doc `1D5z_FQfNOKWwwpX6vgT68MLScPdKqlWtlbEQCEGUXHg`.
+- Doc crudo origen y 8 entrevistas históricas no afectados.
+
+Bump PATCH `v3.4.3` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-25] — v3.4.2
 
 ### Higiene documental — banner de cierre en `docs/historico/F1-PLAN.md`
