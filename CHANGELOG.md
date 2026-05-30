@@ -2,6 +2,38 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-30] — v3.4.4
+
+### Higiene documental — corrección de cita derivada en entrada `v3.4.3`
+
+Hallazgo del revisor tras la auditoría `/revisar-docs` del commit `8f258af`:
+la entrada `v3.4.3` cita `schema.sql:31` para justificar la tolerancia del
+campo `file_size = 0`, pero el campo real (`file_size BIGINT DEFAULT 0`
+dentro de la definición de `portal_files`) vive en `server/schema.sql:37`.
+La cita derivada **no rompe el mini-slice de fondo** (el comportamiento
+de tolerancia sigue vigente y verificable), pero sí falsifica la afirmación
+de la auditoría sobre "cero referencias rotas introducidas". Bajo
+`CONTRATOS.md` CT-9 las entradas históricas son inmutables, por lo que
+esta corrección no edita `v3.4.3`; la documenta y enmienda aquí.
+
+**Acciones:**
+
+- Sin tocar el cuerpo de la entrada `v3.4.3` (que permanece literal con
+  su cita `schema.sql:31` para preservar la historia).
+- La referencia robusta correcta es: **el campo `file_size BIGINT
+  DEFAULT 0` definido dentro de `portal_files` en `server/schema.sql`**
+  (sin número de línea — los números derivan con futuras ediciones del
+  schema; el campo es estable).
+- Bumps en los 4 puntos canónicos `v3.4.3 → v3.4.4`.
+
+**Deuda apuntada** (no urgente): el script `.claude/hooks/validar-rutas-md.sh`
+no verifica números de línea citados en docs, solo presencia de archivos.
+Una mejora futura del hook podría detectar `path:NN` y validar que la
+línea existe y contiene texto coherente con el contexto de cita.
+
+Sin cambios de código de producto. Sin cambios en producción. Bump PATCH
+`v3.4.4` por `docs/OPERATIVA.md §0.4`.
+
 ## [2026-05-30] — v3.4.3
 
 ### Integración documental — 9ª entrevista ARMC (Marisela, 2ª sesión, 15-abr-2026)
