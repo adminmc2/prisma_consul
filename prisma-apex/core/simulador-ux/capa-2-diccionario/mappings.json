@@ -12,6 +12,9 @@
     }
   },
   "events": {
-    "LEAD_CAPTURED": { "tablas": ["armc_leads", "armc_events"] }
+    "LEAD_CAPTURED": { "tablas": ["armc_leads", "armc_events"] },
+    "HUMAN_HANDOFF_REQUESTED": { "tablas": ["armc_leads", "armc_events", "armc_handoffs"] },
+    "HUMAN_HANDOFF_ASSIGNED": { "tablas": ["armc_leads", "armc_events", "armc_handoffs"] },
+    "HUMAN_HANDOFF_CLOSED": { "tablas": ["armc_leads", "armc_events", "armc_handoffs"] }
   }
 }

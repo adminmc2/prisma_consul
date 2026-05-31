@@ -107,6 +107,58 @@ const CAPA1_NODES = {
       { label: 'Ver tabla armc_leads en Capa 3', tab: 3, itemId: 'table-armc_leads' }
     ],
     actions: []
+  },
+  // Handoff humano — patrón transversal (no nueva linealidad del flujo base).
+  // Activable desde cualquiera de los 4 nodos del flujo lineal (lead_entry_channel,
+  // web_contact_form_received, lead_capture_whatsapp, lead_captured).
+  human_handoff_requested: {
+    title: 'Handoff humano solicitado', key: 'HUMAN_HANDOFF_REQUESTED', x: 2080, y: 110, width: 360,
+    description: 'La conversación entra en estado "esperando humano". El bot queda silenciado para esta conversación; un humano del Hub puede tomarla.',
+    dataPoints: [
+      'Trigger: explícito (lead solicita) o automático (señal del bot)',
+      'Canal origen heredado: WEB_FORM o WHATSAPP',
+      'Receptor por defecto: Carlos',
+      'Bot silenciado para esta conversación'
+    ],
+    note: 'Patrón transversal activable desde cualquier nodo del flujo base.',
+    crossLinks: [
+      { label: 'Ver evento HUMAN_HANDOFF_REQUESTED en Capa 2', tab: 2, itemId: 'event-HUMAN_HANDOFF_REQUESTED' },
+      { label: 'Ver tabla armc_handoffs en Capa 3', tab: 3, itemId: 'table-armc_handoffs' }
+    ],
+    actions: []
+  },
+  human_handoff_active: {
+    title: 'Handoff humano activo', key: 'HUMAN_HANDOFF_ACTIVE', x: 2080, y: 480, width: 360,
+    description: 'Un humano del Hub ha tomado el handoff. La conversación está siendo atendida por una persona; el bot sigue silenciado.',
+    dataPoints: [
+      'Humano asignado: FK portal_users en armc_leads.handoff_assigned_to',
+      'UI del Hub muestra nombre visible del humano',
+      'Sistema autoasigna al humano que abre el lead; botón "Reasignar" actualiza la asignación',
+      'Cada asignación / reasignación queda como fila ASSIGNED en armc_handoffs',
+      'Bot continúa silenciado'
+    ],
+    note: 'Mientras el handoff está activo, la responsabilidad funcional es del humano asignado.',
+    crossLinks: [
+      { label: 'Ver evento HUMAN_HANDOFF_ASSIGNED en Capa 2', tab: 2, itemId: 'event-HUMAN_HANDOFF_ASSIGNED' },
+      { label: 'Ver tabla armc_handoffs en Capa 3', tab: 3, itemId: 'table-armc_handoffs' }
+    ],
+    actions: []
+  },
+  human_handoff_closed: {
+    title: 'Handoff humano cerrado', key: 'HUMAN_HANDOFF_CLOSED', x: 2080, y: 860, width: 360,
+    description: 'El handoff cierra, sea manualmente desde apex-armc o automáticamente por inactividad.',
+    dataPoints: [
+      'Cierre manual: el humano lo cierra desde apex-armc',
+      'Cierre automático: tras 24 horas sin actividad',
+      'close_reason en armc_leads: "manual" o "inactivity"',
+      'Identidad de quien cierra (closed_by) NO se duplica en armc_leads; se persiste en armc_handoffs (fila CLOSED con user_id) y en el payload del evento HUMAN_HANDOFF_CLOSED (closed_by_user_id opcional)'
+    ],
+    note: 'Reintroducción del bot tras el cierre queda fuera del alcance de este paquete.',
+    crossLinks: [
+      { label: 'Ver evento HUMAN_HANDOFF_CLOSED en Capa 2', tab: 2, itemId: 'event-HUMAN_HANDOFF_CLOSED' },
+      { label: 'Ver tabla armc_handoffs en Capa 3', tab: 3, itemId: 'table-armc_handoffs' }
+    ],
+    actions: []
   }
 };
 
@@ -947,7 +999,10 @@ const MAPA_ROWS = [
   { c1: 'lead_entry_channel', c1_label: 'Entrada del lead', c2_form: null, c2_event: null, c3: [], note: 'Dispatcher visual. Sin datos ni evento.' },
   { c1: 'web_contact_form_received', c1_label: 'Contacto web recibido', c2_form: 'web_contact_form', c2_event: null, c3: [], note: 'Input por canal web. La persistencia ocurre al converger en lead_captured.' },
   { c1: 'lead_capture_whatsapp', c1_label: 'Contacto por WhatsApp recibido', c2_form: 'lead_capture', c2_event: null, c3: [], note: 'Input por canal WhatsApp. La persistencia ocurre al converger en lead_captured.' },
-  { c1: 'lead_captured', c1_label: 'Lead capturado (convergencia)', c2_form: null, c2_event: 'LEAD_CAPTURED', c3: ['armc_leads', 'armc_events'], note: 'Punto único de persistencia. Emite el evento y escribe en BD.' }
+  { c1: 'lead_captured', c1_label: 'Lead capturado (convergencia)', c2_form: null, c2_event: 'LEAD_CAPTURED', c3: ['armc_leads', 'armc_events'], note: 'Punto único de persistencia. Emite el evento y escribe en BD.' },
+  { c1: 'human_handoff_requested', c1_label: 'Handoff humano solicitado', c2_form: null, c2_event: 'HUMAN_HANDOFF_REQUESTED', c3: ['armc_leads', 'armc_events', 'armc_handoffs'], note: 'Patrón transversal: activable desde cualquier nodo del flujo base. Bot silenciado para la conversación.' },
+  { c1: 'human_handoff_active', c1_label: 'Handoff humano activo', c2_form: null, c2_event: 'HUMAN_HANDOFF_ASSIGNED', c3: ['armc_leads', 'armc_events', 'armc_handoffs'], note: 'Humano del Hub atiende la conversación. Cada (re)asignación añade fila ASSIGNED en armc_handoffs.' },
+  { c1: 'human_handoff_closed', c1_label: 'Handoff humano cerrado', c2_form: null, c2_event: 'HUMAN_HANDOFF_CLOSED', c3: ['armc_leads', 'armc_events', 'armc_handoffs'], note: 'Cierre manual o por inactividad (24h). closed_by no se duplica en armc_leads.' }
 ];
 
 function createMapa(mountEl, opts) {

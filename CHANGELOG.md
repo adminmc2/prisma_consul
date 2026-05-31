@@ -2,6 +2,92 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-31] — v3.4.14
+
+### Simulador UX + ARQUITECTURA — integración del paquete congelado N3-1 (Handoff humano)
+
+Integración 1:1 del paquete congelado de F3 para la nota N3-1 (handoff
+humano) registrado en bitácora §7. **No reabre decisiones**: se integra
+exactamente lo definido por F3, con PASS del revisor para tocar
+`armc_leads`. F2 fuera. Producción intocada en `v3.4.13`.
+
+**Cambios en el simulador (Capa 1, 2, 3 + Mapa + README):**
+
+- **3 eventos nuevos en Capa 2** (`capa-2-diccionario/events/`):
+  `human-handoff-requested.json`, `human-handoff-assigned.json`,
+  `human-handoff-closed.json`.
+- **Ampliación aditiva de `mappings.json`**: 3 entries nuevas en
+  `events.*`, mapeadas a `armc_leads + armc_events + armc_handoffs`.
+  Forms existentes intactos.
+- **Ampliación aditiva de `capa-3-sql/schema.sql`**:
+  - `armc_leads`: 6 columnas nuevas (`handoff_state`,
+    `handoff_assigned_to`, `handoff_close_reason`, `handoff_requested_at`,
+    `handoff_assigned_at`, `handoff_closed_at`). FK
+    `handoff_assigned_to → portal_users(id) ON DELETE SET NULL`.
+  - Tabla nueva `armc_handoffs` con historial completo (una fila por
+    transición `REQUESTED / ASSIGNED / CLOSED`). FKs `user_id` y
+    `reassigned_from_user_id` hacia `portal_users(id)`.
+  - Enum `armc_events.event_type` ampliado a 4 valores:
+    `LEAD_CAPTURED`, `HUMAN_HANDOFF_REQUESTED`,
+    `HUMAN_HANDOFF_ASSIGNED`, `HUMAN_HANDOFF_CLOSED`.
+  - 3 índices nuevos en `armc_handoffs` (`lead_id`, `user_id`,
+    `event_type`).
+- **Documentación en `capa-3-sql/data-dictionary.md`**: descripción
+  humana de las 6 columnas nuevas, de `armc_handoffs` completa, del
+  enum ampliado y nota explícita sobre `closed_by` (no se duplica en
+  `armc_leads`).
+- **3 nodos nuevos en Capa 1** (`hub-analisis.js`, `CAPA1_NODES`):
+  `human_handoff_requested`, `human_handoff_active`,
+  `human_handoff_closed`. Patrón **transversal**, activable desde
+  cualquiera de los 4 nodos del flujo base. El flujo lineal canónico
+  (`lead_entry_channel → web_contact_form_received / lead_capture_whatsapp →
+  lead_captured`) **no cambia**.
+- **3 filas nuevas en `MAPA_ROWS`** del simulador, con sus eventos de
+  Capa 2 y persistencia en `armc_leads + armc_events + armc_handoffs`.
+- **README del módulo (`Alcance verificado`)** actualizado: refleja
+  los 3 nodos, los 3 eventos, las 6 columnas y la tabla
+  `armc_handoffs`. Incluye convención **N3-2 derivada**: silencio del
+  bot = `armc_leads.handoff_state ∈ ('requested', 'active')`; no
+  introduce columnas ni eventos propios.
+
+**Cambio en `docs/ARQUITECTURA.md` §4.2 (regla del carril ampliado):**
+
+- Ampliación de la tabla de "Persistencia definida y pendiente": fila
+  `armc_leads` recoge las 6 columnas aditivas; fila `armc_events`
+  recoge el enum ampliado; fila nueva `armc_handoffs` con su función.
+- Bloque nuevo *"Relación técnica con `portal_users`"*: declara las
+  tres FKs nuevas (`armc_leads.handoff_assigned_to`,
+  `armc_handoffs.user_id`, `armc_handoffs.reassigned_from_user_id`)
+  hacia `portal_users(id)`. Es relación técnica entre tablas; **no
+  introduce actor humano nuevo** — `portal_users` ya existe operativa
+  en §4.1 y se reusa.
+
+**No tocado** en este slice:
+
+- Forms existentes `web-contact-form.json` y `lead-capture.json` —
+  intactos.
+- Evento `LEAD_CAPTURED` — intacto.
+- Catálogo de demandas, factories del simulador, shell, navegación
+  cross-layer — intactos.
+- F2 (blueprint) — los 3 archivos `clientes-publicados/armc/blueprint/`
+  siguen sin entrar al slice.
+- `server/schema.sql` y backend operativo — sin tocar. La promoción a
+  operativo entra cuando B4 (activación operativa APEX-ARMC) se abra.
+- `MODELO-DOMINIO.md`, `CONTRATOS.md`, `GLOSARIO.md`, `OPERATIVA.md`
+  — sin tocar.
+
+**Naturaleza del slice:** contenido del simulador (F3) + impacto
+arquitectónico (regla §5 OPERATIVA: actualización de `ARQUITECTURA.md`
+en el mismo paquete). Smoke en `dev.prismaconsul.com` validando la
+versión, el catálogo del módulo y la visibilidad de los 3 nodos
+nuevos en la Capa 1 del Hub.
+
+**Bumps en los 4 puntos canónicos `v3.4.13 → v3.4.14`** conforme a
+`OPERATIVA.md` §0.4.
+
+**Producción intocada:** `prismaconsul.com` permanece en `v3.4.13`.
+Cualquier promoción posterior requiere decisión explícita del revisor.
+
 ## [2026-05-31] — v3.4.13
 
 ### Documentado

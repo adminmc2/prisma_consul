@@ -187,8 +187,17 @@ lo cierre.
 
 | Tabla | Función | Estado | Origen canónico |
 |---|---|---|---|
-| `armc_leads` | Leads capturados (web / WhatsApp). | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
-| `armc_events` | Eventos del flujo (hoy `LEAD_CAPTURED`). | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
+| `armc_leads` | Leads capturados (web / WhatsApp). Incluye **seis columnas aditivas de handoff** humano: `handoff_state`, `handoff_assigned_to`, `handoff_close_reason`, `handoff_requested_at`, `handoff_assigned_at`, `handoff_closed_at`. | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
+| `armc_events` | Eventos del flujo (`LEAD_CAPTURED`, `HUMAN_HANDOFF_REQUESTED`, `HUMAN_HANDOFF_ASSIGNED`, `HUMAN_HANDOFF_CLOSED`). | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
+| `armc_handoffs` | Historial completo del handoff humano: una fila por cada transición `REQUESTED / ASSIGNED / CLOSED`. Conserva trazabilidad de quién pidió, asignó, reasignó y cerró. | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
+
+**Relación técnica con `portal_users`:** las nuevas claves foráneas
+`armc_leads.handoff_assigned_to`, `armc_handoffs.user_id` y
+`armc_handoffs.reassigned_from_user_id` apuntan a `portal_users(id)`
+(`ON DELETE SET NULL`). Es relación técnica entre tablas; **no introduce
+un actor humano nuevo en la captación** — `portal_users` ya existe como
+tabla operativa de cuentas del Hub (§4.1) y se reusa para resolver la
+identidad del humano que atiende cada handoff.
 
 Detalle del modelo:
 [`MODELO-DOMINIO.md`](../MODELO-DOMINIO.md) y

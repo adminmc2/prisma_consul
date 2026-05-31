@@ -1,0 +1,8 @@
+{
+  "id": "HUMAN_HANDOFF_ASSIGNED",
+  "paso": "human_handoff_active",
+  "origen": ["human_handoff_requested", "human_handoff_active"],
+  "destino": ["armc_leads", "armc_events", "armc_handoffs"],
+  "payload_minimo": ["lead_id", "user_id", "assigned_at"],
+  "payload_opcional": ["reassigned_from_user_id"]
+}

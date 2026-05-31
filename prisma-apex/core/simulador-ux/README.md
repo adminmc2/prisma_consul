@@ -21,13 +21,17 @@ Visualización en cuatro capas del flujo de captación y persistencia de leads e
 
 A fecha actual solo está modelado lo verificado:
 
-- **Capa 1:** cuatro nodos — `lead_entry_channel` (entrada), `web_contact_form_received` (rama web, input), `lead_capture_whatsapp` (rama WhatsApp, input), `lead_captured` (convergencia técnica: donde se emite el evento y persisten los datos).
-- **Capa 2:** dos formularios (`web_contact_form`, `lead_capture`) que actúan como input, y un evento (`LEAD_CAPTURED`) emitido al converger.
-- **Capa 3:** dos tablas (`armc_leads`, `armc_events`) con enums limitados al estado `LEAD_CAPTURED`. La escritura ocurre una sola vez por lead, en el momento de convergencia.
+- **Capa 1:** cuatro nodos del flujo lineal base — `lead_entry_channel` (entrada), `web_contact_form_received` (rama web, input), `lead_capture_whatsapp` (rama WhatsApp, input), `lead_captured` (convergencia técnica: donde se emite el evento y persisten los datos). Adicionalmente, **patrón transversal de handoff humano**: `human_handoff_requested → human_handoff_active → human_handoff_closed`, activable desde cualquiera de los cuatro nodos del flujo base. El patrón transversal no introduce nueva linealidad: el flujo base sigue siendo el camino canónico de captura.
+- **Capa 2:** dos formularios (`web_contact_form`, `lead_capture`) que actúan como input, y cuatro eventos: `LEAD_CAPTURED` (emitido al converger) y los tres del handoff (`HUMAN_HANDOFF_REQUESTED`, `HUMAN_HANDOFF_ASSIGNED`, `HUMAN_HANDOFF_CLOSED`).
+- **Capa 3:** tres tablas — `armc_leads` (con seis columnas de handoff aditivas: `handoff_state`, `handoff_assigned_to`, `handoff_close_reason`, `handoff_requested_at`, `handoff_assigned_at`, `handoff_closed_at`), `armc_events` (enum ampliado a los cuatro `event_type` del alcance) y `armc_handoffs` (historial completo del handoff: una fila por transición `REQUESTED / ASSIGNED / CLOSED`). FKs hacia `portal_users(id)` para identidad de humano. La escritura del lead sigue siendo una sola vez por lead en el momento de convergencia.
 
 En la captura inicial actualmente modelada (web y WhatsApp), el contrato refleja la presentación previa del Aviso de Privacidad para orientar comercialmente al contacto sobre servicios de ARMC. Los consentimientos explícitos obligatorios se desplazan a la fase posterior de creación de cuenta, fuera del alcance actual.
 
-Las piezas posteriores del flujo (respuesta automática, escalado humano, intake preclínico, etc.) se añadirán a medida que se verifiquen. No se mantienen piezas especulativas en las capas.
+**Convención de silencio del bot (N3-2 como convención derivada de N3-1):** mientras `armc_leads.handoff_state ∈ ('requested', 'active')`, el bot queda silenciado para esa conversación. No se introducen columnas ni eventos específicos para el silencio del bot — se deduce del `handoff_state`. La reintroducción del bot tras el cierre del handoff queda fuera del alcance del paquete N3-1.
+
+**`closed_by` (identidad de quien cierra el handoff):** no se duplica en `armc_leads`. Vive solo en la fila `CLOSED` de `armc_handoffs` (vía `user_id`) y en el `payload_opcional` del evento `HUMAN_HANDOFF_CLOSED` (`closed_by_user_id`). Coherente con el principio "persistencia base ligera + historial completo".
+
+Las piezas posteriores del flujo (respuesta automática, escalado humano, intake preclínico, detección automática de frustración, etc.) se añadirán a medida que se verifiquen. No se mantienen piezas especulativas en las capas.
 
 ## Arquitectura
 

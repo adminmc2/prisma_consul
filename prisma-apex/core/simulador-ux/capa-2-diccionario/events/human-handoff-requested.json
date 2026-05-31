@@ -1,0 +1,8 @@
+{
+  "id": "HUMAN_HANDOFF_REQUESTED",
+  "paso": "human_handoff_requested",
+  "origen": ["lead_entry_channel", "web_contact_form_received", "lead_capture_whatsapp", "lead_captured"],
+  "destino": ["armc_leads", "armc_events", "armc_handoffs"],
+  "payload_minimo": ["lead_id", "canal_origen", "trigger", "requested_at"],
+  "payload_opcional": ["mensaje_lead", "senal_origen"]
+}
