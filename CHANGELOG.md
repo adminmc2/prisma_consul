@@ -2,6 +2,59 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-31] — v3.4.9
+
+### OPERATIVA — ampliación de §0.5 con mapa de uso documental y promoción bitácora → canónico
+
+Añade tres filas faltantes al mapa, explicita qué entra y qué no entra
+en cada documento, y fija el flujo de promoción desde la bitácora viva
+a los canónicos. Sin cambios en §1–§11. Producción sigue en `v3.4.0`.
+
+**Cambios en `docs/OPERATIVA.md` §0.5:**
+
+- **Tres filas nuevas en el mapa** (la columna *Documento* queda
+  reordenada por agrupación temática):
+  - `docs/CLAUDE.md` — instrucciones locales para trabajar dentro de
+    `docs/` (eterno).
+  - `docs/ARQUITECTURA.md` — vista canónica técnica nivel contenedor,
+    mantenida por el Ejecutor 1 (§1), vigente (apertura en `v3.4.7`).
+  - `BITACORA-VIVA.md (si existe localmente)` — memoria operativa
+    local de coordinación entre revisor y ejecutores. Marcada como
+    *operativo* y *no aplica en repo*; las decisiones que maduran se
+    promueven por su slice al canónico correspondiente. La regla de
+    ignorar la carpeta `bitacora/` ya vive en `.gitignore` desde
+    `v3.4.8`.
+- Etiqueta de la fila `CLAUDE.md` cambiada a `CLAUDE.md (raíz)` para
+  distinguirla inequívocamente de `docs/CLAUDE.md`.
+- **Bloque nuevo "Regla de uso por documento"** con tabla de "Entra /
+  NO entra" para los nueve documentos relevantes (incluidos
+  `CLAUDE.md (raíz)` y `docs/CLAUDE.md` como entradas separadas).
+- **Bloque nuevo "Promoción de bitácora a canónico"** con el flujo de
+  cuatro pasos (conversación → bitácora → decisión cerrada → slice de
+  canonización en el canónico que corresponda → bitácora actualizada
+  con "canonizado en X versión Y").
+- **Tres reglas prácticas** al final del bloque: *si dudo dónde va
+  algo, va primero a la bitácora; nada se canoniza sin slice propio;
+  la bitácora nunca sustituye a un canónico*.
+
+**No tocado** en este slice:
+
+- §1–§11 de `OPERATIVA.md`.
+- La deuda preexistente de la cabecera `Estado` / `Última verificación`
+  del propio `OPERATIVA.md` (queda apuntada para slice de higiene
+  aparte, igual que se anotó en `v3.4.6`).
+- Ningún otro documento canónico.
+
+**Naturaleza del slice:** gobernanza documental (norma del modo de
+trabajo). No es runtime. Smoke se limita a verificación de versión,
+igual que `v3.4.8`.
+
+**Bumps en los 4 puntos canónicos `v3.4.8 → v3.4.9`** conforme a
+`OPERATIVA.md` §0.4.
+
+**Producción intocada:** `prismaconsul.com` permanece en `v3.4.0`.
+Acumulado en `dev`: `v3.4.1..v3.4.9`. Opción B sigue vigente.
+
 ## [2026-05-31] — v3.4.8
 
 ### Repo — bitácora viva de coordinación añadida a `.gitignore`

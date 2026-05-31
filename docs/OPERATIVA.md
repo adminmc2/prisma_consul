@@ -110,13 +110,15 @@ OPERATIVA.md** y se escala al revisor.
 
 | Documento | Propósito | Ciclo de vida | Condición de archivo |
 |---|---|---|---|
-| `CLAUDE.md` | Instrucciones base que Claude carga automáticamente; apunta a esta operativa | eterno | — |
+| `CLAUDE.md` (raíz) | Instrucciones base que Claude carga automáticamente; apunta a esta operativa | eterno | — |
+| `docs/CLAUDE.md` | Instrucciones locales para trabajar dentro de `docs/` (cabecera obligatoria, qué entra en la carpeta, cuándo mover a `historico/`) | eterno | — |
 | `docs/OPERATIVA.md` | Modo de trabajo del proyecto (este archivo) | eterno | — |
 | `GLOSARIO.md` | Vocabulario canónico | eterno | — |
 | `ECOSISTEMA.md` | Repos del ecosistema PRISMA y sus relaciones | eterno | — |
 | `README.md` | Portada técnica del repo (estructura, stack, despliegue) | vigente | cuando la estructura mayor cambie |
 | `CONTRATOS.md` | Contratos del sistema que no se pueden romper (URLs, APIs, BD) | vigente | cuando un contrato evolucione |
 | `MODELO-DOMINIO.md` | Modelo conceptual de datos | vigente | cuando el modelo cambie |
+| `docs/ARQUITECTURA.md` | Vista canónica técnica del repo nivel contenedor (qué piezas existen, cómo se conectan, qué estado tiene cada una) | vigente | cuando cambie arquitectura efectiva (mantenido por Ejecutor 1, §1) |
 | `docs/NOMENCLATURA.md` | Reglas de naming de archivos cliente | vigente | si se reformula la convención |
 | `docs/GUIA-NUEVAS-SECCIONES.md` | Cómo añadir secciones al Hub (paso a paso operativo) | vigente con caducidad | cuando el paso a paso de código se reescriba al patrón vigente (afectado por Bloque 2 de F1) |
 | `docs/historico/F1-PLAN.md` | Plan operativo vinculante de F1 (archivado al cierre en `v3.4.0`, 2026-05-25) | histórico | — |
@@ -125,6 +127,50 @@ OPERATIVA.md** y se escala al revisor.
 | `REGISTRO-RUTAS.md` | Spec del slice de registro de rutas (cerrado v3.2.46-48 + alineación v3.3.31) | histórico | candidato a mover a `docs/historico/` en un slice futuro |
 | `REVIEW-PRISMA-APEX.md` | Revisión cerrada del Sprint A | histórico cerrado | ya histórico; intocable |
 | `CHANGELOG.md` | Registro cronológico de cambios | operativo | nunca se archiva |
+| `BITACORA-VIVA.md` (si existe localmente) | Memoria operativa local de coordinación entre revisor y ejecutores | operativo | no aplica en repo; las decisiones que maduran se promueven por su slice al canónico correspondiente |
+
+### Regla de uso por documento
+
+Cada documento tiene un perímetro de contenido. Saber qué entra en cada
+uno evita derivas y duplicaciones:
+
+| Documento | Entra | NO entra |
+|---|---|---|
+| `CLAUDE.md` (raíz) | Overview del proyecto, design system, versión actual, workflow git, gotchas repo-wide. | Detalle de modelo, contratos, arquitectura técnica, vocabulario. |
+| `docs/CLAUDE.md` | Instrucciones locales para trabajar dentro de `docs/` (cabecera obligatoria, qué va y qué no va en la carpeta, cuándo mover a `historico/`). | El método general de trabajo (eso vive en `docs/OPERATIVA.md`); contenido de los propios canónicos de la carpeta. |
+| `docs/OPERATIVA.md` | Cómo se trabaja: roles, capas, escalado, handoff, validación, condiciones inviolables, cierre de slice, gobernanza documental. | Qué es el producto, qué piezas existen, qué dice el modelo, vocabulario. |
+| `GLOSARIO.md` | Vocabulario canónico (APEX, Prisma APEX, engagement, vertical...). | Cómo se trabaja; qué piezas hay; reglas de modelo. |
+| `MODELO-DOMINIO.md` | Entidades, atributos, relaciones, reglas del modelo, mapeo legacy. | Vista técnica de piezas; vocabulario aislado. |
+| `CONTRATOS.md` | Contratos congelados con el exterior: URLs públicas, formatos, compromisos cliente, reglas tipo CT-9. | Procesos internos; cómo se trabaja. |
+| `docs/ARQUITECTURA.md` | Piezas técnicas y su estado: contenedores, mounts, persistencia, runtime, dependencias, estados (operativo / integrado en dev / definido y pendiente). | Vocabulario; reglas de modelo; contratos. |
+| `CHANGELOG.md` | Cronología cerrada de cambios publicables, una entrada por versión. | Decisiones abiertas; planes; conversaciones. |
+| `BITACORA-VIVA.md` | Conversaciones, decisiones del revisor "en frío" no oficializadas, dudas abiertas, inputs cruzados de ejecutores, estado vivo del repo. **No canónico, no Git.** | Cualquier afirmación que el repo deba "creerse" como verdad — eso va a canónicos. |
+
+### Promoción de bitácora a canónico
+
+Cuando una decisión madura en la bitácora y debe ser auditable por
+cualquiera, se promueve por su slice propio (con bump + CHANGELOG y, si
+aplica, con actualización de `docs/ARQUITECTURA.md` por la regla del
+Ejecutor 1 ampliado, §1):
+
+1. Conversación o input → bitácora.
+2. Decisión cerrada del revisor → bitácora (registrada, no canonizada).
+3. La decisión necesita ser auditable → slice de canonización en el
+   canónico que corresponda:
+   - vocabulario nuevo o renombrado → `GLOSARIO.md`.
+   - entidades, relaciones, atributos → `MODELO-DOMINIO.md`.
+   - URL pública o compromiso externo → `CONTRATOS.md`.
+   - cómo se trabaja → `docs/OPERATIVA.md`.
+   - piezas, mounts, estados → `docs/ARQUITECTURA.md`.
+4. Bitácora actualizada con *"canonizado en X versión Y"*; la decisión
+   sale del bloque de decisiones abiertas y queda como histórico de la
+   bitácora.
+
+**Tres reglas prácticas para no perderse:**
+
+- Si dudo dónde va algo, va primero a la bitácora.
+- Nada se canoniza sin slice propio.
+- La bitácora nunca sustituye a un canónico.
 
 Modificar esta sección §0 requiere arbitraje del revisor. No se modifica por
 contexto de un turno ni por sugerencia de Claude.
