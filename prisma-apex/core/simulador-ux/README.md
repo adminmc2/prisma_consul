@@ -94,6 +94,11 @@ prisma-apex/core/simulador-ux/
 - **`campos` vs `genera` en los contratos:**
   - **`campos`** = input de captura que llega al sistema junto con el envío del formulario. Puede provenir del usuario (datos tecleados) o del propio canal (ej. el teléfono que WhatsApp aporta automáticamente). En todos los casos viaja en el payload del envío. Equivale a `writeOnly` en OpenAPI/JSON Schema.
   - **`genera`** = atributos que el sistema asigna **después** de recibir el formulario (`id`, `fecha_primer_contacto`, `canal_origen`). No son input; son metadato de la fila persistida. Equivale a `readOnly` en OpenAPI/JSON Schema.
+- **Naming de identificadores.** Convención verificada en el módulo; mantener al ampliar.
+  - **Formularios.** El `id` del contrato y el valor de `paso` usan `lower_snake_case`. Los archivos en `forms/` usan `kebab-case` alineado semánticamente con ese `id`. Ejemplos: `web_contact_form` ↔ `web-contact-form.json`, `lead_capture` ↔ `lead-capture.json`, `web_contact_form_received`.
+  - **Eventos.** El `id` del evento y el valor de `event_type` en SQL usan `UPPER_SNAKE_CASE`. El archivo en `events/` usa `kebab-case` alineado semánticamente con ese `id`. Ejemplo: `LEAD_CAPTURED` ↔ `lead-captured.json`.
+  - **Tablas y columnas SQL**: `lower_snake_case`. Ejemplos: `armc_leads`, `armc_events`, `canal_origen`, `lineas_servicio_detectadas`.
+  - **Consistencia entre capas.** El `paso` declarado en un form de Capa 2 coincide literalmente con la clave del nodo correspondiente en `CAPA1_NODES` y con la fila correspondiente de `MAPA_ROWS`. Los nombres de evento y de tabla usados en `mappings.json` coinciden literalmente con los `id` canónicos de eventos y con los nombres de tabla del `schema.sql`.
 
 ## Navegación
 

@@ -2,6 +2,12 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-31] — v3.4.13
+
+### Documentado
+
+- **Simulador UX (F3) — convención de naming canonizada en el README.** Añadido bullet "Naming de identificadores" en la sección "Convenciones" del `README.md` del módulo. Documenta cuatro reglas ya existentes y verificadas en el código: `id` y `paso` de formularios en `lower_snake_case`, `id` de evento y `event_type` SQL en `UPPER_SNAKE_CASE`, tablas y columnas SQL en `lower_snake_case`, y consistencia literal entre `paso` ↔ `CAPA1_NODES` ↔ `MAPA_ROWS`, además de la alineación semántica entre `id` canónicos, archivos JSON y `mappings.json`. Documental puro, sin refactor ni renombrado de identificadores existentes.
+
 ## [2026-05-31] — v3.4.12
 
 ### ARQUITECTURA — incorporación de `/apex-armc` como superficie propuesta
