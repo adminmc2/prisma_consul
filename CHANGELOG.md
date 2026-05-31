@@ -2,6 +2,81 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-31] — v3.4.11
+
+### GLOSARIO — canonización del renombre futuro de URLs Hub → /apex, discovery → /discovery-apex y nombres futuros APEX-ARMC
+
+Corrige el destino del renombre planificado en la entrada *Prisma APEX*,
+matiza las entradas legacy `/hub` y `/apex`, abre las entradas futuras
+`/apex` (destino del sistema), `/discovery-apex`, `/apex-armc` y
+`clinicaarmc.com`, y deja explícito que **en este slice solo se fijan
+nombres**. `MODELO-DOMINIO.md` no requiere cambios. `CONTRATOS.md §9.3`
+queda como deuda canonizable en slice posterior. Producción sigue en
+`v3.4.0`.
+
+**Cambios en `GLOSARIO.md`:**
+
+- **Cabecera**: `Última verificación` actualizada a `2026-05-31
+  (canonización renombre URL Hub → APEX, v3.4.11)`.
+- **Regla de uso introductoria**: ampliada con una excepción de
+  gobernanza — un slice explícito de nomenclatura aprobado por el
+  revisor puede canonizar aquí decisiones de naming (URLs, dominios,
+  renombres) que todavía no estén bajadas a los otros canónicos. La
+  entrada deja explícito el origen (decisión del revisor + versión
+  del slice) y queda apuntada la deuda de canonizarla también en el
+  canónico correspondiente.
+- **§1 entrada `Prisma APEX`**: reescrita. Corrige el destino del
+  renombre de URL pública: es `/apex`, no `/prisma-apex`. La carpeta
+  interna `prisma-apex/` se mantiene.
+- **§10 entrada `/hub`**: reescrita como URL pública legacy del
+  sistema Prisma APEX, congelada durante Sprint A; destino del
+  renombre planificado: `/apex`.
+- **§10 entrada `/apex`**: reescrita como uso actual frozen Sprint A,
+  con nota explícita de que tras el renombre del sistema queda
+  liberada para Prisma APEX y el discovery pasa a `/discovery-apex`.
+- **§10 cuatro entradas nuevas** (insertadas después de `/apex` uso
+  actual):
+  - `/apex` (futuro — destino del renombre del sistema).
+  - `/discovery-apex` (futuro).
+  - `/apex-armc` (futuro — engagement APEX de ARMC). Naturaleza
+    funcional **pendiente de definición** (tres lecturas registradas
+    en bitácora viva): (a) discovery adaptado, (b) panel operativo de
+    clínica, (c) front del simulador en producto. Esta entrada **fija
+    el nombre, no el contenido**.
+  - `clinicaarmc.com` (futuro — web pública de la clínica ARMC).
+    Hosting **pendiente** (tres lecturas registradas en bitácora):
+    (i) web independiente, (ii) servida por nuestro Express bajo otro
+    dominio, (iii) decisión abierta. Esta entrada **fija el nombre,
+    no la solución técnica final**.
+- **§13 aclaración "Hub ≠ Prisma APEX"**: matizada — `/hub` es URL
+  legacy y el destino futuro es `/apex`, no `/prisma-apex`.
+- **§14 dos entradas nuevas** en términos pendientes de definir:
+  *"Naturaleza funcional de `/apex-armc`"* y *"Hosting de
+  `clinicaarmc.com`"*.
+
+**No tocado** en este slice:
+
+- `MODELO-DOMINIO.md` (evaluado: no afirma "renombre planificado a
+  `/prisma-apex`" en su texto; sin incoherencia terminológica con
+  impacto de modelo).
+- `CONTRATOS.md §9.3` (deuda explícita apuntada en la entrada `Prisma
+  APEX` del propio glosario, canonizable en slice posterior).
+- `docs/ARQUITECTURA.md` (reescritura conceptual queda como Paso 3 del
+  plan, con nombres y URLs ya estabilizados).
+- `docs/OPERATIVA.md` (no se reabre en este slice).
+- Carpetas internas y `discovery-engine` (no se renombran aún; sólo
+  nomenclatura de URLs/dominio futuros).
+- F2 (los 2 archivos del blueprint siguen fuera del slice).
+
+**Naturaleza del slice:** gobernanza de nomenclatura, no runtime.
+Smoke se limita a verificación de versión.
+
+**Bumps en los 4 puntos canónicos `v3.4.10 → v3.4.11`** conforme a
+`OPERATIVA.md` §0.4.
+
+**Producción intocada:** `prismaconsul.com` permanece en `v3.4.0`.
+Acumulado en `dev`: `v3.4.1..v3.4.11`. Opción B sigue vigente.
+
 ## [2026-05-31] — v3.4.10
 
 ### Cambiado

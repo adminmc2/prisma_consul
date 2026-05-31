@@ -1,6 +1,6 @@
 # Glosario — Prisma APEX
 
-> **Estado:** vigente · **Última verificación:** 2026-05-22 (auditoría documental, Bloque 1).
+> **Estado:** vigente · **Última verificación:** 2026-05-31 (canonización renombre URL Hub → APEX, `v3.4.11`).
 > Varios términos anclan su definición canónica a `REVIEW-PRISMA-APEX.md` (histórico
 > cerrado). Esos anclajes se conservan a falta de un documento vigente que los sustituya;
 > reasignarlos es una decisión de gobernanza documental pendiente, fuera del alcance de
@@ -8,7 +8,7 @@
 
 Vocabulario canónico del proyecto. Fuente única para evitar deriva terminológica entre documentos, código y conversación.
 
-> **Cómo se usa.** Cada término tiene definición concisa + referencia al documento canónico donde se desarrolla en detalle. El glosario **no inventa términos**: absorbe los ya aprobados en `MODELO-DOMINIO.md`, `CONTRATOS.md`, `ECOSISTEMA.md` y `REVIEW-PRISMA-APEX.md`.
+> **Cómo se usa.** Cada término tiene definición concisa + referencia al documento canónico donde se desarrolla en detalle. El glosario **no inventa términos**: absorbe los ya aprobados en `MODELO-DOMINIO.md`, `CONTRATOS.md`, `ECOSISTEMA.md` y `REVIEW-PRISMA-APEX.md`. **Excepción de gobernanza:** un slice explícito de nomenclatura, aprobado por el revisor, puede canonizar aquí decisiones de naming (URLs, dominios, renombres) que todavía no estén bajadas a los otros canónicos; en ese caso la entrada deja explícito el origen (decisión del revisor + versión del slice) y queda apuntada la deuda de canonizarla también en el canónico correspondiente.
 >
 > **Regla de mantenimiento.** Cuando un documento canónico introduce un término nuevo o cambia uno existente, el cambio se refleja aquí. Cuando el documento canónico contradice este glosario, manda el canónico — pero hay que actualizar el glosario inmediatamente.
 >
@@ -25,8 +25,8 @@ Producto que PRISMA vende a clientes. Acrónimo de **Automatización de Procesos
 *Canónico:* `MODELO-DOMINIO.md` §1.1.
 
 ### Prisma APEX
-Sistema interno de PRISMA donde PRISMA opera con sus clientes. Es la instancia que PRISMA usa para sí misma. Análogo a Salesforce-empresa usando Salesforce-producto. Reemplaza el nombre legacy "Hub" — **el nombre canónico del sistema es Prisma APEX (`prisma-apex` en código, directorios y URLs)**.
-*Canónico:* `MODELO-DOMINIO.md` §1.1. *Estado:* la URL pública `/hub` se mantiene durante Sprint A por contrato congelado. El renombre planificado es a `/prisma-apex` (destino decidido); el *momento* del cambio queda como decisión de comunicación posterior a Sprint A (ver `CONTRATOS.md` §9.3).
+Sistema interno de PRISMA donde PRISMA opera con sus clientes. Es la instancia que PRISMA usa para sí misma. Análogo a Salesforce-empresa usando Salesforce-producto. Reemplaza el nombre legacy "Hub". En código y directorios el sistema sigue residiendo en `prisma-apex/`; **el destino del renombre de URL pública es `/apex`**, no `/prisma-apex` (decisión revisada del revisor; ver §10).
+*Canónico:* `MODELO-DOMINIO.md` §1.1 (entidad y producto). Renombre URL: decisión del revisor canonizada en este glosario (`v3.4.11`). *Estado:* la URL pública `/hub` se mantiene durante Sprint A por contrato congelado (`CONTRATOS.md` §3.2). El *momento* del cambio queda como decisión de comunicación posterior a Sprint A. `CONTRATOS.md §9.3` queda pendiente de actualización con el destino correcto (deuda canonizable en slice posterior).
 
 ### Producto
 Categoría de oferta de PRISMA. Hoy en `web-de-prisma` solo se modela **APEX**. Otros productos PRISMA (NOVIA, ABBE, Omia) viven en sus propios repos.
@@ -317,12 +317,38 @@ Marca aplicada a contratos cuyo cambio afecta el comportamiento visible al usuar
 ## 10. Términos de URL específicas
 
 ### `/hub`
-URL pública del sistema interno Prisma APEX (URL externa congelada durante Sprint A). El nombre interno del directorio cambia a `prisma-apex/`, pero la URL pública NO se renombra.
+URL pública **legacy** del sistema Prisma APEX (frozen Sprint A). El directorio interno ya es `prisma-apex/`. La URL pública **no se renombra durante Sprint A**; el destino del renombre planificado es **`/apex`** (decisión revisada del revisor; ver entrada nueva `/apex` (futuro)).
 *Canónico:* `CONTRATOS.md` §3.2, §11 (CT-1).
 
-### `/apex`
-URL pública del formulario de discovery (frozen Sprint A).
+### `/apex` (uso actual, frozen Sprint A)
+URL pública **actual** del formulario de discovery (frozen Sprint A). Tras el renombre del sistema, esta URL **queda liberada para Prisma APEX**; el discovery engine pasa a `/discovery-apex` (ver entrada nueva).
 *Canónico:* `CONTRATOS.md` §3.2, §11 (CT-1).
+
+### `/apex` (futuro — destino del renombre del sistema)
+URL pública **futura** del sistema Prisma APEX, tras el renombre desde `/hub`. Decisión del revisor: el destino del renombre del sistema es `/apex`, no `/prisma-apex`. El *momento* del cambio queda como decisión de comunicación posterior a Sprint A.
+*Canónico:* decisión del revisor canonizada en este glosario (`v3.4.11`). `CONTRATOS.md §9.3` pendiente de actualización con el destino correcto.
+
+### `/discovery-apex` (futuro)
+URL pública **futura** del formulario de discovery, tras la liberación de `/apex` para el sistema. Decisión del revisor. El motor sigue siendo el mismo (núcleo común APEX, hoy `discovery-engine`); solo cambia la URL pública. El renombre interno de la carpeta `prisma-apex/core/discovery-engine/` a una variante con `discovery-apex` queda como decisión menor pendiente del slice del cambio de URL.
+*Canónico:* decisión del revisor canonizada en este glosario (`v3.4.11`).
+
+### `/apex-armc` (futuro — engagement APEX de ARMC)
+URL pública **futura** del engagement APEX para el cliente ARMC. **No existe aún.** Es la pieza nueva en construcción: una instancia del producto APEX dedicada a la operativa de ARMC, distinta de la instancia interna Prisma APEX (`/apex` futuro). Servida desde la misma infraestructura PRISMA (VPS IONOS).
+
+**Naturaleza funcional pendiente de definición** — tres lecturas en discusión, registradas en bitácora viva (no canónica) hasta que el revisor cierre la decisión:
+(a) discovery engine adaptado para que ARMC capte pacientes (vs. el `/apex` actual que capta clientes para el SaaS);
+(b) panel operativo de clínica (gestión de leads, agenda, intake);
+(c) front-end del flujo del simulador llevado a producto real.
+
+*Canónico:* decisión del revisor sobre el **nombre de la URL** canonizada en este glosario (`v3.4.11`). Naturaleza funcional: pendiente. La definición se canonizará en el slice correspondiente cuando el revisor cierre (a)/(b)/(c). Mientras tanto, esta entrada **fija el nombre, no el contenido**.
+
+### `clinicaarmc.com` (futuro — web pública de la clínica ARMC)
+Dominio público de la clínica ARMC, distinto del producto Prisma APEX. **Existe como decisión nominal**; el hosting está abierto. Tres lecturas en discusión, registradas en bitácora viva (no canónica) hasta que el revisor cierre la decisión:
+(i) web independiente de la clínica (servidor propio o tercero) que enlaza/embebe la captación del engagement APEX-ARMC;
+(ii) web servida por nuestro Express bajo otro dominio (proxy Cloudflare → IONOS);
+(iii) decisión abierta.
+
+*Canónico:* decisión del revisor sobre el **nombre del dominio** canonizada en este glosario (`v3.4.11`). Hosting: pendiente. La decisión se canonizará en el slice correspondiente cuando el revisor cierre (i)/(ii)/(iii). Esta entrada **fija el nombre, no la solución técnica final**.
 
 ### `/publicados/[cliente]/...`
 **Contrato canónico** para los entregables publicados al cliente. Sustituye a `/portal/analisis/[cliente]/...` (URL legacy con redirect 301 indefinido).
@@ -394,7 +420,7 @@ Versión actual: ver `CLAUDE.md` §"Versionado". Cierre completo de la reorganiz
 Aclaraciones para evitar confusión recurrente:
 
 - **APEX ≠ formulario de discovery.** APEX es el producto completo. El formulario es solo una pieza del engagement APEX (fase 1 legacy "Formulario APEX").
-- **Hub ≠ Prisma APEX.** "Hub" es nombre legacy + URL pública (`/hub`). "Prisma APEX" es el nombre canónico actual del sistema interno.
+- **Hub ≠ Prisma APEX.** "Hub" es nombre legacy + URL pública legacy `/hub`. "Prisma APEX" es el nombre canónico del sistema; **el destino del renombre de URL pública es `/apex`**, no `/prisma-apex` (ver §10).
 - **Cliente ≠ Usuario.** Cliente es la empresa; Usuario es la persona. Un cliente puede tener varios usuarios.
 - **Engagement ≠ Cliente.** Un Cliente puede tener múltiples Engagements.
 - **`active_engagement_id` ≠ relación canónica.** Es puntero transitorio de UI, solo aplica a `cliente_user`. `prisma_admin` siempre lo tiene NULL.
@@ -415,6 +441,8 @@ Términos que aparecerán cuando los procesos correspondientes maduren. **No se 
 - Subtipos de **distribuidor** dentro de las verticales (cuando el primer cliente distribuidor entre).
 - Capa **centralizada de autorización** (sprint posterior).
 - **EngagementAccess** (granularidad de auth por engagement, sprint posterior).
+- **Naturaleza funcional de `/apex-armc`** — tres lecturas en discusión (discovery adaptado / panel operativo / front del simulador en producto). Se cierra cuando el revisor decida.
+- **Hosting de `clinicaarmc.com`** — tres lecturas en discusión (web independiente / proxy a PRISMA / decisión abierta). Se cierra cuando el revisor decida.
 
 ---
 
