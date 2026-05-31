@@ -2,6 +2,19 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-31] — v3.4.12
+
+### ARQUITECTURA — incorporación de `/apex-armc` como superficie propuesta
+
+Añade `/apex-armc` como primera superficie con estado **propuesto** en
+`docs/ARQUITECTURA.md`: frase de estados, nodo en Mermaid y fila en
+módulos internos. **No tocados**: `clinicaarmc.com`, persistencia,
+renombre `/hub → /apex` ni reescritura conceptual general. Producción
+sigue en `v3.4.0`.
+
+**Bumps en los 4 puntos canónicos `v3.4.11 → v3.4.12`** conforme a
+`OPERATIVA.md` §0.4.
+
 ## [2026-05-31] — v3.4.11
 
 ### GLOSARIO — canonización del renombre futuro de URLs Hub → /apex, discovery → /discovery-apex y nombres futuros APEX-ARMC

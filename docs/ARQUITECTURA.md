@@ -33,8 +33,10 @@ dominio (`MODELO-DOMINIO.md`), ni los contratos externos (`CONTRATOS.md`).
   consume todavía. F2 / F3 contribuyen aquí; la integración efectiva la
   cierra el Ejecutor 1 (§1 de `OPERATIVA.md`).
 
-El estado **propuesto** no se utiliza en esta versión; se incorporará si
-se hace necesario.
+El estado **propuesto** se utiliza por primera vez en esta versión para
+reflejar `/apex-armc` (engagement APEX para ARMC, no existe aún).
+Definición canónica del nombre en `GLOSARIO.md` §10; su naturaleza
+funcional queda pendiente de definición en un slice posterior.
 
 ### Dentro del alcance
 
@@ -88,6 +90,7 @@ flowchart LR
       SHARED["/shared"]:::op
       API["/api/* — backend"]:::op
       SIM["/core/simulador-ux<br/>[integrado en dev]"]:::dev
+      APEXARMC["/apex-armc<br/>[propuesto]"]:::pending
     end
 
     subgraph PERSIST["Persistencia · Neon PostgreSQL"]
@@ -133,6 +136,9 @@ flowchart LR
   **pendiente de integración** en backend.
 - Flechas punteadas representan dependencias entre piezas definidas pero
   todavía no ejecutadas en runtime.
+- `/apex-armc` aparece etiquetado como `[propuesto]` y, por economía
+  visual en esta versión, reutiliza temporalmente el trazo punteado sin
+  implicar todavía pieza definida pendiente de integración.
 
 ## 3. Módulos internos
 
@@ -145,6 +151,7 @@ flowchart LR
 | Recursos compartidos | `shared/` | `/shared` | operativo |
 | Backend Express | `server/server.js`, `server/routes/`, `server/lib/` | `/api/*` | operativo |
 | Simulador UX | `prisma-apex/core/simulador-ux/` | `/core/simulador-ux` | integrado en dev *(prod nginx pendiente, ver §8 de OPERATIVA)* |
+| Engagement APEX-ARMC | `prismaconsul.com/apex-armc` (futuro, no existe aún) | — | propuesto — naturaleza funcional pendiente (ver `GLOSARIO.md` §10) |
 
 **Compatibilidades de URL** (configuradas en `server/server.js`):
 
