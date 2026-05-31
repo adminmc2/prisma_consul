@@ -15,7 +15,7 @@ Alcance verificado: solo las tablas necesarias para la captura del lead (acción
 | `email` | VARCHAR(255) | SÍ | — | Correo del lead. Opcional para canal WhatsApp. |
 | `telefono` | VARCHAR(20) | NO | — | Teléfono de contacto. |
 | `canal_origen` | VARCHAR(50) | NO | enum | `WEB_FORM`, `WHATSAPP`. |
-| `opciones_seleccionadas` | INT[] | NO | cardinality ≥ 1 | IDs del catálogo de 25 demandas. |
+| `opciones_seleccionadas` | INT[] | NO | cardinality ≥ 1 | IDs del catálogo de 20 demandas. |
 | `lineas_servicio_detectadas` | VARCHAR(100)[] | NO | `ARRAY[]` | Derivado de `opciones_seleccionadas`. |
 | `nota` | TEXT | SÍ | — | Observaciones libres del lead. |
 | `estado_actual` | VARCHAR(50) | NO | `LEAD_CAPTURED` | Estado actual del lead en el flujo. |

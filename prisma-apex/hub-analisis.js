@@ -466,7 +466,7 @@ function createCapa2(mountEl, opts) {
   function buildTree() {
     state.tree = [
       { id: 'cat-catalogo', label: 'Catálogo', icon: 'ph-list-bullets', items: [
-        { id: 'catalogo-demandas', label: 'Demandas (25)', icon: 'ph-target', kind: 'demandas' },
+        { id: 'catalogo-demandas', label: 'Demandas (20)', icon: 'ph-target', kind: 'demandas' },
         { id: 'catalogo-lineas', label: 'Líneas de servicio (5)', icon: 'ph-stack', kind: 'lineas' }
       ] },
       { id: 'cat-forms', label: 'Formularios', icon: 'ph-clipboard-text',
@@ -529,7 +529,7 @@ function createCapa2(mountEl, opts) {
   }
   function renderDemandas(host) {
     const rows = state.catalogo.opciones;
-    host.innerHTML = header('Catálogo', 'Demandas (25)', [{ label: 'fuente: catalogo-demandas.json', soft: true }]) +
+    host.innerHTML = header('Catálogo', 'Demandas (20)', [{ label: 'fuente: catalogo-demandas.json', soft: true }]) +
       '<div class="panel-filter"><input class="capa2-demandas-filter" placeholder="Filtrar por frase o línea de servicio…" autocomplete="off">' +
       '<span class="count capa2-demandas-count">' + rows.length + ' / ' + rows.length + '</span></div>' +
       '<table class="data"><thead><tr><th>#</th><th>Frase</th><th>Líneas</th><th>Tratamientos</th></tr></thead><tbody class="capa2-demandas-body"></tbody></table>';

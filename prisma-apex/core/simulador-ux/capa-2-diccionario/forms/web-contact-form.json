@@ -10,7 +10,7 @@
     { "nombre": "apellido_materno", "tipo": "texto_corto", "obligatorio": true, "min": 1, "max": 120, "ejemplo": "López" },
     { "nombre": "email", "tipo": "email", "obligatorio": true, "max": 255, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "ejemplo": "maria.garcia@example.com" },
     { "nombre": "telefono", "tipo": "telefono", "obligatorio": true, "max": 20, "pattern": "^\\+?[0-9 ]{8,20}$", "ejemplo": "+52 55 1234 5678" },
-    { "nombre": "opciones_seleccionadas", "tipo": "multiseleccion", "obligatorio": true, "fuente": "catalogo-demandas", "min_items": 1, "max_items": 25, "ejemplo": [1, 7] },
+    { "nombre": "opciones_seleccionadas", "tipo": "multiseleccion", "obligatorio": true, "fuente": "catalogo-demandas", "min_items": 1, "max_items": 20, "ejemplo": [1, 7] },
     { "nombre": "nota", "tipo": "texto_libre", "obligatorio": false, "max": 2000, "nullable": true, "ejemplo": "Me interesa una valoración antes de fin de mes." }
   ],
   "genera": [

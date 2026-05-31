@@ -53,7 +53,7 @@ prisma-apex/core/simulador-ux/
 │   └── index.html                      ← capa standalone legacy
 ├── capa-2-diccionario/
 │   ├── index.html                      ← capa standalone legacy
-│   ├── catalogo-demandas.json          ← 25 demandas + 5 líneas de servicio (consumido)
+│   ├── catalogo-demandas.json          ← 20 demandas + 5 líneas de servicio (consumido)
 │   ├── forms/
 │   │   ├── web-contact-form.json        (consumido)
 │   │   └── lead-capture.json            (consumido)
@@ -90,7 +90,7 @@ prisma-apex/core/simulador-ux/
 - **Capa 1 muestra estados y decisiones.** No incrusta formularios ni grids de captura.
 - **Capa 2 es contrato.** Cada formulario tiene id, canal, campos, derivados, reglas. Cada evento tiene id, payload mínimo/opcional, origen y destino.
 - **Capa 3 es persistencia.** El esquema SQL es la verdad; el `data-dictionary.md` es la referencia humana.
-- **El catálogo es referencia reutilizable.** Las 25 demandas viven en `catalogo-demandas.json` y los formularios apuntan a él (`fuente: "catalogo-demandas"`). Mismo patrón que países, categorías o cualquier dimensión en producto real.
+- **El catálogo es referencia reutilizable.** Las 20 demandas viven en `catalogo-demandas.json` y los formularios apuntan a él (`fuente: "catalogo-demandas"`). Mismo patrón que países, categorías o cualquier dimensión en producto real.
 - **`campos` vs `genera` en los contratos:**
   - **`campos`** = input de captura que llega al sistema junto con el envío del formulario. Puede provenir del usuario (datos tecleados) o del propio canal (ej. el teléfono que WhatsApp aporta automáticamente). En todos los casos viaja en el payload del envío. Equivale a `writeOnly` en OpenAPI/JSON Schema.
   - **`genera`** = atributos que el sistema asigna **después** de recibir el formulario (`id`, `fecha_primer_contacto`, `canal_origen`). No son input; son metadato de la fila persistida. Equivale a `readOnly` en OpenAPI/JSON Schema.
@@ -102,7 +102,7 @@ Capa 2, Capa 3 y Mapa usan **sidebar + detalle + búsqueda** (patrón estándar 
 - Sidebar lateral con categorías colapsables.
 - Buscador en cabecera que filtra todos los items en tiempo real.
 - Panel central renderiza solo el item seleccionado.
-- Listas largas (25 demandas) como tablas compactas con filtro propio.
+- Listas largas (20 demandas) como tablas compactas con filtro propio.
 
 **Cross-links entre capas:** cada formulario/evento muestra chips de trazabilidad que saltan a otras capas. Cada tabla muestra "Usado por". Cada nodo de Capa 1 con contrato muestra "Ver contrato en Capa 2". El Mapa permite saltar desde cualquier celda a su capa correspondiente. Mecánica técnica: **llamada directa entre instancias nativas** de capa dentro del Hub (`onNavigate` → `simNavigate` → `focusItem` de la capa destino). No hay `postMessage` ni iframes.
 
@@ -110,7 +110,7 @@ Capa 2, Capa 3 y Mapa usan **sidebar + detalle + búsqueda** (patrón estándar 
 
 - **Lead:** persona que entra al flujo por web o WhatsApp.
 - **Captura:** registro inicial del lead con sus datos de contacto y demandas seleccionadas.
-- **Demanda:** una de las 25 frases del catálogo (`catalogo-demandas.json`).
+- **Demanda:** una de las 20 frases del catálogo (`catalogo-demandas.json`).
 - **Línea de servicio:** agrupación clínica/operativa derivada de las demandas.
 - **Evento:** transición observable del lead. Se persiste en `armc_events`.
 

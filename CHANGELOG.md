@@ -2,6 +2,12 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-31] — v3.4.10
+
+### Cambiado
+
+- **Simulador UX (F3) — catálogo de demandas reducido de 25 a 20 frases.** Sustitución completa del contenido de `catalogo-demandas.json`. Fusiones: id 6 actual ("lifting facial") + id 10 ("tensar/reafirmar piel") se consolidan en nuevo id 6; id 14 ("cicatrices") + id 16 ("quemaduras y daño solar") se consolidan en nuevo id 13. Se eliminan id 21 (hiperhidrosis), id 23 (otoplastia), id 24 (rutina de mantenimiento). Reasignación de líneas de servicio donde procede. `max_items` en los dos forms (web/WhatsApp) baja de 25 a 20. Barrido de "25 demandas" → "20 demandas" en `hub-analisis.js`, capa 2 legacy `index.html`, `README.md` del módulo y `data-dictionary.md`. La regla de derivación especializada por demanda (cabello / obesidad → Dra. Elián) queda anotada en la bitácora viva como pendiente del slice de agendamiento; no se incorpora al catálogo.
+
 ## [2026-05-31] — v3.4.9
 
 ### OPERATIVA — ampliación de §0.5 con mapa de uso documental y promoción bitácora → canónico
