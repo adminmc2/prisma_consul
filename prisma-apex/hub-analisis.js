@@ -108,9 +108,9 @@ const CAPA1_NODES = {
     ],
     actions: []
   },
-  // Handoff humano — patrón transversal (no nueva linealidad del flujo base).
-  // Activable desde cualquiera de los 4 nodos del flujo lineal (lead_entry_channel,
-  // web_contact_form_received, lead_capture_whatsapp, lead_captured).
+  // Handoff humano — patrón transversal de estado del lead (no nueva linealidad del
+  // flujo base). El simulador representa la presencia del handoff respecto al flujo
+  // lineal; no modela transiciones interactivas de activación dentro de Capa 1.
   human_handoff_requested: {
     title: 'Handoff humano solicitado', key: 'HUMAN_HANDOFF_REQUESTED', x: 2080, y: 110, width: 360,
     description: 'La conversación entra en estado "esperando humano". El bot queda silenciado para esta conversación; un humano del Hub puede tomarla.',
@@ -120,7 +120,7 @@ const CAPA1_NODES = {
       'Receptor por defecto: Carlos',
       'Bot silenciado para esta conversación'
     ],
-    note: 'Patrón transversal activable desde cualquier nodo del flujo base.',
+    note: 'Patrón transversal de estado del lead. El simulador representa la presencia del handoff respecto al flujo lineal; no modela transiciones interactivas de activación dentro de Capa 1.',
     crossLinks: [
       { label: 'Ver evento HUMAN_HANDOFF_REQUESTED en Capa 2', tab: 2, itemId: 'event-HUMAN_HANDOFF_REQUESTED' },
       { label: 'Ver tabla armc_handoffs en Capa 3', tab: 3, itemId: 'table-armc_handoffs' }
@@ -153,7 +153,7 @@ const CAPA1_NODES = {
       'close_reason en armc_leads: "manual" o "inactivity"',
       'Identidad de quien cierra (closed_by) NO se duplica en armc_leads; se persiste en armc_handoffs (fila CLOSED con user_id) y en el payload del evento HUMAN_HANDOFF_CLOSED (closed_by_user_id opcional)'
     ],
-    note: 'Reintroducción del bot tras el cierre queda fuera del alcance de este paquete.',
+    note: 'Al pasar a handoff_state = "closed", el bot se reactiva automáticamente para la conversación. Convención N3-2 derivada del handoff_state, sin columnas ni eventos propios.',
     crossLinks: [
       { label: 'Ver evento HUMAN_HANDOFF_CLOSED en Capa 2', tab: 2, itemId: 'event-HUMAN_HANDOFF_CLOSED' },
       { label: 'Ver tabla armc_handoffs en Capa 3', tab: 3, itemId: 'table-armc_handoffs' }
@@ -1000,7 +1000,7 @@ const MAPA_ROWS = [
   { c1: 'web_contact_form_received', c1_label: 'Contacto web recibido', c2_form: 'web_contact_form', c2_event: null, c3: [], note: 'Input por canal web. La persistencia ocurre al converger en lead_captured.' },
   { c1: 'lead_capture_whatsapp', c1_label: 'Contacto por WhatsApp recibido', c2_form: 'lead_capture', c2_event: null, c3: [], note: 'Input por canal WhatsApp. La persistencia ocurre al converger en lead_captured.' },
   { c1: 'lead_captured', c1_label: 'Lead capturado (convergencia)', c2_form: null, c2_event: 'LEAD_CAPTURED', c3: ['armc_leads', 'armc_events'], note: 'Punto único de persistencia. Emite el evento y escribe en BD.' },
-  { c1: 'human_handoff_requested', c1_label: 'Handoff humano solicitado', c2_form: null, c2_event: 'HUMAN_HANDOFF_REQUESTED', c3: ['armc_leads', 'armc_events', 'armc_handoffs'], note: 'Patrón transversal: activable desde cualquier nodo del flujo base. Bot silenciado para la conversación.' },
+  { c1: 'human_handoff_requested', c1_label: 'Handoff humano solicitado', c2_form: null, c2_event: 'HUMAN_HANDOFF_REQUESTED', c3: ['armc_leads', 'armc_events', 'armc_handoffs'], note: 'Patrón transversal de estado del lead. Bot silenciado para la conversación. El simulador representa presencia respecto al flujo lineal, no transiciones interactivas.' },
   { c1: 'human_handoff_active', c1_label: 'Handoff humano activo', c2_form: null, c2_event: 'HUMAN_HANDOFF_ASSIGNED', c3: ['armc_leads', 'armc_events', 'armc_handoffs'], note: 'Humano del Hub atiende la conversación. Cada (re)asignación añade fila ASSIGNED en armc_handoffs.' },
   { c1: 'human_handoff_closed', c1_label: 'Handoff humano cerrado', c2_form: null, c2_event: 'HUMAN_HANDOFF_CLOSED', c3: ['armc_leads', 'armc_events', 'armc_handoffs'], note: 'Cierre manual o por inactividad (24h). closed_by no se duplica en armc_leads.' }
 ];

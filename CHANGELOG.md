@@ -2,6 +2,50 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-05-31] — v3.4.15
+
+### Simulador — mini-fix v3.4.15: N3-2 y transversalidad declarativa del handoff
+
+Corrige dos hallazgos del revisor sobre `v3.4.14`: (1) N3-2 queda
+documentada correctamente como convención derivada del `handoff_state`,
+con reactivación automática del bot al pasar a `closed`; (2) la
+transversalidad del handoff en Capa 1 se aclara como
+representacional/declarativa, no como navegación interactiva. F2 fuera.
+Producción intacta en `v3.4.13`.
+
+**Ediciones aplicadas** (solo redacción; schema intacto):
+
+- `prisma-apex/core/simulador-ux/README.md`:
+  - Bloque N3-2 corregido: silencio del bot mientras
+    `handoff_state ∈ ('requested', 'active')`; reactivación automática
+    al pasar a `closed`. Sin columnas ni eventos propios.
+  - Sección "Capa 1" del *Alcance verificado*: la transversalidad del
+    handoff se redacta como representación analítica del estado del
+    lead, sin transiciones interactivas.
+- `prisma-apex/hub-analisis.js`:
+  - Comentario sobre el bloque de nodos handoff: rebajado a "patrón
+    transversal de estado del lead; no modela transiciones
+    interactivas de activación dentro de Capa 1".
+  - `note` del nodo `human_handoff_requested`: mismo rebaje.
+  - `note` del nodo `human_handoff_closed`: ahora documenta la
+    reactivación automática del bot al cierre, convención N3-2 derivada.
+  - Fila `MAPA_ROWS` de `human_handoff_requested`: rebaje análogo.
+
+**No tocado:** `capa-3-sql/schema.sql`, `capa-3-sql/data-dictionary.md`,
+`capa-2-diccionario/events/*.json`, `capa-2-diccionario/mappings.json`,
+forms existentes, `LEAD_CAPTURED`, `docs/ARQUITECTURA.md`, ningún otro
+canónico. `data-dictionary.md` se revisó y no contenía afirmaciones
+contradictorias equivalentes. F2 fuera.
+
+**Naturaleza del slice:** mini-fix documental sobre la redacción del
+paquete N3-1 ya integrado. Sin impacto en schema ni en contratos
+materiales del simulador.
+
+**Bumps en los 4 puntos canónicos `v3.4.14 → v3.4.15`** conforme a
+`OPERATIVA.md` §0.4.
+
+**Producción intocada:** `prismaconsul.com` permanece en `v3.4.13`.
+
 ## [2026-05-31] — v3.4.14
 
 ### Simulador UX + ARQUITECTURA — integración del paquete congelado N3-1 (Handoff humano)
