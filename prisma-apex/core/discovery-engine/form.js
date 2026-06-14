@@ -3447,50 +3447,9 @@ function clearApexSession() {
   sessionStorage.removeItem('apex_nombre');
 }
 
-async function handleApexLogin(e) {
-  e.preventDefault();
-
-  const email = document.getElementById('apexLoginEmail').value.trim();
-  const password = document.getElementById('apexLoginPassword').value;
-  const errorEl = document.getElementById('apexLoginError');
-  const btnLogin = document.getElementById('btnApexLogin');
-  const loginText = document.getElementById('apexLoginText');
-  const spinner = document.getElementById('apexLoginSpinner');
-
-  if (!email || !password) {
-    errorEl.textContent = 'Introduce email y contraseña';
-    return;
-  }
-
-  errorEl.textContent = '';
-  btnLogin.disabled = true;
-  loginText.style.display = 'none';
-  spinner.style.display = 'inline-block';
-
-  try {
-    const res = await fetch(CONFIG.authApiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      errorEl.textContent = data.error || 'Credenciales incorrectas';
-      return;
-    }
-
-    setApexSession(data);
-    goToScreen('welcome');
-  } catch (err) {
-    errorEl.textContent = 'Error de conexión';
-  } finally {
-    btnLogin.disabled = false;
-    loginText.style.display = 'inline';
-    spinner.style.display = 'none';
-  }
-}
+// handleApexLogin eliminada en v3.5.0: el discovery pasa a ser superficie pública sin login.
+// Las utilidades getApexToken / setApexSession / clearApexSession / isAuthenticated quedan
+// como helpers pasivos para aprovechar el token si el lead viene logueado desde el Hub.
 
 // ============================================================
 // INICIALIZACIÓN
@@ -3500,16 +3459,9 @@ function init() {
   try {
     initDOM();
 
-    // Event Listeners - Login
-    const apexLoginForm = document.getElementById('apexLoginForm');
-    if (apexLoginForm) {
-      apexLoginForm.addEventListener('submit', handleApexLogin);
-    }
-
-    // Si ya tiene sesión, saltar al welcome
-    if (isAuthenticated()) {
-      goToScreen('welcome');
-    }
+    // v3.5.0: pantalla de login del discovery eliminada. Welcome es la pantalla inicial
+    // activa en index.html. Si el lead viene logueado desde el Hub, getApexToken() devuelve
+    // su token y se aprovecha pasivamente en los fetches; si no, el form funciona igual sin él.
 
     // Event Listeners - Botón Start (va a identificación de empresa)
     if (DOM.btnStart) {

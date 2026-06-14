@@ -320,17 +320,17 @@ Marca aplicada a contratos cuyo cambio afecta el comportamiento visible al usuar
 URL pública **legacy** del sistema Prisma APEX (frozen Sprint A). El directorio interno ya es `prisma-apex/`. La URL pública **no se renombra durante Sprint A**; el destino del renombre planificado es **`/apex`** (decisión revisada del revisor; ver entrada nueva `/apex` (futuro)).
 *Canónico:* `CONTRATOS.md` §3.2, §11 (CT-1).
 
-### `/apex` (uso actual, frozen Sprint A)
-URL pública **actual** del formulario de discovery (frozen Sprint A). Tras el renombre del sistema, esta URL **queda liberada para Prisma APEX**; el discovery engine pasa a `/discovery-apex` (ver entrada nueva).
+### `/apex` (legacy `301` desde `v3.5.0`)
+URL pública **legacy** del formulario de discovery. **Renombrada a `/discovery-apex` en `v3.5.0`**. `/apex` queda como redirect `301` a `/discovery-apex` (compatibilidad temporal registrada en `docs/OPERATIVA.md` §8). Cuando entre el slice del renombre `/hub → /apex` del sistema, esta URL se libera del `301` y pasa a apuntar al sistema Prisma APEX (ver entrada siguiente).
 *Canónico:* `CONTRATOS.md` §3.2, §11 (CT-1).
 
 ### `/apex` (futuro — destino del renombre del sistema)
 URL pública **futura** del sistema Prisma APEX, tras el renombre desde `/hub`. Decisión del revisor: el destino del renombre del sistema es `/apex`, no `/prisma-apex`. El *momento* del cambio queda como decisión de comunicación posterior a Sprint A.
 *Canónico:* decisión del revisor canonizada en este glosario (`v3.4.11`). `CONTRATOS.md §9.3` pendiente de actualización con el destino correcto.
 
-### `/discovery-apex` (futuro)
-URL pública **futura** del formulario de discovery, tras la liberación de `/apex` para el sistema. Decisión del revisor. El motor sigue siendo el mismo (núcleo común APEX, hoy `discovery-engine`); solo cambia la URL pública. El renombre interno de la carpeta `prisma-apex/core/discovery-engine/` a una variante con `discovery-apex` queda como decisión menor pendiente del slice del cambio de URL.
-*Canónico:* decisión del revisor canonizada en este glosario (`v3.4.11`).
+### `/discovery-apex` (vigente desde `v3.5.0`)
+URL pública **canónica** del formulario de discovery. **Público — sin login** (reversión de la decisión técnica no canonizada del 16/03/2026, commit `4ad6136`). El motor sigue siendo el mismo (núcleo común APEX, `discovery-engine/`); el renombre afecta solo a la URL pública, no a la carpeta interna. La URL legacy `/apex` redirige aquí vía `301` hasta que se libere para el renombre `/hub → /apex` del sistema.
+*Canónico:* decisión del revisor canonizada en este glosario (`v3.4.11`), ejecutada en `v3.5.0`. Ver también `CONTRATOS.md` §3.2.
 
 ### `/apex-armc` (futuro — engagement APEX de ARMC)
 URL pública **futura** del engagement APEX para el cliente ARMC. **No existe aún.** Es la pieza nueva en construcción: una instancia del producto APEX dedicada a la operativa de ARMC, distinta de la instancia interna Prisma APEX (`/apex` futuro). Servida desde la misma infraestructura PRISMA (VPS IONOS).

@@ -21,7 +21,7 @@ Web de marketing + formulario de descubrimiento APEX + sistema interno Prisma AP
 | Ruta | App | Descripción |
 |------|-----|-------------|
 | `/` | Landing page | Web de marketing de PRISMA Consul |
-| `/apex` | APEX Discovery | Formulario interactivo de descubrimiento empresarial |
+| `/discovery-apex` | APEX Discovery | Formulario interactivo de descubrimiento empresarial (público, sin login desde `v3.5.0`). `/apex` legacy devuelve `301`. |
 | `/hub` | Prisma APEX (Hub) | Sistema interno: gestión de clientes, archivos y entregables (requiere login) |
 | `/publicados/[cliente]/...` | Entregables | HTMLs de análisis publicados por cliente |
 | `/api/*` | API REST | Backend compartido por las apps |
@@ -49,7 +49,7 @@ Web de marketing + formulario de descubrimiento APEX + sistema interno Prisma AP
 │   ├── hub-admin.js              # Dominio admin + vistas del panel (compartidas por viewAsClient)
 │   ├── hub-analisis.js           # Simulador (módulo nativo) + análisis (iframes ARMC) + init
 │   ├── core/                     # Núcleo común a todos los clientes
-│   │   ├── discovery-engine/     # Formulario APEX Discovery (servido en /apex)
+│   │   ├── discovery-engine/     # Formulario APEX Discovery (servido en /discovery-apex desde v3.5.0; /apex legacy → 301)
 │   │   └── simulador-ux/         # Simulador UX — assets (JSON/SQL/MD del módulo nativo)
 │   └── clientes-publicados/      # Entregables publicados por cliente
 │       └── armc/                 # ARMC — primer cliente real
@@ -90,7 +90,8 @@ npm run dev
 
 # Acceder
 http://localhost:3000              # Landing
-http://localhost:3000/apex         # APEX Discovery
+http://localhost:3000/discovery-apex  # APEX Discovery (público)
+http://localhost:3000/apex            # 301 legacy → /discovery-apex
 http://localhost:3000/hub          # Prisma APEX (Hub)
 ```
 

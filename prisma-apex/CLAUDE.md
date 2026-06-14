@@ -5,7 +5,7 @@ Instrucciones locales para trabajar dentro de `prisma-apex/`. El contexto repo-w
 ## Cuatro superficies internas
 
 - **Hub** — `prisma-apex/index.html`. Entrypoint SPA del Hub (login + 3 pestañas admin / 1 pestaña user). Servido en `/hub`.
-- **Discovery engine** — `prisma-apex/core/discovery-engine/`. Formulario APEX. Servido en `/apex`. Archivos: `index.html`, `form.js`, `form.css`, `signal-detector.js`.
+- **Discovery engine** — `prisma-apex/core/discovery-engine/`. Formulario APEX. Servido en `/discovery-apex` desde `v3.5.0` (`/apex` queda como redirect `301` legacy con condición de retirada en `docs/OPERATIVA.md` §8). **Público — sin login**. Archivos: `index.html`, `form.js`, `form.css`, `signal-detector.js`.
 - **Simulador UX** — `prisma-apex/core/simulador-ux/`. Módulo interno del Hub (Línea B, nativizado). **No tiene URL pública**; sus datos se sirven internamente bajo `/core/simulador-ux/...`. Estructura: `capa-1-ux/`, `capa-2-diccionario/`, `capa-3-sql/`, `mapa/`.
 - **Entregables por cliente** — `prisma-apex/clientes-publicados/<cliente>/`. Hoy solo ARMC. Estructura: `diagramas/`, `diagnostico/`, `blueprint/`, `css/`. URL canónica: `/publicados/[cliente]/...` (legacy `/portal/analisis/...` resuelve por 301).
 

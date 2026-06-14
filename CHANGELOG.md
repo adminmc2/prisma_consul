@@ -2,6 +2,83 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-06-08] — v3.5.0
+
+### Discovery APEX — superficie pública `/discovery-apex` + corrección drift CONTRATOS
+
+Reversión de la decisión técnica no canonizada del 16/03/2026 (commit
+`4ad6136`) que cerró el funnel de captación con login. Ejecución
+simultánea del renombre `/apex → /discovery-apex` ya canonizado en
+`GLOSARIO.md` `v3.4.11`. **Cambio de superficie pública con
+compatibilidad legacy `301` y actualización simultánea de canónicos**
+(regla del carril ampliado `OPERATIVA.md` §5).
+
+**Runtime real cambiado** (slice único, sin Slice 1 documental
+anticipado):
+
+- Mount `/apex` en `server/server.js` **reemplazado** por mount
+  `/discovery-apex`. `/apex` queda solo como redirect `301` legacy
+  (compatibilidad temporal registrada en `docs/OPERATIVA.md` §8 con
+  condición de retirada). El handler `410 Gone` de `/apex/fonts/.+`
+  (deuda `v3.3.37`) sigue activo antes del wildcard `301`.
+- Eliminada pantalla `#screen-apex-login` del frontend del discovery
+  (`prisma-apex/core/discovery-engine/index.html`). La pantalla
+  `welcome` pasa a tener `active` y arranca directa.
+- Eliminado el gate de sesión en
+  `prisma-apex/core/discovery-engine/form.js`: `handleApexLogin` se
+  retira; las utilidades `getApexToken / setApexSession /
+  clearApexSession / isAuthenticated` quedan como helpers pasivos
+  (si el lead viene logueado desde el Hub, se aprovecha; si no, el
+  form funciona sin token).
+- `og:url` del discovery actualizado de
+  `https://prismaconsul.com/apex/` a
+  `https://prismaconsul.com/discovery-apex/`.
+
+**Backend intocado**: los endpoints `/api/research-company`,
+`/api/generate-questions`, `/api/submit-form`, `/api/groq-chat`,
+`/api/groq-whisper` ya eran públicos según código real y según
+declaración en `CONTRATOS.md` desde origen. El problema nunca fue de
+auth backend — era solo el gate frontend.
+
+**Canónicos actualizados en el mismo paquete:**
+
+- `CLAUDE.md` (raíz): §Architecture + Directory Structure + Development
+  quickstart.
+- `prisma-apex/CLAUDE.md`: entrada Discovery engine.
+- `CONTRATOS.md`: tabla URLs públicas (entrada `/discovery-apex`
+  canónica + `/apex` legacy), §65 implicación Fase 2, §548 nota
+  post-movimiento, §608 redirects SPAs, §633 corrección drift
+  `/hub → /prisma-apex` por `/hub → /apex`, §645 consumer SPA, §652
+  landing, §659 clientes humanos, §670 CT-1 con excepción ejecutada,
+  §697 checklist, §767 auditoría adicional.
+- `docs/OPERATIVA.md` §8: nueva fila compatibilidad temporal `/apex
+  → 301 → /discovery-apex`.
+- `docs/ARQUITECTURA.md` §3: fila Discovery (mount canónico
+  `/discovery-apex`, estado público).
+- `GLOSARIO.md` §10: entrada `/apex` reescrita como legacy `301` desde
+  `v3.5.0`. Entrada `/discovery-apex` reescrita como vigente desde
+  `v3.5.0`. Entrada `/apex (futuro — destino del renombre del
+  sistema)` intacta.
+- `README.md`: tabla URLs + árbol carpetas + comandos acceder.
+
+**Sin cambios** en `MODELO-DOMINIO.md` (no se altera la relación
+`portal_users.apex_submission_id`). Submissions persistidos con su
+esquema actual (`apex_submissions` PK por `id`, email obligatorio).
+
+**Bumps en los 4 puntos canónicos `v3.4.15 → v3.5.0`** conforme a
+`OPERATIVA.md` §0.4.
+
+**Aplazado a follow-up** (no entra en este slice):
+
+- Creación opcional de cuenta al final del discovery (diseño correcto
+  contra `portal_users.apex_submission_id`).
+- Rate limit en endpoints públicos del discovery (P-7 abierto en
+  `bitacora/BITACORA-VIVA.md` §10).
+
+**Producción intocada:** `prismaconsul.com` permanece en `v3.4.13`.
+Acumulado en `dev`: `v3.4.1..v3.4.15`, `v3.5.0`. Promoción a `main`:
+decisión separada del revisor.
+
 ## [2026-05-31] — v3.4.15
 
 ### Simulador — mini-fix v3.4.15: N3-2 y transversalidad declarativa del handoff

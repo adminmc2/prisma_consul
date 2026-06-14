@@ -75,12 +75,21 @@ app.get(/^\/apex\/fonts\/.+$/, (req, res) => {
   res.status(410).type('text/plain').send('Gone — Phosphor fonts moved to /shared/fonts/phosphor/ in v3.3.37');
 });
 
-// APEX Discovery — vive en prisma-apex/core/discovery-engine/ desde Subpaso 2.4
-// (v3.3.36). La URL pública /apex se mantiene idéntica.
-app.use('/apex', express.static(path.join(projectRoot, 'prisma-apex', 'core', 'discovery-engine'), {
+// APEX Discovery — superficie pública canónica /discovery-apex (renombre canonizado en
+// GLOSARIO.md v3.4.11 y ejecutado en v3.5.0). El subtree vive en
+// prisma-apex/core/discovery-engine/ desde Subpaso 2.4 (v3.3.36); el renombre afecta solo
+// a la URL pública, no a la carpeta interna.
+app.use('/discovery-apex', express.static(path.join(projectRoot, 'prisma-apex', 'core', 'discovery-engine'), {
   index: 'index.html',
   extensions: ['html']
 }));
+
+// Compatibilidad legacy: /apex queda solo como redirect 301 a /discovery-apex.
+// Condición de retirada: cuando entre el slice del renombre /hub → /apex (registrado en
+// docs/OPERATIVA.md §8). El handler de /apex/fonts/.+ (410 Gone, deuda v3.3.37) sigue
+// definido más arriba y captura su patrón antes que el wildcard 301 de abajo.
+app.get('/apex', (req, res) => res.redirect(301, '/discovery-apex'));
+app.get(/^\/apex\/(.*)$/, (req, res) => res.redirect(301, '/discovery-apex/' + req.params[0]));
 
 // Mount /portal eliminado en la micro-higiene v3.3.38: portal/ está vacío
 // tras el subpaso 2.3 (Hub movido a prisma-apex/index.html). Solo queda

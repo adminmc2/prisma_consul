@@ -84,7 +84,7 @@ flowchart LR
 
     subgraph SURFACES["Superficies servidas por Express"]
       ROOT["/ — Landing pública"]:::op
-      APEX["/apex — APEX Discovery"]:::op
+      APEX["/discovery-apex — APEX Discovery<br/>(/apex → 301 legacy)"]:::op
       HUB["/hub — PRISMA Hub"]:::op
       PUB["/publicados/&lt;cliente&gt;"]:::op
       SHARED["/shared"]:::op
@@ -145,7 +145,7 @@ flowchart LR
 | Módulo | Path | Mount | Estado |
 |---|---|---|---|
 | Landing pública | `web/` | `/` (raíz) | operativo |
-| APEX Discovery | `prisma-apex/core/discovery-engine/` | `/apex` | operativo |
+| APEX Discovery | `prisma-apex/core/discovery-engine/` | `/discovery-apex` (canónico desde `v3.5.0`) · `/apex` (`301` legacy) | operativo (público — sin login) |
 | PRISMA Hub | `prisma-apex/index.html` + `hub-*.{css,js}` | `/hub` | operativo |
 | Entregables por cliente | `prisma-apex/clientes-publicados/<cliente>/` | `/publicados/<cliente>/` | operativo (hoy solo ARMC) |
 | Recursos compartidos | `shared/` | `/shared` | operativo |

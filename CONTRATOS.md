@@ -59,10 +59,11 @@ URLs servidas por Express o redirigidas a través del stack nginx → Cloudflare
 
 | URL | Sirve | Handler | Estado |
 |---|---|---|---|
-| `prismaconsul.com/apex` | `prisma-apex/core/discovery-engine/index.html` (Discovery SPA) | `express.static` montado en `/apex` sobre `prisma-apex/core/discovery-engine/` | Frozen Sprint A — discovery movido en subpaso 2.4; URL pública intacta |
+| `prismaconsul.com/discovery-apex` | `prisma-apex/core/discovery-engine/index.html` (Discovery SPA) | `express.static` montado en `/discovery-apex` sobre `prisma-apex/core/discovery-engine/` | **Canónico desde `v3.5.0`** — superficie pública, sin login. Renombre canonizado en `GLOSARIO.md` `v3.4.11` y ejecutado en `v3.5.0`. |
+| `prismaconsul.com/apex` | (redirect) | `app.get('/apex', ...) → 301 → /discovery-apex` + wildcard `/apex/(.*)` | **Legacy `301` desde `v3.5.0`**. Compatibilidad temporal registrada en `docs/OPERATIVA.md` §8 con condición de retirada (slice del renombre `/hub → /apex` o decisión explícita del revisor). |
 | `prismaconsul.com/hub` | `prisma-apex/index.html` (Prisma APEX SPA) — entrypoint movido en subpaso 2.3 (`v3.3.33`) | `app.get('/hub', ...)` en `server/server.js` con `res.sendFile(...prisma-apex/index.html)` + `location /hub` en nginx con alias a `prisma-apex/` | Frozen Sprint A — URL pública intacta; entrypoint físico ya migrado |
 
-**Implicación para Fase 2 (estado actual):** los subpasos físicos 2.1–2.7 están ejecutados: web pública bajo `web/`, discovery bajo `prisma-apex/core/discovery-engine/`, entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`, entrypoint del Hub en `prisma-apex/index.html`, migración aditiva de BD aplicada (`v3.3.38`). URLs públicas `/`, `/apex` y `/hub` siguen idénticas.
+**Implicación para Fase 2 (estado actual):** los subpasos físicos 2.1–2.7 están ejecutados: web pública bajo `web/`, discovery bajo `prisma-apex/core/discovery-engine/`, entregables ARMC bajo `prisma-apex/clientes-publicados/armc/`, entrypoint del Hub en `prisma-apex/index.html`, migración aditiva de BD aplicada (`v3.3.38`). URL pública `/` intacta. URL pública del Hub `/hub` intacta (su renombre a `/apex` queda como slice futuro independiente). URL del discovery: pasa de `/apex` a `/discovery-apex` en `v3.5.0` (con `301` legacy desde `/apex`).
 
 ### 3.3 Entregables ARMC publicados
 
@@ -545,7 +546,7 @@ El registro es síncrono y embebido en el frontend (objeto JS literal en `prisma
 
 No se han detectado otros paths hardcodeados a artefactos físicos en el frontend de la SPA Hub o de la SPA APEX. Las referencias a CSS, JS, fuentes e imágenes son rutas relativas o canónicas que el `express.static` resuelve naturalmente.
 
-**Nota tras el movimiento físico:** el discovery vive hoy en `prisma-apex/core/discovery-engine/` (`form.js`, `signal-detector.js`, etc.). La URL pública `/apex` no cambió, de modo que cualquier path interno del estilo `'/apex/...'` sigue resolviendo igual.
+**Nota tras el movimiento físico:** el discovery vive en `prisma-apex/core/discovery-engine/` (`form.js`, `signal-detector.js`, etc.). Desde `v3.5.0`, la URL pública canónica es `/discovery-apex`; `/apex` queda como `301` legacy hasta retirada futura. Cualquier path interno `'/apex/...'` recibe `301` automático a `/discovery-apex/...` con preservación del path.
 
 ### 6.3 Nota técnica importante
 
@@ -605,7 +606,7 @@ app.get('/portal/analisis/:cliente/*', (req, res) => {
 
 ### 8.2 Sin redirects para SPAs
 
-Las URLs `/`, `/apex`, `/hub`, `/api/*`, `/aviso-legal*`, `/cookies*`, `/privacidad*` **no requieren redirect** porque su path público no cambia (solo cambian los path físicos internos en el repo).
+Las URLs `/`, `/hub`, `/api/*`, `/aviso-legal*`, `/cookies*`, `/privacidad*` **no requieren redirect** porque su path público no cambia (solo cambian los path físicos internos en el repo). **Excepción `/apex`**: en `v3.5.0` se renombra a `/discovery-apex` con `301` legacy (cumplimiento CT-10: convivencia viejo/nuevo).
 
 ---
 
@@ -630,7 +631,7 @@ Modificar un contrato es legítimo y se hace cuando aporta valor; lo que no se p
 
 - **Sprint B (almacén Drive → IONOS):** la columna `drive_file_id` se generaliza. Plan de transición propio.
 - **Sprint posterior (centralización auth):** el JWT puede dejar de incluir `role` cuando todos los consumidores usen `client_memberships`. Plan propio.
-- **Sprint posterior (renombre público de `/hub` → `/prisma-apex`):** el destino del renombre está decidido — la URL pública pasará a `/prisma-apex`, alineada con el directorio canónico y con el nombre del sistema (Prisma APEX). Sigue siendo decisión de comunicación, no técnica: el *momento* del cambio se planifica en un slice propio posterior a Sprint A. La URL legacy `/hub` se conservará vía redirect 301 indefinido por compatibilidad.
+- **Sprint posterior (renombre público de `/hub` → `/apex`):** el destino del renombre está decidido — la URL pública pasará a `/apex`, alineado con `GLOSARIO.md` `v3.4.11`. Sigue siendo decisión de comunicación, no técnica: el *momento* del cambio se planifica en un slice propio posterior. La URL legacy `/hub` se conservará vía redirect `301` indefinido por compatibilidad. La URL `/apex` queda **liberada** tras el renombre del discovery a `/discovery-apex` ejecutado en `v3.5.0`.
 
 ---
 
@@ -642,21 +643,21 @@ Lista de "quién usa qué" para validar que cada cambio considera a todos los af
 
 | Consumer | Endpoints API que llama | URLs públicas que sirve |
 |---|---|---|
-| `apex/index.html` (Discovery SPA) | `/api/research-company`, `/api/generate-questions`, `/api/submit-form`, `/api/groq-chat`, `/api/groq-whisper` | `/apex` |
+| `discovery-engine/index.html` (Discovery SPA) | `/api/research-company`, `/api/generate-questions`, `/api/submit-form`, `/api/groq-chat`, `/api/groq-whisper` | `/discovery-apex` (`/apex` → `301` legacy) |
 | `prisma-apex/index.html` (Hub SPA — entrypoint movido en `v3.3.33`) | `/api/portal-auth`, `/api/portal-apex-results`, `/api/portal-profile` (GET/PATCH), `/api/portal-upload`, `/api/portal-files` (GET/DELETE/PATCH), `/api/portal-users` (GET/POST), `/api/portal-users/:id` (PATCH), `/api/portal-activity` | `/hub` y entregables ARMC vía iframe |
 
 ### 10.2 Frontend público
 
 | Consumer | URLs |
 |---|---|
-| `index.html` (landing) | sirve sus propios assets en `/css/*`, `/js/*`, `/images/*`; enlaza externamente a `/apex` y `/hub` |
+| `index.html` (landing) | sirve sus propios assets en `/css/*`, `/js/*`, `/images/*`; enlaza externamente a `/discovery-apex` (canónico desde `v3.5.0`; `/apex` antiguo sigue funcionando vía `301`) y `/hub` |
 | Páginas legales (`aviso-legal.html`, `cookies.html`, `privacidad.html`) | sirven contenido estático sin dependencias externas |
 
 ### 10.3 Consumidores externos al repo
 
 | Consumer | Qué consume | Mitigación si cambia |
 |---|---|---|
-| Clientes humanos | `/`, `/hub`, `/apex` (URLs guardadas en favoritos/correos) | Mantener congeladas durante Sprint A |
+| Clientes humanos | `/`, `/hub`, `/discovery-apex` (canónico desde `v3.5.0`). Marcadores antiguos en `/apex` siguen funcionando vía `301`. |
 | Cliente humano (ARMC) | URLs de entregables `/portal/analisis/armc/...` posiblemente compartidas en correos | Redirect 301 indefinido a `/publicados/armc/...` |
 | Buscadores (Google) | URLs públicas indexadas | Idem; redirects 301 actualizan el índice |
 | Email transaccional | URLs en correos automatizados (si existen) | Auditar antes de cualquier renombre público; ninguno previsto Sprint A |
@@ -667,7 +668,7 @@ Lista de "quién usa qué" para validar que cada cambio considera a todos los af
 
 | # | Decisión |
 |---|---|
-| CT-1 | URLs públicas `/`, `/apex`, `/hub`, `/api/*`, `/aviso-legal*`, `/cookies*`, `/privacidad*`, `/css/*`, `/js/*`, `/images/*` **frozen durante Sprint A**. Ninguna se renombra. |
+| CT-1 | URLs públicas `/`, `/hub`, `/api/*`, `/aviso-legal*`, `/cookies*`, `/privacidad*`, `/css/*`, `/js/*`, `/images/*` **frozen durante Sprint A**. Ninguna se renombra. **Excepción ejecutada `v3.5.0`**: `/apex` se renombra a `/discovery-apex` cumpliendo CT-10 (anuncio en `CHANGELOG.md` + convivencia `301` viejo/nuevo + condición de retirada en `docs/OPERATIVA.md` §8). |
 | CT-2 | URLs de entregables ARMC `/portal/analisis/armc/...` **se sustituyen por `/publicados/armc/...` en fase 2** con redirect 301 indefinido desde la URL antigua. |
 | CT-3 | Los **17 endpoints API** (sección 4) **frozen durante Sprint A**: ningún endpoint se renombra ni cambia su shape de request/response. |
 | CT-4 | Los endpoints `/api/portal-profile` (PATCH) y `/api/portal-users/:id` (PATCH) son **CONTRATOS CRÍTICOS**: siguen aceptando los campos empresariales y de fase exactamente como hoy; la sincronización a `clientes` y `engagements` es transparente vía `domain-sync.js` (cableado `v3.3.42`, sincronización atómica). Excepción explícita: `profile_type` queda **legacy-only** en este cableado por decisión de slice (`MODELO-DOMINIO.md` §6.6 addendum + MD-4). |
@@ -694,7 +695,8 @@ Estos son los tests manuales mínimos que **deben pasar** antes de aprobar el me
 - [ ] `prismaconsul.com/aviso-legal` y `/aviso-legal.html` cargan ambos.
 - [ ] `prismaconsul.com/cookies` y `/cookies.html` cargan ambos.
 - [ ] `prismaconsul.com/privacidad` y `/privacidad.html` cargan ambos.
-- [ ] `prismaconsul.com/apex` carga la SPA Discovery.
+- [ ] `prismaconsul.com/discovery-apex` carga la SPA Discovery sin login.
+- [ ] `prismaconsul.com/apex` devuelve `301` a `/discovery-apex` (compatibilidad legacy).
 - [ ] `prismaconsul.com/hub` carga la SPA Hub.
 - [ ] `prismaconsul.com/css/styles.css` responde 200.
 - [ ] `prismaconsul.com/js/main.js` responde 200.
@@ -764,7 +766,7 @@ Cableado mínimo en `v3.3.42` (sincronización atómica vía `sql.transaction`):
 
 Los movimientos físicos de Fase 2 ya están ejecutados. Las comprobaciones de paths hardcodeados que esta sección listaba como previas al movimiento se aplican hoy sobre la estructura nueva:
 
-- `prisma-apex/core/discovery-engine/form.js` y `signal-detector.js` — JS del discovery. La URL pública `/apex` no cambió, así que los paths internos `/apex/...` siguen resolviendo.
+- `prisma-apex/core/discovery-engine/form.js` y `signal-detector.js` — JS del discovery. Desde `v3.5.0`, la URL pública canónica es `/discovery-apex`; cualquier path interno `/apex/...` recibe `301` automático a `/discovery-apex/...`.
 - `web/js/main.js` — JS de la landing.
 - La carpeta `portal/` ya no existe; las referencias legacy `/portal/analisis/...` se resuelven por redirect 301.
 

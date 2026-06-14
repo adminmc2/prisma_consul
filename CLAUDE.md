@@ -32,7 +32,7 @@ Comportamiento base del workspace. Antes de aprobar cualquier cambio relevante (
 
 ## Architecture
 
-Monorepo con 3 frontends servidos por un único Express: `/` (landing) · `/apex` (APEX Discovery, requiere login) · `/hub` (PRISMA Hub, requiere login) · `/api/*` (backend).
+Monorepo con 3 frontends servidos por un único Express: `/` (landing) · `/discovery-apex` (APEX Discovery, **público**; `/apex` queda como redirect `301` legacy con condición de retirada en `docs/OPERATIVA.md` §8) · `/hub` (PRISMA Hub, requiere login) · `/api/*` (backend).
 
 ## Directory Structure
 
@@ -43,7 +43,7 @@ web/                          # Web pública (landing + legales + css/js/images)
 prisma-apex/
   index.html                  # PRISMA Hub — entrypoint (SPA)
   core/
-    discovery-engine/         # APEX Discovery — servido en /apex
+    discovery-engine/         # APEX Discovery — servido en /discovery-apex (URL pública canónica desde v3.5.0; /apex queda como redirect 301 legacy)
     simulador-ux/             # Simulador UX — módulo interno del Hub
   clientes-publicados/<cliente>/   # Entregables (diagramas, diagnóstico, blueprint)
 shared/fonts/phosphor/        # Phosphor Icons — servido bajo /shared/fonts/phosphor/
@@ -85,7 +85,7 @@ Arranque local rápido:
 ```bash
 cd server && node server.js
 # http://localhost:3000          Landing
-# http://localhost:3000/apex     APEX form
+# http://localhost:3000/discovery-apex  APEX form (público; /apex devuelve 301)
 # http://localhost:3000/hub      Hub
 ```
 
@@ -133,7 +133,7 @@ DNS y proxy gestionados desde Cloudflare (nameservers `bruce.ns.cloudflare.com`,
 
 ## Versionado
 
-Versionado Semántico (`MAJOR.MINOR.PATCH`). **Versión actual:** `v3.4.15`.
+Versionado Semántico (`MAJOR.MINOR.PATCH`). **Versión actual:** `v3.5.0`.
 
 En cada cambio publicable actualizar la versión en los **4 puntos canónicos**: (1) footer de `web/index.html` (`footer__bottom`, en `data-es`, `data-en` y texto visible); (2) login de `prisma-apex/index.html` (`.welcome-version`); (3) cabecera de [`CHANGELOG.md`](./CHANGELOG.md) (entrada nueva); (4) este campo "Versión actual".
 
