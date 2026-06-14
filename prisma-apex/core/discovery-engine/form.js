@@ -353,7 +353,7 @@ const EXPLORATION_PRIORITY = {
 // ============================================================
 
 const FormState = {
-  currentScreen: 'login',
+  currentScreen: 'welcome',
   currentPhase: 0,
 
   // Tipo de negocio (distribuidor / clinica)
@@ -543,10 +543,10 @@ function updateProgress() {
   const progress = Math.min((currentIndex / totalScreens) * 100, 100);
   DOM.progressFill.style.width = `${progress}%`;
 
-  // Ocultar barra de progreso en login
+  // Ocultar barra de progreso en welcome (pantalla inicial pública desde v3.5.0).
   const progressBar = document.querySelector('.progress-bar');
   if (progressBar) {
-    progressBar.style.display = FormState.currentScreen === 'login' ? 'none' : '';
+    progressBar.style.display = FormState.currentScreen === 'welcome' ? 'none' : '';
   }
 }
 
@@ -602,7 +602,7 @@ function updateNavigationState() {
   const screen = FormState.currentScreen;
 
   // Mostrar/ocultar navegación según pantalla
-  const hideNavScreens = ['login', 'welcome', 'thank-you', 'transition-phase2', 'transition-phase3', 'processing-audio', 'researching-company', 'swipe-situaciones', 'transition-maxdiff', 'maxdiff-priorizar', 'top4-resultado', 'transition-phase2-questions'];
+  const hideNavScreens = ['welcome', 'thank-you', 'transition-phase2', 'transition-phase3', 'processing-audio', 'researching-company', 'swipe-situaciones', 'transition-maxdiff', 'maxdiff-priorizar', 'top4-resultado', 'transition-phase2-questions'];
   showNav(!hideNavScreens.includes(screen));
 
   // Botón anterior
@@ -613,8 +613,8 @@ async function goBack() {
   if (FormState.screenHistory.length > 1) {
     FormState.screenHistory.pop();
     const previousScreen = FormState.screenHistory[FormState.screenHistory.length - 1];
-    // No volver al login desde el formulario
-    if (previousScreen === 'login') return;
+    // No volver a la pantalla inicial (welcome) desde el formulario.
+    if (previousScreen === 'welcome') return;
     await goToScreen(previousScreen, false);
   }
 }

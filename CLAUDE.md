@@ -133,7 +133,7 @@ DNS y proxy gestionados desde Cloudflare (nameservers `bruce.ns.cloudflare.com`,
 
 ## Versionado
 
-Versionado Semántico (`MAJOR.MINOR.PATCH`). **Versión actual:** `v3.5.0`.
+Versionado Semántico (`MAJOR.MINOR.PATCH`). **Versión actual:** `v3.5.1`.
 
 En cada cambio publicable actualizar la versión en los **4 puntos canónicos**: (1) footer de `web/index.html` (`footer__bottom`, en `data-es`, `data-en` y texto visible); (2) login de `prisma-apex/index.html` (`.welcome-version`); (3) cabecera de [`CHANGELOG.md`](./CHANGELOG.md) (entrada nueva); (4) este campo "Versión actual".
 

@@ -2,6 +2,41 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-06-14] — v3.5.1
+
+### Discovery APEX — mini-fix de regresión introducida por v3.5.0
+
+Mini-fix del slice `v3.5.0`. Al eliminar la pantalla `screen-apex-login`
+y poner `active` directamente en `welcome` (HTML), no se actualizó el
+valor inicial de `FormState.currentScreen` en `form.js`, que seguía
+siendo `'login'`. Resultado visible: al pulsar **Empezar** desde la
+pantalla welcome, `goToScreen('q0-company')` no encontraba el elemento
+DOM `[data-screen="login"]` (ya inexistente), saltaba la rama de
+salida de la pantalla actual y dejaba `welcome` con la clase `active`
+mientras añadía `active` también a `q0-company`. Las dos pantallas
+quedaban superpuestas.
+
+**4 ediciones en `prisma-apex/core/discovery-engine/form.js`:**
+
+- `FormState.currentScreen` inicial: `'login'` → `'welcome'`.
+- `updateProgress`: la barra se oculta en `'welcome'` (no en `'login'`).
+- `updateNavigationState` array `hideNavScreens`: eliminado `'login'`.
+- `goBack` guard: cambiado de `previousScreen === 'login'` a
+  `previousScreen === 'welcome'` (mantiene la regla "no volver a la
+  pantalla inicial desde el formulario").
+
+**Sin cambios** en HTML, CSS, mounts, backend, schema ni contratos.
+Cambio de redacción puro de JS frontend.
+
+**Bumps en los 4 puntos canónicos `v3.5.0 → v3.5.1`** conforme a
+`OPERATIVA.md` §0.4.
+
+**Producción intocada:** `prismaconsul.com` permanece en `v3.5.0`. El
+mini-fix se valida primero en `dev.prismaconsul.com/discovery-apex/`
+(visual: welcome → click Empezar → transición limpia sin solape).
+Promoción a `main` queda como decisión separada del revisor tras el
+smoke en dev.
+
 ## [2026-06-08] — v3.5.0
 
 ### Discovery APEX — superficie pública `/discovery-apex` + corrección drift CONTRATOS
