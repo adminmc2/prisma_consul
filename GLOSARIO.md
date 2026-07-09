@@ -26,7 +26,7 @@ Producto que PRISMA vende a clientes. Acrónimo de **Automatización de Procesos
 
 ### Prisma APEX
 Sistema interno de PRISMA donde PRISMA opera con sus clientes. Es la instancia que PRISMA usa para sí misma. Análogo a Salesforce-empresa usando Salesforce-producto. Reemplaza el nombre legacy "Hub". En código y directorios el sistema sigue residiendo en `prisma-apex/`; **el destino del renombre de URL pública es `/apex`**, no `/prisma-apex` (decisión revisada del revisor; ver §10).
-*Canónico:* `MODELO-DOMINIO.md` §1.1 (entidad y producto). Renombre URL: decisión del revisor canonizada en este glosario (`v3.4.11`). *Estado:* la URL pública `/hub` se mantiene durante Sprint A por contrato congelado (`CONTRATOS.md` §3.2). El *momento* del cambio queda como decisión de comunicación posterior a Sprint A. `CONTRATOS.md §9.3` queda pendiente de actualización con el destino correcto (deuda canonizable en slice posterior).
+*Canónico:* `MODELO-DOMINIO.md` §1.1 (entidad y producto). Renombre URL: decisión del revisor canonizada en este glosario (`v3.4.11`). *Estado:* la URL pública `/hub` se mantiene durante Sprint A por contrato congelado (`CONTRATOS.md` §3.2). El *momento* del cambio queda como decisión de comunicación posterior a Sprint A. `CONTRATOS.md §9.3` corregido en `v3.5.0` (`/hub → /prisma-apex` sustituido por `/hub → /apex`, alineado con esta canonización). La URL `/apex` queda **liberada del discovery** a partir de `v3.5.0` (renombrado a `/discovery-apex`); pasa al sistema Prisma APEX cuando entre el slice de renombre `/hub → /apex`.
 
 ### Producto
 Categoría de oferta de PRISMA. Hoy en `web-de-prisma` solo se modela **APEX**. Otros productos PRISMA (NOVIA, ABBE, Omia) viven en sus propios repos.

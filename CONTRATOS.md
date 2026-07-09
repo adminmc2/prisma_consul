@@ -685,9 +685,9 @@ Lista de "quién usa qué" para validar que cada cambio considera a todos los af
 
 ---
 
-## 12. Validación de fase 2
+## 12. Validación de contrato vigente
 
-Estos son los tests manuales mínimos que **deben pasar** antes de aprobar el merge de fase 2 a `main`. Cubren los contratos listados en este documento.
+Checklist de tests manuales mínimos que reflejan el contrato vigente del sistema tras `v3.5.0` (discovery público en `/discovery-apex`, `/apex` como `301` legacy) y `v3.5.1` (mini-fix de arranque del discovery). Los items pasan actualmente en producción edge — última verificación: 2026-07-07 (smoke edge tras cierre del ajuste nginx prod). Se usan para cada slice futuro que toque contratos declarados en este documento; los items nuevos se añaden en el slice que los introduce.
 
 ### 12.1 URLs públicas
 

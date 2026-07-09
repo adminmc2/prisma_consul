@@ -2,6 +2,58 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-09] — v3.5.2
+
+### Higiene documental — cierre de dos drifts residuales tras v3.5.0/v3.5.1
+
+Slice documental puro. Corrige dos derivas menores en canónicos
+detectadas por el revisor tras el cierre en superficie real de
+`v3.5.0` + `v3.5.1` en producción (edge `prismaconsul.com/discovery-apex/`
+smoke 5/5 OK el 2026-07-07).
+
+**Cambios en `GLOSARIO.md` (entrada `Prisma APEX`):**
+
+- La frase final del párrafo canónico decía *"`CONTRATOS.md §9.3`
+  queda pendiente de actualización con el destino correcto (deuda
+  canonizable en slice posterior)"*. Esa deuda **ya se cerró en
+  `v3.5.0`** (corrección del drift `/hub → /prisma-apex` por
+  `/hub → /apex`).
+- Reformulado: reconoce que `CONTRATOS.md §9.3` está corregido en
+  `v3.5.0` y añade la nota de que `/apex` queda liberada del discovery
+  a partir de `v3.5.0` (renombrado a `/discovery-apex`); pasa al
+  sistema Prisma APEX cuando entre el slice de renombre `/hub → /apex`.
+
+**Cambios en `CONTRATOS.md` §12 (título y descripción):**
+
+- Título anterior: *"12. Validación de fase 2"* (marco histórico de F1,
+  cerrado desde `v3.4.0`).
+- Título nuevo: *"12. Validación de contrato vigente"*. La descripción
+  se reformula para explicitar que el checklist refleja el contrato
+  vigente tras `v3.5.0` y `v3.5.1`, con última verificación edge
+  `2026-07-07`, y que los items se mantienen para cada slice futuro
+  que toque contratos.
+- Los items internos (URLs, endpoints API, entregables ARMC) no se
+  tocan — ya reflejan la nomenclatura `v3.5.0` (`/discovery-apex` sin
+  login, `/apex → 301` legacy).
+
+**Sin cambios** en código, runtime, nginx, `MODELO-DOMINIO.md`,
+`docs/OPERATIVA.md`, `docs/ARQUITECTURA.md` ni ningún otro documento.
+
+**Deuda operativa externa (fuera del carril del Ejecutor 1):** el
+cambio de nginx prod aplicado en vivo el `2026-07-07` sigue **sin
+sincronizar** en la config versionada del repo `prisma_server`
+(`adminmc2/prisma_server#1` con comentario del cierre en superficie
+real, pendiente de sincronización interna del repo de ops antes de
+cerrar formalmente).
+
+**Bumps en los 4 puntos canónicos `v3.5.1 → v3.5.2`** conforme a
+`OPERATIVA.md` §0.4.
+
+**Producción intocada:** `prismaconsul.com` permanece en `v3.5.1`.
+El slice `v3.5.2` es cambio documental puro; se aplica a `dev` con
+smoke mínimo de versión. Promoción a `main` queda como decisión
+separada del revisor.
+
 ## [2026-06-14] — v3.5.1
 
 ### Discovery APEX — mini-fix de regresión introducida por v3.5.0
