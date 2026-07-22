@@ -2,7 +2,39 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
-## [2026-07-12] — v3.5.3
+## [2026-07-22] — v3.5.4
+
+### Higiene documental — anulación de instrucción stale en la entrada v3.5.3 + alineación de fecha
+
+Micro-slice C1 ordenado por el revisor como condición previa a la
+promoción de `v3.5.2` + `v3.5.3` a `main`. Dos correcciones sobre la
+entrada `v3.5.3`, ambas arbitradas explícitamente por el revisor como
+**corrección de error documental** (excepción puntual a CT-9 sobre una
+entrada aún no promovida a `main`; el texto original queda preservado
+en la historia git, commit `7bd5bfe`):
+
+- **Anulada la instrucción stale** del bloque "Fuera del cierre
+  editorial" que escalaba a ejecutor 1 un *"alta 2ª entrevista CEO en
+  sistema"* con nomenclatura nueva (`34_01_ENTREVISTA_V2_MARISELA_BASE_20260415`).
+  Esa alta **ya existe desde `v3.4.3`** (doc
+  `34_01_ENTREVISTA_V1_MARISELA_PARTE2_20260415`, fila `portal_files`
+  id=82, `doc_type='entrevista'`) y su vigencia quedó **auditada y
+  cerrada el 2026-07-10** (Drive + BD + Hub verificados, sin
+  implementación nueva). Ejecutar la instrucción habría creado un
+  duplicado de la misma entrevista. El mini-slice queda cerrado como
+  auditoría de vigencia; no hay alta pendiente.
+- **Fecha de la entrada `v3.5.3`** alineada de `[2026-07-12]` a
+  `[2026-07-22]`: la fecha de cierre editorial en el carril C2 era
+  12-jul, pero la convención del changelog es la fecha del cambio
+  publicable (commits `8e4471c` + `7bd5bfe`, ambos del 22-jul, día de
+  su push a `origin/dev` y deploy a dev).
+
+Sin cambios de código, runtime, contratos ni entregables. Producción
+intacta en `v3.5.1`. Bump PATCH en los 4 puntos canónicos por
+`OPERATIVA §0.4`. La promoción a `main` (`v3.5.2` → `v3.5.4`) queda
+como decisión separada del revisor tras este slice.
+
+## [2026-07-22] — v3.5.3
 
 ### Blueprint ARMC — F2 tanda editorial: reconciliación conteos + integración 2ª entrevista CEO (2026-04-15)
 
@@ -38,7 +70,7 @@ con ARMC.
 - `F2-S3b`: sigue bloqueado — abrir slice propio solo si aparece cita textual directa del corpus.
 - `diagnostico/embudo-operativo.html:104`: congelado sin cambios por dictamen del revisor — *"7 entrevistas"* en su subtítulo describe la fuente de las **métricas cuantitativas** (extraídas de la 1ª ronda operativa), mientras que la 2ª CEO se atribuye correctamente en el cuerpo (línea 231) como fuente **cualitativa** (variantes A/B/C). No hay contradicción dura que justifique edición.
 - Escalados Esc-1 (destacar C07/C08), Esc-2 (rol Bob), Esc-3 (marcado sistemático de propuestas PRISMA vs verdades verificadas): no bloquean estos 5 archivos, se abordarán en slice propio.
-- Mini-slice paralelo *"alta 2ª entrevista CEO en sistema"*: escalado a ejecutor 1 (edición asimétrica: procesar Notas de Gemini crudas del 15-abr → doc limpio con nomenclatura `34_01_ENTREVISTA_V2_MARISELA_BASE_20260415` en carpeta Drive del usuario ARMC + fila en `portal_files` con `doc_type='entrevista'`). No es F2.
+- Mini-slice paralelo *"alta 2ª entrevista CEO en sistema"*: **instrucción anulada en `v3.5.4` por dictamen del revisor (error documental)**. La entrevista ya está en sistema desde `v3.4.3` (doc `34_01_ENTREVISTA_V1_MARISELA_PARTE2_20260415`, fila `portal_files` id=82) y su vigencia quedó auditada y cerrada el 2026-07-10 como auditoría, sin implementación nueva. No hay alta pendiente.
 
 ## [2026-07-09] — v3.5.2
 
