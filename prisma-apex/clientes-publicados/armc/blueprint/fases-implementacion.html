@@ -45,7 +45,7 @@
           <div class="phase-section"><div class="phase-section-title">Qu&eacute; se construye</div>
             <div class="items">
               <div class="item">Ciclo de vida completo: Lead &rarr; Usuario &rarr; Evaluaci&oacute;n agendada &rarr; Paciente (transiciones autom&aacute;ticas + manuales)</div>
-              <div class="item">Modelo de datos: 260 campos en 10 entidades (Paciente, Cita, Procedimiento, Inventario, Comunicaci&oacute;n, Documento, Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) &mdash; HC organizada por etapa del ciclo de vida</div>
+              <div class="item">Modelo de datos: 352 campos en 13 entidades (Paciente, Cita, Procedimiento, Profesional, Servicio, Pago, Inventario, Comunicaci&oacute;n, Documento, Se&ntilde;al de Inacci&oacute;n, Protocolo de Revisi&oacute;n, Log de Auditor&iacute;a, Evaluaci&oacute;n Cl&iacute;nica) &mdash; HC organizada por etapa del ciclo de vida</div>
               <div class="item">Dos IDs separados: ID Sistema (interno, invisible) + ID Historia Cl&iacute;nica (expediente, inmutable, impreso)</div>
               <div class="item">Agenda digital con disponibilidad en tiempo real por profesional</div>
               <div class="item">Cita ampliada (18 campos): ciclo de vida con 6 estados y transiciones autom&aacute;ticas, tipos de cita diferenciados, cadena de citas (self-reference evaluaci&oacute;n &rarr; procedimiento &rarr; revisiones), vinculaci&oacute;n a Protocolo de Revisi&oacute;n, motivo cancelaci&oacute;n/no-show</div>
@@ -84,9 +84,10 @@
           <div class="prereqs"><div class="prereqs-title">Prerrequisitos</div>
             <div class="prereq-item">Migraci&oacute;n de datos de pacientes existentes (libretas, Excel, memorias)</div>
             <div class="prereq-item">Capacitaci&oacute;n b&aacute;sica al equipo (2&ndash;3 sesiones)</div>
+            <div class="prereq-item">ARMC carga el cat&aacute;logo oficial de servicios en BD: 5 l&iacute;neas de servicio confirmadas y ~53 procedimientos (2&ordf; entrevista CEO 2026-04-15)</div>
             <div class="prereq-item">ARMC: protocolos por tipo de procedimiento (umbrales, ciclos de retorno) &mdash; alimentan Protocolo de Revisi&oacute;n</div>
             <div class="prereq-item">ARMC elige formato de ID Historia Cl&iacute;nica (4 opciones propuestas)</div>
-            <div class="prereq-item">ARMC revisa y valida los 260 campos de HC en 10 entidades</div>
+            <div class="prereq-item">ARMC revisa y valida los 352 campos de HC en 13 entidades</div>
             <div class="prereq-item">Publicaci&oacute;n del aviso de privacidad en URL accesible</div>
             <div class="prereq-item">PRISMA entrega Matriz de Cumplimiento APEX-NOM024 antes de producci&oacute;n</div>
           </div>
