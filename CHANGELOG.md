@@ -2,6 +2,44 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-12] — v3.5.3
+
+### Blueprint ARMC — F2 tanda editorial: reconciliación conteos + integración 2ª entrevista CEO (2026-04-15)
+
+Slice de contenido puro sobre `prisma-apex/clientes-publicados/armc/blueprint/`.
+Ninguna URL, mount, contrato ni schema modificado. 5 archivos tocados,
+13 inserciones / 12 borrados. Cada slice cerrado con explicación de 4 partes
++ PASS explícito del revisor, perímetro estricto por slice, literalidad
+respecto a `modelo-datos.html`, marcas explícitas donde persiste pendencia
+con ARMC.
+
+**Bloque 1 — reconciliación interna** (`fases-implementacion.html`)
+
+- Entidades del modelo de datos: `10 → 13` en las dos menciones (líneas 48 y 89), alineado con canónico `modelo-datos.html:908`.
+- Campos del modelo de datos: `260 → 352` en las mismas dos menciones.
+
+**F2-S3a — huecos catálogo Edición A** (`modelo-datos.html:673`)
+
+- Línea "Medicina estética" del catálogo ampliada: toxina botulínica × 3 aplicaciones (corrección de arrugas, hiperhidrosis, toxina en maseteros para bruxismo) + armonización facial como ítem separado del ácido hialurónico de zona única.
+- Edición B (hialuronidasa con 3 escenarios de cobro + mesoterapia facial Dermapen / peptonas / bioestimuladores) **bloqueada** por falta de cita textual directa del corpus. Sigue pendiente.
+
+**Bloque 2 — propagación del 15-abr al resto del blueprint**
+
+- `fases-implementacion.html`: prerrequisito Fase 1 nuevo — *"ARMC carga el catálogo oficial de servicios en BD: 5 líneas de servicio confirmadas y ~53 procedimientos (2ª entrevista CEO 2026-04-15)"*.
+- `flujos-to-be.html`: step-notes con literalidad de `modelo-datos.html` en 4 roles — variantes A/B/C/D/E de valoración (Atención al Paciente), lifting facial láser in-house y su distinción de endolifting (Cirujano), Cosmiatría con 9 servicios + 2 sublíneas melasma/acné con cobro por sesión (Cosmiatra), Tricología regenerativa con 8 servicios incluido implante capilar como "(futuro)" (Tricóloga).
+- `automatizaciones.html`: subtítulo ampliado — *"Se proyectan sobre las 5 líneas de servicio y ~53 procedimientos del catálogo (2ª entrevista CEO 2026-04-15)"*. Redacción prudente ("se proyectan", no "operan sobre") para evitar implicar cobertura cerrada ya implementada.
+
+**F2-C2 — homogeneización de referencia al corpus** (4 archivos)
+
+- Menciones *"7 entrevistas"* → *"corpus de entrevistas con ARMC (incluida la 2ª entrevista CEO 2026-04-15)"* en pies/notas de `modelo-datos.html:846`, `automatizaciones.html:128`, `flujos-to-be.html:86`, `kpis-objetivo.html:124`. Resuelve la contradicción intra-archivo generada por Bloque 2 (cabeceras/step-notes citando la 2ª CEO explícitamente mientras el pie afirmaba "7 entrevistas").
+
+**Fuera del cierre editorial**
+
+- `F2-S3b`: sigue bloqueado — abrir slice propio solo si aparece cita textual directa del corpus.
+- `diagnostico/embudo-operativo.html:104`: congelado sin cambios por dictamen del revisor — *"7 entrevistas"* en su subtítulo describe la fuente de las **métricas cuantitativas** (extraídas de la 1ª ronda operativa), mientras que la 2ª CEO se atribuye correctamente en el cuerpo (línea 231) como fuente **cualitativa** (variantes A/B/C). No hay contradicción dura que justifique edición.
+- Escalados Esc-1 (destacar C07/C08), Esc-2 (rol Bob), Esc-3 (marcado sistemático de propuestas PRISMA vs verdades verificadas): no bloquean estos 5 archivos, se abordarán en slice propio.
+- Mini-slice paralelo *"alta 2ª entrevista CEO en sistema"*: escalado a ejecutor 1 (edición asimétrica: procesar Notas de Gemini crudas del 15-abr → doc limpio con nomenclatura `34_01_ENTREVISTA_V2_MARISELA_BASE_20260415` en carpeta Drive del usuario ARMC + fila en `portal_files` con `doc_type='entrevista'`). No es F2.
+
 ## [2026-07-09] — v3.5.2
 
 ### Higiene documental — cierre de dos drifts residuales tras v3.5.0/v3.5.1
