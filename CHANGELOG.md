@@ -2,6 +2,28 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-22] — v3.5.5
+
+### Blueprint ARMC — F2-S3b: desbloqueo Edición B del catálogo (Medicina estética)
+
+Slice de contenido puro entregado por el carril C2 como commit congelado
+(`73fdd4c`, handoff con PASS del revisor). F2-S3b estaba **bloqueado desde
+`v3.5.3`** por falta de cita textual directa del corpus; el desbloqueo llega
+con la evidencia resuelta en C2.
+
+- **`modelo-datos.html`** (1 línea, catálogo línea de servicio "2. Medicina
+  estética"): se añaden **mesoterapia facial (con Dermapen)**, **peptonas
+  (aplicación en glúteo)** y **aplicación de hialuronidasa** (servicio
+  activo y acto correctivo; 3 escenarios de cobro: externo cobrado, error
+  interno gratis, insatisfacción estética cobrada).
+- Las menciones históricas a "F2-S3b sigue bloqueado" en la entrada
+  `v3.5.3` permanecen verbatim (CT-9); esta entrada registra su cierre.
+
+Sin cambios de código, URLs, contratos ni schema. Integración C1 sin
+reescritura del contenido (OPERATIVA §6). Bump PATCH en los 4 puntos
+canónicos por `OPERATIVA §0.4`. Producción permanece en `v3.5.4` hasta
+decisión de promoción del revisor.
+
 ## [2026-07-22] — v3.5.4
 
 ### Higiene documental — anulación de instrucción stale en la entrada v3.5.3 + alineación de fecha
