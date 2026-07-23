@@ -2,6 +2,29 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-23] — v3.5.9
+
+### Blueprint ARMC — alineación RBAC hermana en flujos-to-be (cierre del residual v3.5.8)
+
+Slice de contenido puro entregado por el carril C2 como commit congelado
+(`e543b4f`), hermano de `c6068be` (v3.5.8). Cierra el residual detectado
+por C1 en el barrido post-deploy de v3.5.8: la vista To-Be del rol
+Cirujano en `flujos-to-be.html` conservaba la formulación vieja del
+sub-rol con acceso limitado.
+
+- **`flujos-to-be.html`** (1 línea, comp-item "Con APEX (To-Be)" del rol
+  Cirujano): el "sub-rol con acceso limitado al expediente" se sustituye
+  por la formulación literal del modelo — los cirujanos externos
+  subcontratados no acceden a APEX ni tienen rol RBAC; registros en la
+  entidad Profesional (sin Usuario asociado). Sello "Confirmado en
+  entrevista CEO 2026-04-15" preservado.
+
+Con este cierre, la contradicción RBAC queda eliminada de **todas** las
+superficies del blueprint publicado. Sin cambios de código, URLs,
+contratos ni schema. Integración C1 sin reescritura (OPERATIVA §6). Bump
+PATCH en los 4 puntos canónicos por `OPERATIVA §0.4`. Producción
+permanece en `v3.5.8` hasta decisión de promoción del revisor.
+
 ## [2026-07-23] — v3.5.8
 
 ### Blueprint ARMC — alineación RBAC: cirujanos externos sin rol, como registros en Profesional
