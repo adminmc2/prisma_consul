@@ -1,6 +1,6 @@
 # ARQUITECTURA — Vista canónica técnica del repo
 
-> **Estado:** vigente · **Última verificación:** 2026-05-30
+> **Estado:** vigente · **Última verificación:** 2026-07-23
 >
 > Vista canónica de arquitectura técnica del repo `web-de-prisma`, nivel
 > contenedor. **El proyecto está en construcción**, así que esta vista
@@ -149,7 +149,7 @@ flowchart LR
 | PRISMA Hub | `prisma-apex/index.html` + `hub-*.{css,js}` | `/hub` | operativo |
 | Entregables por cliente | `prisma-apex/clientes-publicados/<cliente>/` | `/publicados/<cliente>/` | operativo (hoy solo ARMC) |
 | Recursos compartidos | `shared/` | `/shared` | operativo |
-| Backend Express | `server/server.js`, `server/routes/`, `server/lib/` | `/api/*` | operativo |
+| Backend Express | `server/server.js`, `server/routes/`, `server/middleware/`, `server/lib/` | `/api/*` | operativo |
 | Simulador UX | `prisma-apex/core/simulador-ux/` | `/core/simulador-ux` | integrado en dev *(prod nginx pendiente, ver §8 de OPERATIVA)* |
 | Engagement APEX-ARMC | `prismaconsul.com/apex-armc` (futuro, no existe aún) | — | propuesto — naturaleza funcional pendiente (ver `GLOSARIO.md` §10) |
 
@@ -228,6 +228,14 @@ no los procesa todavía.
 
 Las dependencias se invocan exclusivamente desde el backend Express. El
 frontend nunca lleva claves externas.
+
+**Protección de cuotas (P-7, `v3.5.6`) — operativo:** los 5 endpoints
+públicos del discovery que consumen Groq/Claude/Tavily llevan rate
+limiting por IP real en Express (`server/middleware/rate-limit.js`;
+bucket pesado 15/h, bucket interactivo 60/h, `keyGenerator` explícito
+`CF-Connecting-IP` → `X-Forwarded-For` → `req.ip`, sin `trust proxy`)
+más blindaje de parámetros (whitelist de modelos Groq y tope de
+`max_tokens` servidor). Detalle contractual en `CONTRATOS.md` §4.10.
 
 ## 6. Runtime e infraestructura
 

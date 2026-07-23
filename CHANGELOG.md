@@ -2,6 +2,55 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-23] — v3.5.6
+
+### Seguridad — cierre de P-7: rate limiting + blindaje de parámetros en los 5 endpoints públicos del discovery
+
+Slice `repo` con PASS del revisor (cierre del punto P-7 de bitácora §10,
+abierto desde `v3.5.0` cuando el discovery pasó a superficie pública sin
+login). Riesgo cerrado: abuso económico de cuotas Groq/Claude/Tavily por
+llamadas en bucle a la API pública.
+
+**Rate limiting** (`server/middleware/rate-limit.js`, nuevo; dependencia
+nueva `express-rate-limit@8`):
+
+- Bucket **pesado** (contador compartido, 15/h por IP):
+  `/api/research-company` + `/api/generate-questions` + `/api/submit-form`.
+- Bucket **interactivo** (contador compartido, 60/h por IP):
+  `/api/groq-chat` + `/api/groq-whisper`.
+- IP real por `keyGenerator` explícito: `CF-Connecting-IP` →
+  `X-Forwarded-For[0]` → `req.ip`; **sin `trust proxy`** (ajuste
+  obligatorio del revisor). IPv6 normalizada a /56 (`ipKeyGenerator`).
+- Al exceder: `429` JSON `{ error: 'rate_limited', message: <es> }` +
+  headers `RateLimit` draft-7. Los 12 endpoints con auth no llevan limitador.
+
+**Blindaje de parámetros** (`server/routes/ai.js`):
+
+- `groq-chat`: whitelist de modelos (`llama-3.3-70b-versatile`) + tope
+  servidor `max_tokens ≤ 2048` (antes el cliente elegía modelo y tamaño
+  sin restricción).
+- `groq-whisper`: whitelist de modelo (`whisper-large-v3-turbo`) —
+  ajuste obligatorio del revisor: ambos endpoints Groq protegidos.
+- Modelo fuera de whitelist → `400` sin llamada externa.
+
+**Canónicos en el mismo paquete:** `CONTRATOS.md` (nueva §4.10 + entradas
+`groq-chat`/`groq-whisper`; CT-3 intacto — blindaje aditivo, sin cambio
+de shape para consumers legítimos), `docs/ARQUITECTURA.md` (§3 backend +
+§5 nota de protección de cuotas + última verificación), `server/CLAUDE.md`
+(mapa de middleware).
+
+**Validación local ejecutada** (peticiones inválidas baratas, sin gasto
+de cuota): bucket pesado devuelve `429` en la petición 16; bucket
+interactivo comparte contador chat+whisper y devuelve `429` tras 60;
+whitelists rechazan modelos no permitidos con `400`; `portal-auth` (con
+auth) no afectado. Pendiente de repetir sobre el edge real de dev.
+
+**Fuera del slice** (decisión del revisor): CORS, reglas Cloudflare,
+cambios amplios de proxy, stores persistentes/distribuidos.
+
+Bump PATCH en los 4 puntos canónicos por `OPERATIVA §0.4`. Producción
+permanece en `v3.5.5` hasta decisión de promoción.
+
 ## [2026-07-22] — v3.5.5
 
 ### Blueprint ARMC — F2-S3b: desbloqueo Edición B del catálogo (Medicina estética)

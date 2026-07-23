@@ -4,12 +4,19 @@
  */
 
 const express = require('express');
+const { interactiveLimiter } = require('../middleware/rate-limit');
 
 const router = express.Router();
 
+// Blindaje P-7: endpoints públicos sin login — el cliente no elige
+// modelo libremente ni tamaño de respuesta ilimitado.
+const ALLOWED_CHAT_MODELS = ['llama-3.3-70b-versatile'];
+const ALLOWED_WHISPER_MODELS = ['whisper-large-v3-turbo'];
+const MAX_TOKENS_CAP = 2048;
+
 // ── GROQ CHAT ──────────────────────────────────────────
 
-router.post('/groq-chat', async (req, res) => {
+router.post('/groq-chat', interactiveLimiter, async (req, res) => {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     return res.status(500).json({ error: 'GROQ_API_KEY not configured' });
@@ -22,6 +29,10 @@ router.post('/groq-chat', async (req, res) => {
       return res.status(400).json({ error: 'messages array is required' });
     }
 
+    if (model && !ALLOWED_CHAT_MODELS.includes(model)) {
+      return res.status(400).json({ error: `model not allowed; use one of: ${ALLOWED_CHAT_MODELS.join(', ')}` });
+    }
+
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -32,7 +43,7 @@ router.post('/groq-chat', async (req, res) => {
         model: model || 'llama-3.3-70b-versatile',
         messages,
         temperature: temperature || 0.7,
-        max_tokens: max_tokens || 1500
+        max_tokens: Math.min(max_tokens || 1500, MAX_TOKENS_CAP)
       })
     });
 
@@ -50,7 +61,7 @@ router.post('/groq-chat', async (req, res) => {
 
 // ── GROQ WHISPER (audio transcription) ─────────────────
 
-router.post('/groq-whisper', async (req, res) => {
+router.post('/groq-whisper', interactiveLimiter, async (req, res) => {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     return res.status(500).json({ error: 'GROQ_API_KEY not configured' });
@@ -61,6 +72,10 @@ router.post('/groq-whisper', async (req, res) => {
 
     if (!audioBase64) {
       return res.status(400).json({ error: 'audioBase64 is required' });
+    }
+
+    if (model && !ALLOWED_WHISPER_MODELS.includes(model)) {
+      return res.status(400).json({ error: `model not allowed; use one of: ${ALLOWED_WHISPER_MODELS.join(', ')}` });
     }
 
     const audioBuffer = Buffer.from(audioBase64, 'base64');

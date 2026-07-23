@@ -6,7 +6,7 @@ Instrucciones locales para trabajar dentro de `server/`. El contexto repo-wide v
 
 - `server.js` — entrypoint Express: middleware, mounts, rutas.
 - `routes/` — rutas modulares: `portal.js` (auth + upload + users + activity log), `apex.js` (research Tavily+Groq, questions Claude, submit form + email), `ai.js` (passthrough Groq chat + Whisper).
-- `middleware/` — `cors.js` (headers todas las rutas), `auth.js` (verificación JWT + `requireAdmin`).
+- `middleware/` — `cors.js` (headers todas las rutas), `auth.js` (verificación JWT + `requireAdmin`), `rate-limit.js` (P-7: buckets por IP real para los 5 endpoints públicos del discovery; ver `CONTRATOS.md` §4.10).
 - `lib/` — `google-drive.js` (cliente + helpers por usuario), `pain-knowledge-base.js` (catálogo de dolores), `fetch-timeout.js` (wrapper de `fetch` con `AbortController`), `domain-sync.js` (sincronización legacy ↔ modelo nuevo; ver estado abajo).
 - `scripts/` — scripts puntuales de mantenimiento.
 - `schema.sql` — referencia del esquema PostgreSQL.

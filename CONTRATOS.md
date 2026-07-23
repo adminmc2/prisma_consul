@@ -324,21 +324,23 @@ La SPA distingue éxito vs fallback por el flag `success` del payload, no por el
 
 #### `POST /api/groq-chat`
 **Auth:** Pública.
-**Request body:** `{ messages, model?, temperature?, max_tokens? }` (formato OpenAI-style).
+**Request body:** `{ messages, model?, temperature?, max_tokens? }` (formato OpenAI-style). Desde `v3.5.6` (P-7): `model` restringido a whitelist (`llama-3.3-70b-versatile`); `max_tokens` con tope servidor de `2048`.
 **Response 200:** estructura OpenAI-compatible (passthrough de Groq).
-**Response 400:** `{ error: 'messages array is required' }`.
+**Response 400:** `{ error: 'messages array is required' }` · `{ error: 'model not allowed; ...' }` (modelo fuera de whitelist).
+**Response 429:** ver §4.10.
 **Side effects:** proxy a Groq API.
 **Consumer:** SPA APEX y posiblemente otras secciones del frontend que usen LLM.
-**Estado:** Frozen Sprint A.
+**Estado:** Frozen Sprint A (blindaje P-7 aditivo, sin cambio de shape para el consumer legítimo — el frontend solo usa el modelo whitelisteado).
 
 #### `POST /api/groq-whisper`
 **Auth:** Pública.
-**Request body:** `{ audioBase64, mimeType?, model?, language? }`.
+**Request body:** `{ audioBase64, mimeType?, model?, language? }`. Desde `v3.5.6` (P-7): `model` restringido a whitelist (`whisper-large-v3-turbo`).
 **Response 200:** `{ text, ... }` (formato Whisper).
-**Response 400:** `{ error: 'audioBase64 is required' }`.
+**Response 400:** `{ error: 'audioBase64 is required' }` · `{ error: 'model not allowed; ...' }` (modelo fuera de whitelist).
+**Response 429:** ver §4.10.
 **Side effects:** proxy a Groq Whisper API.
 **Consumer:** SPA APEX, paso de grabación de audio.
-**Estado:** Frozen Sprint A.
+**Estado:** Frozen Sprint A (blindaje P-7 aditivo, sin cambio de shape para el consumer legítimo).
 
 ### 4.9 Resumen de endpoints (17)
 
@@ -353,6 +355,28 @@ La SPA distingue éxito vs fallback por el flag `success` del payload, no por el
 | APEX — Discovery flow | 3 | Pública |
 | AI — Groq proxy | 2 | Pública |
 | **Total** | **17** | — |
+
+### 4.10 Rate limiting de endpoints públicos (P-7, `v3.5.6`)
+
+Los **5 endpoints públicos** (Discovery flow §4.7 + Groq proxy §4.8)
+llevan límite de uso por IP real desde `v3.5.6` (cierre del punto P-7;
+decisión del revisor). Middleware: `server/middleware/rate-limit.js`
+(`express-rate-limit`, store en memoria por proceso, ventana 1 h):
+
+| Bucket | Endpoints (contador compartido) | Límite |
+|---|---|---|
+| Pesado | `/api/research-company`, `/api/generate-questions`, `/api/submit-form` | 15/h por IP |
+| Interactivo | `/api/groq-chat`, `/api/groq-whisper` | 60/h por IP |
+
+- **IP real por `keyGenerator` explícito** (`CF-Connecting-IP` →
+  `X-Forwarded-For[0]` → `req.ip`); sin `trust proxy`. IPv6 normalizada
+  a subred `/56`.
+- **Response 429:** `{ error: 'rate_limited', message: '<texto en español>' }`
+  + headers `RateLimit` (draft-7).
+- Los 12 endpoints con auth (portal/Hub) **no** llevan limitador.
+- Este comportamiento es **aditivo**: no altera shape de request/response
+  de los consumers legítimos (CT-3 se mantiene). Cambiar buckets, límites
+  o alcance requiere slice propio con PASS del revisor.
 
 ---
 

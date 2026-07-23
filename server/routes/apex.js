@@ -8,6 +8,7 @@ const { neon } = require('@neondatabase/serverless');
 const nodemailer = require('nodemailer');
 const { fetchWithTimeout } = require('../lib/fetch-timeout');
 const { PAIN_CATALOG, PAIN_CLUSTERS, CLUSTER_QUESTIONS } = require('../lib/pain-knowledge-base');
+const { heavyLimiter } = require('../middleware/rate-limit');
 
 const router = express.Router();
 
@@ -52,7 +53,7 @@ const SITUACIONES = {
 
 // ── RESEARCH COMPANY ───────────────────────────────────
 
-router.post('/research-company', async (req, res) => {
+router.post('/research-company', heavyLimiter, async (req, res) => {
   try {
     const { companyName, website } = req.body;
 
@@ -400,7 +401,7 @@ function getRelevantPains(categoryIds) {
   return { relevantPains, relevantClusters, relevantQuestions };
 }
 
-router.post('/generate-questions', async (req, res) => {
+router.post('/generate-questions', heavyLimiter, async (req, res) => {
   let parsedTipoNegocio = 'distribuidor';
   try {
     const ANTHROPIC_API_KEY = (process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY || '').trim();
@@ -610,7 +611,7 @@ Responde SOLO con el JSON, sin markdown ni explicaciones.`;
 
 // ── SUBMIT FORM ────────────────────────────────────────
 
-router.post('/submit-form', async (req, res) => {
+router.post('/submit-form', heavyLimiter, async (req, res) => {
   try {
     const formData = req.body;
 
