@@ -2,6 +2,31 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-23] — v3.5.8
+
+### Blueprint ARMC — alineación RBAC: cirujanos externos sin rol, como registros en Profesional
+
+Slice de contenido puro entregado por el carril C2 como commit congelado
+(`c6068be`). Cierra la deuda declarada al integrar `v3.5.7`: el texto de
+Fase 1 en `fases-implementacion.html` aún hablaba de "Sub-rol Cirujano
+externo con acceso limitado al expediente", contradiciendo el modelo
+vigente de la entidad Profesional (`modelo-datos.html`: el sub-rol quedó
+absorbido como valor del enum "Tipo de relación con la clínica"; los
+externos no acceden a APEX ni tienen rol RBAC).
+
+- **`fases-implementacion.html`** (1 línea): la frase del sub-rol se
+  sustituye por la formulación literal del modelo — los cirujanos
+  externos subcontratados (Figueroa, Vargas, Ducón) no acceden a APEX ni
+  tienen rol RBAC; se modelan como registros en Profesional (sin Usuario
+  asociado); su expediente y CI originales viven con ellos (decisión CEO
+  2026-04-15). La primera oración RBAC (NOM-004, solo médicos acceden a
+  HC completa) se mantiene intacta.
+
+Sin cambios de código, URLs, contratos ni schema. Integración C1 sin
+reescritura (OPERATIVA §6). Bump PATCH en los 4 puntos canónicos por
+`OPERATIVA §0.4`. Producción permanece en `v3.5.7` hasta decisión de
+promoción del revisor.
+
 ## [2026-07-23] — v3.5.7
 
 ### Blueprint ARMC — C2 tanda editorial: cierre de Esc-1 + Esc-2 + Esc-3
