@@ -2,6 +2,39 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-23] — v3.5.7
+
+### Blueprint ARMC — C2 tanda editorial: cierre de Esc-1 + Esc-2 + Esc-3
+
+Slice de contenido puro entregado por el carril C2 como commit congelado
+(`b9a5e22`, handoff con PASS del revisor). Cierra los 3 escalados
+editoriales que quedaron fuera del cierre `v3.5.3`. 3 archivos, 3
+inserciones / 2 borrados. Integración C1 sin reescritura (OPERATIVA §6).
+
+- **Esc-1** (`fases-implementacion.html`): reformulada la referencia a
+  REVIEW-PRISMA-APEX — C08 cerrado (canal de agendamiento:
+  portal-paciente por defecto, fallback Carlos) y C07 resuelto solo
+  parcialmente (2ª valoración de pago confirmada; monto pendiente de
+  cifrar con ARMC). Corrige contradicción con el estado ya declarado en
+  `modelo-datos.html`.
+- **Esc-2** (`modelo-datos.html`): Bob retirado del catálogo inicial de
+  profesionales internos — no ha sido entrevistado; silencio editorial
+  hasta que exista entrevista propia, sin marca "pendiente".
+- **Esc-3** (`kpis-objetivo.html`): aviso destacado tras el subtítulo —
+  los KPIs y valores objetivo son propuestas abiertas de PRISMA; ARMC
+  define qué adopta y qué metas fija. Reutiliza la clase `.note`
+  existente, cero cambio de estilo.
+
+**Deuda declarada por C2, fuera de este cierre** (slice propio futuro):
+alinear el texto RBAC de `fases-implementacion.html` ("Sub-rol Cirujano
+externo con acceso limitado") con el modelo vigente de Profesional en
+`modelo-datos.html` (sub-rol absorbido como valor del enum "Tipo de
+relación con la clínica").
+
+Sin cambios de código, URLs, contratos ni schema. Bump PATCH en los 4
+puntos canónicos por `OPERATIVA §0.4`. Producción permanece en `v3.5.6`
+hasta decisión de promoción del revisor.
+
 ## [2026-07-23] — v3.5.6
 
 ### Seguridad — cierre de P-7: rate limiting + blindaje de parámetros en los 5 endpoints públicos del discovery
