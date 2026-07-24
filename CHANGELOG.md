@@ -2,6 +2,36 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-24] — v3.5.12
+
+### Blueprint ARMC — avisos de propuestas abiertas en automatizaciones + fases-implementacion (A1+A2)
+
+Tanda editorial conjunta entregada por el carril C2 como commit congelado
+(`1d7c5f6`). Unidad semántica: el mismo tipo de aviso destacado del Esc-3
+(`kpis-objetivo.html`, `v3.5.7`) se extiende a los otros dos archivos del
+blueprint con alta densidad de cifras propuestas por PRISMA que un lector
+cliente podría tomar por compromisos cerrados.
+
+- **A1 — `automatizaciones.html`** (1 inserción, cabecera tras el
+  subtítulo): aviso — las automatizaciones, los umbrales de las 8
+  señales de inacción (S1–S8) y las respuestas automáticas son
+  propuestas abiertas de PRISMA; ARMC valida qué adopta, qué umbrales
+  fija y qué respuestas activa.
+- **A2 — `fases-implementacion.html`** (1 inserción, cabecera tras el
+  subtítulo): aviso — las 4 fases F1–F4, sus tiempos estimados, los
+  umbrales por tipo de tratamiento y las 3 propuestas de clasificación
+  A/B/C son propuestas abiertas; ARMC valida alcance, tiempos, umbrales
+  y clasificación.
+
+Simetría absoluta con Esc-3: misma clase `.note` existente, mismo verbo
+"valida", misma coletilla "irá evolucionando", mismo punto de inserción.
+Cero cambio de estilo.
+
+Sin cambios de código, URLs, contratos ni schema. Integración C1 sin
+reescritura (OPERATIVA §6). Bump PATCH en los 4 puntos canónicos por
+`OPERATIVA §0.4`. Producción permanece en `v3.5.11` hasta decisión de
+promoción del revisor.
+
 ## [2026-07-24] — v3.5.11
 
 ### Blueprint ARMC — reglas transversales del ciclo clínico: Fase C universal + Fase A obligatoria (2ª entrevista CEO)
