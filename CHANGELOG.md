@@ -2,6 +2,35 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-24] — v3.5.11
+
+### Blueprint ARMC — reglas transversales del ciclo clínico: Fase C universal + Fase A obligatoria (2ª entrevista CEO)
+
+Grupo editorial conjunto entregado por el carril C2 como dos commits
+congelados (`3efd9f8` + `29f9b14`, integrados en ese orden). Apertura
+del frente "reglas de negocio/modelado" con sus dos primeras reglas
+transversales, ambas declaradas en la nota al pie de
+`flujos-to-be.html` con evidencia DECIDIDO en `VALIDACION-CATALOGO.md`
+del corpus (validado con CEO 2026-04-15):
+
+- **Fase C universal** (`3efd9f8`): APEX modela Fase C de seguimiento
+  para todas las líneas de servicio e intervenciones, no solo para
+  tricología. Corrige el posible sesgo de lectura por los pasos de
+  seguimiento dispersos por rol.
+- **Fase A obligatoria** (`29f9b14`): APEX modela Fase A de valoración
+  previa obligatoria para todas las líneas, sin excepciones (incluidos
+  inyectables pequeños y aparatología ligera). Explicita la
+  universalidad de las variantes A/B/C/D/E integradas en `v3.5.3`.
+
+Cambios quirúrgicos: dos frases añadidas al mismo `<div class="note">`
+del pie, cero cambio de estilo. **Fuera del grupo** (declarado por C2):
+masajes post-qx cobrados aparte — slice futuro si aparece.
+
+Sin cambios de código, URLs, contratos ni schema. Integración C1 sin
+reescritura (OPERATIVA §6). Bump PATCH en los 4 puntos canónicos por
+`OPERATIVA §0.4`. Producción permanece en `v3.5.10` hasta decisión de
+promoción del revisor.
+
 ## [2026-07-24] — v3.5.10
 
 ### Blueprint ARMC — Prerrequisitos F1: PNO manejo obesidad + CI lipoenzimas (2ª entrevista CEO)
