@@ -2,6 +2,37 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-24] — v3.5.10
+
+### Blueprint ARMC — Prerrequisitos F1: PNO manejo obesidad + CI lipoenzimas (2ª entrevista CEO)
+
+Slice de contenido puro entregado por el carril C2 como commit congelado
+(`0673858`). Publicado solo, por decisión del revisor: no apareció
+mini-tanda hermana coherente, y el frente de reglas operativas derivadas
+de la 2ª entrevista CEO se tratará aparte.
+
+- **`fases-implementacion.html`** (2 inserciones puras en el bloque de
+  Prerrequisitos de Fase 1): dos decisiones cerradas por la CEO en la
+  validación de catálogo del 2026-04-15 que estaban declaradas como
+  pendencias en `modelo-datos.html` pero no figuraban como
+  prerrequisitos explícitos:
+  - ARMC entrega **PNO formal del manejo integral de obesidad**
+    (Dra. Elián; consulta + dieta + seguimiento + tirzepatida).
+  - ARMC entrega **CI específico de lipoenzimas** faciales y corporales.
+  Evidencia: `VALIDACION-CATALOGO.md` (corpus, validado con CEO
+  2026-04-15), ambas marcadas DECIDIDO.
+
+**Fuera del slice** (dictamen del revisor registrado en el commit): el
+monto de la 2ª valoración con externo sigue como residual C07 (no
+bloquea F1 — el modelo de Servicio admite precio null); el PNO de
+lifting facial láser se descartó por falta de respaldo textual en el
+corpus.
+
+Sin cambios de código, URLs, contratos ni schema. Integración C1 sin
+reescritura (OPERATIVA §6). Bump PATCH en los 4 puntos canónicos por
+`OPERATIVA §0.4`. Producción permanece en `v3.5.9` hasta decisión de
+promoción del revisor.
+
 ## [2026-07-23] — v3.5.9
 
 ### Blueprint ARMC — alineación RBAC hermana en flujos-to-be (cierre del residual v3.5.8)
