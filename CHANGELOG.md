@@ -2,6 +2,42 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-25] — v3.5.14
+
+### Blueprint ARMC — modelado: campo "Escenario del cobro" en Pago + propagación 353 campos
+
+Grupo editorial conjunto entregado por el carril C2 como dos commits
+congelados (`2929e39` + `a20e839`, integrados en ese orden). Primer
+micro-slice del frente "automatizaciones asociadas al catálogo ampliado"
+(Opción B del revisor: fijar modelado antes de tocar automatizaciones).
+`2929e39` estuvo congelado sin publicar hasta que su hermano de
+spillover salió limpio, para no publicar incoherencia 352/353 entre
+archivos.
+
+- **`modelo-datos.html`** (`2929e39`, 3+/3−, coherencia interna cerrada):
+  - Nuevo campo en la entidad Pago: **"Escenario del cobro"** (selección
+    opcional, default "estándar"): estándar / acto correctivo — externo
+    cobrado / acto correctivo — error interno (sin cobro) / acto
+    correctivo — insatisfacción cobrada. Tipifica dónde vive en el
+    modelo la distinción de cobro de actos correctivos como la
+    hialuronidasa (3 escenarios ya en catálogo desde F2-S3b, enum
+    literal a esa redacción). Retrocompatible; ortogonal al campo
+    "Estado" del lifecycle.
+  - Contador del bloque Pago: 10 → **11 campos**; cobertura D1 alineada;
+    nota final del documento: 352 → **353 campos** en 13 entidades.
+  - Evidencia: `VALIDACION-CATALOGO.md:42` (DECIDIDO, CEO 2026-04-15).
+- **`fases-implementacion.html`** (`a20e839`, 2 sustituciones): "352
+  campos" → "353 campos" en Fase 1 "Qué se construye" y en
+  Prerrequisitos. Cero ocurrencias residuales de 352.
+
+**Fuera del grupo** (declarado por C2): toxina × 3, mesoterapia × 4 y
+demás frentes del catálogo ampliado — slices separados.
+
+Sin cambios de código, URLs, contratos ni schema. Integración C1 sin
+reescritura (OPERATIVA §6). Bump PATCH en los 4 puntos canónicos por
+`OPERATIVA §0.4`. Producción permanece en `v3.5.13` hasta decisión de
+promoción del revisor.
+
 ## [2026-07-25] — v3.5.13
 
 ### Blueprint ARMC — regla comercial post-op quirúrgico: servicios asociados facturados aparte (cierre del frente reglas de negocio / 2ª CEO)
