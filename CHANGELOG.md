@@ -2,6 +2,31 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-25] — v3.5.16
+
+### Blueprint ARMC — frente #1 completo: propagación del catálogo ampliado a 3 roles de flujos-to-be
+
+Release que publica el frente #1 completo, entregado por el carril C2
+como 4 commits congelados acumulados (integrados en orden:
+`3fe42f6` + `1735f95` + `2226251` + `22bbb05`). Decisión del revisor:
+publicar el frente cerrado temáticamente en un solo release en lugar de
+seguir apilando slices locales. Delta combinado: **solo
+`flujos-to-be.html`** (4+/4−).
+
+- **Director/Propietario** (`3fe42f6`): step-note de cobertura del
+  dashboard — 5 líneas de servicio y ~53 procedimientos del catálogo.
+- **Primer Ayudante — RBAC** (`1735f95`): alineación de su vista
+  operativa acotada, sin acceso a HC completa (RBAC NOM-004).
+- **Primer Ayudante — agenda quirúrgica** (`2226251`, hermano del
+  anterior): step-note de cobertura de la agenda quirúrgica con los
+  procedimientos in-house de Cirugía estética mínima invasiva.
+- **Community Manager** (`22bbb05`, cierra el frente): step-note de
+  cobertura de templates con las 5 líneas de servicio del catálogo.
+
+Sin cambios de código, URLs, contratos ni schema. Integración C1 sin
+reescritura (OPERATIVA §6). Bump PATCH en los 4 puntos canónicos por
+`OPERATIVA §0.4`.
+
 ## [2026-07-25] — v3.5.15
 
 ### Blueprint ARMC — modelado: convención de instanciación múltiple en Servicio (toxina × 3 + mesoterapia × 4)
