@@ -2,6 +2,31 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-25] — v3.5.18
+
+### Blueprint ARMC — frente #3 cerrado con encuadre semántico: brecha promoción-catálogo en Community Manager
+
+Slice de contenido puro entregado por el carril C2 como commit congelado
+(`014a48f`). Decisión del revisor: **el frente #3 "promoción ≠ catálogo"
+se cierra solo con este encuadre semántico** — el blueprint ya contiene
+el contraste suficiente entre as-is (brecha) y to-be (cobertura
+potencial de templates por 5 líneas, publicada en `v3.5.16`) sin abrir
+solución comercial ni automatizaciones nuevas.
+
+- **`flujos-to-be.html`** (1+/1−, solo columna Hoy (As-Is) del rol
+  Community Manager, que queda con 7 comp-items): nuevo dolor declarado
+  — la promoción real cubre solo ~7 procedimientos aunque el catálogo
+  operativo abarca 5 líneas y ~53 procedimientos; cosmiatría,
+  aparatología y tricología sin promoción sistemática (cita CEO
+  2026-04-15). Redacción con ajuste del revisor: ~53 (no ~52 del
+  corpus) para mantener la base numérica ya publicada.
+- Evidencia: fricciones identificadas en `flujo-ceo.html` tras la 2ª
+  entrevista CEO. Sin cambios en to-be, pasos ni otros roles.
+
+Sin cambios de código, URLs, contratos ni schema. Integración C1 sin
+reescritura (OPERATIVA §6). Bump PATCH en los 4 puntos canónicos por
+`OPERATIVA §0.4`.
+
 ## [2026-07-25] — v3.5.17
 
 ### Blueprint ARMC — frente #2 completo: dolores as-is de Atención al Paciente
