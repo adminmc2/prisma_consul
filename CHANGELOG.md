@@ -2,6 +2,31 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-25] — v3.5.17
+
+### Blueprint ARMC — frente #2 completo: dolores as-is de Atención al Paciente
+
+Release que publica el frente #2 completo ("dolores as-is del corpus no
+declarados en el blueprint"), entregado por el carril C2 como 2 commits
+congelados de la misma unidad temática (`c1d0002` + `ccb0885`,
+integrados en orden). Delta combinado: **solo la columna Hoy (As-Is)
+del rol Atención al Paciente** en `flujos-to-be.html` (1+/1−; queda con
+9 comp-items). Sin cambios en to-be, pasos, role-notes ni otros roles.
+
+- **Sobrecarga de mensajes** (`c1d0002`): saturación operativa —
+  cobertura extendida 6am–10pm entre Carlos y Marisela; sin respuesta
+  nocturna, Carlos amanece con ~200 mensajes acumulados. Ancla el
+  dolor de origen del to-be ya publicado (bandeja unificada, canal
+  switching, aviso automático).
+- **Asignación por disponibilidad** (`ccb0885`, cierra el frente): el
+  paciente es atendido por "quien esté desocupado", sin continuidad con
+  el mismo asistente ni asignación por especialidad — dolor de
+  coordinación clínica, semánticamente distinto de la sobrecarga.
+
+Sin cambios de código, URLs, contratos ni schema. Integración C1 sin
+reescritura (OPERATIVA §6). Bump PATCH en los 4 puntos canónicos por
+`OPERATIVA §0.4`.
+
 ## [2026-07-25] — v3.5.16
 
 ### Blueprint ARMC — frente #1 completo: propagación del catálogo ampliado a 3 roles de flujos-to-be
