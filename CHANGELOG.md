@@ -2,6 +2,37 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-25] — v3.5.13
+
+### Blueprint ARMC — regla comercial post-op quirúrgico: servicios asociados facturados aparte (cierre del frente reglas de negocio / 2ª CEO)
+
+Slice de contenido puro entregado por el carril C2 como commit congelado
+(`3b497e8`). Última pieza del frente "reglas de negocio/modelado"
+derivado de la 2ª entrevista CEO (2026-04-15).
+
+- **`modelo-datos.html`** (1 línea, celda "1. Cirugía estética mínima
+  invasiva" del catálogo): se añade la regla comercial hasta ahora
+  invisible en el blueprint — el post-operatorio quirúrgico puede
+  requerir servicios asociados facturados como procedimientos
+  independientes (ej. drenaje linfático manual, ultrasonido), no
+  incluidos en el precio de la cirugía. Insertada entre la mención de
+  blefaroplastia y el cierre "Lista representativa"; cero cambio de
+  estilo.
+- Evidencia: `VALIDACION-CATALOGO.md` líneas 43 y 84 del corpus
+  (DECIDIDO con CEO 2026-04-15 — masajes post-qx obligatorios
+  clínicamente pero cobrados aparte).
+- **Fuera del slice** (declarado por C2): masajes reductivos (futuro, no
+  se ofrecen actualmente).
+
+Con este cierre, el frente "reglas de negocio/modelado" de la 2ª
+entrevista CEO queda completo: Fase C universal + Fase A obligatoria
+(`v3.5.11`) + regla comercial post-op (`v3.5.13`).
+
+Sin cambios de código, URLs, contratos ni schema. Integración C1 sin
+reescritura (OPERATIVA §6). Bump PATCH en los 4 puntos canónicos por
+`OPERATIVA §0.4`. Producción permanece en `v3.5.12` hasta decisión de
+promoción del revisor.
+
 ## [2026-07-24] — v3.5.12
 
 ### Blueprint ARMC — avisos de propuestas abiertas en automatizaciones + fases-implementacion (A1+A2)
