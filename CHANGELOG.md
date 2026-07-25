@@ -2,6 +2,35 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-25] — v3.5.15
+
+### Blueprint ARMC — modelado: convención de instanciación múltiple en Servicio (toxina × 3 + mesoterapia × 4)
+
+Slice de contenido puro entregado por el carril C2 como commit congelado
+(`ca06fcf`). Segundo micro-slice del frente "automatizaciones asociadas
+al catálogo ampliado"; cierra los 2 pendientes de tipificación del
+frente en una sola pieza semántica.
+
+- **`modelo-datos.html`** (1 línea, campo Nombre de la entidad
+  Servicio): se amplía la descripción del campo con la convención de
+  instanciación múltiple — procedimientos con múltiples
+  indicaciones/aplicaciones (toxina botulínica × 3: arrugas,
+  hiperhidrosis, maseteros bruxismo; mesoterapia × 4: capilar, facial
+  Dermapen, peptonas glúteo, bioestimuladores) se instancian como filas
+  separadas de Servicio con Nombre distintivo por indicación o
+  aplicación (decisión CEO 2026-04-15).
+- Sin campos nuevos, sin contadores tocados (los 8 campos de Servicio y
+  el total 353 se mantienen), sin spillover a otros archivos: la
+  entidad ya soportaba N filas por Nombre; el slice declara la
+  convención explícita para quien pueble el catálogo.
+- Evidencia: `VALIDACION-CATALOGO.md:40` y `:46` (DECIDIDO, CEO
+  2026-04-15).
+
+Sin cambios de código, URLs, contratos ni schema. Integración C1 sin
+reescritura (OPERATIVA §6). Bump PATCH en los 4 puntos canónicos por
+`OPERATIVA §0.4`. Producción permanece en `v3.5.14` hasta decisión de
+promoción del revisor.
+
 ## [2026-07-25] — v3.5.14
 
 ### Blueprint ARMC — modelado: campo "Escenario del cobro" en Pago + propagación 353 campos
