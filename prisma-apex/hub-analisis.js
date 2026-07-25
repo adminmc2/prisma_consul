@@ -92,7 +92,13 @@ const CAPA1_NODES = {
   lead_capture_whatsapp: {
     title: 'Contacto por WhatsApp recibido', key: 'LEAD_CAPTURE_WHATSAPP', x: 900, y: 860, width: 340,
     description: 'Se registra un contacto entrante por WhatsApp con el contexto inicial disponible.',
-    dataPoints: ['Canal origen: WHATSAPP', 'Origen: conversación de WhatsApp', 'Contexto inicial recibido', 'Ingreso al flujo inicial', 'Aviso de Privacidad LFPDPPP enviado por el bot antes de capturar datos para captación inicial y orientación comercial'],
+    dataPoints: [
+      'Canal origen: WHATSAPP.',
+      'Bot conversacional: Gabia — apertura canónica "¿Aló? Policía de belleza".',
+      'Aviso de Privacidad LFPDPPP enviado por el bot antes de capturar datos.',
+      'Captura conversacional en el chat: nombre y apellidos por respuesta libre.',
+      'Al terminar el saludo, el bot ofrece un CTA que abre el WhatsApp Flow para continuar la interacción.'
+    ],
     note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
     crossLinks: [{ label: 'Ver contrato lead_capture en Capa 2', tab: 2, itemId: 'form-lead_capture' }],
     actions: [{ id: 'register-lead-whatsapp', label: 'Registrar lead capturado', targetId: 'lead_captured', dbAction: "INSERT armc_leads(canal_origen='WHATSAPP', ...) RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CAPTURED');" }]

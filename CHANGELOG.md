@@ -2,6 +2,34 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-25] — v3.5.19
+
+### Simulador UX — screen 1 Lead WhatsApp: dataPoints del nodo `lead_capture_whatsapp`
+
+Slice F3 integrado por C1 en el repo ejecutable, con alcance aprobado
+por el revisor: **solo el reemplazo de los `dataPoints`** del nodo
+`lead_capture_whatsapp` en `prisma-apex/hub-analisis.js` (Capa 1 del
+simulador). Sin tocar forms, mappings, schema, shell, factories ni
+navegación.
+
+Datapoints finales aprobados (sustituyen a los 5 anteriores):
+
+1. Canal origen: WHATSAPP.
+2. Bot conversacional: Gabia — apertura canónica "¿Aló? Policía de
+   belleza".
+3. Aviso de Privacidad LFPDPPP enviado por el bot antes de capturar
+   datos.
+4. Captura conversacional en el chat: nombre y apellidos por respuesta
+   libre.
+5. Al terminar el saludo, el bot ofrece un CTA que abre el WhatsApp
+   Flow para continuar la interacción.
+
+Los 7 puntos excluidos del análisis F3 quedan explícitamente **fuera**
+de este slice. Validación: `node --check` OK + smoke en
+`dev.prismaconsul.com/hub`. Bump PATCH en los 4 puntos canónicos por
+`OPERATIVA §0.4`. Producción permanece en `v3.5.18` hasta decisión de
+promoción del revisor.
+
 ## [2026-07-25] — v3.5.18
 
 ### Blueprint ARMC — frente #3 cerrado con encuadre semántico: brecha promoción-catálogo en Community Manager
