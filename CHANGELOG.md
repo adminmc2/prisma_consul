@@ -2,6 +2,31 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-26] — v3.5.20
+
+### Simulador UX — Screen 2: campo `area` en el catálogo de demandas (Capa 2)
+
+Micro-slice F3 integrado por C1 (PASS con observaciones del revisor).
+Alcance: **solo
+`prisma-apex/core/simulador-ux/capa-2-diccionario/catalogo-demandas.json`**
+(21+/21−).
+
+- Las 20 opciones del catálogo incorporan el campo **`area`** para la
+  agrupación de Screen 2: Rostro (×7, ids 1-7), Cuerpo (×2, ids 8-9),
+  Piel (×8, ids 10-17), Cabello (id 18), Control de peso (id 19).
+- **Opción 20 (escape)**: `area = null` + `es_escape = true` — sin
+  cambio de solución, conforme al dictamen del revisor.
+- Se añade el newline final que faltaba en el archivo. JSON validado
+  (parse + invariantes: 20/20 con campo, opción 20 correcta).
+
+**Fuera del slice** (decisión del revisor — no se abre coherencia entre
+capas): `lead-capture.json`, `mappings.json`, `lead-captured.json`,
+`hub-analisis.js` y `README.md` del simulador quedan intactos.
+
+Sin cambios de código de sistema, URLs, contratos ni schema. Bump PATCH
+en los 4 puntos canónicos por `OPERATIVA §0.4`. Producción permanece en
+`v3.5.19` hasta decisión de promoción del revisor.
+
 ## [2026-07-25] — v3.5.19
 
 ### Simulador UX — screen 1 Lead WhatsApp: dataPoints del nodo `lead_capture_whatsapp`
