@@ -2,6 +2,36 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-26] — v3.5.21
+
+### Simulador UX — Screen 2: columna "Área" visible en la tarjeta Demandas (Capa 2)
+
+Micro-slice C1 local (encargo del revisor): hacer visible en pantalla el
+campo `area` aprobado en `v3.5.20`, sin reabrir contratos ni semántica y
+sin mezclar con la deuda de nombre/apellidos en WhatsApp.
+
+- **`prisma-apex/hub-analisis.js`** (solo la función `renderDemandas`):
+  - Nueva columna **"Área"** en la tabla de Demandas (entre Frase y
+    Líneas), leyendo el `area` ya presente en `catalogo-demandas.json`.
+    Menor cambio coherente (opción "columna" del encargo); mismo
+    lenguaje visual existente (`span.tag`).
+  - **Opción 20 (escape)**: no se fuerza a un área falsa — se muestra
+    diferenciada como *"escape — sin área"* (según `es_escape`).
+  - Filtro extendido a área (placeholder actualizado) para que la
+    columna nueva no quede fuera de la búsqueda; el `colspan` de la
+    fila vacía pasa de 4 a 5.
+- **Sin tocar** (perímetro del encargo): `lead-capture.json`,
+  `mappings.json`, eventos, schema, README del simulador, carril
+  técnico externo. Sin semántica nueva ni deducción de comportamiento
+  del Flow desde `area`.
+- Validación local ejecutada: `node --check` OK; simulación del render
+  y del filtro con el catálogo real — 5/5 áreas canónicas visibles,
+  opción 20 diferenciada, filtro por área (rostro→7, piel→8) sin romper
+  la búsqueda previa por frase/línea (tricología→3) ni el conteo 20/20.
+
+Bump PATCH en los 4 puntos canónicos por `OPERATIVA §0.4`. Producción
+permanece en `v3.5.20` hasta decisión de promoción del revisor.
+
 ## [2026-07-26] — v3.5.20
 
 ### Simulador UX — Screen 2: campo `area` en el catálogo de demandas (Capa 2)

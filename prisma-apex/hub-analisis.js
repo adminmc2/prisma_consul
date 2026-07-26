@@ -588,22 +588,27 @@ function createCapa2(mountEl, opts) {
   function renderDemandas(host) {
     const rows = state.catalogo.opciones;
     host.innerHTML = header('Catálogo', 'Demandas (20)', [{ label: 'fuente: catalogo-demandas.json', soft: true }]) +
-      '<div class="panel-filter"><input class="capa2-demandas-filter" placeholder="Filtrar por frase o línea de servicio…" autocomplete="off">' +
+      '<div class="panel-filter"><input class="capa2-demandas-filter" placeholder="Filtrar por frase, área o línea de servicio…" autocomplete="off">' +
       '<span class="count capa2-demandas-count">' + rows.length + ' / ' + rows.length + '</span></div>' +
-      '<table class="data"><thead><tr><th>#</th><th>Frase</th><th>Líneas</th><th>Tratamientos</th></tr></thead><tbody class="capa2-demandas-body"></tbody></table>';
+      '<table class="data"><thead><tr><th>#</th><th>Frase</th><th>Área</th><th>Líneas</th><th>Tratamientos</th></tr></thead><tbody class="capa2-demandas-body"></tbody></table>';
     const body = host.querySelector('.capa2-demandas-body');
     const count = host.querySelector('.capa2-demandas-count');
+    // La opción de escape (es_escape) no pertenece a ningún área canónica: se muestra diferenciada, sin forzarla a un área.
+    const areaCell = (r) => r.es_escape
+      ? '<em style="color:#8fa3bd;font-size:0.8rem">escape — sin área</em>'
+      : `<span class="tag">${escapeHtml(r.area || '')}</span>`;
     const draw = (q) => {
       const filtered = rows.filter(r => {
         if (!q) return true;
         const t = q.toLowerCase();
-        return r.frase.toLowerCase().includes(t) || r.lineas_servicio.some(l => l.toLowerCase().includes(t));
+        return r.frase.toLowerCase().includes(t) || (r.area || '').toLowerCase().includes(t) || r.lineas_servicio.some(l => l.toLowerCase().includes(t));
       });
       body.innerHTML = filtered.map(r =>
         '<tr><td><code>' + r.id + '</code></td><td>' + escapeHtml(r.frase) + '</td>' +
+        '<td>' + areaCell(r) + '</td>' +
         '<td>' + r.lineas_servicio.map(l => `<span class="tag">${escapeHtml(l)}</span>`).join('') + '</td>' +
         '<td style="color:#b7c7dd;font-size:0.84rem">' + escapeHtml(r.tratamientos) + '</td></tr>'
-      ).join('') || '<tr><td colspan="4" class="empty">Sin resultados</td></tr>';
+      ).join('') || '<tr><td colspan="5" class="empty">Sin resultados</td></tr>';
       count.textContent = filtered.length + ' / ' + rows.length;
     };
     draw('');
