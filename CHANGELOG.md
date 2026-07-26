@@ -2,6 +2,37 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-26] — v3.5.22
+
+### Simulador UX — revalidación de assets (Capa 2 + Capa 3) contra caché de navegador
+
+Micro-slice técnico local del simulador (encargo del revisor, con
+análisis de C1 conforme). Origen: al publicar la columna Área
+(`v3.5.21`), navegadores con caché previa mezclaban el JS nuevo con el
+`catalogo-demandas.json` viejo (sin `area`) y mostraban tags vacías —
+el catálogo se descarga en un `fetch` posterior a la carga de página,
+que la recarga forzada no refresca.
+
+- **`prisma-apex/hub-analisis.js`** (únicos 2 puntos de fetch del
+  archivo, verificado): `capa2LoadJSON` y `capa3Load` pasan a
+  `fetch(..., { cache: 'no-cache' })` — el navegador revalida cada
+  asset contra el servidor vía ETag (304 si no cambió; coste ~0, sin
+  re-descargas innecesarias). Cubre la clase completa del problema
+  dentro del simulador, no solo el síntoma de Capa 2.
+- **Sin tocar** (perímetro del encargo): `server.js`, contratos,
+  schema, README, carril técnico externo.
+- Residual anotado sin ampliar alcance: el propio `hub-analisis.js`
+  puede quedar cacheado por el navegador (mezcla inversa); se resuelve
+  con recarga normal y cualquier arreglo exigiría tocar `index.html` —
+  fuera de este slice.
+
+Validación: `node --check` OK; smoke en dev (assets de Capa 2 y Capa 3
+respondiendo en edge con el código nuevo); la comprobación visual con
+ventana cacheada y la revalidación en pestaña Network quedan a cargo
+del revisor. Bump PATCH en los 4 puntos canónicos por `OPERATIVA §0.4`.
+Producción permanece en `v3.5.20` (con `v3.5.21` + `v3.5.22` en dev)
+hasta decisión de promoción del revisor.
+
 ## [2026-07-26] — v3.5.21
 
 ### Simulador UX — Screen 2: columna "Área" visible en la tarjeta Demandas (Capa 2)

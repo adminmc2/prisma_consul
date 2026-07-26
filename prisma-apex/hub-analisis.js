@@ -487,7 +487,8 @@ const CAPA2_EVENT_FILES = ['lead-captured'];
 const _capa2Cache = {};
 function capa2LoadJSON(path) {
   if (!_capa2Cache[path]) {
-    _capa2Cache[path] = fetch(CAPA2_BASE + path).then(r => {
+    // cache: 'no-cache' — revalida contra el servidor (ETag/304) para no mezclar JS nuevo con JSON viejo del navegador.
+    _capa2Cache[path] = fetch(CAPA2_BASE + path, { cache: 'no-cache' }).then(r => {
       if (!r.ok) throw new Error(path);
       return r.json();
     }).catch(err => {
@@ -755,7 +756,8 @@ const CAPA3_BASE = '/core/simulador-ux/';
 const _capa3Cache = {};
 function capa3Load(path, asJson) {
   if (!_capa3Cache[path]) {
-    _capa3Cache[path] = fetch(CAPA3_BASE + path).then(r => {
+    // cache: 'no-cache' — misma revalidación que capa2LoadJSON (evita assets rancios de Capa 3).
+    _capa3Cache[path] = fetch(CAPA3_BASE + path, { cache: 'no-cache' }).then(r => {
       if (!r.ok) throw new Error(path);
       return asJson ? r.json() : r.text();
     }).catch(err => { delete _capa3Cache[path]; throw err; });
