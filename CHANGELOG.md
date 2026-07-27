@@ -2,6 +2,33 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-27] — v3.5.23
+
+### Simulador UX — reformulación de frases del catálogo de demandas (opciones 1-19)
+
+Slice de contenido F3 aplicado por C1 (handoff con PASS del revisor,
+observaciones absorbidas; commit de contenido `238a009` + este bump en
+commit separado del carril repo).
+
+- **`catalogo-demandas.json`** (19+/19−): solo el campo `frase` en las
+  opciones 1-19, según mapa consolidado — fraseo más corto y directo
+  para el Step 2 del Flow (se retiran los prefijos "Quiero…/Tengo…/Me
+  preocupa…"; ej. id 14 "Tengo estrías que quiero mejorar" → "Estrías").
+- **Opción 20 sin cambio** (literal "Tengo otra inquietud o no
+  encuentro lo que busco"); `id`, `area`, `es_escape`,
+  `lineas_servicio` y `tratamientos` intactos en las 20.
+- Validación completa: JSON válido, 20/20, solo `frase` en 1-19
+  (comparación campo a campo contra el estado anterior), opción 20
+  idéntica, distribución de áreas intacta (7/2/8/1/1/null 1), newline
+  final preservado.
+
+**Fuera de alcance declarado** (no verificado aquí): títulos por área y
+subtítulos del Step 2 del Flow, coherencia con mockup W1, multi-step
+del Flow, modelado operativo de la opción 20 más allá de `es_escape`.
+
+Bump PATCH en los 4 puntos canónicos por `OPERATIVA §0.4`. Producción
+permanece en `v3.5.22` hasta decisión de promoción del revisor.
+
 ## [2026-07-26] — v3.5.22
 
 ### Simulador UX — revalidación de assets (Capa 2 + Capa 3) contra caché de navegador
