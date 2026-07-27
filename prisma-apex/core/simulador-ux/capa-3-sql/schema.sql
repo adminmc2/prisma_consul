@@ -16,7 +16,7 @@ CREATE TABLE armc_leads (
     ),
     opciones_seleccionadas INT[] NOT NULL CHECK (cardinality(opciones_seleccionadas) > 0),
     lineas_servicio_detectadas VARCHAR(100)[] NOT NULL DEFAULT ARRAY[]::VARCHAR(100)[],
-    nota TEXT,
+    comentario_libre_lead TEXT,
     estado_actual VARCHAR(50) NOT NULL DEFAULT 'LEAD_CAPTURED' CHECK (
         estado_actual IN ('LEAD_CAPTURED')
     ),

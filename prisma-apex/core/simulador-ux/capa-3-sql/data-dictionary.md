@@ -17,7 +17,7 @@ Alcance verificado: tablas necesarias para la captura del lead (acción de entra
 | `canal_origen` | VARCHAR(50) | NO | enum | `WEB_FORM`, `WHATSAPP`. |
 | `opciones_seleccionadas` | INT[] | NO | cardinality ≥ 1 | IDs del catálogo de 20 demandas. |
 | `lineas_servicio_detectadas` | VARCHAR(100)[] | NO | `ARRAY[]` | Derivado de `opciones_seleccionadas`. |
-| `nota` | TEXT | SÍ | — | Observaciones libres del lead. |
+| `comentario_libre_lead` | TEXT | SÍ | — | Comentario opcional que el lead escribe al momento de la captación inicial (Step 3 del Flow WhatsApp o formulario web). Un único texto libre por lead, no un histórico conversacional. No confundir con notas clínicas, notas internas, notas de evolución ni notas pre-consulta del modelo canónico F2. |
 | `estado_actual` | VARCHAR(50) | NO | `LEAD_CAPTURED` | Estado actual del lead en el flujo. |
 | `fecha_primer_contacto` | TIMESTAMPTZ | NO | `NOW()` | Fecha y hora del primer contacto del lead con ARMC. Se asigna automáticamente al crear la fila. |
 | `handoff_state` | VARCHAR(20) | NO | `'none'`; enum `none / requested / active / closed` | Estado actual del handoff humano para esta conversación. `none` cuando el handoff no ha sido solicitado. |
