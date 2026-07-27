@@ -2,6 +2,33 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-27] — v3.5.24
+
+### Simulador UX — renombrado semántico `nota` → `comentario_libre_lead` en contratos del catálogo Lead
+
+Handoff F3 aplicado por C1 (commit de contenido `cdbb2cc` con PASS del
+revisor + este bump en commit separado).
+
+- Renombrado semántico puro en los 6 archivos de contrato del catálogo
+  Lead del simulador: forms `lead-capture` y `web-contact-form` (campo
+  + regla de obligatoriedad), evento `lead-captured`
+  (`payload_opcional`), `mappings.json` (2 listas de columnas),
+  `schema.sql` (columna TEXT) y `data-dictionary.md` (fila +
+  descripción aprobada: un único texto libre por lead en la captación
+  inicial — Step 3 del Flow WhatsApp o formulario web —, no un
+  histórico conversacional; no confundir con notas clínicas, internas,
+  de evolución ni pre-consulta del modelo canónico F2).
+- **Cambio contractual puro, sin impacto arquitectónico** (la tabla
+  `armc_leads` del simulador es persistencia definida y pendiente, no
+  operativa). Prepara el handoff posterior de B2-7 con la clave
+  correcta.
+- Validación 5/5: 0 ocurrencias estructurales de `nota` restantes, 8 de
+  `comentario_libre_lead`, 4 JSON válidos, diff acotado a 6 archivos
+  (8+/8−), sin arrastre fuera de alcance.
+
+Bump PATCH en los 4 puntos canónicos por `OPERATIVA §0.4`. Producción
+permanece en `v3.5.23` hasta decisión de promoción del revisor.
+
 ## [2026-07-27] — v3.5.23
 
 ### Simulador UX — reformulación de frases del catálogo de demandas (opciones 1-19)
