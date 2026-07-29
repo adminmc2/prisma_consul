@@ -5,13 +5,19 @@
       "columnas": ["canal_origen", "nombre", "apellido_paterno", "apellido_materno", "email", "telefono", "opciones_seleccionadas", "comentario_libre_lead", "lineas_servicio_detectadas", "estado_actual", "fecha_primer_contacto"],
       "eventos": ["LEAD_CAPTURED"]
     },
-    "lead_capture": {
+    "lead_open_whatsapp": {
       "tabla_principal": "armc_leads",
-      "columnas": ["canal_origen", "nombre", "apellido_paterno", "apellido_materno", "email", "telefono", "opciones_seleccionadas", "comentario_libre_lead", "lineas_servicio_detectadas", "estado_actual", "fecha_primer_contacto"],
+      "columnas": ["canal_origen", "nombre", "apellido_paterno", "apellido_materno", "telefono", "estado_actual", "fecha_primer_contacto"],
+      "eventos": ["LEAD_CREATED"]
+    },
+    "lead_flow_submission_whatsapp": {
+      "tabla_principal": "armc_leads",
+      "columnas": ["opciones_seleccionadas", "comentario_libre_lead", "email", "lineas_servicio_detectadas", "estado_actual"],
       "eventos": ["LEAD_CAPTURED"]
     }
   },
   "events": {
+    "LEAD_CREATED": { "tablas": ["armc_leads", "armc_events"] },
     "LEAD_CAPTURED": { "tablas": ["armc_leads", "armc_events"] },
     "HUMAN_HANDOFF_REQUESTED": { "tablas": ["armc_leads", "armc_events", "armc_handoffs"] },
     "HUMAN_HANDOFF_ASSIGNED": { "tablas": ["armc_leads", "armc_events", "armc_handoffs"] },

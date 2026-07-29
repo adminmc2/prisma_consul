@@ -18,7 +18,7 @@ Alcance verificado: tablas necesarias para la captura del lead (acción de entra
 | `opciones_seleccionadas` | INT[] | NO | cardinality ≥ 1 | IDs del catálogo de 20 demandas. |
 | `lineas_servicio_detectadas` | VARCHAR(100)[] | NO | `ARRAY[]` | Derivado de `opciones_seleccionadas`. |
 | `comentario_libre_lead` | TEXT | SÍ | — | Comentario opcional que el lead escribe al momento de la captación inicial (Step 3 del Flow WhatsApp o formulario web). Un único texto libre por lead, no un histórico conversacional. No confundir con notas clínicas, notas internas, notas de evolución ni notas pre-consulta del modelo canónico F2. |
-| `estado_actual` | VARCHAR(50) | NO | `LEAD_CAPTURED` | Estado actual del lead en el flujo. |
+| `estado_actual` | VARCHAR(50) | NO | `LEAD_ABIERTO` (default); enum `LEAD_ABIERTO / LEAD_CONFIRMADO` | Estado actual del lead en el ciclo Lead. `LEAD_ABIERTO` cuando la ficha se crea al dar nombre y apellidos (solo canal WhatsApp). `LEAD_CONFIRMADO` cuando se envía el formulario completo (Step 4 del Flow WhatsApp o formulario web). |
 | `fecha_primer_contacto` | TIMESTAMPTZ | NO | `NOW()` | Fecha y hora del primer contacto del lead con ARMC. Se asigna automáticamente al crear la fila. |
 | `handoff_state` | VARCHAR(20) | NO | `'none'`; enum `none / requested / active / closed` | Estado actual del handoff humano para esta conversación. `none` cuando el handoff no ha sido solicitado. |
 | `handoff_assigned_to` | INTEGER | SÍ | FK → `portal_users(id)` ON DELETE SET NULL | Humano que tiene asignado el handoff actualmente. NULL mientras el handoff no esté en `active`. |
@@ -29,7 +29,9 @@ Alcance verificado: tablas necesarias para la captura del lead (acción de entra
 | `created_at` | TIMESTAMPTZ | SÍ | `NOW()` | Fecha de creación. |
 | `updated_at` | TIMESTAMPTZ | SÍ | `NOW()` | Fecha de última modificación. |
 
-**Estados válidos (alcance verificado):** `LEAD_CAPTURED`.
+**Estados válidos (alcance verificado):** `LEAD_ABIERTO`, `LEAD_CONFIRMADO`.
+
+**Coherencia estado ↔ opciones:** el CHECK `armc_leads_opciones_confirmado` exige `cardinality(opciones_seleccionadas) > 0` **solo** cuando `estado_actual = 'LEAD_CONFIRMADO'`. En `LEAD_ABIERTO` puede ser `NULL`.
 
 **Nota sobre `closed_by`:** la identidad de quien cierra el handoff **no se duplica** en `armc_leads`. Vive en la fila `CLOSED` correspondiente de `armc_handoffs` (vía `user_id`) y en el `payload_opcional` del evento `HUMAN_HANDOFF_CLOSED` (`closed_by_user_id`). Convención coherente con el principio "persistencia base ligera + historial completo".
 
@@ -43,7 +45,7 @@ Alcance verificado: tablas necesarias para la captura del lead (acción de entra
 | `payload` | JSONB | NO | — | Payload específico del evento. |
 | `created_at` | TIMESTAMPTZ | SÍ | `NOW()` | Fecha del evento. |
 
-**Tipos válidos (alcance verificado):** `LEAD_CAPTURED`, `HUMAN_HANDOFF_REQUESTED`, `HUMAN_HANDOFF_ASSIGNED`, `HUMAN_HANDOFF_CLOSED`.
+**Tipos válidos (alcance verificado):** `LEAD_CREATED`, `LEAD_CAPTURED`, `HUMAN_HANDOFF_REQUESTED`, `HUMAN_HANDOFF_ASSIGNED`, `HUMAN_HANDOFF_CLOSED`.
 
 ## `armc_handoffs`
 

@@ -21,9 +21,9 @@ Visualización en cuatro capas del flujo de captación y persistencia de leads e
 
 A fecha actual solo está modelado lo verificado:
 
-- **Capa 1:** cuatro nodos del flujo lineal base — `lead_entry_channel` (entrada), `web_contact_form_received` (rama web, input), `lead_capture_whatsapp` (rama WhatsApp, input), `lead_captured` (convergencia técnica: donde se emite el evento y persisten los datos). Adicionalmente, **patrón transversal de handoff humano modelado como estado del lead**: `human_handoff_requested → human_handoff_active → human_handoff_closed`. Puede estar presente en cualquier punto del flujo base como representación analítica del estado, sin transiciones interactivas en el simulador. El patrón transversal no introduce nueva linealidad: el flujo base sigue siendo el camino canónico de captura.
-- **Capa 2:** dos formularios (`web_contact_form`, `lead_capture`) que actúan como input, y cuatro eventos: `LEAD_CAPTURED` (emitido al converger) y los tres del handoff (`HUMAN_HANDOFF_REQUESTED`, `HUMAN_HANDOFF_ASSIGNED`, `HUMAN_HANDOFF_CLOSED`).
-- **Capa 3:** tres tablas — `armc_leads` (con seis columnas de handoff aditivas: `handoff_state`, `handoff_assigned_to`, `handoff_close_reason`, `handoff_requested_at`, `handoff_assigned_at`, `handoff_closed_at`), `armc_events` (enum ampliado a los cuatro `event_type` del alcance) y `armc_handoffs` (historial completo del handoff: una fila por transición `REQUESTED / ASSIGNED / CLOSED`). FKs hacia `portal_users(id)` para identidad de humano. La escritura del lead sigue siendo una sola vez por lead en el momento de convergencia.
+- **Capa 1:** seis nodos del flujo lineal base — `lead_entry_channel` (entrada), `web_contact_form_received` (rama web, input directo), `lead_conversation_started` (rama WhatsApp, primer contacto sin ficha aún), `lead_open_whatsapp` (rama WhatsApp, ficha creada al dar nombre y apellidos con estado `LEAD_ABIERTO`), `lead_flow_submission_whatsapp` (rama WhatsApp, envío del Flow completo con transición a `LEAD_CONFIRMADO`), `lead_confirmed` (convergencia final: ficha con formulario completo persistida). Adicionalmente, **patrón transversal de handoff humano modelado como estado del lead**: `human_handoff_requested → human_handoff_active → human_handoff_closed`. Puede estar presente en cualquier punto del flujo base como representación analítica del estado, sin transiciones interactivas en el simulador. El patrón transversal no introduce nueva linealidad: el flujo base sigue siendo el camino canónico de captura.
+- **Capa 2:** tres formularios — `web_contact_form` (canal web, un solo envío directo a `LEAD_CONFIRMADO`), `lead_open_whatsapp` (canal WhatsApp fase 1: crea ficha con estado `LEAD_ABIERTO`), `lead_flow_submission_whatsapp` (canal WhatsApp fase 2: actualiza ficha existente y transiciona a `LEAD_CONFIRMADO`) — y cinco eventos: `LEAD_CREATED` (emitido al crear la ficha en canal WhatsApp), `LEAD_CAPTURED` (emitido al enviar el formulario completo, en cualquiera de los dos canales), y los tres del handoff (`HUMAN_HANDOFF_REQUESTED`, `HUMAN_HANDOFF_ASSIGNED`, `HUMAN_HANDOFF_CLOSED`).
+- **Capa 3:** tres tablas — `armc_leads` (con columna `estado_actual` enum `LEAD_ABIERTO / LEAD_CONFIRMADO`; `opciones_seleccionadas` acepta `NULL` con CHECK condicional que exige cardinalidad ≥ 1 solo en `LEAD_CONFIRMADO`; más las seis columnas de handoff aditivas: `handoff_state`, `handoff_assigned_to`, `handoff_close_reason`, `handoff_requested_at`, `handoff_assigned_at`, `handoff_closed_at`), `armc_events` (enum `event_type` ampliado a los cinco valores del alcance: `LEAD_CREATED`, `LEAD_CAPTURED`, y los tres del handoff) y `armc_handoffs` (historial completo del handoff: una fila por transición `REQUESTED / ASSIGNED / CLOSED`). FKs hacia `portal_users(id)` para identidad de humano. **En canal WhatsApp la ficha del lead se escribe en dos instantes**: `INSERT` al dar nombre (evento `LEAD_CREATED`, estado `LEAD_ABIERTO`) y `UPDATE` al enviar el Flow completo (evento `LEAD_CAPTURED`, estado `LEAD_CONFIRMADO`). En canal web se escribe en un único `INSERT` con estado `LEAD_CONFIRMADO` (evento `LEAD_CAPTURED`).
 
 En la captura inicial actualmente modelada (web y WhatsApp), el contrato refleja la presentación previa del Aviso de Privacidad para orientar comercialmente al contacto sobre servicios de ARMC. Los consentimientos explícitos obligatorios se desplazan a la fase posterior de creación de cuenta, fuera del alcance actual.
 
@@ -60,8 +60,10 @@ prisma-apex/core/simulador-ux/
 │   ├── catalogo-demandas.json          ← 20 demandas + 5 líneas de servicio (consumido)
 │   ├── forms/
 │   │   ├── web-contact-form.json        (consumido)
-│   │   └── lead-capture.json            (consumido)
+│   │   ├── lead-open-whatsapp.json      (consumido)
+│   │   └── lead-flow-submission-whatsapp.json (consumido)
 │   ├── events/
+│   │   ├── lead-created.json            (consumido)
 │   │   └── lead-captured.json           (consumido)
 │   └── mappings.json                   ← form/evento → tabla (consumido)
 ├── capa-3-sql/
@@ -99,8 +101,8 @@ prisma-apex/core/simulador-ux/
   - **`campos`** = input de captura que llega al sistema junto con el envío del formulario. Puede provenir del usuario (datos tecleados) o del propio canal (ej. el teléfono que WhatsApp aporta automáticamente). En todos los casos viaja en el payload del envío. Equivale a `writeOnly` en OpenAPI/JSON Schema.
   - **`genera`** = atributos que el sistema asigna **después** de recibir el formulario (`id`, `fecha_primer_contacto`, `canal_origen`). No son input; son metadato de la fila persistida. Equivale a `readOnly` en OpenAPI/JSON Schema.
 - **Naming de identificadores.** Convención verificada en el módulo; mantener al ampliar.
-  - **Formularios.** El `id` del contrato y el valor de `paso` usan `lower_snake_case`. Los archivos en `forms/` usan `kebab-case` alineado semánticamente con ese `id`. Ejemplos: `web_contact_form` ↔ `web-contact-form.json`, `lead_capture` ↔ `lead-capture.json`, `web_contact_form_received`.
-  - **Eventos.** El `id` del evento y el valor de `event_type` en SQL usan `UPPER_SNAKE_CASE`. El archivo en `events/` usa `kebab-case` alineado semánticamente con ese `id`. Ejemplo: `LEAD_CAPTURED` ↔ `lead-captured.json`.
+  - **Formularios.** El `id` del contrato y el valor de `paso` usan `lower_snake_case`. Los archivos en `forms/` usan `kebab-case` alineado semánticamente con ese `id`. Ejemplos: `web_contact_form` ↔ `web-contact-form.json`, `lead_open_whatsapp` ↔ `lead-open-whatsapp.json`, `lead_flow_submission_whatsapp` ↔ `lead-flow-submission-whatsapp.json`.
+  - **Eventos.** El `id` del evento y el valor de `event_type` en SQL usan `UPPER_SNAKE_CASE`. El archivo en `events/` usa `kebab-case` alineado semánticamente con ese `id`. Ejemplos: `LEAD_CREATED` ↔ `lead-created.json`, `LEAD_CAPTURED` ↔ `lead-captured.json`. **El `paso` del evento apunta al nodo Capa 1 donde ocurre la señal** (convención del renderer nativo, ver §Navegación).
   - **Tablas y columnas SQL**: `lower_snake_case`. Ejemplos: `armc_leads`, `armc_events`, `canal_origen`, `lineas_servicio_detectadas`.
   - **Consistencia entre capas.** El `paso` declarado en un form de Capa 2 coincide literalmente con la clave del nodo correspondiente en `CAPA1_NODES` y con la fila correspondiente de `MAPA_ROWS`. Los nombres de evento y de tabla usados en `mappings.json` coinciden literalmente con los `id` canónicos de eventos y con los nombres de tabla del `schema.sql`.
 
@@ -117,11 +119,14 @@ Capa 2, Capa 3 y Mapa usan **sidebar + detalle + búsqueda** (patrón estándar 
 
 ## Glosario
 
-- **Lead:** persona que entra al flujo por web o WhatsApp.
-- **Captura:** registro inicial del lead con sus datos de contacto y demandas seleccionadas.
+- **Lead:** persona que entra al flujo por web o WhatsApp. Su ficha vive en `armc_leads` con un `estado_actual` que evoluciona.
+- **Ficha abierta (`LEAD_ABIERTO`):** ficha del lead ya creada pero pendiente de completar el formulario. Solo aparece en canal WhatsApp, entre el instante de dar nombre y el instante de enviar el Flow. Emitida por `LEAD_CREATED`.
+- **Ficha confirmada (`LEAD_CONFIRMADO`):** ficha del lead con formulario completo enviado. Estado terminal del ciclo Lead. En WhatsApp se alcanza al enviar el Flow (Step 4); en web al enviar el formulario. Emitida por `LEAD_CAPTURED`.
+- **Captura:** proceso completo de creación y confirmación de la ficha. En canal WhatsApp abarca dos fases (`LEAD_CREATED` → `LEAD_CAPTURED`); en canal web es una sola fase (`LEAD_CAPTURED`).
 - **Demanda:** una de las 20 frases del catálogo (`catalogo-demandas.json`).
 - **Línea de servicio:** agrupación clínica/operativa derivada de las demandas.
-- **Evento:** transición observable del lead. Se persiste en `armc_events`.
+- **Evento:** transición observable del ciclo del lead. Se persiste en `armc_events`.
+- **Resolución por contexto:** en `lead_flow_submission_whatsapp` la ficha a actualizar se identifica por contexto del canal (teléfono en WhatsApp), no por un campo `lead_id` en el input del formulario.
 
 ## Desarrollo local
 

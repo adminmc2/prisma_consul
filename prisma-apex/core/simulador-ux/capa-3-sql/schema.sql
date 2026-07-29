@@ -14,11 +14,11 @@ CREATE TABLE armc_leads (
     canal_origen VARCHAR(50) NOT NULL CHECK (
         canal_origen IN ('WEB_FORM', 'WHATSAPP')
     ),
-    opciones_seleccionadas INT[] NOT NULL CHECK (cardinality(opciones_seleccionadas) > 0),
+    opciones_seleccionadas INT[],
     lineas_servicio_detectadas VARCHAR(100)[] NOT NULL DEFAULT ARRAY[]::VARCHAR(100)[],
     comentario_libre_lead TEXT,
-    estado_actual VARCHAR(50) NOT NULL DEFAULT 'LEAD_CAPTURED' CHECK (
-        estado_actual IN ('LEAD_CAPTURED')
+    estado_actual VARCHAR(50) NOT NULL DEFAULT 'LEAD_ABIERTO' CHECK (
+        estado_actual IN ('LEAD_ABIERTO', 'LEAD_CONFIRMADO')
     ),
     fecha_primer_contacto TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     -- Handoff humano (patrón transversal, aditivo sobre la captura del lead).
@@ -33,7 +33,12 @@ CREATE TABLE armc_leads (
     handoff_assigned_at TIMESTAMP WITH TIME ZONE,
     handoff_closed_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    -- Coherencia estado ↔ opciones: en LEAD_CONFIRMADO se exige al menos una opción.
+    CONSTRAINT armc_leads_opciones_confirmado CHECK (
+        estado_actual != 'LEAD_CONFIRMADO' OR
+        (opciones_seleccionadas IS NOT NULL AND cardinality(opciones_seleccionadas) > 0)
+    )
 );
 
 CREATE TABLE armc_events (
@@ -41,6 +46,7 @@ CREATE TABLE armc_events (
     lead_id UUID NOT NULL REFERENCES armc_leads(id) ON DELETE CASCADE,
     event_type VARCHAR(50) NOT NULL CHECK (
         event_type IN (
+            'LEAD_CREATED',
             'LEAD_CAPTURED',
             'HUMAN_HANDOFF_REQUESTED',
             'HUMAN_HANDOFF_ASSIGNED',

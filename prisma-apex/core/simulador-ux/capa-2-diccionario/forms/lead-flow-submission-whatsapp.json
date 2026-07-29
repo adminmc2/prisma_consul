@@ -1,0 +1,25 @@
+{
+  "id": "lead_flow_submission_whatsapp",
+  "nombre": "Envío del Flow WhatsApp por el lead",
+  "version": "1.0.0",
+  "canal": "WHATSAPP",
+  "paso": "lead_flow_submission_whatsapp",
+  "requiere_ficha_previa": true,
+  "campos": [
+    { "nombre": "opciones_seleccionadas", "tipo": "multiseleccion", "obligatorio": true, "fuente": "catalogo-demandas", "min_items": 1, "max_items": 20, "ejemplo": [1, 7] },
+    { "nombre": "comentario_libre_lead", "tipo": "texto_libre", "obligatorio": false, "max": 2000, "nullable": true, "ejemplo": "Me interesa una valoración antes de fin de mes." },
+    { "nombre": "email", "tipo": "email", "obligatorio": false, "nullable": true, "max": 255, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "ejemplo": "maria.garcia@example.com" }
+  ],
+  "derivados": [
+    { "nombre": "lineas_servicio_detectadas", "origen": "opciones_seleccionadas → catalogo-demandas.lineas_servicio" }
+  ],
+  "transicion_estado": { "desde": "LEAD_ABIERTO", "hacia": "LEAD_CONFIRMADO" },
+  "eventos_emitidos": ["LEAD_CAPTURED"],
+  "reglas": [
+    "Requiere ficha previa (creada por `lead_open_whatsapp`). No crea ficha nueva; actualiza la existente.",
+    "La ficha a actualizar se resuelve por contexto del canal (teléfono del subject en WhatsApp), no por un campo `lead_id` en el input del formulario. No se expone `lead_id` como campo.",
+    "Se dispara al pulsar 'Enviar a ARMC' en el Step 4 del WhatsApp Flow.",
+    "email es opcional en este canal.",
+    "Al menos una opción seleccionada del catálogo (mínimo 1, máximo 20)."
+  ]
+}

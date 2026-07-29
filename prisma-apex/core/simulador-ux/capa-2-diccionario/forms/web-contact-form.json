@@ -16,8 +16,10 @@
   "genera": [
     { "nombre": "id", "tipo": "uuid", "descripcion": "Identificador único e inmutable del subject. Lo asigna el sistema al crear la fila y se mantiene sin cambios durante toda la vida del lead." },
     { "nombre": "canal_origen", "tipo": "enum", "valor": "WEB_FORM", "descripcion": "Asignado automáticamente por el sistema según el contexto del contrato." },
+    { "nombre": "estado_actual", "tipo": "enum", "valor": "LEAD_CONFIRMADO", "descripcion": "El canal web no tiene fase intermedia: la ficha nace confirmada." },
     { "nombre": "fecha_primer_contacto", "tipo": "datetime", "descripcion": "Marca temporal asignada automáticamente por el sistema en el instante de crear la fila." }
   ],
+  "eventos_emitidos": ["LEAD_CAPTURED"],
   "derivados": [
     { "nombre": "lineas_servicio_detectadas", "origen": "opciones_seleccionadas → catalogo-demandas.lineas_servicio" }
   ],
@@ -25,6 +27,7 @@
     "Todos los campos son obligatorios excepto comentario_libre_lead.",
     "Al menos una opción seleccionada del catálogo (mínimo 1, máximo 25).",
     "email y telefono validados contra patrón.",
-    "Antes de enviar, se muestra al usuario el Aviso de Privacidad conforme a la LFPDPPP. Esta superficie modela la presentación previa del aviso en el canal web para la captación inicial y la orientación comercial sobre servicios de la clínica. No se modela aquí evidencia específica de aceptación ni los consentimientos explícitos obligatorios de creación de cuenta."
+    "Antes de enviar, se muestra al usuario el Aviso de Privacidad conforme a la LFPDPPP. Esta superficie modela la presentación previa del aviso en el canal web para la captación inicial y la orientación comercial sobre servicios de la clínica. No se modela aquí evidencia específica de aceptación ni los consentimientos explícitos obligatorios de creación de cuenta.",
+    "El canal web no tiene bipartición pre-Flow/Flow. La ficha se crea con estado LEAD_CONFIRMADO en el mismo instante del envío. No emite LEAD_CREATED."
   ]
 }

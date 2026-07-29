@@ -1,0 +1,26 @@
+{
+  "id": "lead_open_whatsapp",
+  "nombre": "Apertura de ficha del lead por WhatsApp",
+  "version": "1.0.0",
+  "canal": "WHATSAPP",
+  "paso": "lead_open_whatsapp",
+  "campos": [
+    { "nombre": "nombre", "tipo": "texto_corto", "obligatorio": true, "min": 1, "max": 120, "ejemplo": "María" },
+    { "nombre": "apellido_paterno", "tipo": "texto_corto", "obligatorio": true, "min": 1, "max": 120, "ejemplo": "García" },
+    { "nombre": "apellido_materno", "tipo": "texto_corto", "obligatorio": true, "min": 1, "max": 120, "ejemplo": "López" },
+    { "nombre": "telefono", "tipo": "telefono", "obligatorio": true, "fuente": "metadata_canal", "max": 20, "pattern": "^\\+?[0-9 ]{8,20}$", "ejemplo": "+52 55 1234 5678" }
+  ],
+  "genera": [
+    { "nombre": "id", "tipo": "uuid", "descripcion": "Identificador único e inmutable del subject. Se asigna al crear la ficha y no cambia en toda su vida." },
+    { "nombre": "canal_origen", "tipo": "enum", "valor": "WHATSAPP", "descripcion": "Asignado automáticamente." },
+    { "nombre": "estado_actual", "tipo": "enum", "valor": "LEAD_ABIERTO", "descripcion": "Estado inicial de la ficha al crearse." },
+    { "nombre": "fecha_primer_contacto", "tipo": "datetime", "descripcion": "Instante en que se creó la ficha." }
+  ],
+  "eventos_emitidos": ["LEAD_CREATED"],
+  "reglas": [
+    "La ficha se crea en el instante en que el lead da nombre y apellidos en el chat con Gabia.",
+    "telefono lo aporta el propio canal (metadata_canal), no requiere tecleo del lead.",
+    "Antes de iniciar la captura conversacional, el bot envía al usuario el Aviso de Privacidad conforme a la LFPDPPP.",
+    "No se modelan aquí opciones_seleccionadas, comentario_libre_lead ni email — pertenecen a `lead_flow_submission_whatsapp`."
+  ]
+}
