@@ -2,6 +2,37 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-29] — v3.6.0
+
+### [Contenido — simulador]
+
+- Realineación semántica de captura WhatsApp Lead en Capa 1 + Capa 2 + Capa 3
+  del simulador. Partición del nodo `lead_capture_whatsapp` en tres nodos
+  operativos (`lead_conversation_started`, `lead_open_whatsapp`,
+  `lead_flow_submission_whatsapp`). Renombrado del nodo de convergencia
+  `lead_captured` → `lead_confirmed` (estado `LEAD_CONFIRMADO`). Introducción
+  del evento `LEAD_CREATED` para el instante de creación de ficha;
+  `LEAD_CAPTURED` se conserva redefinido como evento del envío completo del
+  Flow (Step 4 WhatsApp) o del formulario web. `paso` de los eventos alineado
+  a nodos vivos (`lead_open_whatsapp` para `LEAD_CREATED`, `lead_confirmed`
+  para `LEAD_CAPTURED`) por la convención de navegación del renderer.
+  Estados de la ficha: `LEAD_ABIERTO` → `LEAD_CONFIRMADO`. Ajuste SQL:
+  `estado_actual` amplía enum, `opciones_seleccionadas` acepta NULL en
+  `LEAD_ABIERTO` con CHECK condicional que exige cardinalidad ≥ 1 solo en
+  `LEAD_CONFIRMADO`, `armc_events.event_type` incluye `LEAD_CREATED`. Regla
+  explícita de resolución por contexto en `lead_flow_submission_whatsapp`: la
+  ficha se identifica por teléfono del canal WhatsApp, no por input. Motivo:
+  cerrar la desalineación entre el instante contractual del simulador y el
+  canon operativo del mockup (Gate 1 + Gate 2 F3 ↔ Armando ↔ Revisor). Slice
+  A+B fusionado del plan multi-slice acordado. Slice C (modelo conversacional
+  `armc_mensajes_lead`) y Slice D (B2-7) pendientes. Slice E (renderer +
+  origen de handoff-requested) retenido aparte. Se completa además el listado
+  vivo `CAPA2_EVENT_FILES` con los tres eventos de handoff — los contratos
+  existían pero no se cargaban en Capa 2, por omisión histórica del listado.
+  Adicional (§3.5 del handoff, opción aplicada por C1): banner `LEGACY
+  CONGELADO` en las 3 superficies sombra no servidas por el Hub
+  (`capa-1-ux/`, `mapa/`, `capa-2-diccionario/index.html`).
+
 ## [2026-07-27] — v3.5.24
 
 ### Simulador UX — renombrado semántico `nota` → `comentario_libre_lead` en contratos del catálogo Lead
