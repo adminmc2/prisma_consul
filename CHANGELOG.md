@@ -2,6 +2,34 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-29] — v3.6.2
+
+### Simulador UX — micro-slice A: reespaciado de la columna handoff en Capa 1 (solape visual)
+
+Hallazgo del revisor con captura: las 3 tarjetas de handoff (columna
+x:2080) se solapaban en el layout por defecto — posicionamiento absoluto
+con separación vertical de 370px para tarjetas cuya altura real
+(contenido de v3.4.14) es ~550-700px. Desajuste preexistente, más
+visible tras densificarse la zona en v3.6.0/v3.6.1.
+
+Alcance recortado aprobado (opción A del análisis; la solución
+permanente — auto-layout por columna — queda absorbida en el Slice E):
+
+- **`hub-analisis.js`** (solo 2 coordenadas `y` por defecto):
+  `human_handoff_active` 480 → 810; `human_handoff_closed` 860 → 1510.
+  `human_handoff_requested` se mantiene en 110. Separaciones de 700px
+  acordes a la altura real de las tarjetas.
+- **`hub.css`** (bump autorizado): `min-height` del canvas de Capa 1
+  1800px → 2300px, para que el último nodo no quede cortado por abajo.
+- **Tramo WhatsApp intocado**: verificado sin solape real (huecos de
+  60px horizontales entre tarjetas, sin vecino vertical).
+- Sin tocar lógica del renderer, Capa 2, Capa 3, README ni mapa. Sin
+  adelgazar contenido. Semántica y acciones de v3.6.1 intactas (0
+  cambios fuera de las 2 coordenadas y el min-height).
+
+Bump PATCH en los 4 puntos canónicos por `OPERATIVA §0.4`. Producción
+permanece en `v3.6.1` hasta decisión de promoción del revisor.
+
 ## [2026-07-29] — v3.6.1
 
 ### Simulador UX — mini-fix v3.6.0: la apertura de ficha se atribuye a su transición correcta en Capa 1

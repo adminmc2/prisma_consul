@@ -170,7 +170,7 @@ const CAPA1_NODES = {
     actions: []
   },
   human_handoff_active: {
-    title: 'Handoff humano activo', key: 'HUMAN_HANDOFF_ACTIVE', x: 2080, y: 480, width: 360,
+    title: 'Handoff humano activo', key: 'HUMAN_HANDOFF_ACTIVE', x: 2080, y: 810, width: 360,
     description: 'Un humano del Hub ha tomado el handoff. La conversación está siendo atendida por una persona; el bot sigue silenciado.',
     dataPoints: [
       'Humano asignado: FK portal_users en armc_leads.handoff_assigned_to',
@@ -187,7 +187,7 @@ const CAPA1_NODES = {
     actions: []
   },
   human_handoff_closed: {
-    title: 'Handoff humano cerrado', key: 'HUMAN_HANDOFF_CLOSED', x: 2080, y: 860, width: 360,
+    title: 'Handoff humano cerrado', key: 'HUMAN_HANDOFF_CLOSED', x: 2080, y: 1510, width: 360,
     description: 'El handoff cierra, sea manualmente desde apex-armc o automáticamente por inactividad.',
     dataPoints: [
       'Cierre manual: el humano lo cierra desde apex-armc',

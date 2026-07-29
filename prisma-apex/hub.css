@@ -639,7 +639,7 @@
     .sim-capa1 .capa1-canvas-wrapper { position: relative; flex: 1; overflow: auto; cursor: grab; background: radial-gradient(circle at 1px 1px, rgba(161,184,242,0.12) 1px, transparent 0), linear-gradient(180deg, rgba(16,27,44,0.96), rgba(26,37,53,0.96)); background-size: 26px 26px, auto; scrollbar-width: none; -ms-overflow-style: none; }
     .sim-capa1 .capa1-canvas-wrapper.panning { cursor: grabbing; }
     .sim-capa1 .capa1-canvas-wrapper::-webkit-scrollbar { width: 0; height: 0; display: none; }
-    .sim-capa1 .capa1-canvas { position: relative; min-width: 3600px; min-height: 1800px; transform-origin: 0 0; transition: transform 0.1s ease-out; }
+    .sim-capa1 .capa1-canvas { position: relative; min-width: 3600px; min-height: 2300px; transform-origin: 0 0; transition: transform 0.1s ease-out; }
     .sim-capa1 .capa1-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
     .sim-capa1 .link { fill: none; stroke: rgba(161,184,242,0.45); stroke-width: 2; transition: stroke 0.3s, stroke-width 0.3s; }
     .sim-capa1 .link.active { stroke: var(--c1-cyan); stroke-width: 3; filter: drop-shadow(0 0 8px rgba(49,190,239,0.5)); }
