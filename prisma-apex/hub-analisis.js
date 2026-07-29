@@ -99,9 +99,9 @@ const CAPA1_NODES = {
       'Sin ficha creada todavía.',
       'Los mensajes previos a la ficha se persistirán en el modelo conversacional (Slice C).'
     ],
-    note: 'Estado conversacional previo a la creación de ficha. Sin persistencia en armc_leads. Sin action: el histórico conversacional se modela en Slice C.',
+    note: 'Estado conversacional previo a la creación de ficha. El histórico de mensajes de esta fase se modela en Slice C. La action de este nodo representa el instante en que nace la ficha.',
     crossLinks: [],
-    actions: []
+    actions: [{ id: 'register-lead-open-whatsapp', label: 'Registrar apertura del lead', targetId: 'lead_open_whatsapp', dbAction: "INSERT armc_leads(canal_origen='WHATSAPP', nombre, apellido_paterno, apellido_materno, telefono, estado_actual='LEAD_ABIERTO', ...) RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CREATED');" }]
   },
   lead_open_whatsapp: {
     title: 'Ficha del lead abierta', key: 'LEAD_ABIERTO', x: 960, y: 860, width: 340,
@@ -114,12 +114,12 @@ const CAPA1_NODES = {
       'Ficha visible en el Hub desde este instante.',
       'Evento LEAD_CREATED emitido.'
     ],
-    note: 'Primer instante de persistencia del canal WhatsApp: INSERT de la ficha con estado LEAD_ABIERTO.',
+    note: 'La ficha ya existe (INSERT + LEAD_CREATED ocurrieron al llegar aquí). La transición al envío del Flow no persiste nada: la creación no se atribuye a ese salto.',
     crossLinks: [
       { label: 'Ver contrato lead_open_whatsapp en Capa 2', tab: 2, itemId: 'form-lead_open_whatsapp' },
       { label: 'Ver evento LEAD_CREATED en Capa 2', tab: 2, itemId: 'event-LEAD_CREATED' }
     ],
-    actions: [{ id: 'register-lead-open-whatsapp', label: 'Registrar apertura del lead', targetId: 'lead_flow_submission_whatsapp', dbAction: "INSERT armc_leads(canal_origen='WHATSAPP', nombre, apellido_paterno, apellido_materno, telefono, estado_actual='LEAD_ABIERTO', ...) RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CREATED');" }]
+    actions: [{ id: 'advance-flow-whatsapp', label: 'El lead abre el Flow (CTA)', targetId: 'lead_flow_submission_whatsapp', dbAction: 'Sin persistencia en este salto: la ficha ya fue creada en la apertura; el Flow se completa y envía en el paso siguiente.' }]
   },
   lead_flow_submission_whatsapp: {
     title: 'Envío del Flow WhatsApp', key: 'LEAD_FLOW_SUBMISSION_WHATSAPP', x: 1360, y: 860, width: 340,

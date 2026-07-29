@@ -2,6 +2,36 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-29] — v3.6.1
+
+### Simulador UX — mini-fix v3.6.0: la apertura de ficha se atribuye a su transición correcta en Capa 1
+
+Hallazgo del revisor que bloqueaba el PASS visual de `v3.6.0`: la action
+"Registrar apertura del lead" (INSERT + `LEAD_CREATED`) vivía en
+`lead_open_whatsapp` apuntando a `lead_flow_submission_whatsapp` — como
+las flechas de Capa 1 derivan de las actions, la creación de la ficha
+quedaba visualmente asociada al salto ficha-abierta → envío-del-Flow (y
+faltaba la flecha `lead_conversation_started → lead_open_whatsapp`).
+Contradecía la semántica aprobada del slice.
+
+Corrección mínima aplicada en `prisma-apex/hub-analisis.js` (solo las
+actions y notes de 2 nodos):
+
+- La action de apertura (INSERT + `LEAD_CREATED`) se mueve a
+  `lead_conversation_started` con target `lead_open_whatsapp` — la
+  flecha ahora representa el instante en que nace la ficha.
+- `lead_open_whatsapp` pasa a tener una transición **no persistente**
+  hacia `lead_flow_submission_whatsapp` ("El lead abre el Flow (CTA)"),
+  que no reatribuye la creación.
+- `lead_flow_submission_whatsapp` intacto: sigue siendo el UPDATE a
+  `LEAD_CONFIRMADO` con `LEAD_CAPTURED`.
+
+Verificación semántica automatizada: apertura en la transición correcta,
+salto intermedio sin persistencia, INSERT+`LEAD_CREATED` sin duplicar.
+Contratos de Capa 2/3, README y mapa: sin cambios (la asociación
+contractual form/evento por nodo no varía). Bump PATCH por
+`OPERATIVA §0.4`. Producción permanece en `v3.5.24`.
+
 ## [2026-07-29] — v3.6.0
 
 ### [Contenido — simulador]
