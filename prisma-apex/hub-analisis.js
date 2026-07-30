@@ -87,7 +87,7 @@ const CAPA1_NODES = {
     dataPoints: ['Canal origen: WEB_FORM', 'Origen: formulario de contacto web', 'Datos básicos recibidos', 'Ingreso al flujo inicial', 'Aviso de Privacidad LFPDPPP visible antes de enviar para captación inicial y orientación comercial'],
     note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
     crossLinks: [{ label: 'Ver contrato web_contact_form en Capa 2', tab: 2, itemId: 'form-web_contact_form' }],
-    actions: [{ id: 'register-lead-web', label: 'Enviar formulario web', targetId: 'lead_confirmed', dbAction: "INSERT armc_leads(canal_origen='WEB_FORM', ..., estado_actual='LEAD_CONFIRMADO') RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CAPTURED');" }]
+    actions: [{ id: 'register-lead-web', label: 'Enviar formulario web', targetId: 'lead_confirmed', dbAction: "INSERT armc_leads(canal_origen='WEB_FORM', nombres, apellidos, email, telefono, opciones_seleccionadas, ..., estado_actual='LEAD_CONFIRMADO') RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CAPTURED');" }]
   },
   lead_conversation_started: {
     title: 'Conversación WhatsApp iniciada', key: 'LEAD_CONVERSATION_STARTED', x: 560, y: 860, width: 340,
@@ -96,18 +96,20 @@ const CAPA1_NODES = {
       'Canal origen: WHATSAPP.',
       'Bot conversacional: Gabia — apertura canónica "¿Aló? Policía de belleza".',
       'Aviso de Privacidad LFPDPPP enviado por el bot antes de capturar datos.',
-      'Sin ficha creada todavía.',
-      'Los mensajes previos a la ficha se persistirán en el modelo conversacional (Slice C).'
+      'El lead envía sus datos por mensaje libre; el sistema hace parse provisional solo para UX (no persiste).',
+      'El sistema muestra al lead los datos parseados y pide confirmación explícita antes de crear la ficha.',
+      'Los mensajes previos a la ficha se persistirán en el modelo conversacional (Slice C).',
+      'Fallback: si el lead corrige, el bot pregunta campo por campo hasta obtener confirmación.'
     ],
-    note: 'Estado conversacional previo a la creación de ficha. El histórico de mensajes de esta fase se modela en Slice C. La action de este nodo representa el instante en que nace la ficha.',
+    note: 'Estado conversacional previo a la creación de ficha. El histórico de mensajes de esta fase se modela en Slice C. La action de este nodo representa el instante de confirmación explícita del lead, que dispara el INSERT y el evento LEAD_CREATED. Alcance actual: sin bot real, sin LLM — el patrón conversacional se documenta contractualmente sin implementación.',
     crossLinks: [],
-    actions: [{ id: 'register-lead-open-whatsapp', label: 'Registrar apertura del lead', targetId: 'lead_open_whatsapp', dbAction: "INSERT armc_leads(canal_origen='WHATSAPP', nombre, apellido_paterno, apellido_materno, telefono, estado_actual='LEAD_ABIERTO', ...) RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CREATED');" }]
+    actions: [{ id: 'register-lead-open-whatsapp', label: 'Registrar apertura del lead', targetId: 'lead_open_whatsapp', dbAction: "INSERT armc_leads(canal_origen='WHATSAPP', nombres, apellidos, telefono, estado_actual='LEAD_ABIERTO', ...) RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CREATED');" }]
   },
   lead_open_whatsapp: {
     title: 'Ficha del lead abierta', key: 'LEAD_ABIERTO', x: 960, y: 860, width: 340,
-    description: 'La ficha del lead se crea en el instante en que da nombre y apellidos en el chat con Gabia.',
+    description: 'La ficha del lead se crea en el instante en que el lead confirma explícitamente sus nombres, apellidos y teléfono parseados por el bot.',
     dataPoints: [
-      'Nombre y apellidos por respuesta libre en el chat.',
+      'nombres + apellidos confirmados explícitamente por el lead a partir de mensaje libre parseado.',
       'Teléfono desde metadata del canal (no lo teclea el lead).',
       'canal_origen = WHATSAPP.',
       'estado_actual = LEAD_ABIERTO.',
@@ -1048,7 +1050,7 @@ const MAPA_ROWS = [
   { c1: 'lead_entry_channel', c1_label: 'Entrada del lead', c2_form: null, c2_event: null, c3: [], note: 'Dispatcher visual. Sin datos ni evento.' },
   { c1: 'web_contact_form_received', c1_label: 'Contacto web recibido', c2_form: 'web_contact_form', c2_event: null, c3: [], note: 'Input por canal web; ficha nace en LEAD_CONFIRMADO y emite LEAD_CAPTURED al enviar.' },
   { c1: 'lead_conversation_started', c1_label: 'Conversación WhatsApp iniciada', c2_form: null, c2_event: null, c3: [], note: 'Primer contacto con Gabia. Sin ficha aún; el histórico conversacional se modela en Slice C.' },
-  { c1: 'lead_open_whatsapp', c1_label: 'Ficha del lead abierta', c2_form: 'lead_open_whatsapp', c2_event: 'LEAD_CREATED', c3: ['armc_leads', 'armc_events'], note: 'INSERT de la ficha con estado LEAD_ABIERTO al dar nombre y apellidos.' },
+  { c1: 'lead_open_whatsapp', c1_label: 'Ficha del lead abierta', c2_form: 'lead_open_whatsapp', c2_event: 'LEAD_CREATED', c3: ['armc_leads', 'armc_events'], note: 'INSERT de la ficha con estado LEAD_ABIERTO tras confirmación explícita del lead sobre nombres y apellidos.' },
   { c1: 'lead_flow_submission_whatsapp', c1_label: 'Envío del Flow WhatsApp', c2_form: 'lead_flow_submission_whatsapp', c2_event: 'LEAD_CAPTURED', c3: ['armc_leads', 'armc_events'], note: 'UPDATE de la ficha existente y transición a LEAD_CONFIRMADO al enviar el Flow.' },
   { c1: 'lead_confirmed', c1_label: 'Lead confirmado', c2_form: null, c2_event: 'LEAD_CAPTURED', c3: ['armc_leads', 'armc_events'], note: 'Convergencia final: ficha con formulario completo persistida.' },
   { c1: 'human_handoff_requested', c1_label: 'Handoff humano solicitado', c2_form: null, c2_event: 'HUMAN_HANDOFF_REQUESTED', c3: ['armc_leads', 'armc_events', 'armc_handoffs'], note: 'Patrón transversal de estado del lead. Bot silenciado para la conversación. El simulador representa presencia respecto al flujo lineal, no transiciones interactivas.' },
@@ -1079,7 +1081,7 @@ function createMapa(mountEl, opts) {
   mountEl.innerHTML =
     '<div class="mapa-page">' +
     '<h1><i class="ph ph-flow-arrow"></i> Mapa de trazabilidad</h1>' +
-    '<p class="lede">Una fila por estado verificado del flujo. En canal WhatsApp la ficha se escribe en dos instantes: <code>INSERT</code> al dar nombre (evento <code>LEAD_CREATED</code>, estado <code>LEAD_ABIERTO</code>) y <code>UPDATE</code> al enviar el Flow (evento <code>LEAD_CAPTURED</code>, estado <code>LEAD_CONFIRMADO</code>). En canal web hay un único <code>INSERT</code> directo a <code>LEAD_CONFIRMADO</code> con <code>LEAD_CAPTURED</code>. Click en cualquier botón para saltar al item en su capa.</p>' +
+    '<p class="lede">Una fila por estado verificado del flujo. En canal WhatsApp la ficha se escribe en dos instantes: <code>INSERT</code> tras confirmación explícita del lead sobre nombres y apellidos (evento <code>LEAD_CREATED</code>, estado <code>LEAD_ABIERTO</code>) y <code>UPDATE</code> al enviar el Flow (evento <code>LEAD_CAPTURED</code>, estado <code>LEAD_CONFIRMADO</code>). En canal web hay un único <code>INSERT</code> directo a <code>LEAD_CONFIRMADO</code> con <code>LEAD_CAPTURED</code>. Click en cualquier botón para saltar al item en su capa.</p>' +
     '<div class="legend">' +
       '<span class="item"><span class="dot c1"></span> Capa 1 — Estados de UX</span>' +
       '<span class="item"><span class="dot c2"></span> Capa 2 — Formularios y eventos</span>' +
@@ -1091,7 +1093,7 @@ function createMapa(mountEl, opts) {
       '<th class="col-c3">Capa 3 (persistencia)</th><th class="col-note">Nota</th>' +
     '</tr></thead><tbody class="mapa-rows">' + rowsHtml + '</tbody></table>' +
     '<h2 class="section">Cómo leer este mapa</h2>' +
-    '<div class="note">Esta matriz muestra los estados verificados de Capa 1 con el modelo bipartito de captura. En canal WhatsApp la escritura ocurre en dos instantes: <code>lead_open_whatsapp</code> (INSERT con <code>LEAD_CREATED</code>, estado <code>LEAD_ABIERTO</code>) y <code>lead_flow_submission_whatsapp</code> (UPDATE con <code>LEAD_CAPTURED</code>, transición a <code>LEAD_CONFIRMADO</code>). En canal web la simetría es un solo INSERT con <code>LEAD_CAPTURED</code> y estado <code>LEAD_CONFIRMADO</code> directo, sin bipartición. Los estados visualizados sin contrato (como <code>lead_entry_channel</code> o <code>lead_conversation_started</code>) son construcciones conversacionales o visuales sin persistencia propia. A medida que se verifiquen nuevas piezas del flujo, se añadirán filas a esta matriz.</div>' +
+    '<div class="note">Esta matriz muestra los estados verificados de Capa 1 con el modelo bipartito de captura. En canal WhatsApp la escritura ocurre en dos instantes: <code>lead_open_whatsapp</code> (INSERT con <code>LEAD_CREATED</code>, estado <code>LEAD_ABIERTO</code>, disparado por confirmación explícita del lead) y <code>lead_flow_submission_whatsapp</code> (UPDATE con <code>LEAD_CAPTURED</code>, transición a <code>LEAD_CONFIRMADO</code>). En canal web la simetría es un solo INSERT con <code>LEAD_CAPTURED</code> y estado <code>LEAD_CONFIRMADO</code> directo, sin bipartición. Los estados visualizados sin contrato (como <code>lead_entry_channel</code> o <code>lead_conversation_started</code>) son construcciones conversacionales o visuales sin persistencia propia. A medida que se verifiquen nuevas piezas del flujo, se añadirán filas a esta matriz.</div>' +
     '</div>';
 
   mountEl.querySelectorAll('[data-nav-tab]').forEach(b => {

@@ -6,9 +6,8 @@
 
 CREATE TABLE armc_leads (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nombre VARCHAR(120) NOT NULL,
-    apellido_paterno VARCHAR(120) NOT NULL,
-    apellido_materno VARCHAR(120) NOT NULL,
+    nombres VARCHAR(120) NOT NULL,
+    apellidos VARCHAR(240) NOT NULL,
     email VARCHAR(255),
     telefono VARCHAR(20) NOT NULL,
     canal_origen VARCHAR(50) NOT NULL CHECK (

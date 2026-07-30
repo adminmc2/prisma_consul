@@ -9,9 +9,8 @@ Alcance verificado: tablas necesarias para la captura del lead (acción de entra
 | Columna | Tipo | Nulo | Dominio / Default | Descripción |
 |---|---|---|---|---|
 | `id` | UUID | NO | `gen_random_uuid()` | Identificador único del lead. |
-| `nombre` | VARCHAR(120) | NO | — | Nombre del lead. |
-| `apellido_paterno` | VARCHAR(120) | NO | — | Apellido paterno. |
-| `apellido_materno` | VARCHAR(120) | NO | — | Apellido materno. |
+| `nombres` | VARCHAR(120) | NO | — | Uno o más nombres de pila del lead. Un solo campo por convención canónica. |
+| `apellidos` | VARCHAR(240) | NO | — | Uno o dos apellidos del lead. Un solo campo por convención canónica; sin subdivisión en paterno/materno ni primer/segundo. |
 | `email` | VARCHAR(255) | SÍ | — | Correo del lead. Opcional para canal WhatsApp. |
 | `telefono` | VARCHAR(20) | NO | — | Teléfono de contacto. |
 | `canal_origen` | VARCHAR(50) | NO | enum | `WEB_FORM`, `WHATSAPP`. |
@@ -30,6 +29,8 @@ Alcance verificado: tablas necesarias para la captura del lead (acción de entra
 | `updated_at` | TIMESTAMPTZ | SÍ | `NOW()` | Fecha de última modificación. |
 
 **Estados válidos (alcance verificado):** `LEAD_ABIERTO`, `LEAD_CONFIRMADO`.
+
+**Regla de creación de ficha (canal WhatsApp):** el `INSERT armc_leads` con `estado_actual = 'LEAD_ABIERTO'` solo se ejecuta tras **confirmación explícita** del lead sobre los datos parseados (`nombres`, `apellidos`, `telefono`). Antes de la confirmación no hay persistencia. Contrato completo en `capa-2-diccionario/forms/lead-open-whatsapp.json` (reglas 1-2).
 
 **Coherencia estado ↔ opciones:** el CHECK `armc_leads_opciones_confirmado` exige `cardinality(opciones_seleccionadas) > 0` **solo** cuando `estado_actual = 'LEAD_CONFIRMADO'`. En `LEAD_ABIERTO` puede ser `NULL`.
 
