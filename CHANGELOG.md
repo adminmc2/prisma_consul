@@ -2,6 +2,37 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-31] — v3.6.3
+
+### [Contenido — simulador]
+
+- Convención canónica única de campos identidad del lead: `nombres` + `apellidos` +
+  `telefono`. Se retiran `nombre` (singular), `apellido_paterno` y `apellido_materno`
+  de los contratos, eventos, mappings, esquema SQL, diccionario y hub-analisis.
+  Semántica única en web y WhatsApp, sin duplicar. `armc_leads` pasa a
+  `nombres VARCHAR(120) NOT NULL, apellidos VARCHAR(240) NOT NULL`.
+- Regla de creación de ficha escrita explícitamente en el contrato
+  `forms/lead-open-whatsapp.json` (reglas 1-2) y en `events/lead-created.json`
+  (descripcion): `LEAD_CREATED` se emite **exclusivamente tras confirmación
+  explícita** del lead sobre los datos parseados. Antes de la confirmación no
+  hay persistencia en `armc_leads`. Mismo enunciado replicado en la sección
+  de notas de `capa-3-sql/data-dictionary.md`.
+- Patrón conversacional de captura documentado como regla contractual en
+  `forms/lead-open-whatsapp.json` y como glosario en `README.md`: mensaje
+  libre → parse provisional solo para UX → confirmación explícita del lead →
+  INSERT + `LEAD_CREATED`; fallback a preguntas separadas por campo si el
+  lead corrige. Alcance actual: sin bot real, sin LLM; la persistencia de
+  los mensajes previos pertenece a Slice C.
+- Preservada íntegramente la corrección de Capa 1 de v3.6.1 (la action
+  `register-lead-open-whatsapp` vive en `lead_conversation_started`, la
+  action `advance-flow-whatsapp` de `lead_open_whatsapp` es no persistente)
+  y el reespaciado de columna handoff de v3.6.2. Solo se actualizan strings
+  (`dbAction`, `dataPoints`, `note`, `description`) para reflejar la
+  convención nueva y la regla de confirmación explícita. Alineados también
+  los tres textos del Mapa (`MAPA_ROWS.lead_open_whatsapp.note`, lede y nota
+  explicativa) a la nueva redacción "tras confirmación explícita" — sin ellos
+  el Mapa contradiría el contrato de Capa 2.
+
 ## [2026-07-29] — v3.6.2
 
 ### Simulador UX — micro-slice A: reespaciado de la columna handoff en Capa 1 (solape visual)
