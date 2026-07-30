@@ -2,6 +2,24 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-31] — v3.6.4
+
+### Simulador UX — mini-fix semántico v3.6.3: descripción de `estado_actual` alineada a la regla de confirmación
+
+Hallazgo del revisor previo al PASS final de v3.6.3 (no funcional,
+semántico): en `capa-3-sql/data-dictionary.md` la descripción de la
+columna `estado_actual` aún decía que `LEAD_ABIERTO` ocurre "al dar
+nombre y apellidos" — contradiciendo la regla aprobada de creación solo
+tras confirmación explícita.
+
+- **`data-dictionary.md`** (1 frase): `LEAD_ABIERTO` ocurre cuando la
+  ficha se crea **tras confirmación explícita del lead sobre nombres,
+  apellidos y teléfono** (solo canal WhatsApp).
+- Barrido de verificación: "al dar nombre" = 0 ocurrencias en todo el
+  simulador y `hub-analisis.js`.
+
+Bump PATCH por `OPERATIVA §0.4`. Producción permanece en `v3.6.2`.
+
 ## [2026-07-31] — v3.6.3
 
 ### [Contenido — simulador]
