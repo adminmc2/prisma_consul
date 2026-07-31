@@ -4,6 +4,6 @@
   "descripcion": "Se dispara cuando el lead completa el envío del formulario. En canal WhatsApp corresponde al Step 4 del Flow ('Enviar a ARMC'), transicionando la ficha de LEAD_ABIERTO a LEAD_CONFIRMADO. En canal web al envío del formulario, con creación e inmediata confirmación de la ficha.",
   "origen": ["web_contact_form", "lead_flow_submission_whatsapp"],
   "destino": ["armc_leads", "armc_events"],
-  "payload_minimo": ["id", "canal_origen", "opciones_seleccionadas", "lineas_servicio_detectadas", "estado_actual", "fecha_primer_contacto"],
+  "payload_minimo": ["id", "canal_origen", "demanda_ids_seleccionados", "lineas_servicio_detectadas", "estado_actual", "fecha_primer_contacto"],
   "payload_opcional": ["nombres", "apellidos", "email", "telefono", "comentario_libre_lead"]
 }

@@ -21,7 +21,7 @@
     "Patrón conversacional aprobado (alcance actual: sin bot real, sin LLM): (1) el lead envía mensaje libre con sus datos; (2) el sistema parsea provisionalmente solo para UX; (3) el sistema muestra al lead los datos parseados y pide confirmación; (4a) si el lead confirma explícitamente → INSERT armc_leads + LEAD_CREATED; (4b) si el lead corrige → fallback a preguntas separadas por campo hasta obtener confirmación.",
     "telefono lo aporta el propio canal (metadata_canal), no requiere tecleo del lead. Se confirma junto con nombres y apellidos.",
     "Antes de iniciar la captura conversacional, el bot envía al usuario el Aviso de Privacidad conforme a la LFPDPPP.",
-    "No se modelan aquí opciones_seleccionadas, comentario_libre_lead ni email — pertenecen a lead_flow_submission_whatsapp.",
+    "No se modelan aquí demanda_ids_seleccionados, comentario_libre_lead ni email — pertenecen a lead_flow_submission_whatsapp.",
     "La persistencia de los mensajes previos (mensaje libre, intercambios de confirmación) pertenece a Slice C — fuera del alcance de este contrato."
   ]
 }

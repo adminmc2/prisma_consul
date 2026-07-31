@@ -87,7 +87,7 @@ const CAPA1_NODES = {
     dataPoints: ['Canal origen: WEB_FORM', 'Origen: formulario de contacto web', 'Datos básicos recibidos', 'Ingreso al flujo inicial', 'Aviso de Privacidad LFPDPPP visible antes de enviar para captación inicial y orientación comercial'],
     note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
     crossLinks: [{ label: 'Ver contrato web_contact_form en Capa 2', tab: 2, itemId: 'form-web_contact_form' }],
-    actions: [{ id: 'register-lead-web', label: 'Enviar formulario web', targetId: 'lead_confirmed', dbAction: "INSERT armc_leads(canal_origen='WEB_FORM', nombres, apellidos, email, telefono, opciones_seleccionadas, ..., estado_actual='LEAD_CONFIRMADO') RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CAPTURED');" }]
+    actions: [{ id: 'register-lead-web', label: 'Enviar formulario web', targetId: 'lead_confirmed', dbAction: "INSERT armc_leads(canal_origen='WEB_FORM', nombres, apellidos, email, telefono, demanda_ids_seleccionados, ..., estado_actual='LEAD_CONFIRMADO') RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CAPTURED');" }]
   },
   lead_conversation_started: {
     title: 'Conversación WhatsApp iniciada', key: 'LEAD_CONVERSATION_STARTED', x: 560, y: 860, width: 340,
@@ -127,7 +127,7 @@ const CAPA1_NODES = {
     title: 'Envío del Flow WhatsApp', key: 'LEAD_FLOW_SUBMISSION_WHATSAPP', x: 1360, y: 860, width: 340,
     description: 'El lead completa el WhatsApp Flow y pulsa "Enviar a ARMC" (Step 4). La ficha existente se actualiza y transiciona a LEAD_CONFIRMADO.',
     dataPoints: [
-      'opciones_seleccionadas: cardinalidad ≥ 1.',
+      'demanda_ids_seleccionados: cardinalidad ≥ 1.',
       'comentario_libre_lead opcional.',
       'email opcional.',
       'Transición LEAD_ABIERTO → LEAD_CONFIRMADO.',
@@ -139,7 +139,7 @@ const CAPA1_NODES = {
       { label: 'Ver contrato lead_flow_submission_whatsapp en Capa 2', tab: 2, itemId: 'form-lead_flow_submission_whatsapp' },
       { label: 'Ver evento LEAD_CAPTURED en Capa 2', tab: 2, itemId: 'event-LEAD_CAPTURED' }
     ],
-    actions: [{ id: 'register-lead-flow-submitted-whatsapp', label: 'Registrar envío del Flow', targetId: 'lead_confirmed', dbAction: "UPDATE armc_leads SET opciones_seleccionadas=..., comentario_libre_lead=..., email=..., estado_actual='LEAD_CONFIRMADO' WHERE id=[lead_id resuelto por contexto del subject]; INSERT armc_events(lead_id=[lead_id], event_type='LEAD_CAPTURED');" }]
+    actions: [{ id: 'register-lead-flow-submitted-whatsapp', label: 'Registrar envío del Flow', targetId: 'lead_confirmed', dbAction: "UPDATE armc_leads SET demanda_ids_seleccionados=..., comentario_libre_lead=..., email=..., estado_actual='LEAD_CONFIRMADO' WHERE id=[lead_id resuelto por contexto del subject]; INSERT armc_events(lead_id=[lead_id], event_type='LEAD_CAPTURED');" }]
   },
   lead_confirmed: {
     title: 'Lead confirmado', key: 'LEAD_CONFIRMADO', x: 1700, y: 480, width: 360,

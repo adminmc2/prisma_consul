@@ -13,7 +13,7 @@ CREATE TABLE armc_leads (
     canal_origen VARCHAR(50) NOT NULL CHECK (
         canal_origen IN ('WEB_FORM', 'WHATSAPP')
     ),
-    opciones_seleccionadas INT[],
+    demanda_ids_seleccionados INT[],
     lineas_servicio_detectadas VARCHAR(100)[] NOT NULL DEFAULT ARRAY[]::VARCHAR(100)[],
     comentario_libre_lead TEXT,
     estado_actual VARCHAR(50) NOT NULL DEFAULT 'LEAD_ABIERTO' CHECK (
@@ -33,10 +33,10 @@ CREATE TABLE armc_leads (
     handoff_closed_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    -- Coherencia estado ↔ opciones: en LEAD_CONFIRMADO se exige al menos una opción.
-    CONSTRAINT armc_leads_opciones_confirmado CHECK (
+    -- Coherencia estado ↔ demandas: en LEAD_CONFIRMADO se exige al menos una demanda seleccionada.
+    CONSTRAINT armc_leads_demandas_confirmado CHECK (
         estado_actual != 'LEAD_CONFIRMADO' OR
-        (opciones_seleccionadas IS NOT NULL AND cardinality(opciones_seleccionadas) > 0)
+        (demanda_ids_seleccionados IS NOT NULL AND cardinality(demanda_ids_seleccionados) > 0)
     )
 );
 

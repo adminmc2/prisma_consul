@@ -6,12 +6,12 @@
   "paso": "lead_flow_submission_whatsapp",
   "requiere_ficha_previa": true,
   "campos": [
-    { "nombre": "opciones_seleccionadas", "tipo": "multiseleccion", "obligatorio": true, "fuente": "catalogo-demandas", "min_items": 1, "max_items": 20, "ejemplo": [1, 7] },
+    { "nombre": "demanda_ids_seleccionados", "tipo": "multiseleccion", "obligatorio": true, "fuente": "catalogo-demandas", "min_items": 1, "max_items": 20, "ejemplo": [1, 7] },
     { "nombre": "comentario_libre_lead", "tipo": "texto_libre", "obligatorio": false, "max": 2000, "nullable": true, "ejemplo": "Me interesa una valoración antes de fin de mes." },
     { "nombre": "email", "tipo": "email", "obligatorio": false, "nullable": true, "max": 255, "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", "ejemplo": "maria.garcia@example.com" }
   ],
   "derivados": [
-    { "nombre": "lineas_servicio_detectadas", "origen": "opciones_seleccionadas → catalogo-demandas.lineas_servicio" }
+    { "nombre": "lineas_servicio_detectadas", "origen": "demanda_ids_seleccionados → catalogo-demandas.lineas_servicio" }
   ],
   "transicion_estado": { "desde": "LEAD_ABIERTO", "hacia": "LEAD_CONFIRMADO" },
   "eventos_emitidos": ["LEAD_CAPTURED"],

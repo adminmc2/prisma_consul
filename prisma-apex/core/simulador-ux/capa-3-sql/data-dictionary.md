@@ -14,8 +14,8 @@ Alcance verificado: tablas necesarias para la captura del lead (acción de entra
 | `email` | VARCHAR(255) | SÍ | — | Correo del lead. Opcional para canal WhatsApp. |
 | `telefono` | VARCHAR(20) | NO | — | Teléfono de contacto. |
 | `canal_origen` | VARCHAR(50) | NO | enum | `WEB_FORM`, `WHATSAPP`. |
-| `opciones_seleccionadas` | INT[] | NO | cardinality ≥ 1 | IDs del catálogo de 20 demandas. |
-| `lineas_servicio_detectadas` | VARCHAR(100)[] | NO | `ARRAY[]` | Derivado de `opciones_seleccionadas`. |
+| `demanda_ids_seleccionados` | INT[] | SÍ | — | Array de IDs (INT[]) del catálogo `catalogo-demandas` seleccionados activamente por el lead. En `LEAD_ABIERTO` puede ser `NULL`; en `LEAD_CONFIRMADO` se exige cardinalidad ≥ 1 vía CHECK condicional. Sin FK por elemento — la integridad referencial de cada ID contra el catálogo no está garantizada a nivel SQL (limitación conocida del simulador). |
+| `lineas_servicio_detectadas` | VARCHAR(100)[] | NO | `ARRAY[]` | Líneas de servicio derivadas de `demanda_ids_seleccionados` y persistidas al confirmar la ficha. Conservan el resultado calculado en ese momento; no preservan por sí mismas la versión completa del catálogo utilizado. |
 | `comentario_libre_lead` | TEXT | SÍ | — | Comentario opcional que el lead escribe al momento de la captación inicial (Step 3 del Flow WhatsApp o formulario web). Un único texto libre por lead, no un histórico conversacional. No confundir con notas clínicas, notas internas, notas de evolución ni notas pre-consulta del modelo canónico F2. |
 | `estado_actual` | VARCHAR(50) | NO | `LEAD_ABIERTO` (default); enum `LEAD_ABIERTO / LEAD_CONFIRMADO` | Estado actual del lead en el ciclo Lead. `LEAD_ABIERTO` cuando la ficha se crea tras confirmación explícita del lead sobre nombres, apellidos y teléfono (solo canal WhatsApp). `LEAD_CONFIRMADO` cuando se envía el formulario completo (Step 4 del Flow WhatsApp o formulario web). |
 | `fecha_primer_contacto` | TIMESTAMPTZ | NO | `NOW()` | Fecha y hora del primer contacto del lead con ARMC. Se asigna automáticamente al crear la fila. |
@@ -32,9 +32,11 @@ Alcance verificado: tablas necesarias para la captura del lead (acción de entra
 
 **Regla de creación de ficha (canal WhatsApp):** el `INSERT armc_leads` con `estado_actual = 'LEAD_ABIERTO'` solo se ejecuta tras **confirmación explícita** del lead sobre los datos parseados (`nombres`, `apellidos`, `telefono`). Antes de la confirmación no hay persistencia. Contrato completo en `capa-2-diccionario/forms/lead-open-whatsapp.json` (reglas 1-2).
 
-**Coherencia estado ↔ opciones:** el CHECK `armc_leads_opciones_confirmado` exige `cardinality(opciones_seleccionadas) > 0` **solo** cuando `estado_actual = 'LEAD_CONFIRMADO'`. En `LEAD_ABIERTO` puede ser `NULL`.
+**Coherencia estado ↔ demandas:** el CHECK `armc_leads_demandas_confirmado` exige `cardinality(demanda_ids_seleccionados) > 0` **solo** cuando `estado_actual = 'LEAD_CONFIRMADO'`. En `LEAD_ABIERTO` puede ser `NULL`.
 
 **Nota sobre `closed_by`:** la identidad de quien cierra el handoff **no se duplica** en `armc_leads`. Vive en la fila `CLOSED` correspondiente de `armc_handoffs` (vía `user_id`) y en el `payload_opcional` del evento `HUMAN_HANDOFF_CLOSED` (`closed_by_user_id`). Convención coherente con el principio "persistencia base ligera + historial completo".
+
+**Estabilidad histórica de `demanda_ids_seleccionados`:** los IDs conservan identidad numérica mientras no se reasignen, pero no conservan la frase ni el `area` mostradas al lead. Esos atributos se obtienen del catálogo vigente. `lineas_servicio_detectadas` queda persistida como resultado derivado en la ficha. Preservar de forma íntegra la vista histórica requerirá versionar el catálogo o guardar `catalogo_version`.
 
 ## `armc_events`
 

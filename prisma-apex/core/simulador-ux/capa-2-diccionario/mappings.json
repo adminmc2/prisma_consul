@@ -2,7 +2,7 @@
   "forms": {
     "web_contact_form": {
       "tabla_principal": "armc_leads",
-      "columnas": ["canal_origen", "nombres", "apellidos", "email", "telefono", "opciones_seleccionadas", "comentario_libre_lead", "lineas_servicio_detectadas", "estado_actual", "fecha_primer_contacto"],
+      "columnas": ["canal_origen", "nombres", "apellidos", "email", "telefono", "demanda_ids_seleccionados", "comentario_libre_lead", "lineas_servicio_detectadas", "estado_actual", "fecha_primer_contacto"],
       "eventos": ["LEAD_CAPTURED"]
     },
     "lead_open_whatsapp": {
@@ -12,7 +12,7 @@
     },
     "lead_flow_submission_whatsapp": {
       "tabla_principal": "armc_leads",
-      "columnas": ["opciones_seleccionadas", "comentario_libre_lead", "email", "lineas_servicio_detectadas", "estado_actual"],
+      "columnas": ["demanda_ids_seleccionados", "comentario_libre_lead", "email", "lineas_servicio_detectadas", "estado_actual"],
       "eventos": ["LEAD_CAPTURED"]
     }
   },
