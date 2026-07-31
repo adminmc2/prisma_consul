@@ -2,6 +2,32 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-31] — v3.6.5
+
+### [Contenido — simulador]
+
+- Renombrado semántico `opciones_seleccionadas` → `demanda_ids_seleccionados`
+  en contratos (`forms/lead-flow-submission-whatsapp.json`,
+  `forms/web-contact-form.json`, `forms/lead-open-whatsapp.json` regla textual),
+  `events/lead-captured.json` (payload_minimo), `mappings.json` (columnas),
+  esquema (`schema.sql`), diccionario (`data-dictionary.md`), `hub-analisis.js`
+  (dbActions + dataPoint) y `README.md` (descripción Capa 3). Constraint SQL
+  renombrado en paralelo: `armc_leads_opciones_confirmado` →
+  `armc_leads_demandas_confirmado`. Motivo: `opciones_seleccionadas` era
+  demasiado genérico para columna persistente y payload de evento; el nombre
+  nuevo identifica dominio (`demanda`), tipo lógico (`ids`) y acción del
+  lead (`seleccionados`). Limitaciones reconocidas y documentadas en
+  `data-dictionary.md`: (1) los IDs conservan identidad numérica mientras no
+  se reasignen, pero no conservan la frase ni el `area` mostradas al lead;
+  esos atributos se obtienen del catálogo vigente. (2) `lineas_servicio_detectadas`
+  queda persistida como resultado derivado en la ficha (calculado al confirmar);
+  no preserva por sí misma la versión completa del catálogo utilizado.
+  (3) `INT[]` no ofrece FK por elemento — la integridad referencial de cada ID
+  contra el catálogo no se garantiza a nivel SQL. Preservación histórica íntegra
+  quedará como slice futuro (catálogo versionado o `catalogo_version`).
+  Renombrado contractual interno, sin cambio de comportamiento, tipo ni rutas.
+  No afecta contratos externos inventariados en `CONTRATOS.md`.
+
 ## [2026-07-31] — v3.6.4
 
 ### Simulador UX — mini-fix semántico v3.6.3: descripción de `estado_actual` alineada a la regla de confirmación
