@@ -1,9 +1,10 @@
 {
   "id": "LEAD_CREATED",
   "paso": "lead_open_whatsapp",
-  "descripcion": "Se dispara en el instante en que se crea la ficha del lead, exclusivamente tras confirmación explícita del lead sobre los datos parseados (nombres, apellidos, teléfono). Solo aplica al canal WhatsApp — el canal web no emite este evento, su ficha nace directamente en LEAD_CONFIRMADO. Antes de la confirmación no hay persistencia en armc_leads ni emisión de este evento.",
+  "descripcion": "Se dispara en el instante en que se crea la ficha del lead, exclusivamente tras confirmación explícita del lead sobre los datos parseados (nombres, apellidos, teléfono). Solo aplica al canal WhatsApp — el canal web no emite este evento, su ficha nace directamente en LEAD_CONFIRMADO. La instancia emitida lleva el envelope común de 5 campos raíz (event_id, event_type, subject_id, lead_id, occurred_at) y un payload de negocio anidado con los datos específicos del lead recién creado.",
   "origen": ["lead_open_whatsapp"],
   "destino": ["armc_leads", "armc_events"],
-  "payload_minimo": ["id", "canal_origen", "nombres", "apellidos", "telefono", "estado_actual", "fecha_primer_contacto"],
+  "envelope_minimo": ["event_id", "event_type", "subject_id", "lead_id", "occurred_at"],
+  "payload_minimo": ["canal_origen", "nombres", "apellidos", "telefono", "estado_actual", "fecha_primer_contacto"],
   "payload_opcional": []
 }

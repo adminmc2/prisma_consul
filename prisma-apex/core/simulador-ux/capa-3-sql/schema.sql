@@ -88,7 +88,7 @@ CREATE TABLE armc_events (
         )
     ),
     payload JSONB NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    occurred_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     -- FK compuesta reemplaza a la FK simple lead_id → armc_leads(id).
     -- Garantiza que el lead_id referenciado pertenece efectivamente al subject_id
     -- declarado. Sin ON DELETE CASCADE: eventos son historial auditable.
@@ -114,7 +114,7 @@ CREATE TABLE armc_handoffs (
     close_reason VARCHAR(20) CHECK (
         close_reason IS NULL OR close_reason IN ('manual', 'inactivity')
     ),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    occurred_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     -- FK compuesta reemplaza a la FK simple lead_id → armc_leads(id).
     -- Mismo criterio que armc_events: sin CASCADE, historial auditable.
     CONSTRAINT armc_handoffs_subject_lead_fk FOREIGN KEY (subject_id, lead_id)

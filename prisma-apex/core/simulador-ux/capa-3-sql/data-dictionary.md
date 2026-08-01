@@ -96,9 +96,11 @@ Identifiers (teléfono / email) asociados al subject. Un subject puede tener mú
 | `lead_id` | UUID | NO | FK compuesta con `subject_id` → `armc_leads(subject_id, id)` (sin CASCADE) | Episodio de lead al que pertenece el evento. La FK compuesta con `subject_id` garantiza que el `lead_id` referenciado pertenece efectivamente al `subject_id` declarado. |
 | `event_type` | VARCHAR(50) | NO | enum (ver abajo) | Tipo de evento emitido. |
 | `payload` | JSONB | NO | — | Payload específico del evento. |
-| `created_at` | TIMESTAMPTZ | SÍ | `NOW()` | Fecha del evento. |
+| `occurred_at` | TIMESTAMPTZ | SÍ | `NOW()` | Instante en que ocurrió el evento. En el alcance actual coincide con el momento del INSERT; la distinción entre "cuándo ocurrió" y "cuándo se insertó" se materializará cuando aparezca backfill o event replay futuros. |
 
 **Tipos válidos (alcance verificado):** `LEAD_CREATED`, `LEAD_CAPTURED`, `HUMAN_HANDOFF_REQUESTED`, `HUMAN_HANDOFF_ASSIGNED`, `HUMAN_HANDOFF_CLOSED`.
+
+**Envelope uniforme de eventos (desde S3):** las instancias emitidas de todo evento del dominio ARMC llevan un envelope común con cinco campos raíz: `event_id`, `event_type`, `subject_id`, `lead_id`, `occurred_at`. El mapeo al esquema físico es directo: `envelope.event_id ← armc_events.id`, `envelope.event_type ← armc_events.event_type`, `envelope.subject_id ← armc_events.subject_id`, `envelope.lead_id ← armc_events.lead_id`, `envelope.occurred_at ← armc_events.occurred_at`, `envelope.payload ← armc_events.payload`. **La PK física no se renombra**: `armc_events.id` sigue siendo la columna; su representación en el envelope se llama `event_id` para separarla visualmente de la PK del subject o del episodio. Ningún campo del envelope se repite en el payload de negocio anidado.
 
 ## `armc_handoffs`
 
@@ -116,7 +118,7 @@ Historial completo del handoff humano: una fila por cada transición (`REQUESTED
 | `senal_origen` | TEXT | SÍ | — | Señal técnica del bot que originó el `REQUESTED` automático (opcional). |
 | `reassigned_from_user_id` | INTEGER | SÍ | FK → `portal_users(id)` ON DELETE SET NULL | Humano del que se reasigna en una transición `ASSIGNED`. NULL en la primera asignación. |
 | `close_reason` | VARCHAR(20) | SÍ | enum `manual / inactivity` | Motivo del cierre en la transición `CLOSED`. NULL en otras transiciones. |
-| `created_at` | TIMESTAMPTZ | NO | `NOW()` | Fecha y hora de la transición. |
+| `occurred_at` | TIMESTAMPTZ | NO | `NOW()` | Instante en que ocurrió la transición de handoff. En el alcance actual coincide con el momento del INSERT; la distinción se materializará con futuros backfills o replay. |
 
 ## Índices
 
