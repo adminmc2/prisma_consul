@@ -76,7 +76,8 @@ CREATE TABLE armc_leads (
 
 CREATE TABLE armc_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    lead_id UUID NOT NULL REFERENCES armc_leads(id) ON DELETE CASCADE,
+    subject_id UUID NOT NULL REFERENCES armc_subjects(id),
+    lead_id UUID NOT NULL,
     event_type VARCHAR(50) NOT NULL CHECK (
         event_type IN (
             'LEAD_CREATED',
@@ -87,13 +88,19 @@ CREATE TABLE armc_events (
         )
     ),
     payload JSONB NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    -- FK compuesta reemplaza a la FK simple lead_id → armc_leads(id).
+    -- Garantiza que el lead_id referenciado pertenece efectivamente al subject_id
+    -- declarado. Sin ON DELETE CASCADE: eventos son historial auditable.
+    CONSTRAINT armc_events_subject_lead_fk FOREIGN KEY (subject_id, lead_id)
+        REFERENCES armc_leads(subject_id, id)
 );
 
 -- Historial completo del handoff humano: una fila por transición.
 CREATE TABLE armc_handoffs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    lead_id UUID NOT NULL REFERENCES armc_leads(id) ON DELETE CASCADE,
+    subject_id UUID NOT NULL REFERENCES armc_subjects(id),
+    lead_id UUID NOT NULL,
     event_type VARCHAR(30) NOT NULL CHECK (
         event_type IN ('REQUESTED', 'ASSIGNED', 'CLOSED')
     ),
@@ -107,7 +114,11 @@ CREATE TABLE armc_handoffs (
     close_reason VARCHAR(20) CHECK (
         close_reason IS NULL OR close_reason IN ('manual', 'inactivity')
     ),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    -- FK compuesta reemplaza a la FK simple lead_id → armc_leads(id).
+    -- Mismo criterio que armc_events: sin CASCADE, historial auditable.
+    CONSTRAINT armc_handoffs_subject_lead_fk FOREIGN KEY (subject_id, lead_id)
+        REFERENCES armc_leads(subject_id, id)
 );
 
 CREATE INDEX idx_armc_leads_email ON armc_leads(email);
@@ -117,6 +128,10 @@ CREATE INDEX idx_armc_events_lead_id ON armc_events(lead_id);
 CREATE INDEX idx_armc_handoffs_lead ON armc_handoffs(lead_id);
 CREATE INDEX idx_armc_handoffs_user ON armc_handoffs(user_id);
 CREATE INDEX idx_armc_handoffs_event ON armc_handoffs(event_type);
+
+-- Índices S2: propagación de subject_id.
+CREATE INDEX idx_armc_events_subject ON armc_events(subject_id);
+CREATE INDEX idx_armc_handoffs_subject ON armc_handoffs(subject_id);
 
 -- Índices de identidad canónica (S1)
 CREATE INDEX idx_armc_subject_identifiers_lookup

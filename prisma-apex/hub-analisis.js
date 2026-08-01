@@ -87,7 +87,7 @@ const CAPA1_NODES = {
     dataPoints: ['Canal origen: WEB_FORM', 'Origen: formulario de contacto web', 'Datos básicos recibidos', 'Antes del INSERT se resuelve o crea el subject_id (política definida en S4).', 'Ingreso al flujo inicial', 'Aviso de Privacidad LFPDPPP visible antes de enviar para captación inicial y orientación comercial'],
     note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
     crossLinks: [{ label: 'Ver contrato web_contact_form en Capa 2', tab: 2, itemId: 'form-web_contact_form' }],
-    actions: [{ id: 'register-lead-web', label: 'Enviar formulario web', targetId: 'lead_confirmed', dbAction: "RESOLVE_OR_CREATE subject_id [política pendiente de S4]; INSERT armc_leads(subject_id=[subject_id], canal_origen='WEB_FORM', nombres, apellidos, email, telefono, demanda_ids_seleccionados, ..., estado_actual='LEAD_CONFIRMADO') RETURNING id AS lead_id; INSERT armc_events(lead_id=[lead_id], event_type='LEAD_CAPTURED');" }]
+    actions: [{ id: 'register-lead-web', label: 'Enviar formulario web', targetId: 'lead_confirmed', dbAction: "RESOLVE_OR_CREATE subject_id [política pendiente de S4]; INSERT armc_leads(subject_id=[subject_id], canal_origen='WEB_FORM', nombres, apellidos, email, telefono, demanda_ids_seleccionados, ..., estado_actual='LEAD_CONFIRMADO') RETURNING id AS lead_id; INSERT armc_events(subject_id=[subject_id], lead_id=[lead_id], event_type='LEAD_CAPTURED');" }]
   },
   lead_conversation_started: {
     title: 'Conversación WhatsApp iniciada', key: 'LEAD_CONVERSATION_STARTED', x: 560, y: 860, width: 340,
@@ -104,7 +104,7 @@ const CAPA1_NODES = {
     ],
     note: 'Estado conversacional previo a la creación de ficha. El histórico de mensajes de esta fase se modela en Slice C. La action de este nodo representa el instante de confirmación explícita del lead, que dispara el INSERT y el evento LEAD_CREATED. Alcance actual: sin bot real, sin LLM — el patrón conversacional se documenta contractualmente sin implementación.',
     crossLinks: [],
-    actions: [{ id: 'register-lead-open-whatsapp', label: 'Registrar apertura del lead', targetId: 'lead_open_whatsapp', dbAction: "RESOLVE_OR_CREATE subject_id [política pendiente de S4]; INSERT armc_leads(subject_id=[subject_id], canal_origen='WHATSAPP', nombres, apellidos, telefono, estado_actual='LEAD_ABIERTO', ...) RETURNING id AS lead_id; INSERT armc_events(lead_id=[lead_id], event_type='LEAD_CREATED');" }]
+    actions: [{ id: 'register-lead-open-whatsapp', label: 'Registrar apertura del lead', targetId: 'lead_open_whatsapp', dbAction: "RESOLVE_OR_CREATE subject_id [política pendiente de S4]; INSERT armc_leads(subject_id=[subject_id], canal_origen='WHATSAPP', nombres, apellidos, telefono, estado_actual='LEAD_ABIERTO', ...) RETURNING id AS lead_id; INSERT armc_events(subject_id=[subject_id], lead_id=[lead_id], event_type='LEAD_CREATED');" }]
   },
   lead_open_whatsapp: {
     title: 'Ficha del lead abierta', key: 'LEAD_ABIERTO', x: 960, y: 860, width: 340,
@@ -140,7 +140,7 @@ const CAPA1_NODES = {
       { label: 'Ver contrato lead_flow_submission_whatsapp en Capa 2', tab: 2, itemId: 'form-lead_flow_submission_whatsapp' },
       { label: 'Ver evento LEAD_CAPTURED en Capa 2', tab: 2, itemId: 'event-LEAD_CAPTURED' }
     ],
-    actions: [{ id: 'register-lead-flow-submitted-whatsapp', label: 'Registrar envío del Flow', targetId: 'lead_confirmed', dbAction: "UPDATE armc_leads SET demanda_ids_seleccionados=..., comentario_libre_lead=..., email=..., estado_actual='LEAD_CONFIRMADO' WHERE id=[lead_id resuelto por contexto del subject]; INSERT armc_events(lead_id=[lead_id], event_type='LEAD_CAPTURED');" }]
+    actions: [{ id: 'register-lead-flow-submitted-whatsapp', label: 'Registrar envío del Flow', targetId: 'lead_confirmed', dbAction: "UPDATE armc_leads SET demanda_ids_seleccionados=..., comentario_libre_lead=..., email=..., estado_actual='LEAD_CONFIRMADO' WHERE id=[lead_id resuelto por contexto del subject]; INSERT armc_events(subject_id=[subject_id], lead_id=[lead_id], event_type='LEAD_CAPTURED');" }]
   },
   lead_confirmed: {
     title: 'Lead confirmado', key: 'LEAD_CONFIRMADO', x: 1700, y: 480, width: 360,
@@ -163,7 +163,8 @@ const CAPA1_NODES = {
       'Trigger: explícito (lead solicita) o automático (señal del bot)',
       'Canal origen heredado: WEB_FORM o WHATSAPP',
       'Receptor por defecto: Carlos',
-      'Bot silenciado para esta conversación'
+      'Bot silenciado para esta conversación',
+      'Persistencia en armc_handoffs propaga subject_id + lead_id (FK compuesta sin CASCADE).'
     ],
     note: 'Patrón transversal de estado del lead. El simulador representa la presencia del handoff respecto al flujo lineal; no modela transiciones interactivas de activación dentro de Capa 1.',
     crossLinks: [
@@ -180,7 +181,8 @@ const CAPA1_NODES = {
       'UI del Hub muestra nombre visible del humano',
       'Sistema autoasigna al humano que abre el lead; botón "Reasignar" actualiza la asignación',
       'Cada asignación / reasignación queda como fila ASSIGNED en armc_handoffs',
-      'Bot continúa silenciado'
+      'Bot continúa silenciado',
+      'Persistencia en armc_handoffs propaga subject_id + lead_id (FK compuesta sin CASCADE).'
     ],
     note: 'Mientras el handoff está activo, la responsabilidad funcional es del humano asignado.',
     crossLinks: [
@@ -196,7 +198,8 @@ const CAPA1_NODES = {
       'Cierre manual: el humano lo cierra desde apex-armc',
       'Cierre automático: tras 24 horas sin actividad',
       'close_reason en armc_leads: "manual" o "inactivity"',
-      'Identidad de quien cierra (closed_by) NO se duplica en armc_leads; se persiste en armc_handoffs (fila CLOSED con user_id) y en el payload del evento HUMAN_HANDOFF_CLOSED (closed_by_user_id opcional)'
+      'Identidad de quien cierra (closed_by) NO se duplica en armc_leads; se persiste en armc_handoffs (fila CLOSED con user_id) y en el payload del evento HUMAN_HANDOFF_CLOSED (closed_by_user_id opcional)',
+      'Persistencia en armc_handoffs propaga subject_id + lead_id (FK compuesta sin CASCADE).'
     ],
     note: 'Al pasar a handoff_state = "closed", el bot se reactiva automáticamente para la conversación. Convención N3-2 derivada del handoff_state, sin columnas ni eventos propios.',
     crossLinks: [

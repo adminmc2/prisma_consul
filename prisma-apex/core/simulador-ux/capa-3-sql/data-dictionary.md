@@ -85,14 +85,15 @@ Identifiers (teléfono / email) asociados al subject. Un subject puede tener mú
 
 **Clave candidata compuesta:** `armc_leads_subject_id_id_key` declara `UNIQUE (subject_id, id)`. Aunque `id` ya es único global, la UNIQUE compuesta es necesaria técnicamente para que S2 pueda declarar `FOREIGN KEY (subject_id, lead_id) REFERENCES armc_leads(subject_id, id)` desde `armc_events` y `armc_handoffs`, y así garantizar la invariante "el `lead_id` referenciado pertenece efectivamente al `subject_id` declarado".
 
-**Nota temporal S1:** durante S1, el vínculo entre eventos/handoffs y el subject se deriva mediante `lead_id → armc_leads.subject_id`. La propagación directa de `subject_id` a `armc_events` y `armc_handoffs` se incorpora en S2 con FK compuesta.
+**FK compuesta desde procesos:** `armc_events` y `armc_handoffs` declaran FK compuesta `FOREIGN KEY (subject_id, lead_id) REFERENCES armc_leads(subject_id, id)`. Cualquier intento de insertar en esas tablas un par `(subject_id, lead_id)` donde el `lead_id` no pertenezca al `subject_id` declarado es rechazado por integridad referencial. Las FKs (directa `subject_id → armc_subjects(id)` y compuesta `(subject_id, lead_id) → armc_leads(subject_id, id)`) no llevan `ON DELETE CASCADE`: impiden eliminar físicamente un subject o un episodio mientras existan eventos o handoffs referenciándolo. La futura política de tratamiento, archivo o pseudonimización se resolverá de forma explícita.
 
 ## `armc_events`
 
 | Columna | Tipo | Nulo | Dominio / Default | Descripción |
 |---|---|---|---|---|
 | `id` | UUID | NO | `gen_random_uuid()` | Identificador del evento. |
-| `lead_id` | UUID | NO | FK → `armc_leads(id)` ON DELETE CASCADE | Lead al que pertenece el evento. |
+| `subject_id` | UUID | NO | FK → `armc_subjects(id)` (sin CASCADE) | Identidad canónica del subject al que pertenece el evento. Propaga la identidad vital para permitir lookups directos por subject sin joins a través de `armc_leads`. |
+| `lead_id` | UUID | NO | FK compuesta con `subject_id` → `armc_leads(subject_id, id)` (sin CASCADE) | Episodio de lead al que pertenece el evento. La FK compuesta con `subject_id` garantiza que el `lead_id` referenciado pertenece efectivamente al `subject_id` declarado. |
 | `event_type` | VARCHAR(50) | NO | enum (ver abajo) | Tipo de evento emitido. |
 | `payload` | JSONB | NO | — | Payload específico del evento. |
 | `created_at` | TIMESTAMPTZ | SÍ | `NOW()` | Fecha del evento. |
@@ -106,7 +107,8 @@ Historial completo del handoff humano: una fila por cada transición (`REQUESTED
 | Columna | Tipo | Nulo | Dominio / Default | Descripción |
 |---|---|---|---|---|
 | `id` | UUID | NO | `gen_random_uuid()` | Identificador de la fila de historial. |
-| `lead_id` | UUID | NO | FK → `armc_leads(id)` ON DELETE CASCADE | Lead al que pertenece la transición. |
+| `subject_id` | UUID | NO | FK → `armc_subjects(id)` (sin CASCADE) | Identidad canónica del subject al que pertenece la transición de handoff. Mismo criterio que `armc_events.subject_id`. |
+| `lead_id` | UUID | NO | FK compuesta con `subject_id` → `armc_leads(subject_id, id)` (sin CASCADE) | Episodio de lead al que pertenece la transición. La FK compuesta con `subject_id` garantiza coherencia con el subject declarado. |
 | `event_type` | VARCHAR(30) | NO | enum `REQUESTED / ASSIGNED / CLOSED` | Tipo de transición que registra esta fila. |
 | `user_id` | INTEGER | SÍ | FK → `portal_users(id)` ON DELETE SET NULL | Humano implicado (asignado en `ASSIGNED`, cerrador en `CLOSED`). |
 | `trigger` | VARCHAR(30) | SÍ | enum `explicit / auto_frustration` | Trigger del `REQUESTED`: explícito por el lead o automático por señal del bot. NULL en otras transiciones. |
@@ -127,3 +129,5 @@ Historial completo del handoff humano: una fila por cada transición (`REQUESTED
 | `idx_armc_handoffs_lead` | `armc_handoffs` | `lead_id` |
 | `idx_armc_handoffs_user` | `armc_handoffs` | `user_id` |
 | `idx_armc_handoffs_event` | `armc_handoffs` | `event_type` |
+| `idx_armc_events_subject` | `armc_events` | `subject_id` |
+| `idx_armc_handoffs_subject` | `armc_handoffs` | `subject_id` |
