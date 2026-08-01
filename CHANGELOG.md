@@ -2,6 +2,21 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-08-01] — v3.7.3
+
+### Simulador UX — mini-fix v3.7.2: guard de "Payload mínimo" en renderEvent
+
+Hallazgo único del revisor sobre v3.7.2 (NO PASS parcial): `renderEvent`
+toleraba `payload_minimo` vacío o ausente sin error (`|| []`) pero
+renderizaba siempre la sección, dejando un bloque "Payload mínimo"
+vacío incoherente. Corrección mínima autorizada, acotada a
+`renderEvent` en `hub-analisis.js`: la sección solo se renderiza si
+`payload_minimo` existe y tiene elementos — mismo criterio ya aplicado
+a Envelope y Payload opcional (los tres guards ahora simétricos).
+Verificado con simulación de contrato sin `payload_minimo`: sin bloque
+vacío, sin excepción. Chips y resto del renderer intactos. Bump PATCH
+por `OPERATIVA §0.4`. Producción permanece en `v3.7.1`.
+
 ## [2026-08-01] — v3.7.2
 
 ### [Contenido — simulador]

@@ -724,8 +724,8 @@ function createCapa2(mountEl, opts) {
       e.destino.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('') + '</div></section>' +
       ((e.envelope_minimo && e.envelope_minimo.length) ? '<section class="block"><h3>Envelope</h3><ul class="simple">' +
         e.envelope_minimo.map(p => `<li><code>${escapeHtml(p)}</code></li>`).join('') + '</ul></section>' : '') +
-      '<section class="block"><h3>Payload mínimo</h3><ul class="simple">' +
-      (e.payload_minimo || []).map(p => `<li><code>${escapeHtml(p)}</code></li>`).join('') + '</ul></section>' +
+      ((e.payload_minimo && e.payload_minimo.length) ? '<section class="block"><h3>Payload mínimo</h3><ul class="simple">' +
+        e.payload_minimo.map(p => `<li><code>${escapeHtml(p)}</code></li>`).join('') + '</ul></section>' : '') +
       (e.payload_opcional && e.payload_opcional.length ? '<section class="block"><h3>Payload opcional</h3><ul class="simple">' +
         e.payload_opcional.map(p => `<li><code>${escapeHtml(p)}</code></li>`).join('') + '</ul></section>' : '');
   }
