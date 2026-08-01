@@ -2,6 +2,41 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-07-31] — v3.7.0
+
+### [Contenido — simulador]
+
+- S1 del plan estructural de identidad canónica `subject_id`. Introduce
+  contractualmente dos tablas nuevas: `armc_subjects` (identidad canónica,
+  vital, inmutable del subject; entidad ligera sin atributos comerciales ni
+  clínicos) y `armc_subject_identifiers` (teléfono/email con `raw_value` +
+  `normalized_value` + vigencia + verificación; índice global no único para
+  lookup por candidatos, índice único activo por subject para impedir
+  duplicados internos). Añade `armc_leads.subject_id UUID NOT NULL REFERENCES
+  armc_subjects(id)` sin `ON DELETE CASCADE`, y `CONSTRAINT
+  armc_leads_subject_id_id_key UNIQUE (subject_id, id)` como clave candidata
+  compuesta requerida por S2 para las FK compuestas de `armc_events` y
+  `armc_handoffs`. Declara cardinalidad `Subject 1:N Lead`: una fila de
+  `armc_leads` es un episodio de captación, no la identidad vital. Migración
+  completa de `mappings.json` al nuevo shape multitabla `{ tablas,
+  columnas_por_tabla, eventos }` para los tres formularios; adaptación acotada
+  del renderer `renderMappingsForms` en `hub-analisis.js` para presentar
+  tablas y columnas jerárquicamente sin rediseño visual amplio.
+  Contratos de captación `lead_open_whatsapp` y `web_contact_form` declaran
+  `subject_id` en `genera` y regla explícita: la política operativa de
+  reconocimiento (crear nuevo vs reutilizar existente) se define en S4; este
+  slice modela solo identidad y relación con el lead. Normalización
+  contractual de identifiers documentada (teléfono E.164, email trim +
+  dominio lowercase, sin stripping de `+tag` ni dot-normalization de Gmail).
+  Coincidencia exacta produce candidato de reconocimiento, no fusión
+  automática. Glosario del README ampliado con Subject, `subject_id`,
+  Episodio de lead, `lead_id`, Identifier. Guardarraíl explícito:
+  `apex_submissions` está fuera del dominio ARMC. Sin cambios en Neon
+  (verificado 2026-07-31: no existen tablas armc_*), sin backend, sin
+  backfill. Slice contractual del plan S1-S5 (PASS estructural del revisor).
+  S2 (propagación de `subject_id` a eventos y handoffs con FK compuesta) es
+  el siguiente slice del plan.
+
 ## [2026-07-31] — v3.6.5
 
 ### [Contenido — simulador]
