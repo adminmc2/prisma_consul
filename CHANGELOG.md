@@ -2,6 +2,34 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-08-01] — v3.7.1
+
+### [Contenido — simulador]
+
+- S2 del plan estructural de identidad canónica `subject_id`. Propaga
+  `subject_id UUID NOT NULL REFERENCES armc_subjects(id)` (sin CASCADE) a
+  `armc_events` y `armc_handoffs`. Reemplaza las FKs simples históricas
+  `lead_id → armc_leads(id) ON DELETE CASCADE` por FK compuestas
+  `FOREIGN KEY (subject_id, lead_id) REFERENCES armc_leads(subject_id, id)`
+  en ambas tablas — sin CASCADE — que garantizan que el `lead_id`
+  referenciado pertenece efectivamente al `subject_id` declarado (invariante
+  subject↔episodio). Retirada de `ON DELETE CASCADE` en las FKs desde
+  `armc_events` y `armc_handoffs` hacia `armc_leads` y en las FKs nuevas
+  hacia `armc_subjects`. Efecto: impide eliminar físicamente un subject o
+  un episodio mientras existan eventos o handoffs referenciándolo. La
+  futura política de tratamiento, archivo o pseudonimización se resolverá
+  de forma explícita. Índices nuevos: `idx_armc_events_subject`,
+  `idx_armc_handoffs_subject`. Los índices existentes sobre `lead_id` se
+  mantienen. Actualización de los tres `dbActions` vivos que emiten
+  `INSERT armc_events` para incluir `subject_id` explícitamente. Nota nueva
+  en los tres nodos de handoff sobre la propagación (aunque no tienen
+  `actions` en Capa 1). Retirada de la "nota temporal S1" del diccionario.
+  Sin cambios en Neon (escenario A: no existen tablas armc_*), sin backend,
+  sin backfill. Sin cambios en `events/*.json`, `mappings.json`, ni en
+  `renderEvent` (envelope uniforme pertenece a S3). Sin política de
+  reconocimiento (S4). Slice contractual del plan S1-S5 (PASS estructural
+  del revisor).
+
 ## [2026-07-31] — v3.7.0
 
 ### [Contenido — simulador]
