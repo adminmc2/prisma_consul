@@ -2,6 +2,45 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-08-01] — v3.7.2
+
+### [Contenido — simulador]
+
+- S3 del plan estructural de identidad canónica `subject_id`. Introduce
+  envelope uniforme en los contratos de eventos con los cinco campos
+  comunes (`event_id`, `event_type`, `subject_id`, `lead_id`,
+  `occurred_at`) separado del payload de negocio anidado. Metamodelo de
+  contrato en `events/*.json` con `envelope_minimo`, `payload_minimo` y
+  `payload_opcional` como campos hermanos de `id`, `paso`, `descripcion`,
+  `origen`, `destino`. `paso` sigue como metadato de trazabilidad hacia
+  Capa 1; no forma parte del envelope emitido. Eliminación del uso
+  ambiguo de `"id"` en los payload de `lead-created.json` y
+  `lead-captured.json`: `event_id` es campo nuevo del envelope
+  (identifica la fila de evento), no renombre semántico del `"id"`
+  anterior. Retirada de `lead_id` del `payload_minimo` de los tres
+  eventos `HUMAN_HANDOFF_*` (vive en envelope). Retirada de timestamps
+  de negocio duplicados (`requested_at`, `assigned_at`, `closed_at`) del
+  payload: `occurred_at` del envelope los reemplaza. Añadida `descripcion`
+  a los tres contratos `human-handoff-*.json`. Renombrado
+  `armc_events.created_at → armc_events.occurred_at` y
+  `armc_handoffs.created_at → armc_handoffs.occurred_at`. Preservada la
+  asimetría de nullability actual (events sin `NOT NULL`, handoffs con
+  `NOT NULL`); no se endurece por inferencia. En el alcance actual
+  `occurred_at` coincide con el momento del INSERT; la distinción se
+  materializará con futuros backfills o event replay. **La PK física de
+  `armc_events` sigue llamándose `id`**; el mapeo al envelope es
+  `envelope.event_id ← armc_events.id`. Sin nueva columna física
+  `event_id`. Adaptación acotada de `renderEvent` en `hub-analisis.js`
+  para presentar tres secciones visuales (Envelope · Payload mínimo ·
+  Payload opcional, esta última solo si tiene elementos). Preservados
+  chips de trazabilidad, layout, colores, tipografía y componentes;
+  sin rediseño visual amplio (Slice E histórico). Preservados
+  íntegramente `armc_subjects` y `armc_subject_identifiers` (S1), FKs
+  compuestas + índices S2 (v3.7.1), `mappings.json`, `forms/*.json`,
+  `catalogo-demandas.json` y `renderMappingsForms`. Sin cambios en Neon
+  (escenario A vigente), sin backend, sin backfill. Slice contractual
+  del plan S1-S5.
+
 ## [2026-08-01] — v3.7.1
 
 ### [Contenido — simulador]
