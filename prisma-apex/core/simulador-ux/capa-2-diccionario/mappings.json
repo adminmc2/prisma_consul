@@ -1,18 +1,28 @@
 {
   "forms": {
     "web_contact_form": {
-      "tabla_principal": "armc_leads",
-      "columnas": ["canal_origen", "nombres", "apellidos", "email", "telefono", "demanda_ids_seleccionados", "comentario_libre_lead", "lineas_servicio_detectadas", "estado_actual", "fecha_primer_contacto"],
+      "tablas": ["armc_subjects", "armc_subject_identifiers", "armc_leads"],
+      "columnas_por_tabla": {
+        "armc_subjects": ["id"],
+        "armc_subject_identifiers": ["subject_id", "identifier_type", "raw_value", "normalized_value"],
+        "armc_leads": ["subject_id", "canal_origen", "nombres", "apellidos", "email", "telefono", "demanda_ids_seleccionados", "comentario_libre_lead", "lineas_servicio_detectadas", "estado_actual", "fecha_primer_contacto"]
+      },
       "eventos": ["LEAD_CAPTURED"]
     },
     "lead_open_whatsapp": {
-      "tabla_principal": "armc_leads",
-      "columnas": ["canal_origen", "nombres", "apellidos", "telefono", "estado_actual", "fecha_primer_contacto"],
+      "tablas": ["armc_subjects", "armc_subject_identifiers", "armc_leads"],
+      "columnas_por_tabla": {
+        "armc_subjects": ["id"],
+        "armc_subject_identifiers": ["subject_id", "identifier_type", "raw_value", "normalized_value"],
+        "armc_leads": ["subject_id", "canal_origen", "nombres", "apellidos", "telefono", "estado_actual", "fecha_primer_contacto"]
+      },
       "eventos": ["LEAD_CREATED"]
     },
     "lead_flow_submission_whatsapp": {
-      "tabla_principal": "armc_leads",
-      "columnas": ["demanda_ids_seleccionados", "comentario_libre_lead", "email", "lineas_servicio_detectadas", "estado_actual"],
+      "tablas": ["armc_leads"],
+      "columnas_por_tabla": {
+        "armc_leads": ["demanda_ids_seleccionados", "comentario_libre_lead", "email", "lineas_servicio_detectadas", "estado_actual"]
+      },
       "eventos": ["LEAD_CAPTURED"]
     }
   },

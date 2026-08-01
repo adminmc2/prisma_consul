@@ -4,11 +4,54 @@ Referencia humana de cada columna del esquema SQL. Complemento del DDL en `schem
 
 Alcance verificado: tablas necesarias para la captura del lead (acción de entrada hasta los formularios web y WhatsApp) y el **handoff humano** modelado como patrón transversal (`requested → active → closed`). Se ampliará a medida que se verifiquen nuevas piezas del flujo.
 
+## `armc_subjects`
+
+Identidad canónica, vital e inmutable del subject dentro del dominio ARMC. Entidad deliberadamente ligera: no acumula datos comerciales, clínicos, conversacionales ni atributos propios de episodio. Su responsabilidad es mantener la identidad estable del subject a lo largo de todos sus procesos.
+
+| Columna | Tipo | Nulo | Dominio / Default | Descripción |
+|---|---|---|---|---|
+| `id` | UUID | NO | `gen_random_uuid()` | Identidad canónica y vital del subject. Referenciada por `armc_leads.subject_id` (S1) y, en S2, por `armc_events.subject_id` y `armc_handoffs.subject_id`. |
+| `created_at` | TIMESTAMPTZ | NO | `NOW()` | Instante de creación del subject en el sistema. |
+| `updated_at` | TIMESTAMPTZ | NO | `NOW()` | Instante de la última modificación de la entidad de identidad. No refleja actividad de episodios ni de identifiers. |
+
+**Relación con `armc_leads`:** un subject puede tener múltiples episodios de lead a lo largo del tiempo (`Subject 1:N Lead`). Una fila de `armc_leads` es un episodio de captación, no la identidad vital.
+
+**Nota sobre borrado:** la FK `armc_leads.subject_id → armc_subjects.id` no usa `ON DELETE CASCADE`. La eliminación de un subject referenciado queda impedida por defecto de PostgreSQL (`NO ACTION`). ARCO futuro se resolverá por pseudonimización o tratamiento reglado, no por borrado en cascada de historial.
+
+## `armc_subject_identifiers`
+
+Identifiers (teléfono / email) asociados al subject. Un subject puede tener múltiples identifiers activos e histórico de identifiers revocados.
+
+| Columna | Tipo | Nulo | Dominio / Default | Descripción |
+|---|---|---|---|---|
+| `id` | UUID | NO | `gen_random_uuid()` | PK del identifier. |
+| `subject_id` | UUID | NO | FK → `armc_subjects(id)` | Subject al que pertenece este identifier. Sin CASCADE. |
+| `identifier_type` | VARCHAR(30) | NO | enum `PHONE / EMAIL` | Tipo de identifier. |
+| `raw_value` | TEXT | NO | — | Representación original recibida o confirmada por el subject. **No debe sustituirse por `normalized_value` al presentar el dato al usuario.** |
+| `normalized_value` | TEXT | NO | — | Representación normalizada usada para lookup y matching. Puede ser igual o distinta de `raw_value`. Nunca se exige que sean distintas. |
+| `verified_at` | TIMESTAMPTZ | SÍ | — | Instante en que el identifier fue verificado (por ejemplo, confirmación explícita del subject). NULL si no verificado. |
+| `valid_from` | TIMESTAMPTZ | NO | `NOW()` | Inicio de vigencia del identifier. |
+| `valid_to` | TIMESTAMPTZ | SÍ | — | Fin de vigencia. NULL indica identifier activo. |
+| `created_at` | TIMESTAMPTZ | NO | `NOW()` | Instante de registro de la fila. |
+
+**Constraint de vigencia:** `armc_subject_identifiers_validity_check` exige `valid_to IS NULL OR valid_to > valid_from`.
+
+**Índice global de lookup** (deliberadamente no único): `idx_armc_subject_identifiers_lookup ON (identifier_type, normalized_value) WHERE valid_to IS NULL`. Permite candidatos múltiples: un teléfono compartido en familia o un número reciclado puede producir varios candidatos legítimos.
+
+**Índice único activo por subject:** `uq_armc_subject_identifiers_active ON (subject_id, identifier_type, normalized_value) WHERE valid_to IS NULL`. Impide que un mismo subject tenga dos veces el mismo identifier activo simultáneamente; permite histórico de revocados.
+
+**Normalización contractual:**
+- **Teléfono:** representación canónica E.164 (`+52...`). Formato nacional admisible solo si el país es inequívoco (default MX en este alcance). Backend futuro usará `libphonenumber-js` o equivalente probado. Usar parser, no sustituciones manuales. Números imposibles o ambiguos se rechazan. El teléfono nunca actúa como FK ni constituye prueba absoluta de identidad.
+- **Email:** `trim` obligatorio. Dominio normalizado a minúsculas. Comparación case-insensitive del valor completo, conservando el original en `raw_value`. **No** eliminar `+tag`. **No** normalizar puntos de Gmail. **No** introducir reglas específicas de proveedores.
+
+**Semántica de coincidencia:** un match exacto sobre `(identifier_type, normalized_value)` produce un **candidato de reconocimiento**, no fusión automática. La política operativa completa se define en S4.
+
 ## `armc_leads`
 
 | Columna | Tipo | Nulo | Dominio / Default | Descripción |
 |---|---|---|---|---|
-| `id` | UUID | NO | `gen_random_uuid()` | Identificador único del lead. |
+| `id` | UUID | NO | `gen_random_uuid()` | Identificador único del lead (episodio de captación). Distinto de `subject_id`: `id` identifica esta fila; `subject_id` identifica al subject vital al que pertenece este episodio. |
+| `subject_id` | UUID | NO | FK → `armc_subjects(id)` | Identidad canónica del subject al que pertenece este episodio de lead. Sin CASCADE. Un subject puede tener múltiples episodios (`Subject 1:N Lead`). |
 | `nombres` | VARCHAR(120) | NO | — | Uno o más nombres de pila del lead. Un solo campo por convención canónica. |
 | `apellidos` | VARCHAR(240) | NO | — | Uno o dos apellidos del lead. Un solo campo por convención canónica; sin subdivisión en paterno/materno ni primer/segundo. |
 | `email` | VARCHAR(255) | SÍ | — | Correo del lead. Opcional para canal WhatsApp. |
@@ -37,6 +80,12 @@ Alcance verificado: tablas necesarias para la captura del lead (acción de entra
 **Nota sobre `closed_by`:** la identidad de quien cierra el handoff **no se duplica** en `armc_leads`. Vive en la fila `CLOSED` correspondiente de `armc_handoffs` (vía `user_id`) y en el `payload_opcional` del evento `HUMAN_HANDOFF_CLOSED` (`closed_by_user_id`). Convención coherente con el principio "persistencia base ligera + historial completo".
 
 **Estabilidad histórica de `demanda_ids_seleccionados`:** los IDs conservan identidad numérica mientras no se reasignen, pero no conservan la frase ni el `area` mostradas al lead. Esos atributos se obtienen del catálogo vigente. `lineas_servicio_detectadas` queda persistida como resultado derivado en la ficha. Preservar de forma íntegra la vista histórica requerirá versionar el catálogo o guardar `catalogo_version`.
+
+**Cardinalidad Subject ↔ Lead:** `Subject 1:N Lead`. Una fila de `armc_leads` representa un episodio de captación, no la identidad vital. Un mismo subject puede tener varios episodios en el tiempo. S1 declara la cardinalidad pero no define las reglas operativas de cuándo termina, reabre o coexiste un episodio — esa política queda pendiente de verificación de negocio y de S4.
+
+**Clave candidata compuesta:** `armc_leads_subject_id_id_key` declara `UNIQUE (subject_id, id)`. Aunque `id` ya es único global, la UNIQUE compuesta es necesaria técnicamente para que S2 pueda declarar `FOREIGN KEY (subject_id, lead_id) REFERENCES armc_leads(subject_id, id)` desde `armc_events` y `armc_handoffs`, y así garantizar la invariante "el `lead_id` referenciado pertenece efectivamente al `subject_id` declarado".
+
+**Nota temporal S1:** durante S1, el vínculo entre eventos/handoffs y el subject se deriva mediante `lead_id → armc_leads.subject_id`. La propagación directa de `subject_id` a `armc_events` y `armc_handoffs` se incorpora en S2 con FK compuesta.
 
 ## `armc_events`
 

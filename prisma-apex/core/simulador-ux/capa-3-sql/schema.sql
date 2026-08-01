@@ -4,8 +4,38 @@
 -- (patrón transversal: requested → active → closed) modelado en este paquete.
 -- Tablas, columnas y enums fuera de ese alcance se añadirán a medida que se verifiquen.
 
+-- Identidad canónica del subject (S1). Entidad deliberadamente ligera:
+-- no acumula atributos comerciales, clínicos ni conversacionales.
+CREATE TABLE armc_subjects (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+-- Identifiers (teléfono / email) asociados al subject, con vigencia y
+-- verificación. raw_value conserva la representación recibida o confirmada;
+-- normalized_value se usa para lookup. Nunca actúan como FK ni prueba absoluta
+-- de identidad. Un match exacto produce candidato de reconocimiento, no fusión.
+CREATE TABLE armc_subject_identifiers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    subject_id UUID NOT NULL REFERENCES armc_subjects(id),
+    identifier_type VARCHAR(30) NOT NULL CHECK (
+        identifier_type IN ('PHONE', 'EMAIL')
+    ),
+    raw_value TEXT NOT NULL,
+    normalized_value TEXT NOT NULL,
+    verified_at TIMESTAMP WITH TIME ZONE,
+    valid_from TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    valid_to TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    CONSTRAINT armc_subject_identifiers_validity_check CHECK (
+        valid_to IS NULL OR valid_to > valid_from
+    )
+);
+
 CREATE TABLE armc_leads (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    subject_id UUID NOT NULL REFERENCES armc_subjects(id),
     nombres VARCHAR(120) NOT NULL,
     apellidos VARCHAR(240) NOT NULL,
     email VARCHAR(255),
@@ -37,7 +67,11 @@ CREATE TABLE armc_leads (
     CONSTRAINT armc_leads_demandas_confirmado CHECK (
         estado_actual != 'LEAD_CONFIRMADO' OR
         (demanda_ids_seleccionados IS NOT NULL AND cardinality(demanda_ids_seleccionados) > 0)
-    )
+    ),
+    -- Clave candidata compuesta requerida por PostgreSQL para que S2 pueda
+    -- declarar FK compuesta (subject_id, lead_id) desde armc_events y armc_handoffs.
+    -- Aunque id ya es único global, la FK compuesta exige UNIQUE compuesta explícita.
+    CONSTRAINT armc_leads_subject_id_id_key UNIQUE (subject_id, id)
 );
 
 CREATE TABLE armc_events (
@@ -83,3 +117,14 @@ CREATE INDEX idx_armc_events_lead_id ON armc_events(lead_id);
 CREATE INDEX idx_armc_handoffs_lead ON armc_handoffs(lead_id);
 CREATE INDEX idx_armc_handoffs_user ON armc_handoffs(user_id);
 CREATE INDEX idx_armc_handoffs_event ON armc_handoffs(event_type);
+
+-- Índices de identidad canónica (S1)
+CREATE INDEX idx_armc_subject_identifiers_lookup
+    ON armc_subject_identifiers(identifier_type, normalized_value)
+    WHERE valid_to IS NULL;
+
+CREATE UNIQUE INDEX uq_armc_subject_identifiers_active
+    ON armc_subject_identifiers(subject_id, identifier_type, normalized_value)
+    WHERE valid_to IS NULL;
+
+CREATE INDEX idx_armc_leads_subject ON armc_leads(subject_id);

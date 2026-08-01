@@ -683,6 +683,7 @@
     .sim-capa1 .zoom-level { min-width: 54px; text-align: center; color: var(--c1-soft); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.76rem; }
 
     /* ── Capa 2 nativa (B3) — todo scopeado bajo .sim-capa2 ── */
+    .sim-capa2 .table-block { margin-bottom: 0.6rem; } .sim-capa2 .table-block:last-child { margin-bottom: 0; } .sim-capa2 .table-block ul { margin: 0.25rem 0 0 1.1rem; padding: 0; } .sim-capa2 .table-block ul li { margin: 0.1rem 0; }
     .sim-capa2 {
       --c2-navy: #101B2C; --c2-side: #0f1724; --c2-cyan: #31BEEF; --c2-soft: #A1B8F2;
       --c2-white: #FAF9F6; --c2-muted: #93A6BF; --c2-border: rgba(161,184,242,0.18);

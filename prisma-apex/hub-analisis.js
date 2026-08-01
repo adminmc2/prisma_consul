@@ -84,10 +84,10 @@ const CAPA1_NODES = {
   web_contact_form_received: {
     title: 'Contacto web recibido', key: 'WEB_CONTACT_FORM_RECEIVED', x: 900, y: 110, width: 340,
     description: 'Se registra un contacto entrante desde la web con los datos básicos del lead.',
-    dataPoints: ['Canal origen: WEB_FORM', 'Origen: formulario de contacto web', 'Datos básicos recibidos', 'Ingreso al flujo inicial', 'Aviso de Privacidad LFPDPPP visible antes de enviar para captación inicial y orientación comercial'],
+    dataPoints: ['Canal origen: WEB_FORM', 'Origen: formulario de contacto web', 'Datos básicos recibidos', 'Antes del INSERT se resuelve o crea el subject_id (política definida en S4).', 'Ingreso al flujo inicial', 'Aviso de Privacidad LFPDPPP visible antes de enviar para captación inicial y orientación comercial'],
     note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
     crossLinks: [{ label: 'Ver contrato web_contact_form en Capa 2', tab: 2, itemId: 'form-web_contact_form' }],
-    actions: [{ id: 'register-lead-web', label: 'Enviar formulario web', targetId: 'lead_confirmed', dbAction: "INSERT armc_leads(canal_origen='WEB_FORM', nombres, apellidos, email, telefono, demanda_ids_seleccionados, ..., estado_actual='LEAD_CONFIRMADO') RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CAPTURED');" }]
+    actions: [{ id: 'register-lead-web', label: 'Enviar formulario web', targetId: 'lead_confirmed', dbAction: "RESOLVE_OR_CREATE subject_id [política pendiente de S4]; INSERT armc_leads(subject_id=[subject_id], canal_origen='WEB_FORM', nombres, apellidos, email, telefono, demanda_ids_seleccionados, ..., estado_actual='LEAD_CONFIRMADO') RETURNING id AS lead_id; INSERT armc_events(lead_id=[lead_id], event_type='LEAD_CAPTURED');" }]
   },
   lead_conversation_started: {
     title: 'Conversación WhatsApp iniciada', key: 'LEAD_CONVERSATION_STARTED', x: 560, y: 860, width: 340,
@@ -98,12 +98,13 @@ const CAPA1_NODES = {
       'Aviso de Privacidad LFPDPPP enviado por el bot antes de capturar datos.',
       'El lead envía sus datos por mensaje libre; el sistema hace parse provisional solo para UX (no persiste).',
       'El sistema muestra al lead los datos parseados y pide confirmación explícita antes de crear la ficha.',
+      'Antes del INSERT del lead se resuelve o crea el subject_id (política definida en S4).',
       'Los mensajes previos a la ficha se persistirán en el modelo conversacional (Slice C).',
       'Fallback: si el lead corrige, el bot pregunta campo por campo hasta obtener confirmación.'
     ],
     note: 'Estado conversacional previo a la creación de ficha. El histórico de mensajes de esta fase se modela en Slice C. La action de este nodo representa el instante de confirmación explícita del lead, que dispara el INSERT y el evento LEAD_CREATED. Alcance actual: sin bot real, sin LLM — el patrón conversacional se documenta contractualmente sin implementación.',
     crossLinks: [],
-    actions: [{ id: 'register-lead-open-whatsapp', label: 'Registrar apertura del lead', targetId: 'lead_open_whatsapp', dbAction: "INSERT armc_leads(canal_origen='WHATSAPP', nombres, apellidos, telefono, estado_actual='LEAD_ABIERTO', ...) RETURNING id; INSERT armc_events(lead_id=[id], event_type='LEAD_CREATED');" }]
+    actions: [{ id: 'register-lead-open-whatsapp', label: 'Registrar apertura del lead', targetId: 'lead_open_whatsapp', dbAction: "RESOLVE_OR_CREATE subject_id [política pendiente de S4]; INSERT armc_leads(subject_id=[subject_id], canal_origen='WHATSAPP', nombres, apellidos, telefono, estado_actual='LEAD_ABIERTO', ...) RETURNING id AS lead_id; INSERT armc_events(lead_id=[lead_id], event_type='LEAD_CREATED');" }]
   },
   lead_open_whatsapp: {
     title: 'Ficha del lead abierta', key: 'LEAD_ABIERTO', x: 960, y: 860, width: 340,
@@ -144,7 +145,7 @@ const CAPA1_NODES = {
   lead_confirmed: {
     title: 'Lead confirmado', key: 'LEAD_CONFIRMADO', x: 1700, y: 480, width: 360,
     description: 'Convergencia final: la ficha del lead queda con el formulario completo persistido, independientemente del canal de entrada.',
-    dataPoints: ['estado_actual = LEAD_CONFIRMADO', 'Ficha completa persistida (demandas, líneas detectadas y datos de contacto)', 'Evento LEAD_CAPTURED emitido al envío del Flow (WhatsApp) o del formulario (web)', 'canal_origen preservado', 'fecha_primer_contacto registrada'],
+    dataPoints: ['estado_actual = LEAD_CONFIRMADO', 'Ficha completa persistida (demandas, líneas detectadas y datos de contacto)', 'Evento LEAD_CAPTURED emitido al envío del Flow (WhatsApp) o del formulario (web)', 'canal_origen preservado', 'fecha_primer_contacto registrada', 'El lead es un episodio del subject. Un mismo subject puede tener múltiples episodios de lead. Este grafo representa el ciclo de un episodio; la recurrencia se expresa en el modelo contractual.'],
     terminalCopy: 'Lead confirmado en el sistema.',
     crossLinks: [
       { label: 'Ver evento LEAD_CAPTURED en Capa 2', tab: 2, itemId: 'event-LEAD_CAPTURED' },
@@ -667,7 +668,7 @@ function createCapa2(mountEl, opts) {
     if (f.version) chips.push({ label: 'v' + f.version, soft: true });
     const persist = state.mappings.forms[f.id];
     const traceLinks = [navChip('← Capa 1: ' + f.paso, 1, 'node-' + f.paso, false)];
-    if (persist) traceLinks.push(navChip('→ Capa 3: ' + persist.tabla_principal, 3, 'table-' + persist.tabla_principal, true));
+    if (persist) (persist.tablas || []).forEach(t => traceLinks.push(navChip('→ Capa 3: ' + t, 3, 'table-' + t, true)));
     host.innerHTML = header('Formulario', f.nombre, chips) +
       '<section class="block"><h3>Trazabilidad</h3><div class="chips">' + traceLinks.join('') + '</div></section>';
     host.innerHTML += '<section class="block"><h3>Campos (input de captura)</h3>' +
@@ -697,9 +698,12 @@ function createCapa2(mountEl, opts) {
       (f.reglas && f.reglas.length ? '<section class="block"><h3>Reglas</h3><ul class="simple">' +
         f.reglas.map(r => `<li>${escapeHtml(r)}</li>`).join('') + '</ul></section>' : '') +
       (persist ? '<section class="block"><h3>Persistencia</h3><table class="data"><tbody>' +
-        '<tr><th style="width:200px">Tabla principal</th><td><code>' + escapeHtml(persist.tabla_principal) + '</code></td></tr>' +
-        (persist.tabla_secundaria ? '<tr><th>Tabla secundaria</th><td><code>' + escapeHtml(persist.tabla_secundaria) + '</code></td></tr>' : '') +
-        '<tr><th>Columnas</th><td>' + persist.columnas.map(c => `<code>${escapeHtml(c)}</code>`).join(' ') + '</td></tr>' +
+        '<tr><th style="width:200px">Tablas + columnas</th><td>' +
+        (persist.tablas || []).map(t =>
+          '<div class="table-block"><code>' + escapeHtml(t) + '</code><ul>' +
+          ((persist.columnas_por_tabla && persist.columnas_por_tabla[t]) || []).map(c => `<li><code>${escapeHtml(c)}</code></li>`).join('') +
+          '</ul></div>'
+        ).join('') + '</td></tr>' +
         '<tr><th>Eventos asociados</th><td>' + persist.eventos.map(e => `<span class="tag">${escapeHtml(e)}</span>`).join('') + '</td></tr>' +
         '</tbody></table></section>' : '');
   }
@@ -723,10 +727,14 @@ function createCapa2(mountEl, opts) {
   function renderMappingsForms(host) {
     const entries = Object.entries(state.mappings.forms);
     host.innerHTML = header('Mapeos', 'Formularios → Base de datos', [{ label: 'fuente: mappings.json', soft: true }]) +
-      '<table class="data"><thead><tr><th>Formulario</th><th>Tabla principal</th><th>Tabla secundaria</th><th>Eventos</th></tr></thead><tbody>' +
+      '<table class="data"><thead><tr><th>Formulario</th><th>Tablas + columnas</th><th>Eventos</th></tr></thead><tbody>' +
       entries.map(([id, def]) =>
-        '<tr><td><code>' + escapeHtml(id) + '</code></td><td><code>' + escapeHtml(def.tabla_principal) + '</code></td>' +
-        '<td>' + (def.tabla_secundaria ? '<code>' + escapeHtml(def.tabla_secundaria) + '</code>' : '<span class="no">—</span>') + '</td>' +
+        '<tr><td><code>' + escapeHtml(id) + '</code></td><td>' +
+        (def.tablas || []).map(t =>
+          '<div class="table-block"><code>' + escapeHtml(t) + '</code><ul>' +
+          ((def.columnas_por_tabla && def.columnas_por_tabla[t]) || []).map(c => `<li><code>${escapeHtml(c)}</code></li>`).join('') +
+          '</ul></div>'
+        ).join('') + '</td>' +
         '<td>' + def.eventos.map(e => `<span class="tag">${escapeHtml(e)}</span>`).join('') + '</td></tr>'
       ).join('') + '</tbody></table>';
   }
@@ -947,7 +955,7 @@ function createCapa3(mountEl, opts) {
     const usedByForms = [], usedByEvents = [];
     if (state.mappings) {
       Object.entries(state.mappings.forms || {}).forEach(([fid, def]) => {
-        if (def.tabla_principal === t.name || def.tabla_secundaria === t.name) usedByForms.push(fid);
+        if ((def.tablas || []).includes(t.name)) usedByForms.push(fid);
       });
       Object.entries(state.mappings.events || {}).forEach(([eid, def]) => {
         if ((def.tablas || []).includes(t.name)) usedByEvents.push(eid);
