@@ -44,7 +44,29 @@ Identifiers (teléfono / email) asociados al subject. Un subject puede tener mú
 - **Teléfono:** representación canónica E.164 (`+52...`). Formato nacional admisible solo si el país es inequívoco (default MX en este alcance). Backend futuro usará `libphonenumber-js` o equivalente probado. Usar parser, no sustituciones manuales. Números imposibles o ambiguos se rechazan. El teléfono nunca actúa como FK ni constituye prueba absoluta de identidad.
 - **Email:** `trim` obligatorio. Dominio normalizado a minúsculas. Comparación case-insensitive del valor completo, conservando el original en `raw_value`. **No** eliminar `+tag`. **No** normalizar puntos de Gmail. **No** introducir reglas específicas de proveedores.
 
-**Semántica de coincidencia:** un match exacto sobre `(identifier_type, normalized_value)` produce un **candidato de reconocimiento**, no fusión automática. La política operativa completa se define en S4.
+**Semántica de coincidencia:** un match exacto sobre `(identifier_type, normalized_value)` produce un **candidato de reconocimiento**, no fusión automática. La política operativa completa se define a continuación (S4).
+
+**Política operativa de reconocimiento del subject (desde S4):**
+
+Al recibir un contacto entrante:
+
+1. Validar y normalizar todos los identifiers (`PHONE` a E.164; `EMAIL` a `trim` + dominio en minúsculas, sin stripping de `+tag` ni dot-normalization de Gmail).
+2. Rechazar identifiers imposibles o ambiguos; no persistir.
+3. Buscar candidatos en `armc_subject_identifiers WHERE valid_to IS NULL` por cada identifier normalizado. **PHONE y EMAIL de igual peso para detectar candidatos y conflictos; sin prioridad de canal.**
+4. **Cero candidatos** → crear nuevo `subject_id` + registrar identifiers (`raw_value` + `normalized_value`; `verified_at` solo si existe verificación real).
+5. **Un candidato limpio** (los identifiers del contacto apuntan al mismo subject, sin conflicto) → comparar nombres declarados contra el episodio de lead más reciente del subject: `SELECT nombres, apellidos FROM armc_leads WHERE subject_id = <candidate> ORDER BY fecha_primer_contacto DESC, id DESC LIMIT 1`.
+   - **Cero filas devueltas** (candidato sin ningún episodio previo comparable): **incidencia**. Caso residual atribuible a integridad de datos, migración o subject huérfano. No se reutiliza automáticamente ni se crea otro subject silenciosamente.
+   - **Una fila devuelta**, normalización nominal permitida: `trim`, espacios consecutivos reducidos a uno, comparación case-insensitive, accent-insensitive, normalización Unicode estándar. **Sin fuzzy matching. Sin alias informales**. Coincidencia tras normalización → reutilizar `subject_id` y asociar identifiers nuevos. Divergencia → **incidencia**.
+6. **Múltiples candidatos** (mismo identifier apunta a varios subjects, o identifiers del contacto apuntan a subjects distintos) → **incidencia**.
+
+**Distinción de estados del identifier:**
+- **Normalizado**: forma canónica usada para lookup (`normalized_value`).
+- **Declarado o confirmado**: recibido y aceptado por el sistema (`raw_value` presente, `verified_at IS NULL`). El mero envío de un formulario o la confirmación declarativa no equivale a verificación.
+- **Verificado**: comprobado mediante mecanismo real (OTP, enlace de confirmación, o equivalente). Se persiste `verified_at`. **En el alcance actual del simulador no existe mecanismo de verificación implementado; `verified_at` queda mayoritariamente NULL**.
+
+**Incidencia**: resultado terminal contractual de la resolución de identidad. **No crea subject, no crea lead, no asocia identifiers, no emite eventos S3, no inicia el Flow asociado a un episodio**. Deriva a resolución humana futura (capacidad no implementada en S4).
+
+**Recurrencia y episodios**: cada nueva captación confirmada crea un nuevo `lead_id` (según reglas 5 y 6). No se reabren episodios previos. Puede coexistir con otros episodios del mismo subject. Dentro del mismo Flow ya establecido, el contexto conservado (`subject_id + lead_id`) evita crear otro episodio por continuidad interna del Flow.
 
 ## `armc_leads`
 
@@ -86,6 +108,8 @@ Identifiers (teléfono / email) asociados al subject. Un subject puede tener mú
 **Clave candidata compuesta:** `armc_leads_subject_id_id_key` declara `UNIQUE (subject_id, id)`. Aunque `id` ya es único global, la UNIQUE compuesta es necesaria técnicamente para que S2 pueda declarar `FOREIGN KEY (subject_id, lead_id) REFERENCES armc_leads(subject_id, id)` desde `armc_events` y `armc_handoffs`, y así garantizar la invariante "el `lead_id` referenciado pertenece efectivamente al `subject_id` declarado".
 
 **FK compuesta desde procesos:** `armc_events` y `armc_handoffs` declaran FK compuesta `FOREIGN KEY (subject_id, lead_id) REFERENCES armc_leads(subject_id, id)`. Cualquier intento de insertar en esas tablas un par `(subject_id, lead_id)` donde el `lead_id` no pertenezca al `subject_id` declarado es rechazado por integridad referencial. Las FKs (directa `subject_id → armc_subjects(id)` y compuesta `(subject_id, lead_id) → armc_leads(subject_id, id)`) no llevan `ON DELETE CASCADE`: impiden eliminar físicamente un subject o un episodio mientras existan eventos o handoffs referenciándolo. La futura política de tratamiento, archivo o pseudonimización se resolverá de forma explícita.
+
+**Base determinista de comparación nominal (desde S4):** cuando la política operativa de reconocimiento (S4) necesita comparar nombres declarados por un contacto entrante contra un subject candidato, la referencia canónica es el **episodio de lead más reciente** del subject: `SELECT nombres, apellidos FROM armc_leads WHERE subject_id = <candidate> ORDER BY fecha_primer_contacto DESC, id DESC LIMIT 1`. `armc_subjects` es entidad ligera que no almacena nombres; la fuente autoritativa para comparación nominal vive en `armc_leads`. **Si la consulta devuelve cero filas** (candidato sin ningún episodio previo comparable), la política resuelve como incidencia: caso residual atribuible a integridad de datos, migración o subject huérfano, no se reutiliza el subject automáticamente.
 
 ## `armc_events`
 

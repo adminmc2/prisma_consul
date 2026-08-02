@@ -24,7 +24,7 @@
     { "nombre": "lineas_servicio_detectadas", "origen": "demanda_ids_seleccionados → catalogo-demandas.lineas_servicio" }
   ],
   "reglas": [
-    "Antes de crear el episodio de lead debe existir un subject_id. La decisión operativa entre crear un subject nuevo o reutilizar uno existente se define en S4. Este contrato modela la identidad y su relación con el lead, pero no implementa ni simula todavía el algoritmo de reconocimiento.",
+    "En el instante del envío se ejecuta la política de reconocimiento del subject: (1) validar y normalizar todos los identifiers (PHONE a E.164; EMAIL a trim + dominio en minúsculas, sin stripping de +tag ni dot-normalization); (2) rechazar identifiers imposibles o ambiguos; (3) consultar todos los identifiers activos con PHONE y EMAIL de igual peso; (4) cero candidatos → crear subject; (5) un candidato limpio con nombres coincidentes tras normalización estricta contra el episodio más reciente del subject → reutilizar subject_id (identifiers parciales: un identifier coincide con un único subject y el otro no coincide con ninguno → reutilizar y asociar el identifier nuevo, sin verified_at automático); si la consulta contra armc_leads devuelve cero filas → incidencia; divergencia nominal → incidencia; (6) cada identifier apuntando a subjects distintos, o múltiples candidatos → incidencia. La incidencia es resultado contractual terminal sin persistencia. Este contrato modela la política; no implementa el reconocimiento ni la resolución humana.",
     "Todos los campos son obligatorios excepto comentario_libre_lead.",
     "Al menos una opción seleccionada del catálogo (mínimo 1, máximo 20).",
     "email y telefono validados contra patrón.",

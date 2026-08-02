@@ -17,7 +17,7 @@
   "eventos_emitidos": ["LEAD_CAPTURED"],
   "reglas": [
     "Requiere ficha previa (creada por `lead_open_whatsapp`). No crea ficha nueva; actualiza la existente.",
-    "La ficha a actualizar se resuelve por contexto del canal (teléfono del subject en WhatsApp), no por un campo `lead_id` en el input del formulario. No se expone `lead_id` como campo.",
+    "La ficha a actualizar se resuelve por contexto conversacional contractual persistente del Flow. Al abrir el Flow (tras el LEAD_CREATED de lead_open_whatsapp), el contexto conserva subject_id y lead_id. Step 4 ejecuta la actualización mediante WHERE subject_id = <ctx> AND id = <ctx>. El teléfono normalizado se usa exclusivamente en el reconocimiento inicial del subject (lead_open_whatsapp regla 1); no se utiliza como sustituto de la identidad persistente durante un Flow ya establecido. S4 no implementa persistencia técnica del contexto; describe el comportamiento contractual que la implementación futura deberá materializar (almacén de sesiones, backend, o mecanismo equivalente que conserve subject_id + lead_id entre pasos del Flow).",
     "Se dispara al pulsar 'Enviar a ARMC' en el Step 4 del WhatsApp Flow.",
     "email es opcional en este canal.",
     "Al menos una opción seleccionada del catálogo (mínimo 1, máximo 20)."

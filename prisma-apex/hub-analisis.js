@@ -84,7 +84,7 @@ const CAPA1_NODES = {
   web_contact_form_received: {
     title: 'Contacto web recibido', key: 'WEB_CONTACT_FORM_RECEIVED', x: 900, y: 110, width: 340,
     description: 'Se registra un contacto entrante desde la web con los datos básicos del lead.',
-    dataPoints: ['Canal origen: WEB_FORM', 'Origen: formulario de contacto web', 'Datos básicos recibidos', 'Antes del INSERT se resuelve o crea el subject_id (política definida en S4).', 'Ingreso al flujo inicial', 'Aviso de Privacidad LFPDPPP visible antes de enviar para captación inicial y orientación comercial'],
+    dataPoints: ['Canal origen: WEB_FORM', 'Origen: formulario de contacto web', 'Datos básicos recibidos', 'En el instante del envío se aplica la política de reconocimiento: normalizar identifiers, buscar candidatos activos (PHONE + EMAIL igual peso). Un candidato limpio con nombres coincidentes reutiliza subject_id; identifiers parciales (uno coincide con un subject único y el otro no coincide con ninguno) reutilizan el subject y asocian el identifier nuevo. Candidato sin episodio comparable, cada identifier apuntando a subjects distintos, o múltiples candidatos, producen incidencia.', 'Ingreso al flujo inicial', 'Aviso de Privacidad LFPDPPP visible antes de enviar para captación inicial y orientación comercial'],
     note: 'Aquí se registra la entrada del contacto antes del siguiente paso operativo.',
     crossLinks: [{ label: 'Ver contrato web_contact_form en Capa 2', tab: 2, itemId: 'form-web_contact_form' }],
     actions: [{ id: 'register-lead-web', label: 'Enviar formulario web', targetId: 'lead_confirmed', dbAction: "RESOLVE_OR_CREATE subject_id [política pendiente de S4]; INSERT armc_leads(subject_id=[subject_id], canal_origen='WEB_FORM', nombres, apellidos, email, telefono, demanda_ids_seleccionados, ..., estado_actual='LEAD_CONFIRMADO') RETURNING id AS lead_id; INSERT armc_events(subject_id=[subject_id], lead_id=[lead_id], event_type='LEAD_CAPTURED');" }]
@@ -98,7 +98,7 @@ const CAPA1_NODES = {
       'Aviso de Privacidad LFPDPPP enviado por el bot antes de capturar datos.',
       'El lead envía sus datos por mensaje libre; el sistema hace parse provisional solo para UX (no persiste).',
       'El sistema muestra al lead los datos parseados y pide confirmación explícita antes de crear la ficha.',
-      'Antes del INSERT del lead se resuelve o crea el subject_id (política definida en S4).',
+      'Tras confirmación explícita del lead, se aplica la política de reconocimiento: normalizar identifiers, buscar candidatos activos (PHONE + EMAIL igual peso), aplicar cero/uno/múltiples candidatos. Un candidato limpio con nombres coincidentes (comparación estricta normalizada contra el episodio más reciente del subject) reutiliza subject_id; candidato sin episodio comparable, múltiples candidatos o contradicciones producen incidencia sin persistencia.',
       'Los mensajes previos a la ficha se persistirán en el modelo conversacional (Slice C).',
       'Fallback: si el lead corrige, el bot pregunta campo por campo hasta obtener confirmación.'
     ],
@@ -133,14 +133,14 @@ const CAPA1_NODES = {
       'email opcional.',
       'Transición LEAD_ABIERTO → LEAD_CONFIRMADO.',
       'Evento LEAD_CAPTURED emitido.',
-      'Ficha resuelta por contexto del subject (teléfono del canal), no por input.'
+      'Contexto conversacional contractual persistente del Flow: subject_id + lead_id conservados desde el LEAD_CREATED de lead_open_whatsapp. Step 4 actualiza con WHERE subject_id = <ctx> AND id = <ctx>. El teléfono normalizado se usa solo en el reconocimiento inicial (lead_open_whatsapp), nunca como sustituto de identidad durante un Flow ya establecido.'
     ],
     note: 'Segundo instante de persistencia del canal WhatsApp: UPDATE de la ficha existente.',
     crossLinks: [
       { label: 'Ver contrato lead_flow_submission_whatsapp en Capa 2', tab: 2, itemId: 'form-lead_flow_submission_whatsapp' },
       { label: 'Ver evento LEAD_CAPTURED en Capa 2', tab: 2, itemId: 'event-LEAD_CAPTURED' }
     ],
-    actions: [{ id: 'register-lead-flow-submitted-whatsapp', label: 'Registrar envío del Flow', targetId: 'lead_confirmed', dbAction: "UPDATE armc_leads SET demanda_ids_seleccionados=..., comentario_libre_lead=..., email=..., estado_actual='LEAD_CONFIRMADO' WHERE id=[lead_id resuelto por contexto del subject]; INSERT armc_events(subject_id=[subject_id], lead_id=[lead_id], event_type='LEAD_CAPTURED');" }]
+    actions: [{ id: 'register-lead-flow-submitted-whatsapp', label: 'Registrar envío del Flow', targetId: 'lead_confirmed', dbAction: "UPDATE armc_leads SET demanda_ids_seleccionados=..., comentario_libre_lead=..., email=..., estado_actual='LEAD_CONFIRMADO' WHERE id=[lead_id + subject_id del contexto conversacional contractual persistente del Flow]; INSERT armc_events(subject_id=[subject_id], lead_id=[lead_id], event_type='LEAD_CAPTURED');" }]
   },
   lead_confirmed: {
     title: 'Lead confirmado', key: 'LEAD_CONFIRMADO', x: 1700, y: 480, width: 360,
