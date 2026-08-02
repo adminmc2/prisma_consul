@@ -2,6 +2,50 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-08-02] — v3.7.4
+
+### [Contenido — simulador]
+- S4 del plan estructural de identidad canónica `subject_id`. Cierra la
+  política operativa de reconocimiento del subject en el instante de
+  captación inicial: normalizar identifiers, buscar candidatos activos
+  con **igual peso de PHONE y EMAIL** (sin prioridad de canal),
+  aplicar cero/uno/múltiples candidatos. Un candidato limpio con
+  nombres coincidentes (comparación estricta normalizada contra el
+  episodio de lead más reciente del subject) reutiliza `subject_id`;
+  candidato sin episodio previo comparable, múltiples candidatos o
+  contradicciones producen **incidencia** — resultado contractual
+  terminal sin persistencia, sin evento nuevo, sin tabla, sin UI,
+  derivado a resolución humana futura. Distinción explícita de tres
+  estados de identifier: **normalizado**, **declarado o confirmado**,
+  **verificado** (con `verified_at` solo si hay verificación real —
+  OTP, enlace, mecanismo equivalente; en el alcance actual
+  mayoritariamente NULL). Regla nominal estricta: normalización
+  mecánica (trim, espacios consecutivos → uno, case-insensitive,
+  accent-insensitive, Unicode estándar), sin fuzzy, sin alias
+  informales, sin reordenar. Base determinista de comparación nominal:
+  episodio de lead más reciente del subject candidato (`SELECT ... FROM
+  armc_leads WHERE subject_id = <c> ORDER BY fecha_primer_contacto
+  DESC, id DESC LIMIT 1`); si devuelve cero filas → incidencia (caso
+  residual). `armc_subjects` es entidad ligera y no almacena nombres.
+  Reescritura de la regla del Flow WhatsApp: el Step 4 usa **contexto
+  conversacional contractual persistente** (`subject_id + lead_id`
+  conservados desde el `LEAD_CREATED` de `lead_open_whatsapp`) en lugar
+  de resolver por teléfono en cada paso. Semántica de recurrencia
+  precisada: **cada nueva captación confirmada crea un nuevo `lead_id`**;
+  los episodios pueden coexistir; S4 no reabre ni actualiza episodios
+  previos por recurrencia; dentro del mismo Flow ya establecido no se
+  crea otro episodio (continuidad interna). S4 no implementa
+  persistencia técnica del contexto conversacional (queda como
+  comportamiento contractual que la implementación futura
+  materializará). Alcance puramente contractual: cero cambios en
+  `schema.sql`, `events/*.json`, `mappings.json`, `catalogo-demandas.json`,
+  `renderEvent`, `renderMappingsForms`, `MAPA_ROWS`, `createMapa`, ni
+  layout de Capa 1. Preservados íntegramente `armc_subjects` y
+  `armc_subject_identifiers` (S1), FKs compuestas + índices S2 (v3.7.1),
+  envelope uniforme + `occurred_at` (v3.7.3). Sin cambios en Neon
+  (escenario A vigente), sin backend, sin backfill. Slice contractual
+  del plan S1-S5. S5 (coherencia y cierre) pendiente.
+
 ## [2026-08-01] — v3.7.3
 
 ### Simulador UX — mini-fix v3.7.2: guard de "Payload mínimo" en renderEvent
