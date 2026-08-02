@@ -2,6 +2,54 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-08-02] — v3.7.5
+
+### [Documentación — plan subject_id]
+- S5 del plan estructural de identidad canónica `subject_id` (cierre
+  documental). Corrige la deriva documental detectada en Gate 1 tras
+  el cierre de S1-S4:
+  - `capa-3-sql/data-dictionary.md`: (a) fila `verified_at` reformulada
+    para eliminar la contradicción canónica con el bloque de política
+    S4 (verificación real por mecanismo — OTP, enlace, equivalente —,
+    no envío ni confirmación declarativa); (b) nota "Cardinalidad
+    Subject ↔ Lead" actualizada para reflejar que S4 (v3.7.4) cerró la
+    política operativa que la nota heredada de S1 indicaba "pendiente
+    de S4".
+  - `docs/ARQUITECTURA.md`: actualización íntegra tras S1-S4 —
+    `Última verificación` a `2026-08-02`; diagrama Mermaid con las
+    cinco tablas `armc_*` (`armc_subjects`, `armc_subject_identifiers`,
+    `armc_leads`, `armc_events`, `armc_handoffs`), tres forms reales
+    (`web_contact_form`, `lead_open_whatsapp`,
+    `lead_flow_submission_whatsapp`) y cinco eventos completos
+    (`LEAD_CREATED`, `LEAD_CAPTURED`, `HUMAN_HANDOFF_REQUESTED`,
+    `HUMAN_HANDOFF_ASSIGNED`, `HUMAN_HANDOFF_CLOSED`); estado del
+    Simulador UX pasa a "operativo" (retira la nota "prod nginx
+    pendiente"); §4.2 con filas nuevas para `armc_subjects` y
+    `armc_subject_identifiers`, `armc_leads` con `subject_id` + clave
+    candidata compuesta, `armc_events` y `armc_handoffs` con
+    `subject_id + lead_id` FK compuesta + `occurred_at` (introducido
+    en v3.7.2, S3 cerrado en v3.7.3 tras mini-fix del renderer); §4.3
+    reemplaza el form inexistente `lead_capture` por los tres forms
+    reales + los cinco eventos; se añade nota de envelope uniforme
+    (introducido en v3.7.2, S3 cerrado en v3.7.3).
+  - `docs/OPERATIVA.md §8`: registra que dev y prod sirven la ruta
+    legacy `/publicados/armc/simulador-ux/...` como estático por
+    override de nginx; retira el estado "prod nginx pendiente" ya
+    superado; conserva las condiciones de retirada verificables para
+    recuperar el `301` de Express en ambos entornos. Fila prod con
+    fecha verificable `2026-08-02`.
+- Cierre formal del plan estructural `subject_id` S1-S5. Slices
+  integrados: S1 (v3.7.0), S2 (v3.7.1), S3 (v3.7.2 introducción +
+  v3.7.3 cierre), S4 (v3.7.4), S5 (v3.7.5). Alcance puramente
+  documental: cero cambios en `schema.sql`, `events/*.json`,
+  `mappings.json`, `catalogo-demandas.json`, `forms/*.json`,
+  `hub-analisis.js` (sha256 completo idéntico al baseline
+  `d52de8547acef878bd305fa89a7bd1c143c865e8a44aa3ec946d3079bc8f3dc0`),
+  `README.md` del simulador. Preservado íntegramente todo el trabajo
+  de S1-S4. Sin cambios en Neon (Escenario A vigente), sin backend,
+  sin backfill. Slices C, D y E permanecen fuera del plan y como
+  capacidades futuras declaradas.
+
 ## [2026-08-02] — v3.7.4
 
 ### [Contenido — simulador]
