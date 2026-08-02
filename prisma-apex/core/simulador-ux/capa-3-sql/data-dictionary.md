@@ -29,7 +29,7 @@ Identifiers (teléfono / email) asociados al subject. Un subject puede tener mú
 | `identifier_type` | VARCHAR(30) | NO | enum `PHONE / EMAIL` | Tipo de identifier. |
 | `raw_value` | TEXT | NO | — | Representación original recibida o confirmada por el subject. **No debe sustituirse por `normalized_value` al presentar el dato al usuario.** |
 | `normalized_value` | TEXT | NO | — | Representación normalizada usada para lookup y matching. Puede ser igual o distinta de `raw_value`. Nunca se exige que sean distintas. |
-| `verified_at` | TIMESTAMPTZ | SÍ | — | Instante en que el identifier fue verificado (por ejemplo, confirmación explícita del subject). NULL si no verificado. |
+| `verified_at` | TIMESTAMPTZ | SÍ | — | Instante en que el identifier fue verificado mediante mecanismo real (OTP, enlace de confirmación, o equivalente). NULL mientras no exista verificación real. El mero envío de un formulario o la confirmación declarativa **no equivale a verificación** (ver política operativa de S4 más abajo). |
 | `valid_from` | TIMESTAMPTZ | NO | `NOW()` | Inicio de vigencia del identifier. |
 | `valid_to` | TIMESTAMPTZ | SÍ | — | Fin de vigencia. NULL indica identifier activo. |
 | `created_at` | TIMESTAMPTZ | NO | `NOW()` | Instante de registro de la fila. |
@@ -103,7 +103,7 @@ Al recibir un contacto entrante:
 
 **Estabilidad histórica de `demanda_ids_seleccionados`:** los IDs conservan identidad numérica mientras no se reasignen, pero no conservan la frase ni el `area` mostradas al lead. Esos atributos se obtienen del catálogo vigente. `lineas_servicio_detectadas` queda persistida como resultado derivado en la ficha. Preservar de forma íntegra la vista histórica requerirá versionar el catálogo o guardar `catalogo_version`.
 
-**Cardinalidad Subject ↔ Lead:** `Subject 1:N Lead`. Una fila de `armc_leads` representa un episodio de captación, no la identidad vital. Un mismo subject puede tener varios episodios en el tiempo. S1 declara la cardinalidad pero no define las reglas operativas de cuándo termina, reabre o coexiste un episodio — esa política queda pendiente de verificación de negocio y de S4.
+**Cardinalidad Subject ↔ Lead:** `Subject 1:N Lead`. Una fila de `armc_leads` representa un episodio de captación, no la identidad vital. Un mismo subject puede tener varios episodios en el tiempo. **S4 cerró la política operativa** (v3.7.4): cada nueva captación confirmada crea un nuevo `lead_id`; los episodios pueden coexistir; S4 no reabre ni actualiza episodios previos por recurrencia; dentro del mismo Flow ya establecido, el contexto conservado (`subject_id + lead_id`) evita crear otro episodio por continuidad interna. Detalle completo en la sección `armc_subject_identifiers` — bloque "Política operativa de reconocimiento del subject (desde S4)".
 
 **Clave candidata compuesta:** `armc_leads_subject_id_id_key` declara `UNIQUE (subject_id, id)`. Aunque `id` ya es único global, la UNIQUE compuesta es necesaria técnicamente para que S2 pueda declarar `FOREIGN KEY (subject_id, lead_id) REFERENCES armc_leads(subject_id, id)` desde `armc_events` y `armc_handoffs`, y así garantizar la invariante "el `lead_id` referenciado pertenece efectivamente al `subject_id` declarado".
 

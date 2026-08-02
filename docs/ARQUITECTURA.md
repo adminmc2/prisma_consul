@@ -1,6 +1,6 @@
 # ARQUITECTURA — Vista canónica técnica del repo
 
-> **Estado:** vigente · **Última verificación:** 2026-07-23
+> **Estado:** vigente · **Última verificación:** 2026-08-02
 >
 > Vista canónica de arquitectura técnica del repo `web-de-prisma`, nivel
 > contenedor. **El proyecto está en construcción**, así que esta vista
@@ -89,20 +89,20 @@ flowchart LR
       PUB["/publicados/&lt;cliente&gt;"]:::op
       SHARED["/shared"]:::op
       API["/api/* — backend"]:::op
-      SIM["/core/simulador-ux<br/>[integrado en dev]"]:::dev
+      SIM["/core/simulador-ux<br/>[operativo]"]:::op
       APEXARMC["/apex-armc<br/>[propuesto]"]:::pending
     end
 
     subgraph PERSIST["Persistencia · Neon PostgreSQL"]
       direction TB
       OPDB["portal_users · portal_files<br/>portal_activity_log · apex_submissions"]:::op
-      DEFDB["armc_leads · armc_events<br/>[definidos]"]:::pending
+      DEFDB["armc_subjects · armc_subject_identifiers<br/>armc_leads · armc_events · armc_handoffs<br/>[definidos]"]:::pending
     end
 
     subgraph CTR["Contratos y eventos definidos"]
       direction TB
-      FORMS["web_contact_form · lead_capture<br/>[definidos]"]:::pending
-      EVT["LEAD_CAPTURED<br/>[definido]"]:::pending
+      FORMS["web_contact_form · lead_open_whatsapp<br/>lead_flow_submission_whatsapp<br/>[definidos]"]:::pending
+      EVT["LEAD_CREATED · LEAD_CAPTURED<br/>HUMAN_HANDOFF_REQUESTED<br/>HUMAN_HANDOFF_ASSIGNED · HUMAN_HANDOFF_CLOSED<br/>[definidos]"]:::pending
     end
 
     DRIVE["Google Drive<br/>(Service Account + DWD)"]:::ext
@@ -150,7 +150,7 @@ flowchart LR
 | Entregables por cliente | `prisma-apex/clientes-publicados/<cliente>/` | `/publicados/<cliente>/` | operativo (hoy solo ARMC) |
 | Recursos compartidos | `shared/` | `/shared` | operativo |
 | Backend Express | `server/server.js`, `server/routes/`, `server/middleware/`, `server/lib/` | `/api/*` | operativo |
-| Simulador UX | `prisma-apex/core/simulador-ux/` | `/core/simulador-ux` | integrado en dev *(prod nginx pendiente, ver §8 de OPERATIVA)* |
+| Simulador UX | `prisma-apex/core/simulador-ux/` | `/core/simulador-ux` | operativo |
 | Engagement APEX-ARMC | `prismaconsul.com/apex-armc` (futuro, no existe aún) | — | propuesto — naturaleza funcional pendiente (ver `GLOSARIO.md` §10) |
 
 **Compatibilidades de URL** (configuradas en `server/server.js`):
@@ -187,9 +187,11 @@ lo cierre.
 
 | Tabla | Función | Estado | Origen canónico |
 |---|---|---|---|
-| `armc_leads` | Leads capturados (web / WhatsApp). Incluye **seis columnas aditivas de handoff** humano: `handoff_state`, `handoff_assigned_to`, `handoff_close_reason`, `handoff_requested_at`, `handoff_assigned_at`, `handoff_closed_at`. | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
-| `armc_events` | Eventos del flujo (`LEAD_CAPTURED`, `HUMAN_HANDOFF_REQUESTED`, `HUMAN_HANDOFF_ASSIGNED`, `HUMAN_HANDOFF_CLOSED`). | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
-| `armc_handoffs` | Historial completo del handoff humano: una fila por cada transición `REQUESTED / ASSIGNED / CLOSED`. Conserva trazabilidad de quién pidió, asignó, reasignó y cerró. | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
+| `armc_subjects` | Identidad canónica del subject dentro del dominio ARMC. Entidad ligera; no acumula datos comerciales, clínicos ni conversacionales. PK vital referenciada por todas las demás tablas `armc_*`. | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
+| `armc_subject_identifiers` | Identifiers del subject (`PHONE`, `EMAIL`) con `raw_value` + `normalized_value` + vigencia (`valid_from`, `valid_to`) + `verified_at`. Tres estados: normalizado, declarado, verificado. Índice único activo por subject + índice global no único para lookup por candidatos. | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
+| `armc_leads` | Episodios de captación (web / WhatsApp). Añade `subject_id UUID NOT NULL REFERENCES armc_subjects(id)` sin CASCADE, con clave candidata compuesta `UNIQUE (subject_id, id)` que S2 usa para las FK compuestas desde `armc_events` y `armc_handoffs`. Estados `LEAD_ABIERTO / LEAD_CONFIRMADO`. Cardinalidad `Subject 1:N Lead`. Conserva las seis columnas aditivas de handoff humano: `handoff_state`, `handoff_assigned_to`, `handoff_close_reason`, `handoff_requested_at`, `handoff_assigned_at`, `handoff_closed_at`. | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
+| `armc_events` | Eventos del ciclo Lead + handoff: `LEAD_CREATED`, `LEAD_CAPTURED`, `HUMAN_HANDOFF_REQUESTED`, `HUMAN_HANDOFF_ASSIGNED`, `HUMAN_HANDOFF_CLOSED`. Cada fila declara `subject_id + lead_id` con FK compuesta `(subject_id, lead_id)` → `armc_leads(subject_id, id)` (sin CASCADE). Timestamp `occurred_at` (renombrado desde `created_at` en S3 · introducido en v3.7.2 y cerrado en v3.7.3 tras mini-fix del renderer). | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
+| `armc_handoffs` | Historial completo del handoff humano: una fila por cada transición `REQUESTED / ASSIGNED / CLOSED`. Cada fila declara `subject_id + lead_id` con FK compuesta `(subject_id, lead_id)` → `armc_leads(subject_id, id)` (sin CASCADE). Timestamp `occurred_at` (renombrado desde `created_at` en S3 · introducido en v3.7.2 y cerrado en v3.7.3 tras mini-fix del renderer). Conserva trazabilidad de quién pidió, asignó, reasignó y cerró. | definido y pendiente | `simulador-ux/capa-3-sql/schema.sql` |
 
 **Relación técnica con `portal_users`:** las nuevas claves foráneas
 `armc_leads.handoff_assigned_to`, `armc_handoffs.user_id` y
@@ -211,9 +213,16 @@ no los procesa todavía.
 
 | Contrato / evento | Tipo | Estado | Origen canónico |
 |---|---|---|---|
-| `web_contact_form` | Form de captación canal web | definido y pendiente | `forms/web-contact-form.json` |
-| `lead_capture` | Form de captación canal WhatsApp | definido y pendiente | `forms/lead-capture.json` |
-| `LEAD_CAPTURED` | Evento de convergencia | definido y pendiente | `capa-2-diccionario/` |
+| `web_contact_form` | Form de captación web: resuelve `subject_id` mediante la política de reconocimiento (S4) y, si el resultado es limpio, crea un nuevo episodio directamente en `LEAD_CONFIRMADO`; una incidencia no persiste. | definido y pendiente | `forms/web-contact-form.json` |
+| `lead_open_whatsapp` | Form de apertura de ficha del lead por WhatsApp: resuelve `subject_id` mediante la política de reconocimiento (S4) y, si el resultado es limpio, crea un nuevo episodio en `LEAD_ABIERTO`; una incidencia no persiste. | definido y pendiente | `forms/lead-open-whatsapp.json` |
+| `lead_flow_submission_whatsapp` | Form de envío del Flow WhatsApp (Step 4; UPDATE de la ficha existente a `LEAD_CONFIRMADO` mediante contexto conversacional contractual persistente) | definido y pendiente | `forms/lead-flow-submission-whatsapp.json` |
+| `LEAD_CREATED` | Evento de creación de ficha del lead tras confirmación explícita (solo canal WhatsApp) | definido y pendiente | `capa-2-diccionario/events/lead-created.json` |
+| `LEAD_CAPTURED` | Evento de envío completo del formulario (Step 4 del Flow WhatsApp o formulario web) | definido y pendiente | `capa-2-diccionario/events/lead-captured.json` |
+| `HUMAN_HANDOFF_REQUESTED` | Evento de solicitud de handoff humano | definido y pendiente | `capa-2-diccionario/events/human-handoff-requested.json` |
+| `HUMAN_HANDOFF_ASSIGNED` | Evento de asignación (o reasignación) del handoff a un humano | definido y pendiente | `capa-2-diccionario/events/human-handoff-assigned.json` |
+| `HUMAN_HANDOFF_CLOSED` | Evento de cierre del handoff (manual o por inactividad) | definido y pendiente | `capa-2-diccionario/events/human-handoff-closed.json` |
+
+**Envelope uniforme de eventos (introducido en v3.7.2, S3 cerrado en v3.7.3):** todas las instancias de eventos declaran envelope común `event_id + event_type + subject_id + lead_id + occurred_at`, separado del payload de negocio anidado. Metamodelo del contrato con `envelope_minimo` + `payload_minimo` + `payload_opcional`. Detalle en `capa-2-diccionario/events/*.json` y sección `armc_events` de `capa-3-sql/data-dictionary.md`.
 
 ## 5. Dependencias externas
 

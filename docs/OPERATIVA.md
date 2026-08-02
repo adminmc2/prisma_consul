@@ -283,8 +283,8 @@ retirada**. Sin condición de retirada, es deuda invisible.
 
 | Compatibilidad | Desde | Condición de retirada |
 |---|---|---|
-| nginx `dev`: `/publicados/armc/simulador-ux/...` se sirve como estático (en lugar del `301 → /hub` que sí tiene el repo en `server.js`). Override de edge, no del repo. | 2026-05-21 | Reintroducir el `301` cuando se confirme que ninguna página cacheada consume aún la ruta legacy. |
-| nginx `prod`: pendiente de añadir `location /core/simulador-ux/` y el bloque legacy-compat antes de promover el simulador nativo a producción. | — | Se cierra al ejecutar el bloque de nginx de producción. |
+| nginx `dev`: `/publicados/armc/simulador-ux/...` se sirve como estático (en lugar del `301 → /hub` declarado por Express en `server.js`). Override de edge, no del repo. | 2026-05-21 | Reintroducir el `301` de Express cuando se confirme que ninguna página cacheada en dev consuma aún la ruta legacy. |
+| nginx `prod`: `/publicados/armc/simulador-ux/...` se sirve como estático (mismo override que dev). El simulador nativo `/core/simulador-ux/*` es **operativo en producción**, estado verificado el 2026-08-02. | 2026-08-02 | Reintroducir el `301` de Express cuando se confirme que ninguna página cacheada en prod consuma aún la ruta legacy. |
 | `/apex` → `301` → `/discovery-apex` (renombre canonizado en `GLOSARIO.md` `v3.4.11`, ejecutado en `v3.5.0`). | 2026-06-08 | Cuando entre el slice del renombre `/hub → /apex` o decisión explícita del revisor de liberar `/apex`. |
 
 ## 9. Definiciones
