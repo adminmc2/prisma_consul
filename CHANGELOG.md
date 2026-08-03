@@ -2,6 +2,23 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-08-03] — v3.7.7
+
+### [Contenido — simulador ARMC]
+- Reformulación editorial de la nota del nodo `lead_open_whatsapp` en
+  `prisma-apex/hub-analisis.js`. Aclara que al llegar al nodo el
+  episodio de lead ya está persistido y que la política de
+  reconocimiento S4 (cerrada en v3.7.4) resolvió el `subject_id` antes
+  del INSERT — creando un subject nuevo o reutilizando uno existente —
+  y que las incidencias de reconocimiento no alcanzan este nodo. Elimina
+  la ambigüedad de la redacción anterior, que podía leerse como "el
+  subject ya existía", cuando lo correcto contractualmente es que el
+  episodio (lead) se acaba de persistir mientras el subject puede haber
+  sido creado ahora o reutilizado. No cambia comportamiento, contratos,
+  schema, forms, mappings, eventos ni ningún otro texto del simulador.
+  El nombre técnico del campo, la ubicación en el nodo y las
+  cross-links permanecen intactos.
+
 ## [2026-08-03] — v3.7.6
 
 ### [Contenido — simulador ARMC]
