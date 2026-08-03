@@ -2,6 +2,26 @@
 
 Registro de cambios relevantes del proyecto PRISMA Consul.
 
+## [2026-08-03] — v3.7.6
+
+### [Contenido — simulador ARMC]
+- Refactor de identidad terminológica en el simulador: el sistema/producto
+  modelado se denomina APEX. Se corrigen siete literales en
+  `prisma-apex/hub-analisis.js` (dataPoints y descripciones de los nodos
+  `lead_open_whatsapp`, `human_handoff_requested`, `human_handoff_active`,
+  `human_handoff_closed`, y fila `MAPA_ROWS` de `human_handoff_active`)
+  y un literal en cada uno de los eventos JSON `human-handoff-assigned.json`
+  y `human-handoff-closed.json`. Fundamento: MODELO-DOMINIO.md fija
+  Producto = APEX. `Hub` queda reservado a la SPA contenedora,
+  `/hub`, acceso autenticado, alojamiento físico y archivos técnicos.
+  El actor humano rector del simulador pasa a `humano asignado`.
+  Se corrigen además tres atribuciones funcionales presentes a
+  `apex-armc` (URL futura no operativa hoy), reasignándolas a APEX.
+  No se modifican: alojamiento del simulador en el Hub, ruta `/hub`,
+  nombres técnicos, contratos, schema ejecutable, forms, mappings,
+  catálogo, data-dictionary, README, shells legacy, backend, Neon
+  ni documentos canónicos.
+
 ## [2026-08-02] — v3.7.5
 
 ### [Documentación — plan subject_id]
