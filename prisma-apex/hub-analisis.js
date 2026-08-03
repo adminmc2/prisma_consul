@@ -117,7 +117,7 @@ const CAPA1_NODES = {
       'Ficha visible en APEX desde este instante.',
       'Evento LEAD_CREATED emitido.'
     ],
-    note: 'La ficha ya existe (INSERT + LEAD_CREATED ocurrieron al llegar aquí). La transición al envío del Flow no persiste nada: la creación no se atribuye a ese salto.',
+    note: 'Al llegar aquí, el episodio de lead ya está persistido: la política de reconocimiento S4 resolvió el subject_id antes del INSERT en armc_leads, creando un subject nuevo o reutilizando uno existente; las incidencias no alcanzan este nodo. La apertura emitió LEAD_CREATED. El siguiente salto, hacia el envío del Flow, no persiste nada nuevo.',
     crossLinks: [
       { label: 'Ver contrato lead_open_whatsapp en Capa 2', tab: 2, itemId: 'form-lead_open_whatsapp' },
       { label: 'Ver evento LEAD_CREATED en Capa 2', tab: 2, itemId: 'event-LEAD_CREATED' }
