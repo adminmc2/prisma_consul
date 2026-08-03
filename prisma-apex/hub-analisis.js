@@ -114,7 +114,7 @@ const CAPA1_NODES = {
       'Teléfono desde metadata del canal (no lo teclea el lead).',
       'canal_origen = WHATSAPP.',
       'estado_actual = LEAD_ABIERTO.',
-      'Ficha visible en el Hub desde este instante.',
+      'Ficha visible en APEX desde este instante.',
       'Evento LEAD_CREATED emitido.'
     ],
     note: 'La ficha ya existe (INSERT + LEAD_CREATED ocurrieron al llegar aquí). La transición al envío del Flow no persiste nada: la creación no se atribuye a ese salto.',
@@ -158,7 +158,7 @@ const CAPA1_NODES = {
   // lineal; no modela transiciones interactivas de activación dentro de Capa 1.
   human_handoff_requested: {
     title: 'Handoff humano solicitado', key: 'HUMAN_HANDOFF_REQUESTED', x: 2080, y: 110, width: 360,
-    description: 'La conversación entra en estado "esperando humano". El bot queda silenciado para esta conversación; un humano del Hub puede tomarla.',
+    description: 'La conversación entra en estado "esperando humano". El bot queda silenciado para esta conversación; un humano asignado puede tomarla.',
     dataPoints: [
       'Trigger: explícito (lead solicita) o automático (señal del bot)',
       'Canal origen heredado: WEB_FORM o WHATSAPP',
@@ -175,10 +175,10 @@ const CAPA1_NODES = {
   },
   human_handoff_active: {
     title: 'Handoff humano activo', key: 'HUMAN_HANDOFF_ACTIVE', x: 2080, y: 810, width: 360,
-    description: 'Un humano del Hub ha tomado el handoff. La conversación está siendo atendida por una persona; el bot sigue silenciado.',
+    description: 'Un humano asignado ha tomado el handoff. La conversación está siendo atendida por una persona; el bot sigue silenciado.',
     dataPoints: [
       'Humano asignado: FK portal_users en armc_leads.handoff_assigned_to',
-      'UI del Hub muestra nombre visible del humano',
+      'UI de APEX muestra nombre visible del humano asignado',
       'Sistema autoasigna al humano que abre el lead; botón "Reasignar" actualiza la asignación',
       'Cada asignación / reasignación queda como fila ASSIGNED en armc_handoffs',
       'Bot continúa silenciado',
@@ -193,9 +193,9 @@ const CAPA1_NODES = {
   },
   human_handoff_closed: {
     title: 'Handoff humano cerrado', key: 'HUMAN_HANDOFF_CLOSED', x: 2080, y: 1510, width: 360,
-    description: 'El handoff cierra, sea manualmente desde apex-armc o automáticamente por inactividad.',
+    description: 'El handoff cierra, sea manualmente desde APEX o automáticamente por inactividad.',
     dataPoints: [
-      'Cierre manual: el humano lo cierra desde apex-armc',
+      'Cierre manual: el humano asignado lo cierra desde APEX',
       'Cierre automático: tras 24 horas sin actividad',
       'close_reason en armc_leads: "manual" o "inactivity"',
       'Identidad de quien cierra (closed_by) NO se duplica en armc_leads; se persiste en armc_handoffs (fila CLOSED con user_id) y en el payload del evento HUMAN_HANDOFF_CLOSED (closed_by_user_id opcional)',
@@ -1067,7 +1067,7 @@ const MAPA_ROWS = [
   { c1: 'lead_flow_submission_whatsapp', c1_label: 'Envío del Flow WhatsApp', c2_form: 'lead_flow_submission_whatsapp', c2_event: 'LEAD_CAPTURED', c3: ['armc_leads', 'armc_events'], note: 'UPDATE de la ficha existente y transición a LEAD_CONFIRMADO al enviar el Flow.' },
   { c1: 'lead_confirmed', c1_label: 'Lead confirmado', c2_form: null, c2_event: 'LEAD_CAPTURED', c3: ['armc_leads', 'armc_events'], note: 'Convergencia final: ficha con formulario completo persistida.' },
   { c1: 'human_handoff_requested', c1_label: 'Handoff humano solicitado', c2_form: null, c2_event: 'HUMAN_HANDOFF_REQUESTED', c3: ['armc_leads', 'armc_events', 'armc_handoffs'], note: 'Patrón transversal de estado del lead. Bot silenciado para la conversación. El simulador representa presencia respecto al flujo lineal, no transiciones interactivas.' },
-  { c1: 'human_handoff_active', c1_label: 'Handoff humano activo', c2_form: null, c2_event: 'HUMAN_HANDOFF_ASSIGNED', c3: ['armc_leads', 'armc_events', 'armc_handoffs'], note: 'Humano del Hub atiende la conversación. Cada (re)asignación añade fila ASSIGNED en armc_handoffs.' },
+  { c1: 'human_handoff_active', c1_label: 'Handoff humano activo', c2_form: null, c2_event: 'HUMAN_HANDOFF_ASSIGNED', c3: ['armc_leads', 'armc_events', 'armc_handoffs'], note: 'Humano asignado atiende la conversación. Cada (re)asignación añade fila ASSIGNED en armc_handoffs.' },
   { c1: 'human_handoff_closed', c1_label: 'Handoff humano cerrado', c2_form: null, c2_event: 'HUMAN_HANDOFF_CLOSED', c3: ['armc_leads', 'armc_events', 'armc_handoffs'], note: 'Cierre manual o por inactividad (24h). closed_by no se duplica en armc_leads.' }
 ];
 

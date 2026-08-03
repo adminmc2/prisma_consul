@@ -1,7 +1,7 @@
 {
   "id": "HUMAN_HANDOFF_ASSIGNED",
   "paso": "human_handoff_active",
-  "descripcion": "Se dispara cuando un humano del Hub toma el handoff (primera asignación) o cuando se reasigna a otro humano. Cada asignación produce una fila ASSIGNED en armc_handoffs. La instancia emitida lleva el envelope común de 5 campos raíz (event_id, event_type, subject_id, lead_id, occurred_at) y un payload de negocio anidado con los datos específicos de la asignación.",
+  "descripcion": "Se dispara cuando un humano asignado toma el handoff (primera asignación) o cuando se reasigna a otro humano. Cada asignación produce una fila ASSIGNED en armc_handoffs. La instancia emitida lleva el envelope común de 5 campos raíz (event_id, event_type, subject_id, lead_id, occurred_at) y un payload de negocio anidado con los datos específicos de la asignación.",
   "origen": ["human_handoff_requested", "human_handoff_active"],
   "destino": ["armc_leads", "armc_events", "armc_handoffs"],
   "envelope_minimo": ["event_id", "event_type", "subject_id", "lead_id", "occurred_at"],
